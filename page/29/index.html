@@ -9,6 +9,7 @@
 <meta property="og:title" content=".">
 <meta property="og:url" content="https://zju.date/page/29/index.html">
 <meta property="og:site_name" content=".">
+<meta property="og:locale" content="default">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content=".">
   
@@ -53,9 +54,9 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-Grails-导出excel" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-angular-select-default-option" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/Grails-导出excel/" class="article-date">
+    <a href="/angular-select-default-option/" class="article-date">
   <time datetime="2016-03-03T05:53:52.000Z" itemprop="datePublished">2016-03-03</time>
 </a>
     
@@ -67,7 +68,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/Grails-导出excel/">Grails导出excel</a>
+      <a class="article-title" href="/angular-select-default-option/">angular中给select设置默认选项</a>
     </h1>
   
 
@@ -78,29 +79,22 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <p>控制器:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> date.zju</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SampleExcelController</span> </span>&#123;</span><br><span class="line">    <span class="function">def <span class="title">index</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>视图：</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE html&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"layout"</span> <span class="attr">content</span>=<span class="string">"main"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>Simple Chat<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">g:link</span> <span class="attr">action</span>=<span class="string">"downloadSampleExcel"</span>&gt;</span>Download Sample Excel<span class="tag">&lt;/<span class="name">g:link</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>添加 JExcelApi 库的方法，在 BuildConfig.groovy 中添加依赖：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">    runtime &apos;net.sourceforge.jexcelapi:jxl:2.6.12&apos;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>The complete code that contains the logic to generate the excel file is this: </p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> date.zju</span><br><span class="line"><span class="keyword">import</span> jxl.Workbook</span><br><span class="line"><span class="keyword">import</span> jxl.write.Label</span><br><span class="line"><span class="keyword">import</span> jxl.write.WritableSheet</span><br><span class="line"><span class="keyword">import</span> jxl.write.WritableWorkbook</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SampleExcelController</span> &#123;</span></span><br><span class="line">    <span class="keyword">def</span> index() &#123;&#125;</span><br><span class="line">    <span class="keyword">def</span> downloadSampleExcel() &#123;</span><br><span class="line">        response.setContentType(<span class="string">'application/vnd.ms-excel'</span>)</span><br><span class="line">        response.setHeader(<span class="string">'Content-Disposition'</span>, <span class="string">'Attachment;Filename="example.xls"'</span>)</span><br><span class="line">        WritableWorkbook workbook = Workbook.createWorkbook(response.outputStream)</span><br><span class="line">        WritableSheet sheet1 = workbook.createSheet(<span class="string">"Students"</span>, <span class="number">0</span>)</span><br><span class="line">        sheet1.addCell(<span class="keyword">new</span> Label(<span class="number">0</span>,<span class="number">0</span>, <span class="string">"First Name"</span>))</span><br><span class="line">        sheet1.addCell(<span class="keyword">new</span> Label(<span class="number">1</span>,<span class="number">0</span>, <span class="string">"Last Name"</span>))</span><br><span class="line">        sheet1.addCell(<span class="keyword">new</span> Label(<span class="number">2</span>,<span class="number">0</span>, <span class="string">"Age"</span>))</span><br><span class="line">        sheet1.addCell(<span class="keyword">new</span> Label(<span class="number">0</span>,<span class="number">1</span>, <span class="string">"John"</span>))</span><br><span class="line">        sheet1.addCell(<span class="keyword">new</span> Label(<span class="number">1</span>,<span class="number">1</span>, <span class="string">"Doe"</span>))</span><br><span class="line">        sheet1.addCell(<span class="keyword">new</span> Label(<span class="number">2</span>,<span class="number">1</span>, <span class="string">"20"</span>))</span><br><span class="line">        sheet1.addCell(<span class="keyword">new</span> Label(<span class="number">0</span>,<span class="number">2</span>, <span class="string">"Jane"</span>))</span><br><span class="line">        sheet1.addCell(<span class="keyword">new</span> Label(<span class="number">1</span>,<span class="number">2</span>, <span class="string">"Smith"</span>))</span><br><span class="line">        sheet1.addCell(<span class="keyword">new</span> Label(<span class="number">2</span>,<span class="number">2</span>, <span class="string">"18"</span>))</span><br><span class="line">        WritableSheet sheet2 = workbook.createSheet(<span class="string">"Courses"</span>, <span class="number">1</span>)</span><br><span class="line">        sheet2.addCell(<span class="keyword">new</span> Label(<span class="number">0</span>,<span class="number">0</span>, <span class="string">"Course Name"</span>))</span><br><span class="line">        sheet2.addCell(<span class="keyword">new</span> Label(<span class="number">1</span>,<span class="number">0</span>, <span class="string">"Number of units"</span>))</span><br><span class="line">        sheet2.addCell(<span class="keyword">new</span> Label(<span class="number">0</span>,<span class="number">1</span>, <span class="string">"Algebra"</span>))</span><br><span class="line">        sheet2.addCell(<span class="keyword">new</span> Label(<span class="number">1</span>,<span class="number">1</span>, <span class="string">"3"</span>))</span><br><span class="line">        sheet2.addCell(<span class="keyword">new</span> Label(<span class="number">0</span>,<span class="number">2</span>, <span class="string">"English Grammar"</span>))</span><br><span class="line">        sheet2.addCell(<span class="keyword">new</span> Label(<span class="number">1</span>,<span class="number">2</span>, <span class="string">"5"</span>))</span><br><span class="line">        workbook.write();</span><br><span class="line">        workbook.close();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>告知浏览器文本格式：</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">response.setContentType(<span class="string">'application/vnd.ms-excel'</span>)</span><br><span class="line">response.setHeader(<span class="string">'Content-Disposition'</span>, <span class="string">'Attachment;Filename="example.xls"'</span>)</span><br></pre></td></tr></table></figure>
-<p>以流的方式输出，而不是保存在本地：</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">WritableWorkbook workbook = Workbook.createWorkbook(response.outputStream)</span><br></pre></td></tr></table></figure>
-<p>创建 worksheet：</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">WritableSheet sheet1 = workbook.createSheet(<span class="string">"Students"</span>, <span class="number">0</span>)</span><br></pre></td></tr></table></figure>
-<p>操作 cell：</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sheet2.addCell(<span class="keyword">new</span> Label(<span class="number">0</span>,<span class="number">1</span>, <span class="string">"Algebra"</span>))</span><br></pre></td></tr></table></figure>
-
+        <div class="article-preview">
+            <p>响应式表单（Reactive Forms）</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"form-group"</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">select</span> <span class="attr">formControlName</span>=<span class="string">"category"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">option</span> [<span class="attr">ngValue</span>]=<span class="string">"null"</span>&gt;</span>Select Category<span class="tag">&lt;/<span class="name">option</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">option</span> *<span class="attr">ngFor</span>=<span class="string">"let option of options"</span> </span></span><br><span class="line"><span class="tag">            [<span class="attr">ngValue</span>]=<span class="string">"option"</span>&gt;</span>&#123;&#123;option.label&#125;&#125;<span class="tag">&lt;/<span class="name">option</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">options = [</span><br><span class="line">	&#123; <span class="attr">id</span>: <span class="number">1</span>, <span class="attr">label</span>: <span class="string">'Category One'</span> &#125;, </span><br><span class="line">	&#123; <span class="attr">id</span>: <span class="number">2</span>, <span class="attr">label</span>: <span class="string">'Category Two'</span> &#125;</span><br><span class="line">]</span><br><span class="line">form = <span class="keyword">new</span> FormGroup(&#123;</span><br><span class="line">  category: <span class="keyword">new</span> FormControl(<span class="literal">null</span>, Validators.required)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/angular-select-default-option/#more">Read More</a>
+          </p>
+        
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/Grails-导出excel/" data-id="cjhn4ha5n000svqq399fm8er8" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/angular-select-default-option/" data-id="cjhn4lbmu003istq3kszyj31n" class="article-share-link">Share</a>
      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/">Java</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
     </footer>
   </div>
@@ -154,7 +148,7 @@
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/grails-datePicker/" data-id="cjhn4haav008kvqq3lzihgtqm" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/grails-datePicker/" data-id="cjhn4lbq7008jstq398tiwiu2" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/">Java</a></li></ul>
 
@@ -203,7 +197,7 @@
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/grails-return-json/" data-id="cjhn4hab0008svqq37pwfjr8g" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/grails-return-json/" data-id="cjhn4lbqb008rstq323cfgxm7" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JAVA/">JAVA</a></li></ul>
 
@@ -252,7 +246,7 @@
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/grials-tags/" data-id="cjhn4hab4008yvqq3q83t3l93" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/grials-tags/" data-id="cjhn4lbqe008xstq3k5wsms0d" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JAVA/">JAVA</a></li></ul>
 
@@ -304,7 +298,7 @@
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/grails-in-docker/" data-id="cjhn4haay008ovqq3dz6dyifx" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/grails-in-docker/" data-id="cjhn4lbq9008nstq3614lvjn0" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JAVA/">JAVA</a></li></ul>
 
@@ -355,7 +349,7 @@
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/groovy-http/" data-id="cjhn4hab50090vqq3edxjp4rm" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/groovy-http/" data-id="cjhn4lbqg008zstq33sm3kzbs" class="article-share-link">Share</a>
      
     </footer>
   </div>
@@ -400,7 +394,7 @@
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/shuangpin-notes/" data-id="cjhn4hah000h6vqq38etjtkt8" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/shuangpin-notes/" data-id="cjhn4lbvw00h5stq3i6rsap8q" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/学习笔记/">学习笔记</a></li></ul>
 
@@ -449,7 +443,7 @@
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/unable-to-write-chinese-punctuation-in-intellj-webstorm/" data-id="cjhn4hahz00iovqq3d5fneejc" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/unable-to-write-chinese-punctuation-in-intellj-webstorm/" data-id="cjhn4lbx100instq3ysr3ai5n" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
 
@@ -497,7 +491,7 @@
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/http-notes/" data-id="cjhn4habq009ivqq33l5dtek9" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/http-notes/" data-id="cjhn4lbqp009hstq3v22j7izx" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/HTTP/">HTTP</a></li></ul>
 
@@ -552,7 +546,7 @@ html += &quot;&lt;/ul&gt;&quot;
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/ejs-notes/" data-id="cjhn4ha9j006fvqq3oa4svszp" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/ejs-notes/" data-id="cjhn4lbom006estq3nd0foxz4" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
