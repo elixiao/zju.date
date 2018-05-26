@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="http是无状态的，只知道响应客户端的请求，即：request——&amp;gt;response。">
+<meta name="keywords" content="HTTP">
+<meta property="og:type" content="article">
+<meta property="og:title" content="session和cookie的区别">
+<meta property="og:url" content="https://zju.date/session-vs-cookie/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="http是无状态的，只知道响应客户端的请求，即：request——&amp;gt;response。">
+<meta property="og:image" content="http://img.react.ren/blog/http-session.jpg">
+<meta property="og:image" content="http://img.react.ren/blog/http-no-state.gif">
+<meta property="og:image" content="http://img.react.ren/blog/http-request-from-same-client.png">
+<meta property="og:image" content="http://img.react.ren/blog/http-session-use-case.jpg">
+<meta property="og:image" content="http://img.react.ren/blog/http-session.png">
+<meta property="og:image" content="http://img.react.ren/blog/http-cookie.png?v=1">
+<meta property="og:image" content="http://img.react.ren/blog/http-faked-cookie.png">
+<meta property="og:updated_time" content="2017-08-19T02:06:50.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="session和cookie的区别">
+<meta name="twitter:description" content="http是无状态的，只知道响应客户端的请求，即：request——&amp;gt;response。">
+<meta name="twitter:image" content="http://img.react.ren/blog/http-session.jpg">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-session-vs-cookie" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/session-vs-cookie/" class="article-date">
+  <time datetime="2017-08-17T06:57:38.000Z" itemprop="datePublished">2017-08-17</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      session和cookie的区别
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><code>http</code>是无状态的，只知道响应客户端的请求，即：<code>request——&gt;response</code>。</p>
+<p><img src="http://img.react.ren/blog/http-session.jpg" alt="request --&gt; response"></p>
+<a id="more"></a>
+<p>即使有多个请求，服务器并不知道它们是否来自同一客户端：</p>
+<p><img alt="http协议是无状态的" src="http://img.react.ren/blog/http-no-state.gif" width="300px"></p>
+<p>但是，很多时候我们需要知道哪些请求是来自同一客户端的：</p>
+<p><img alt="来自同一客户端的请求" src="http://img.react.ren/blog/http-request-from-same-client.png" width="300px"></p>
+<p>例如大家都在淘宝上购物，某客户端发起结账的请求，如果不知道来自哪个客户端，就不知道向谁要钱。</p>
+<h2 id="session"><a href="#session" class="headerlink" title="session"></a><code>session</code></h2><p><code>session</code>是一个抽象概念，表示<code>user agent</code>和<code>server</code>之间的交互，而http协议是无状态的，任意两次请求，服务器并不知道是否来自同一客户端，但是对于某个客户端来说，它所发起的一系列请求以及服务器的响应是完整的会话，当逻辑上有了会话的概念之后，任意一个http请求，服务器都可以将其归类于某个会话，为了表示这种“会话状态”，就有了<code>session</code>的概念，它是在服务端保存的一个数据结构，用来跟踪用户的状态，这个数据可以保存在集群、数据库、文件中。</p>
+<p><img alt="根据session将http请求归类到客户端" src="http://img.react.ren/blog/http-session-use-case.jpg" width="300px"></p>
+<p><code>session id</code>需要从http请求中获取，往往是读取<code>http header</code>中的<code>cookie</code>字段，如果没有<code>cookie</code>，服务器认为这是一个全新的会话，会在<code>http header</code>中<code>set</code>一个<code>cookie</code>返回给客户端，以后每次请求，该客户端都会携带这个<code>cookie</code>：</p>
+<p><img alt="用cookie携带session信息" src="http://img.react.ren/blog/http-session.png" width="300px"></p>
+<h2 id="cookie"><a href="#cookie" class="headerlink" title="cookie"></a><code>cookie</code></h2><p><code>cookie</code>不是一个抽象的概念，而是一个实际存在的、看得见、摸得着的东西，因为<code>http</code>协议中在<code>header</code>中定义了<code>cookie</code>这个字段，是客户端保存用户信息的一种机制，用来记录用户的一些信息，可以存储任何字符串，如果存储了<code>session id</code>那么服务器就能在每次http请求的时候，读取<code>cookie</code>里面的<code>session id</code>信息，然后将请求归类到会话。</p>
+<p><img src="http://img.react.ren/blog/http-cookie.png?v=1" alt="cookie"></p>
+<p>cookie是可以伪造的，同一个cookie被归类为同一个会话，被视为来自同一个客户端，如果有坏蛋伪造了其他人的cookie发起请求，服务器是不知道的。</p>
+<p><img src="http://img.react.ren/blog/http-faked-cookie.png" alt="faked cookie"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/session-vs-cookie/" data-id="cjhn4hagw00h0vqq3d9upkesq" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/HTTP/">HTTP</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/redirect-in-feathersjs/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          feathersjs重定向
+        
+      </div>
+    </a>
+  
+  
+    <a href="/wechat-oauth2/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">oauth2.0微信扫码登录</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

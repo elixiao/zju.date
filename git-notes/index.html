@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="常用命令fetchgit fetch从远程分支获取最新版本到本地，语法是：git fetch origin remote_branch:local_branch，不会自动merge，可以先观察区别之后再决定是否merge： 123git fetch origin mastergit log -p master..origin/mastergit merge origin/master 其实逻辑和下">
+<meta name="keywords" content="Git">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Git干货集锦">
+<meta property="og:url" content="https://zju.date/git-notes/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="常用命令fetchgit fetch从远程分支获取最新版本到本地，语法是：git fetch origin remote_branch:local_branch，不会自动merge，可以先观察区别之后再决定是否merge： 123git fetch origin mastergit log -p master..origin/mastergit merge origin/master 其实逻辑和下">
+<meta property="og:updated_time" content="2017-08-16T02:26:13.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Git干货集锦">
+<meta name="twitter:description" content="常用命令fetchgit fetch从远程分支获取最新版本到本地，语法是：git fetch origin remote_branch:local_branch，不会自动merge，可以先观察区别之后再决定是否merge： 123git fetch origin mastergit log -p master..origin/mastergit merge origin/master 其实逻辑和下">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-git-notes" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/git-notes/" class="article-date">
+  <time datetime="2016-05-13T02:22:23.000Z" itemprop="datePublished">2016-05-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Git干货集锦
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h2><h3 id="fetch"><a href="#fetch" class="headerlink" title="fetch"></a>fetch</h3><p>git fetch从远程分支获取最新版本到本地，语法是：<code>git fetch origin remote_branch:local_branch</code>，不会自动merge，可以先观察区别之后再决定是否merge：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git fetch origin master</span><br><span class="line">git <span class="built_in">log</span> -p master..origin/master</span><br><span class="line">git merge origin/master</span><br></pre></td></tr></table></figure>
+<p>其实逻辑和下面的把远程分支下载到本地的一个临时分支上，查看区别，然后合并：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git fetch origin master:tmp</span><br><span class="line">git diff tmp</span><br><span class="line">git merge tmp</span><br></pre></td></tr></table></figure>
+<h3 id="pull"><a href="#pull" class="headerlink" title="pull"></a>pull</h3><p>如果你运行git pull，那么git会帮你做两件事情，首先拿到远程最新的代码，然后运行 git merge。即git pull 是从远程获取最新版然后就直接merge到本地相同分支了。这么看来，fetch要安全一些，因为在merge前可以查看更新情况，然后再决定是否合并。</p>
+<h3 id="cherry-pick"><a href="#cherry-pick" class="headerlink" title="cherry-pick"></a>cherry-pick</h3><p>例如，假设我们有两个分支A和B，这两个分支不能合并，否则这样会导致版本混乱，但是又想增加A分支中的一个功能到B分支中，可以使用cherry-pick了。</p>
+<p>cherry-pick 就是对已经存在的commit 进行 再次提交；</p>
+<p>语法如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git cherry-pick &lt;commit id&gt;</span><br></pre></td></tr></table></figure>
+<p>当执行完 cherry-pick 以后，将会 生成一个新的提交；这个新的提交的哈希值和原来的不同，但标识名一样；</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ git checkout B</span><br><span class="line">$ git cherry-pick 6aa94d53d702876a7f7a61da2e72c43016618ecc</span><br></pre></td></tr></table></figure>
+<h3 id="rebase"><a href="#rebase" class="headerlink" title="rebase"></a>rebase</h3><p>git rebase是把某个分支上的一部分commit嫁接到另一个commit后面，而在这个过程中这些commit的base（基）变了，所以这个操作叫做rebase。</p>
+<p>语法如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git rebase &lt;upstream&gt; &lt;branch&gt;</span><br></pre></td></tr></table></figure>
+<p>比如我们有如下的提交历史，当前的分支是topic：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">     A---B---C topic(HEAD)</span><br><span class="line">    /</span><br><span class="line">D---E---F---G master</span><br></pre></td></tr></table></figure>
+<p>我们执行了如下任何一个命令（区别是后者会首先checkout到topic分支，然后再执行rebase的操作。）之后：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ git rebase master</span><br><span class="line">$ git rebase master topic</span><br></pre></td></tr></table></figure>
+<p>提交历史将会变成如下这样：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">              A&apos;--B&apos;--C&apos; topic(HEAD)</span><br><span class="line">             /</span><br><span class="line">D---E---F---G master</span><br></pre></td></tr></table></figure>
+<p>git把A—B—C这段commit嫁接到了G之后，不过虽然这些新commit的内容是一样的，但是hash值是不同的（A’–B’–C’），因为在这个过程中，git做了三件事情：</p>
+<ol>
+<li>首先对topic分支和<upstream>做一个差集，把不同的commit找出来，对于以上例子来说结果就是A—B—C，然后把这些commit存在一个临时的地方。</upstream></li>
+<li>其次，git会把当前分支reset到<upstream>上，类似于执行git reset –hard <upstream>命令。对于以上例子来说就是reset到master。</upstream></upstream></li>
+<li>最后，git把第一步中暂存的commit，按照顺序一个一个地应用到分支上，相当于一个一个重复提交，这就是为什么rebase之后commit的hash值变了。</li>
+</ol>
+<p>如果中的一个commit进行了某项修改，而当前分支中也存在一个commit，这两个commit的修改的内容一样，那么当前分支中的commit将会被忽略。比如以下的<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure></p>
+<pre><code> A---B---C topic
+/
+</code></pre><p>D—E—A’—F master<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">执行完git rebase master之后，结果如下：</span><br></pre></td></tr></table></figure></p>
+<pre><code> B&apos;---C&apos; topic
+/
+</code></pre><p>D—E—A’—F master<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">rebase往往和pull一起使用，git pull --rebase的意思是git fetch去服务器拿到最新代码，然后运行git rebase，注意不是git merge，如果没有--rebase，那么就会执行git merge，但是有--rebase就执行git rebase。和git pull的区别简单来说都是将不同分支的代码融合在一起，但生成的代码树不同，git pull --rebase不会生成大量的merge节点。</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">## 常见问题</span><br><span class="line"></span><br><span class="line">### 创建分支失败</span><br><span class="line"></span><br><span class="line">```bash</span><br><span class="line">$ git branch frontend</span><br><span class="line">fatal: Not a valid object name: &apos;master&apos;.</span><br></pre></td></tr></table></figure></p>
+<p>问题描述-一个非法的master,原因：本地还没有创建master，你可以执行以下git branch，会发现没有看到本地分支列表。</p>
+<p>解决方案就是先提交，创建master分支之后再创建其他分支。</p>
+<h3 id="push失败"><a href="#push失败" class="headerlink" title="push失败"></a>push失败</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">error: failed to push some refs to <span class="string">'git@github.com:your/name.git'</span></span><br><span class="line">hint: Updates were rejected because the remote contains work that you <span class="keyword">do</span></span><br><span class="line">hint: not have locally. This is usually caused by another repository pushing</span><br><span class="line">hint: to the same ref. You may want to first integrate the remote changes</span><br><span class="line">hint: (e.g., <span class="string">'git pull ...'</span>) before pushing again.</span><br><span class="line">hint: See the <span class="string">'Note about fast-forwards'</span> <span class="keyword">in</span> <span class="string">'git push --help'</span> <span class="keyword">for</span> details.</span><br></pre></td></tr></table></figure>
+<p>还没pull就push了，而远程有本地没有的文件，就提示这个错误，解决方案就是先pull然后再push即可。</p>
+<h3 id="下载远程指定分支"><a href="#下载远程指定分支" class="headerlink" title="下载远程指定分支"></a>下载远程指定分支</h3><p>git下载远程指定分支：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> -b &lt;branch&gt; &lt;remote_repo&gt;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/git-notes/" data-id="cjhn4haal0086vqq3qscexzf1" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/">Git</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/mongodb-notes/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          mongodb学习笔记
+        
+      </div>
+    </a>
+  
+  
+    <a href="/elasticsearch-notes/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">ElasticSearch学习笔记</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

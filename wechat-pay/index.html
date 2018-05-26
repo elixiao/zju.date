@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="信扫码支付，官方提供了两种模式：  商户根据微信支付规则链接生成二维码，带固定参数productid（订单号）。用户扫码后，微信支付系统将productid和用户唯一标识（openid）回调商户后台系统，商户后台系统根据productid生成支付交易，最后微信支付系统发起用户支付流程。 商户后台系统调用微信支付预付交易接口，将返回的链接生成二维码，用户扫码后输入密码完成支付交易。  模式2比较简单">
+<meta name="keywords" content="JavaScript">
+<meta property="og:type" content="article">
+<meta property="og:title" content="微信扫码支付">
+<meta property="og:url" content="https://zju.date/wechat-pay/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="信扫码支付，官方提供了两种模式：  商户根据微信支付规则链接生成二维码，带固定参数productid（订单号）。用户扫码后，微信支付系统将productid和用户唯一标识（openid）回调商户后台系统，商户后台系统根据productid生成支付交易，最后微信支付系统发起用户支付流程。 商户后台系统调用微信支付预付交易接口，将返回的链接生成二维码，用户扫码后输入密码完成支付交易。  模式2比较简单">
+<meta property="og:updated_time" content="2017-09-14T02:01:01.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="微信扫码支付">
+<meta name="twitter:description" content="信扫码支付，官方提供了两种模式：  商户根据微信支付规则链接生成二维码，带固定参数productid（订单号）。用户扫码后，微信支付系统将productid和用户唯一标识（openid）回调商户后台系统，商户后台系统根据productid生成支付交易，最后微信支付系统发起用户支付流程。 商户后台系统调用微信支付预付交易接口，将返回的链接生成二维码，用户扫码后输入密码完成支付交易。  模式2比较简单">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-wechat-pay" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/wechat-pay/" class="article-date">
+  <time datetime="2017-08-22T01:06:07.000Z" itemprop="datePublished">2017-08-22</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      微信扫码支付
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>信扫码支付，官方提供了两种模式：</p>
+<ol>
+<li>商户根据微信支付规则链接生成二维码，带固定参数productid（订单号）。用户扫码后，微信支付系统将productid和用户唯一标识（openid）回调商户后台系统，商户后台系统根据productid生成支付交易，最后微信支付系统发起用户支付流程。</li>
+<li>商户后台系统调用微信支付预付交易接口，将返回的链接生成二维码，用户扫码后输入密码完成支付交易。</li>
+</ol>
+<p>模式2比较简单，逐一分析。</p>
+<h2 id="模式2"><a href="#模式2" class="headerlink" title="模式2"></a>模式2</h2><p>首先调用统一下单接口地址：<code>https://api.mch.weixin.qq.com/pay/unifiedorder</code>，这个地址需要提供以下参数，放在body里面通过POST请求调用：</p>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>参数含义</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>appid</td>
+<td>公众号ID</td>
+<td>wxb77bcb162c53b0f8</td>
+</tr>
+<tr>
+<td>mch_id</td>
+<td>商户号</td>
+<td>1487713882</td>
+</tr>
+<tr>
+<td>nonce_str</td>
+<td>随机字符串</td>
+<td>abc123def</td>
+</tr>
+<tr>
+<td>sign</td>
+<td>签名</td>
+<td>签名</td>
+</tr>
+<tr>
+<td>body</td>
+<td>商品描述</td>
+<td>软件-购买</td>
+</tr>
+<tr>
+<td>out_trade_no</td>
+<td>商户订单号</td>
+<td>20150806125346</td>
+</tr>
+<tr>
+<td>total_fee</td>
+<td>金额</td>
+<td>10</td>
+</tr>
+<tr>
+<td>spbill_create_ip</td>
+<td>终端IP</td>
+<td>192.168.1.1</td>
+</tr>
+<tr>
+<td>notify_url</td>
+<td>支付结果通知地址</td>
+<td><a href="http://api.soft.cn/payment" target="_blank" rel="noopener">http://api.soft.cn/payment</a></td>
+</tr>
+<tr>
+<td>trade_type</td>
+<td>交易类型</td>
+<td>NATIVE</td>
+</tr>
+</tbody>
+</table>
+<a id="more"></a>
+<p><strong>看下签名如何生成</strong>：</p>
+<p>将所有的参数按照参数名ASCII码从小到大排序，使用URL键值对的格式（即<code>key1=value1&amp;key2=value2</code>）拼接成字符串，例如我用<code>javascript</code>对象保存了所有参数：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> params = &#123;</span><br><span class="line">  appid: <span class="string">'wxb77bcb162c53b0f8'</span>,</span><br><span class="line">  mch_id: <span class="string">'1487713882'</span>,</span><br><span class="line">  nonce_str: <span class="string">'abc123def'</span>,</span><br><span class="line">  body: <span class="string">'软件-购买'</span>,</span><br><span class="line">  out_trade_no: <span class="string">'total_fee'</span>,</span><br><span class="line">  spbill_create_ip: <span class="string">'192.168.1.1'</span>,</span><br><span class="line">  notify_url: <span class="string">'http://www.weixin.qq.com/wxpay/pay.php'</span>,</span><br><span class="line">  trade_type: <span class="string">'NATIVE'</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>得先排序再拼接，用下面两行代码即可：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> keys = <span class="built_in">Object</span>.keys(params).sort()</span><br><span class="line"><span class="keyword">let</span> str = keys.map(<span class="function"><span class="params">key</span> =&gt;</span> key + <span class="string">'='</span> + params[key]).join(<span class="string">'&amp;'</span>)</span><br></pre></td></tr></table></figure>
+<p>然后去商户平台设置密钥（设置方法：微信商户平台–&gt;账户中心–&gt;API安全–&gt;密钥设置），把 <code>&amp;key=你的密钥</code> 附加在str的后面，然后把这一串字符按照MD5加密。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">md5</span> (<span class="params">text</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="built_in">require</span>(<span class="string">'crypto'</span>).createHash(<span class="string">'md5'</span>).update(text).digest(<span class="string">'hex'</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> sign = md5(str+<span class="string">'&amp;key=你的密钥'</span>)</span><br></pre></td></tr></table></figure>
+<p>生成签名之后，把参数传给服务器，如果成功则返回一个二维码链接code_url，大概是这样的<code>URI：weixin：//wxpay/s/An4baqw</code>，把这个字符串生成一个二维码让用户扫描即可。可以用 <code>qr-image</code> 库来生成二维码：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> qr = <span class="built_in">require</span>(<span class="string">'qr-image'</span>)</span><br><span class="line"><span class="keyword">const</span> code = qr.image(query.code_url, &#123;<span class="attr">type</span>: <span class="string">'svg'</span>&#125;)</span><br><span class="line">res.type(<span class="string">'svg'</span>)</span><br><span class="line">code.pipe(res)</span><br></pre></td></tr></table></figure>
+<h2 id="模式1"><a href="#模式1" class="headerlink" title="模式1"></a>模式1</h2><p>与模式2相比，区别在于订单的生成方式上。模式1是先生成预付订单，然后根据微信返回的URI来生成二维码，用户扫码直接支付；模式2是先按照一定规则生成二维码，用户扫码之后再生成预付订单。也就是说当用户看到二维码的时候，模式1已经完成和微信后台的交互，而模式2需要等待扫码才开始与微信后台进行交互。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">weixin://wxpay/bizpayurl?appid=wx2421b1c4370ec43b&amp;mch_id=10000100&amp;nonce_str=f6808210402125e30663234f94c87a8c&amp;product_id=1&amp;time_stamp=1415949957&amp;sign=512F68131DD251DA4A45DA79CC7EFE9D</span><br></pre></td></tr></table></figure>
+<p>只要按照上面的格式就可以调用 <code>qr-image</code> 生成二维码，然后去商户后台设置回调地址（设置方法：商户平台–&gt;产品中心–&gt;开发配置），只要用户扫描了二维码微信就会访问该回调地址，同时携带以下参数：</p>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>参数含义</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>appid</td>
+<td>公众号ID</td>
+<td>wxb77bcb162c53b0f8</td>
+</tr>
+<tr>
+<td>openid</td>
+<td>用户标识</td>
+<td>o8GeHuLAsgefS_80exEr1cTqekUs</td>
+</tr>
+<tr>
+<td>mch_id</td>
+<td>商户号</td>
+<td>1487713882</td>
+</tr>
+<tr>
+<td>is_subscribe</td>
+<td>是否关注公众账号</td>
+<td>Y-关注，N-未关注</td>
+</tr>
+<tr>
+<td>nonce_str</td>
+<td>随机字符串</td>
+<td>5K8264ILTKCH16CQ2502SI8ZNMTM67VS</td>
+</tr>
+<tr>
+<td>product_id</td>
+<td>商品ID</td>
+<td>abc123def</td>
+</tr>
+<tr>
+<td>sign</td>
+<td>签名</td>
+<td>C380BEC2BFD727A4B6845133519F3AD6</td>
+</tr>
+</tbody>
+</table>
+<p>有了这些参数之后，商户首先要核对签名，确认签名正确之后，可以根据 <code>product_id</code> 生成订单，然后调用统一下单接口获得 <code>prepay_id</code> ，然后把这个 <code>prepay_id</code> 返回给微信，微信支付系统然后发起用户端支付流程，用户支付成功后，会把结果发给统一下单接口设置的回调。</p>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>参数含义</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>return_code</td>
+<td>返回状态码</td>
+<td>SUCCESS/FAIL（表示通信状态）</td>
+</tr>
+<tr>
+<td>return_msg</td>
+<td>返回信息</td>
+<td>签名失败</td>
+</tr>
+<tr>
+<td>appid</td>
+<td>公众号ID</td>
+<td>wxb77bcb162c53b0f8</td>
+</tr>
+<tr>
+<td>mch_id</td>
+<td>商户号</td>
+<td>1487713882</td>
+</tr>
+<tr>
+<td>nonce_str</td>
+<td>随机字符串</td>
+<td>5K8264ILTKCH16CQ2502SI8ZNMTM67VS</td>
+</tr>
+<tr>
+<td>prepay_id</td>
+<td>预付ID</td>
+<td>wx201410272009395522657a690389285100</td>
+</tr>
+<tr>
+<td>result_code</td>
+<td>支付结果</td>
+<td>SUCCESS/FAIL（表示支付状态）</td>
+</tr>
+<tr>
+<td>err_code_des</td>
+<td>错误描述</td>
+<td>商户展示给客户的错误描述</td>
+</tr>
+<tr>
+<td>sign</td>
+<td>签名</td>
+<td>C380BEC2BFD727A4B6845133519F3AD6</td>
+</tr>
+</tbody>
+</table>
+<p>可以看到，无论是模式1还是模式2，都要调用统一下单接口，模式2是上来就调用，模式1是用户扫码之后再调用。虽然模式1比模式2复杂了一点，但各有应用场景，模式1的二维码是针对商品的，先扫码后生成订单，用于二维码比较固定的场景，比如售卖机商品的二维码，二维码无时效性，多用于线下；模式2的二维码是针对订单的，先生成订单，再扫码，用于商城购物车结算，由于二维码有效期2小时，此模式多用于线上。</p>
+<p>几个注意点：</p>
+<ol>
+<li>扫码登录里面的appid和扫码支付的appid不一样，前者是<a href="https://open.weixin.qq.com" target="_blank" rel="noopener">开放平台</a>里面的，后者是<a href="https://mp.weixin.qq.com" target="_blank" rel="noopener">公众平台</a>里面的。</li>
+</ol>
+<ol>
+<li><p>微信回调是公网的地址，不方便本地调试，可以用ssh建立反向通道：</p>
+<ol>
+<li><code>ssh</code> 登录到<strong>公网</strong>主机，修改 <code>sshd</code> 的配置文件<code>/etc/ssh/sshd_config</code> ，加入选项 <code>GatewayPorts yes</code></li>
+<li>执行重启 <code>sshd</code> 命令：<code>service sshd restart</code></li>
+<li>执行建立反向通道命令：<code>ssh -R 9999:localhost:3031 root@server_ip</code></li>
+<li>在本地3031上开启web服务，当微信回调公网服务器时就会被代理到本地3031端口对应的web服务</li>
+</ol>
+</li>
+<li><p>微信接收以及回调的参数是一个XML，不是普通的JSON或form-data，如果框架不支持解析XML，则需要添加第三方库或自己写代码。</p>
+</li>
+<li><p>统一支付平台回调地址返回给微信的时候，记得一定要把 <code>statusCode</code> 设置为200，把 <code>Content-Type</code> 设置为 <code>text/xml</code> ，返回的数据为：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">xml</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">return_code</span>&gt;</span>SUCCESS<span class="tag">&lt;/<span class="name">return_code</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">xml</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>否则腾讯认为服务器没收到，按照一定的规则连发多次。</p>
+</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/wechat-pay/" data-id="cjhn4haip00juvqq339bebh83" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/focus-not-working/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          无法对输入框进行聚焦
+        
+      </div>
+    </a>
+  
+  
+    <a href="/feathersjs-hook/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">feathersjs hook</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

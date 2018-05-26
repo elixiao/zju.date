@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta property="og:type" content="website">
+<meta property="og:title" content=".">
+<meta property="og:url" content="https://zju.date/page/9/index.html">
+<meta property="og:site_name" content=".">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content=".">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main">
+  
+    <article id="post-linux-sudo-lost" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/linux-sudo-lost/" class="article-date">
+  <time datetime="2017-09-16T04:18:31.000Z" itemprop="datePublished">2017-09-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/linux-sudo-lost/">sudo找不到命令</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><code>sudo npm i</code>  报错：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[ec2-user@ip-17-31-41]$ sudo npm i</span><br><span class="line">sudo：npm：找不到命令</span><br></pre></td></tr></table></figure>
+<p>sudo 有时候会出现找不到命令，而明明 PATH 路径下包含该命令，让人非常疑惑。其实出现这种情况的原因是：出于系统安全的考虑，当 sudo 以管理权限执行命令的时候，linux 将 PATH 环境变量进行了重置，因此搜索的路径不是我们想要的PATH变量的路径。两种方法解决该问题：</p>
+<p>首先，都要打开sudo的配置文件：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo visudo</span><br></pre></td></tr></table></figure>
+<ol>
+<li><p>可以使用 secure_path 指令修改 sudoers 中默认的 PATH为你想要的路径。这个指令指定当用户执行 sudo 命令时在什么地方寻找二进制代码和命令。这个选项的目的显然是要限制用户运行 sudo 命令的范围，这是一种好做法。</p>
+</li>
+<li><p>将 <code>Defaults env_reset</code> 改成 <code>Defaults !env_reset</code> 取消掉对 PATH 变量的重置，然后在 .bashrc 中最后 <code>alias sudo=&#39;sudo env PATH=$PATH&#39;</code>，这样sudo执行命令时所搜寻的路径就是系统的PATH变量中的路径，如想添加其他变量也是类似。</p>
+</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/linux-sudo-lost/" data-id="cjhn4hadt00civqq3uidhvywd" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-mongoose-aggregation" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/mongoose-aggregation/" class="article-date">
+  <time datetime="2017-09-16T01:06:07.000Z" itemprop="datePublished">2017-09-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/mongoose-aggregation/">mongoose 聚合查询</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>mongoose 聚合查询语法： </p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">db.collection.aggregrate([</span><br><span class="line">   pipe1_operator : &#123;....&#125;,</span><br><span class="line">   pipe2_operator : &#123;....&#125;,</span><br><span class="line">   pipe3_operator : &#123;....&#125;</span><br><span class="line">])</span><br></pre></td></tr></table></figure>
+<h2 id="分组-group"><a href="#分组-group" class="headerlink" title="分组 $group"></a>分组 <code>$group</code></h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  $group: &#123;</span><br><span class="line">    _id: &apos;$region&apos;,</span><br><span class="line">    count: &#123; $sum: 1 &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="匹配-match"><a href="#匹配-match" class="headerlink" title="匹配 $match"></a>匹配 <code>$match</code></h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  $match: &#123;</span><br><span class="line">    created: &#123; $gt: new Date(time) &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/mongoose-aggregation/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/mongoose-aggregation/" data-id="cjhn4haet00e2vqq30d0bs59p" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-node-module-mjs" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/node-module-mjs/" class="article-date">
+  <time datetime="2017-09-13T01:51:07.000Z" itemprop="datePublished">2017-09-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/node-module-mjs/">nodejs支持es6模块语法</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>在此之前，node.js中一直不支持es6模块语法，即 <code>import</code> 和 <code>export</code>，如果在命令行编译包含es6模块的文件，就会报下面的错误：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(function (exports, require, module, __filename, __dirname) &#123; import * as utils from &apos;./index.js&apos;</span><br><span class="line">                                                              ^^^^^^</span><br><span class="line">SyntaxError: Unexpected token import</span><br></pre></td></tr></table></figure>
+<p>于是不得不使用类似于 <code>babel</code> 的转换器进行转换，你需要安装 <code>babel-cli</code> 然后用命令 <code>babel-node</code> 来转换：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">babel-node index.js</span><br></pre></td></tr></table></figure>
+<p>而昨天发布的 8.5.0 版本增加了对模块的支持，语法是：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">node --experimental-modules index.mjs</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/node-module-mjs/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/node-module-mjs/" data-id="cjhn4hafi00f0vqq3dn6ol9ij" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-nginx-gzip" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/nginx-gzip/" class="article-date">
+  <time datetime="2017-09-03T09:58:20.000Z" itemprop="datePublished">2017-09-03</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/nginx-gzip/">nginx 配置 gzip 压缩</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>直接修改 nginx.conf 文件，添加下面内容：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">sendfile            on;</span><br><span class="line">tcp_nopush          on;</span><br><span class="line">tcp_nodelay         on;</span><br><span class="line">keepalive_timeout   65;</span><br><span class="line">types_hash_max_size 2048;</span><br><span class="line">gzip  on;</span><br><span class="line">gzip_min_length 1k;</span><br><span class="line">gzip_buffers 4 16k;</span><br><span class="line">gzip_http_version 1.1;</span><br><span class="line">gzip_comp_level 9;</span><br><span class="line">gzip_types text/plain application/x-javascript application/javascript text/css application/xml text/javascript application/x-httpd-php image/jpeg image/gif image/png;</span><br><span class="line">gzip_disable <span class="string">"MSIE [1-6]\."</span>;</span><br></pre></td></tr></table></figure>
+<p>或者在 <code>/etc/nginx/conf.d</code> 下面创建一个 <code>gzip.conf</code> 文件，然后输入下面的内容</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">gzip on;</span><br><span class="line">gzip_disable &quot;msie6&quot;;</span><br><span class="line"></span><br><span class="line">gzip_vary on;</span><br><span class="line">gzip_proxied any;</span><br><span class="line">gzip_comp_level 6;</span><br><span class="line">gzip_http_version 1.1;</span><br><span class="line">gzip_min_length 256;</span><br><span class="line">gzip_types text/plain text/css application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript application/javascript application/vnd.ms-fontobject application/x-font-ttf font/opentype image/svg+xml image/x-icon;</span><br></pre></td></tr></table></figure>
+<p>配置项的含义：</p>
+<ul>
+<li><code>gzip on</code>  启用gzip</li>
+<li><code>gzip_disable &quot;msie6&quot;</code>  排除IE6浏览器上对文件压缩，因为IE6不再支持gzip压缩的.</li>
+<li><code>gzip_vary</code>  <code>和`</code>gzip_proxied` 是让代理服务器上的浏览器和服务器能正确辨认gzip压缩功能.</li>
+<li><code>gzip_comp_level 6</code> 设置文件压缩的级别，数字越大，压缩越高，一般6是最合适的.</li>
+<li><code>gzip_http_version 1.1</code> 用来限制 <code>gzip</code> 是否支持浏览器HTTP/1.1  协议的 ，一般浏览器不支持的话，gzip很可能就不能支持</li>
+<li><code>gzip_min_length 256</code>  让Nginx对小于256kb的文件不压缩.小的文件一般也不用压缩的.</li>
+<li><code>gzip_types</code>  列出所有的需要压缩的MIME类型文件. 我们配置的就有, HTML 页面, CSS stylesheets, Javascript 和JSON 文件, XML 文件爱你, icons, SVG 镜像, 和web字体.</li>
+</ul>
+<p>重启Nginx让配置生效.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl restart nginx</span><br></pre></td></tr></table></figure>
+<p>## </p>
+<p>下面就来测试下我们的配置是否生效</p>
+<p>我们还是安装步骤2那样来测试，看看头信息里面有没有 <code>Content-Encoding: gzip</code> .</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -H &quot;Accept-Encoding: gzip&quot; -I http://localhost/test.html</span><br></pre></td></tr></table></figure>
+<p>在相应头信息中我们找下是否有<code>Content-Encoding: gzip</code></p>
+<p>Nginx response headers</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">HTTP/1.1 200 OK</span><br><span class="line">Server: nginx/1.6.3</span><br><span class="line">Date: Fri, 11 Mar 2016 13:19:16 GMT</span><br><span class="line">Content-Type: text/html</span><br><span class="line">Last-Modified: Fri, 11 Mar 2016 12:48:02 GMT</span><br><span class="line">Connection: keep-alive</span><br><span class="line">Vary: Accept-Encoding</span><br><span class="line">Content-Encoding: gzip</span><br></pre></td></tr></table></figure>
+<p>同样测试其他文件:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">curl -H &quot;Accept-Encoding: gzip&quot; -I http://localhost/test.jpg </span><br><span class="line">curl -H &quot;Accept-Encoding: gzip&quot; -I http://localhost/test.css </span><br><span class="line">curl -H &quot;Accept-Encoding: gzip&quot; -I http://localhost/test.js</span><br></pre></td></tr></table></figure>
+<p>当我们找到<code>Content-Encoding: gzip</code> 后就说明gzip功能已开启了</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/nginx-gzip/" data-id="cjhn4haf900emvqq3wxph171f" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Nginx/">Nginx</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-js-perfect-square" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/js-perfect-square/" class="article-date">
+  <time datetime="2017-09-03T09:47:13.000Z" itemprop="datePublished">2017-09-03</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/js-perfect-square/">js 查找完全平方数</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> arr = []</span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">let</span> i=<span class="number">1000</span>;i&lt;<span class="number">10000</span>;i++) &#123;</span><br><span class="line">	<span class="keyword">let</span> n = isSuperPefect(i)</span><br><span class="line">	<span class="keyword">if</span>(n) arr.push(&#123;<span class="attr">x</span>:i,<span class="attr">i</span>:n*<span class="number">1111</span>&#125;)</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">isPerfectSquare</span>(<span class="params">n</span>) </span>&#123;</span><br><span class="line">	<span class="keyword">return</span> n&gt;<span class="number">0</span>&amp;&amp;<span class="built_in">Number</span>.isInteger(<span class="built_in">Math</span>.sqrt(n))</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">isSuperPefect</span>(<span class="params">n</span>) </span>&#123;</span><br><span class="line">	<span class="keyword">if</span>(!isPerfectSquare(n)) <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">	<span class="keyword">for</span>(<span class="keyword">let</span> i=<span class="number">1</span>;i&lt;<span class="number">10</span>;i++) <span class="keyword">if</span>(isPerfectSquare(n-i*<span class="number">1111</span>)) <span class="keyword">return</span> i</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">console</span>.log(<span class="built_in">JSON</span>.stringify(arr))</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/js-perfect-square/" data-id="cjhn4had900bovqq3zh1r7tn3" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-node-qr-image" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/node-qr-image/" class="article-date">
+  <time datetime="2017-08-25T06:19:20.000Z" itemprop="datePublished">2017-08-25</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/node-qr-image/">node.js二维码生成工具</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p><a href="https://github.com/alexeyten/qr-image" target="_blank" rel="noopener">qr-image</a> 包可以非常方便的生成二维码，项目本身无任何依赖，非常轻量级，安装方法：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">npm install qr-image</span><br><span class="line"><span class="comment"># 或者</span></span><br><span class="line">yarn add qr-image</span><br></pre></td></tr></table></figure>
+<p>支持图片格式：<code>png</code>、 <code>svg</code>、 <code>eps</code> 和 <code>pdf</code>，使用方法：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> qr = <span class="built_in">require</span>(<span class="string">'qr-image'</span>);  </span><br><span class="line"><span class="keyword">var</span> fs = <span class="built_in">require</span>(<span class="string">'fs'</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> code = qr.image(<span class="string">'http://zju.date'</span>, &#123; <span class="attr">type</span>: <span class="string">'svg'</span> &#125;);  </span><br><span class="line"><span class="keyword">var</span> output = fs.createWriteStream(<span class="string">'zju.date.svg'</span>)</span><br><span class="line"></span><br><span class="line">code.pipe(output);</span><br></pre></td></tr></table></figure>
+<p>上面的代码可以把网址 <code>http://zju.date</code> 生成如下二维码：</p>
+<p><img src="http://img.react.ren/blog/zju-date-qrcode.svg" width="300" height="300"></p>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/node-qr-image/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/node-qr-image/" data-id="cjhn4hafj00f2vqq3of9irj3c" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-reverse-proxy-nginx" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/reverse-proxy-nginx/" class="article-date">
+  <time datetime="2017-08-24T03:42:55.000Z" itemprop="datePublished">2017-08-24</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/reverse-proxy-nginx/">用nginx域名转发</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>nginx可以把同一端口上的连接根据不同的域名转发到不同的端口，例如在本地通过node.js起了两个server，分别监听3031和3032端口，nginx监听80端口，在 <code>/etc/hosts</code> 文件里面建立两个映射：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1	www.3031.com</span><br><span class="line">127.0.0.1	www.3032.com</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/reverse-proxy-nginx/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/reverse-proxy-nginx/" data-id="cjhn4hagr00gsvqq3ugauez69" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-install-nginx-on-mac" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/install-nginx-on-mac/" class="article-date">
+  <time datetime="2017-08-23T15:07:07.000Z" itemprop="datePublished">2017-08-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/install-nginx-on-mac/">Mac安装nginx</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>安装nginx</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install nginx</span><br></pre></td></tr></table></figure>
+<p>查看nginx版本</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nginx -v</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/install-nginx-on-mac/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/install-nginx-on-mac/" data-id="cjhn4hac900a2vqq3pjw99vbd" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-focus-not-working" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/focus-not-working/" class="article-date">
+  <time datetime="2017-08-23T02:37:39.000Z" itemprop="datePublished">2017-08-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/focus-not-working/">无法对输入框进行聚焦</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在控制台想对一个输入框进行聚焦，使用：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$(<span class="string">'input[name="q"]'</span>).focus();</span><br></pre></td></tr></table></figure>
+<p>发现没反应，后来在 stackoverflow 找到<a href="https://stackoverflow.com/questions/15859113/focus-not-working" target="_blank" rel="noopener">原因</a>，是因为当时的焦点在控制台而不是网页，可以先设置一个延迟，然后迅速点击一下网页，然后就能看到输入框聚焦了。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">  $(<span class="string">'input[name="q"]'</span>).focus();</span><br><span class="line">&#125;, <span class="number">3000</span>);</span><br></pre></td></tr></table></figure>
+<p>同样的道理，如果一个元素不在 DOM 上面，对其使用 <code>focus</code> 也是无效的，所以当你发现始终无法对一个元素进行聚焦的时候，不妨检查一下该元素是否是动态的、在聚焦的时刻是否已经在 DOM 中了。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/focus-not-working/" data-id="cjhn4haa8007ivqq34vk2gtvd" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-wechat-pay" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/wechat-pay/" class="article-date">
+  <time datetime="2017-08-22T01:06:07.000Z" itemprop="datePublished">2017-08-22</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/wechat-pay/">微信扫码支付</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>信扫码支付，官方提供了两种模式：</p>
+<ol>
+<li>商户根据微信支付规则链接生成二维码，带固定参数productid（订单号）。用户扫码后，微信支付系统将productid和用户唯一标识（openid）回调商户后台系统，商户后台系统根据productid生成支付交易，最后微信支付系统发起用户支付流程。</li>
+<li>商户后台系统调用微信支付预付交易接口，将返回的链接生成二维码，用户扫码后输入密码完成支付交易。</li>
+</ol>
+<p>模式2比较简单，逐一分析。</p>
+<h2 id="模式2"><a href="#模式2" class="headerlink" title="模式2"></a>模式2</h2><p>首先调用统一下单接口地址：<code>https://api.mch.weixin.qq.com/pay/unifiedorder</code>，这个地址需要提供以下参数，放在body里面通过POST请求调用：</p>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>参数含义</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>appid</td>
+<td>公众号ID</td>
+<td>wxb77bcb162c53b0f8</td>
+</tr>
+<tr>
+<td>mch_id</td>
+<td>商户号</td>
+<td>1487713882</td>
+</tr>
+<tr>
+<td>nonce_str</td>
+<td>随机字符串</td>
+<td>abc123def</td>
+</tr>
+<tr>
+<td>sign</td>
+<td>签名</td>
+<td>签名</td>
+</tr>
+<tr>
+<td>body</td>
+<td>商品描述</td>
+<td>软件-购买</td>
+</tr>
+<tr>
+<td>out_trade_no</td>
+<td>商户订单号</td>
+<td>20150806125346</td>
+</tr>
+<tr>
+<td>total_fee</td>
+<td>金额</td>
+<td>10</td>
+</tr>
+<tr>
+<td>spbill_create_ip</td>
+<td>终端IP</td>
+<td>192.168.1.1</td>
+</tr>
+<tr>
+<td>notify_url</td>
+<td>支付结果通知地址</td>
+<td><a href="http://api.soft.cn/payment" target="_blank" rel="noopener">http://api.soft.cn/payment</a></td>
+</tr>
+<tr>
+<td>trade_type</td>
+<td>交易类型</td>
+<td>NATIVE</td>
+</tr>
+</tbody>
+</table>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/wechat-pay/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/wechat-pay/" data-id="cjhn4haip00juvqq339bebh83" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+
+
+  <nav id="page-nav">
+    <a class="extend prev" rel="prev" href="/page/8/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="page-number" href="/page/8/">8</a><span class="page-number current">9</span><a class="page-number" href="/page/10/">10</a><a class="page-number" href="/page/11/">11</a><span class="space">&hellip;</span><a class="page-number" href="/page/36/">36</a><a class="extend next" rel="next" href="/page/10/">Next &raquo;</a>
+  </nav>
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

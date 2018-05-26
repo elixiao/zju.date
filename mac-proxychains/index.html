@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="安装 proxychains4 1brew install proxychains-ng 找到 proxychains4 配置文件所在的位置： 123~/.proxychains/proxychains.conf# 或者/usr/local/etc/proxychains.conf  可用 proxychains4 printenv | grep PROXYCHAINS_CONF_FILE 命令找">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用 proxychains 作为 Mac 的终端代理">
+<meta property="og:url" content="https://zju.date/mac-proxychains/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="安装 proxychains4 1brew install proxychains-ng 找到 proxychains4 配置文件所在的位置： 123~/.proxychains/proxychains.conf# 或者/usr/local/etc/proxychains.conf  可用 proxychains4 printenv | grep PROXYCHAINS_CONF_FILE 命令找">
+<meta property="og:updated_time" content="2018-04-16T05:17:55.578Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="使用 proxychains 作为 Mac 的终端代理">
+<meta name="twitter:description" content="安装 proxychains4 1brew install proxychains-ng 找到 proxychains4 配置文件所在的位置： 123~/.proxychains/proxychains.conf# 或者/usr/local/etc/proxychains.conf  可用 proxychains4 printenv | grep PROXYCHAINS_CONF_FILE 命令找">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-mac-proxychains" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/mac-proxychains/" class="article-date">
+  <time datetime="2016-12-10T02:03:07.000Z" itemprop="datePublished">2016-12-10</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      使用 proxychains 作为 Mac 的终端代理
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>安装 proxychains4</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install proxychains-ng</span><br></pre></td></tr></table></figure>
+<p>找到 proxychains4 配置文件所在的位置：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">~/.proxychains/proxychains.conf</span><br><span class="line"><span class="comment"># 或者</span></span><br><span class="line">/usr/<span class="built_in">local</span>/etc/proxychains.conf</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>可用 <code>proxychains4 printenv | grep PROXYCHAINS_CONF_FILE</code> 命令找到。</p>
+</blockquote>
+<p>在配置文件中 <code>[ProxyList]</code> 区域下添加一行：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">socks5  127.0.0.1 1086</span><br></pre></td></tr></table></figure>
+<p>以后使用代理的时候加上 <code>proxychains4</code> 就行了，例如：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">proxychains4 npm install </span><br><span class="line">proxychains4 curl ip.cn</span><br></pre></td></tr></table></figure>
+<p>【更新】macOS 10.11 后下由于开启了 SIP（System Integrity Protection） 会导致命令行下 proxychains-ng 代理的模式失效，如果要使用 proxychains-ng 这种简单的方法，就需要先关闭 SIP。关闭方法如下：</p>
+<ul>
+<li>部分关闭 SIP</li>
+</ul>
+<blockquote>
+<p>重启Mac，按住Option键进入启动盘选择模式，再按⌘ + R进入Recovery模式。<br>实用工具（Utilities）-&gt; 终端（Terminal）。<br>输入命令<code>csrutil enable --without debug</code>运行。<br>重启进入系统后，终端里输入 csrutil status，结果中如果有 Debugging Restrictions: disabled 则说明关闭成功。</p>
+</blockquote>
+<ul>
+<li>完全关闭 SIP</li>
+</ul>
+<blockquote>
+<p>重启Mac，按住Option键进入启动盘选择模式，再按⌘ + R进入Recovery模式。<br>实用工具（Utilities）-&gt; 终端（Terminal）。<br>输入命令<code>csrutil disable</code>运行。<br>重启进入系统后，终端里输入 csrutil status，结果中如果有 System Integrity Protection status:disabled. 则说明关闭成功。</p>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/mac-proxychains/" data-id="cjhn4hae600d2vqq36h0rfrl1" class="article-share-link">Share</a>
+     
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/rename-files-using-nodejs/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          nodejs给文件重命名
+        
+      </div>
+    </a>
+  
+  
+    <a href="/angular-common-errors/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Angular2常见错误</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

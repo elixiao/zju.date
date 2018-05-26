@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="URL映射到目前为止，贯穿整个文档用于URLs的规约默认为/controller/action/id。然而，这个规约不是硬性的写入Grails中，实际上，它是通过一个位于grails-app/controllers/UrlMappings.groovy的URL映射类所控制。 UrlMappings类包含一个名为mappings单一属性，并被赋予一个代码块： class UrlMappings {">
+<meta name="keywords" content="JAVA">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Grails-URL映射">
+<meta property="og:url" content="https://zju.date/grails-url-mapping/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="URL映射到目前为止，贯穿整个文档用于URLs的规约默认为/controller/action/id。然而，这个规约不是硬性的写入Grails中，实际上，它是通过一个位于grails-app/controllers/UrlMappings.groovy的URL映射类所控制。 UrlMappings类包含一个名为mappings单一属性，并被赋予一个代码块： class UrlMappings {">
+<meta property="og:updated_time" content="2017-08-16T02:28:21.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Grails-URL映射">
+<meta name="twitter:description" content="URL映射到目前为止，贯穿整个文档用于URLs的规约默认为/controller/action/id。然而，这个规约不是硬性的写入Grails中，实际上，它是通过一个位于grails-app/controllers/UrlMappings.groovy的URL映射类所控制。 UrlMappings类包含一个名为mappings单一属性，并被赋予一个代码块： class UrlMappings {">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-grails-url-mapping" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/grails-url-mapping/" class="article-date">
+  <time datetime="2016-01-27T09:41:23.000Z" itemprop="datePublished">2016-01-27</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Grails-URL映射
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h4 id="URL映射"><a href="#URL映射" class="headerlink" title="URL映射"></a>URL映射</h4><p>到目前为止，贯穿整个文档用于URLs的规约默认为<code>/controller/action/id</code>。然而，这个规约不是硬性的写入Grails中，实际上，它是通过一个位于<code>grails-app/controllers/UrlMappings.groovy</code>的URL映射类所控制。</p>
+<p>UrlMappings类包含一个名为mappings单一属性，并被赋予一个代码块：</p>
+<pre><code>class UrlMappings {
+    static mappings = {
+    }    
+}
+</code></pre><a id="more"></a>
+<h4 id="映射到控制器和操作"><a href="#映射到控制器和操作" class="headerlink" title="映射到控制器和操作"></a>映射到控制器和操作</h4><p>为了创建简单的映射，只需简单的使用相对URL作为方法名，并指定控制器和操作的命名参数来映射：</p>
+<pre><code>&quot;/product&quot;(controller:&quot;product&quot;, action:&quot;list&quot;)
+</code></pre><p>在这种情况下，我们建立URL /product到ProductController的list操作的映射。你当然可以省略操作定义，来映射控制器默认的操作：</p>
+<pre><code>&quot;/product&quot;(controller:&quot;product&quot;)
+</code></pre><p>一个可选的语法是把在块中被赋值的控制器和操作传递给方法：</p>
+<pre><code>&quot;/product&quot; {
+    controller = &quot;product&quot;
+    action = &quot;list&quot;
+}
+</code></pre><p>你使用哪一个句法很大程度上依赖于个人偏好。</p>
+<h4 id="嵌入式变量"><a href="#嵌入式变量" class="headerlink" title="嵌入式变量"></a>嵌入式变量</h4><h5 id="简单变量"><a href="#简单变量" class="headerlink" title="简单变量"></a>简单变量</h5><p>然而很多情况下，直到运行时才知道要映射到哪个路径。在这种情况下，可以在URL中使用变量占位符，例如：</p>
+<pre><code>static mappings = {
+    &quot;/product/$id&quot;(controller:&quot;product&quot;)
+}
+</code></pre><p>通过嵌入一个$id变量作为第2个标记，Grails将自动映射第2个标记到一个名为id的参数(通过params对象得到).例如给定的URL/product/MacBook，下面的代码将渲染”MacBook”到响应中：</p>
+<pre><code>class ProductController {
+    def index = {
+        render params.id 
+    }
+}
+</code></pre><p>当然你可以构建更多复杂的映射示例。例如传统的blog URL格式将被映射成下面这样：</p>
+<pre><code>static mappings = {
+   &quot;/$blog/$year/$month/$day/$id&quot;(controller:&quot;blog&quot;, action:&quot;show&quot;)
+}
+</code></pre>
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/grails-url-mapping/" data-id="cjhn4hab1008uvqq3rmtzqzwm" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JAVA/">JAVA</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/rvm-notes/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          RVM使用笔记
+        
+      </div>
+    </a>
+  
+  
+    <a href="/tomcat-deploy-war/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">tomcat部署静态war包</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

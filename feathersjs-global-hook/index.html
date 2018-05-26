@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="123456789101112131415161718192021222324252627282930313233const feathers = require(&apos;feathers&apos;)const hooks = require(&apos;feathers-hooks&apos;)const memory = require(&apos;feathers-memory&apos;)const app = feathers()  .co">
+<meta name="keywords" content="JavaScript">
+<meta property="og:type" content="article">
+<meta property="og:title" content="feathersjs 全局 hook">
+<meta property="og:url" content="https://zju.date/feathersjs-global-hook/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="123456789101112131415161718192021222324252627282930313233const feathers = require(&apos;feathers&apos;)const hooks = require(&apos;feathers-hooks&apos;)const memory = require(&apos;feathers-memory&apos;)const app = feathers()  .co">
+<meta property="og:updated_time" content="2017-12-30T10:19:38.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="feathersjs 全局 hook">
+<meta name="twitter:description" content="123456789101112131415161718192021222324252627282930313233const feathers = require(&apos;feathers&apos;)const hooks = require(&apos;feathers-hooks&apos;)const memory = require(&apos;feathers-memory&apos;)const app = feathers()  .co">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-feathersjs-global-hook" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/feathersjs-global-hook/" class="article-date">
+  <time datetime="2017-08-07T09:02:17.000Z" itemprop="datePublished">2017-08-07</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      feathersjs 全局 hook
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> feathers = <span class="built_in">require</span>(<span class="string">'feathers'</span>)</span><br><span class="line"><span class="keyword">const</span> hooks = <span class="built_in">require</span>(<span class="string">'feathers-hooks'</span>)</span><br><span class="line"><span class="keyword">const</span> memory = <span class="built_in">require</span>(<span class="string">'feathers-memory'</span>)</span><br><span class="line"><span class="keyword">const</span> app = feathers()</span><br><span class="line">  .configure(hooks())</span><br><span class="line">  .use(<span class="string">'/todos'</span>, memory());</span><br><span class="line"></span><br><span class="line"><span class="comment">// 注册全局 hook</span></span><br><span class="line">app.hooks(&#123;</span><br><span class="line">  before(hook) &#123;</span><br><span class="line">    <span class="comment">// 设置进入时间</span></span><br><span class="line">    hook.start = <span class="keyword">new</span> <span class="built_in">Date</span>().getTime()</span><br><span class="line">  &#125;,</span><br><span class="line">  </span><br><span class="line">  after(hook) &#123;</span><br><span class="line">    <span class="keyword">const</span> services = hook.app.services</span><br><span class="line">    <span class="comment">// 查找当前服务的路径 Get the path for this service</span></span><br><span class="line">    <span class="keyword">const</span> path = <span class="built_in">Object</span>.keys(services).find(<span class="function"><span class="params">key</span> =&gt;</span> services[key] === <span class="keyword">this</span>)</span><br><span class="line">    <span class="comment">// 计算时长</span></span><br><span class="line">    <span class="keyword">const</span> duration = <span class="keyword">new</span> <span class="built_in">Date</span>().getTime() - hook.start</span><br><span class="line">    <span class="comment">// 打印耗时</span></span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">`<span class="subst">$&#123;path&#125;</span>::<span class="subst">$&#123;hook.method&#125;</span> took <span class="subst">$&#123;duration&#125;</span>ms`</span>)</span><br><span class="line">  &#125;,</span><br><span class="line">  </span><br><span class="line">  error(hook) &#123;</span><br><span class="line">    <span class="comment">// 打印错误</span></span><br><span class="line">    <span class="built_in">console</span>.error(hook.error)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">app.service(<span class="string">'todos'</span>).create(&#123;</span><br><span class="line">  text: <span class="string">`You have to do dishes`</span></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/feathersjs-global-hook/" data-id="cjhn4ha9x0072vqq3sa8k3i7q" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/nodejs-gzip/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Nodejs关于gzip/deflate压缩详解
+        
+      </div>
+    </a>
+  
+  
+    <a href="/angular-environment/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Angular 环境配置</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="数据库在 mysql 容器里面，用户上传的文件在 wordpress 容器里面。 备份 MySQL 数据库ssh 到服务器，然后使用 docker exec 或 docker-compose exec 进入 MySQL 容器内查看数据库结构： 1mysql -uwordpress -pwordpress 在 mysql 命令行： 1234567891011121314151617181920212">
+<meta name="keywords" content="Linux">
+<meta property="og:type" content="article">
+<meta property="og:title" content="docker wordpress 备份">
+<meta property="og:url" content="https://zju.date/wordpress-backup/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="数据库在 mysql 容器里面，用户上传的文件在 wordpress 容器里面。 备份 MySQL 数据库ssh 到服务器，然后使用 docker exec 或 docker-compose exec 进入 MySQL 容器内查看数据库结构： 1mysql -uwordpress -pwordpress 在 mysql 命令行： 1234567891011121314151617181920212">
+<meta property="og:image" content="http://img.react.ren/wordpress-errors-www-data.jpg">
+<meta property="og:updated_time" content="2018-03-10T04:29:06.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="docker wordpress 备份">
+<meta name="twitter:description" content="数据库在 mysql 容器里面，用户上传的文件在 wordpress 容器里面。 备份 MySQL 数据库ssh 到服务器，然后使用 docker exec 或 docker-compose exec 进入 MySQL 容器内查看数据库结构： 1mysql -uwordpress -pwordpress 在 mysql 命令行： 1234567891011121314151617181920212">
+<meta name="twitter:image" content="http://img.react.ren/wordpress-errors-www-data.jpg">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-wordpress-backup" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/wordpress-backup/" class="article-date">
+  <time datetime="2018-02-24T09:09:03.000Z" itemprop="datePublished">2018-02-24</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      docker wordpress 备份
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>数据库在 mysql 容器里面，用户上传的文件在 wordpress 容器里面。</p>
+<h2 id="备份-MySQL-数据库"><a href="#备份-MySQL-数据库" class="headerlink" title="备份 MySQL 数据库"></a>备份 MySQL 数据库</h2><p><code>ssh</code> 到服务器，然后使用 <code>docker exec</code> 或 <code>docker-compose exec</code> 进入 MySQL 容器内查看数据库结构：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql -uwordpress -pwordpress</span><br></pre></td></tr></table></figure>
+<p>在 mysql 命令行：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show databases;</span><br><span class="line">+--------------------+</span><br><span class="line">| Database           |</span><br><span class="line">+--------------------+</span><br><span class="line">| information_schema |</span><br><span class="line">| wordpress          |</span><br><span class="line">+--------------------+</span><br><span class="line">2 rows <span class="keyword">in</span> <span class="built_in">set</span> (0.01 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; use wordpress;</span><br><span class="line">Reading table information <span class="keyword">for</span> completion of table and column names</span><br><span class="line">You can turn off this feature to get a quicker startup with -A</span><br><span class="line"></span><br><span class="line">Database changed</span><br><span class="line"></span><br><span class="line">mysql&gt; show tables;</span><br><span class="line">+-----------------------+</span><br><span class="line">| Tables_in_wordpress   |</span><br><span class="line">+-----------------------+</span><br><span class="line">| wp_commentmeta        |</span><br><span class="line">| wp_comments           |</span><br><span class="line">| wp_hfcm_scripts       |</span><br><span class="line">| wp_links              |</span><br><span class="line">| wp_options            |</span><br><span class="line">| wp_postmeta           |</span><br><span class="line">| wp_posts              |</span><br><span class="line">| wp_term_relationships |</span><br><span class="line">| wp_term_taxonomy      |</span><br><span class="line">| wp_termmeta           |</span><br><span class="line">| wp_terms              |</span><br><span class="line">| wp_usermeta           |</span><br><span class="line">| wp_users              |</span><br><span class="line">+-----------------------+</span><br><span class="line">13 rows <span class="keyword">in</span> <span class="built_in">set</span> (0.00 sec)</span><br></pre></td></tr></table></figure>
+<p>备份的时候可以在容器内备份完毕后拷贝到宿主机，也可以直接备份到宿主机。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 进入容器内备份</span></span><br><span class="line">docker-compose <span class="built_in">exec</span> mysql sh</span><br><span class="line">mysqldump -uwordpress -pwordpress wordpress &gt; /var/backups/db.sql</span><br><span class="line">docker cp mysql:/var/backups/db.sql /ali/bak/wordpress/db.sql</span><br><span class="line"></span><br><span class="line"><span class="comment"># 直接备份出来</span></span><br><span class="line">docker-compose <span class="built_in">exec</span> mysql \</span><br><span class="line">    mysqldump -uwordpress -pwordpress wordpress &gt; /ali/bak/wordpress/db.sql</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<h2 id="备份-WordPress-文件"><a href="#备份-WordPress-文件" class="headerlink" title="备份 WordPress 文件"></a>备份 WordPress 文件</h2><p>文件保存在 <code>/var/www/html/wp-content</code> 里面：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker cp wordpress:/var/www/html/wp-content /ali/bak/wordpress/wp-content</span><br></pre></td></tr></table></figure>
+<h2 id="打包备份文件"><a href="#打包备份文件" class="headerlink" title="打包备份文件"></a>打包备份文件</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /ali/backups/wordpress</span><br><span class="line">tar -czf wordpress.tar.gz db.sql wp-content</span><br></pre></td></tr></table></figure>
+<h2 id="上传并解压备份文件"><a href="#上传并解压备份文件" class="headerlink" title="上传并解压备份文件"></a>上传并解压备份文件</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~</span><br><span class="line">tar -xzf wordpress.tar.gz</span><br></pre></td></tr></table></figure>
+<h2 id="还原-MySQL-数据"><a href="#还原-MySQL-数据" class="headerlink" title="还原 MySQL 数据"></a>还原 MySQL 数据</h2><p>将备份的 <code>db.sql</code> 放到容器并导入：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 拷贝到容器内</span></span><br><span class="line">docker cp /ali/backups/wordpress/db.sql mysql:/var/backups/db.sql</span><br><span class="line"></span><br><span class="line"><span class="comment"># 在容器内导入</span></span><br><span class="line">mysql -uwordpress -pwordpress wordpress &lt; /var/backups/db.sql</span><br><span class="line">mysql -uwordpress -pwordpress wordpress &lt; /var/backups/wordpress.sql</span><br><span class="line"></span><br><span class="line"><span class="comment"># 在宿主机上导入</span></span><br><span class="line">docker-compose <span class="built_in">exec</span> mysql \</span><br><span class="line">    bash -c <span class="string">'mysql -uwordpress -pwordpress wordpress &lt; /var/backups/db.sql'</span></span><br></pre></td></tr></table></figure>
+<p>如果出现错误：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ERROR 1064 (42000) at line 1: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ‘Usage: mysqldump [OPTIONS] database [tables] OR mysqldump [OPTIONS] –databa’ at line 1</span><br></pre></td></tr></table></figure>
+<p>可能是开头几行</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sed <span class="string">'1,6d'</span> /var/backups/db.sql &gt; /var/backups/wordpress.sql     </span><br><span class="line">head /var/backups/wordpress.sql</span><br><span class="line">sed <span class="string">'1,6d'</span> db.sql &gt; db.sql</span><br></pre></td></tr></table></figure>
+<p>修改图片地址和域名：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看</span></span><br><span class="line">select * from wordpress.wp_posts <span class="built_in">limit</span> 1;</span><br><span class="line">select guid from wordpress.wp_posts <span class="built_in">limit</span> 10;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 改数据</span></span><br><span class="line">UPDATE wordpress.wp_posts SET post_content =</span><br><span class="line">REPLACE(post_content, <span class="string">'http://abc.com'</span>, <span class="string">'https://xyz.com/wp'</span>)</span><br><span class="line"></span><br><span class="line">UPDATE wordpress.wp_posts SET guid =</span><br><span class="line">REPLACE(guid, <span class="string">'http://abc.com'</span>, <span class="string">'https://xyz.com/wp'</span>)</span><br></pre></td></tr></table></figure>
+<h2 id="还原-WordPress-文件"><a href="#还原-WordPress-文件" class="headerlink" title="还原 WordPress 文件"></a>还原 WordPress 文件</h2><p>将备份的 <code>wp-content</code> 的内容放入容器：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"> <span class="comment"># 拷贝到容器内</span></span><br><span class="line">docker cp /ali/backups/wordpress/wp-content wordpress:/var/www/html/wp</span><br><span class="line"></span><br><span class="line"><span class="comment"># 改变目录权限</span></span><br><span class="line">docker-compose <span class="built_in">exec</span> wordpress chown -R www-data:www-data /var/www/html/wp</span><br></pre></td></tr></table></figure>
+<p>修改 <code>home</code> 和 <code>site</code> 的域名地址：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看</span></span><br><span class="line">select * from wordpress.wp_options <span class="built_in">where</span> option_name <span class="keyword">in</span> (<span class="string">"home"</span>,<span class="string">"siteurl"</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改</span></span><br><span class="line">update wordpress.wp_options <span class="built_in">set</span> option_value=<span class="string">"http://www.xxx.com"</span> <span class="built_in">where</span> option_name <span class="keyword">in</span> (<span class="string">"home"</span>,<span class="string">"siteurl"</span>);</span><br></pre></td></tr></table></figure>
+<p>假如你的网站是 <code>xxx.com</code>，而你希望 wordpress 在子目录中访问，例如：<code>xxx.com/wp</code>，可以这么做：</p>
+<ol>
+<li><p>在 <code>/var/www/html/</code> 目录下新建一个目录，例如 <code>wp</code>，然后把所有文件（包括隐藏文件）和文件夹都移动到 <code>wp</code> 目录下</p>
+</li>
+<li><p>再把刚刚移动到 <code>wp</code> 目录下的 <code>.htaccess</code> 和 <code>index.php</code> 两个文件拷贝出来</p>
+</li>
+<li><p>修改 <code>index.php</code>：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sed -i <span class="string">'s/wp-blog-header.php/wp\/wp-blog-header.php/g'</span> index.php</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h2 id="常见问题："><a href="#常见问题：" class="headerlink" title="常见问题："></a>常见问题：</h2><ol>
+<li><p>Permission denied</p>
+<p><img src="http://img.react.ren/wordpress-errors-www-data.jpg" alt="wordpress-errors-www-data"></p>
+<p>目录权限没改过来。</p>
+</li>
+</ol>
+<h2 id="附录（MySQL-命令一览）"><a href="#附录（MySQL-命令一览）" class="headerlink" title="附录（MySQL 命令一览）"></a>附录（MySQL 命令一览）</h2><ul>
+<li>进入数据库：<code>mysql -u root -p 　databaseName</code></li>
+</ul>
+<ul>
+<li>显示数据库列表：<code>show databases</code></li>
+<li>创建数据库：<code>create database name</code></li>
+<li>切换到对应的数据库：<code>use databaseName</code></li>
+</ul>
+<ul>
+<li>展示当前数据库所有表：<code>show tables</code></li>
+<li>显示数据表结构：<code>describe 表名</code></li>
+<li>导入SQL文件：<code>source /home/baron/work/test.sql</code></li>
+<li>删除数据库：<code>drop database test</code></li>
+<li>查看数据库：<code>select * from table</code></li>
+<li>清除命令行：<code>\c</code></li>
+<li>退出数据库：<code>exit</code></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/wordpress-backup/" data-id="cjhn4haiv00k4vqq3rqksde23" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/ssh-auto-password/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          ssh自动输入密码
+        
+      </div>
+    </a>
+  
+  
+    <a href="/ssh-broken-pipe/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">ssh broken pipe</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="查看目录中与 mysql 相关的文件： 12345➜  ~ ls -al /usr/local | grep mysqllrwxr-xr-x    1 lixiao  admin     27 12 20  2015 mysql -&amp;gt; mysql-5.7.10-osx10.9-x86_64drwxr-xr-x   14 lixiao  admin    476 10 23 17:54 mys">
+<meta name="keywords" content="Database">
+<meta property="og:type" content="article">
+<meta property="og:title" content="mysql 升级指南">
+<meta property="og:url" content="https://zju.date/upgrade-mysql/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="查看目录中与 mysql 相关的文件： 12345➜  ~ ls -al /usr/local | grep mysqllrwxr-xr-x    1 lixiao  admin     27 12 20  2015 mysql -&amp;gt; mysql-5.7.10-osx10.9-x86_64drwxr-xr-x   14 lixiao  admin    476 10 23 17:54 mys">
+<meta property="og:updated_time" content="2017-12-29T14:36:23.858Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="mysql 升级指南">
+<meta name="twitter:description" content="查看目录中与 mysql 相关的文件： 12345➜  ~ ls -al /usr/local | grep mysqllrwxr-xr-x    1 lixiao  admin     27 12 20  2015 mysql -&amp;gt; mysql-5.7.10-osx10.9-x86_64drwxr-xr-x   14 lixiao  admin    476 10 23 17:54 mys">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-upgrade-mysql" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/upgrade-mysql/" class="article-date">
+  <time datetime="2017-10-23T10:15:23.000Z" itemprop="datePublished">2017-10-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      mysql 升级指南
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>查看目录中与 mysql 相关的文件：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">➜  ~ ls -al /usr/<span class="built_in">local</span> | grep mysql</span><br><span class="line">lrwxr-xr-x    1 lixiao  admin     27 12 20  2015 mysql -&gt; mysql-5.7.10-osx10.9-x86_64</span><br><span class="line">drwxr-xr-x   14 lixiao  admin    476 10 23 17:54 mysql-5.7.10-osx10.9-x86_64</span><br><span class="line">lrwxr-xr-x    1 root    wheel     36  2 22  2017 mysql-shell -&gt; mysql-shell-1.0.5-osx10.11-x86-64bit</span><br><span class="line">drwxr-xr-x    4 root    wheel    136  8 26  2016 mysql-shell-1.0.5-osx10.11-x86-64bit</span><br></pre></td></tr></table></figure>
+<p>升级步骤：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 进入新版本目录</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> /usr/<span class="built_in">local</span>/mysql-5.7.20-macos10.12-x86_64</span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除新版本的数据目录</span></span><br><span class="line"></span><br><span class="line">sudo rm -rf ./data</span><br><span class="line"></span><br><span class="line"><span class="comment"># 复制老版本的数据目录到新版本目录</span></span><br><span class="line"></span><br><span class="line">sudo cp -R ../mysql-5.7.10-osx10.9-x86_64/data ./</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修复目录权限</span></span><br><span class="line"></span><br><span class="line">sudo chown -R _mysql ./data</span><br><span class="line"></span><br><span class="line"><span class="comment"># 启动MySQL（一定要加 --skip-grant-tables 关闭权限检查）</span></span><br><span class="line"></span><br><span class="line">sudo ./bin/mysqld_safe --skip-grant-tables</span><br><span class="line"></span><br><span class="line"><span class="comment"># 执行升级脚本（升级过程有一大堆升级信息输出, 最关键的是: Upgrade process completed successfully. 看到这个就说明升级成功了.）</span></span><br><span class="line"></span><br><span class="line">sudo ./bin/mysql_upgrade</span><br><span class="line"></span><br><span class="line"><span class="comment"># 停止通过 mysqld_safe 启动的服务器, 正常启动服务器</span></span><br><span class="line"></span><br><span class="line">sudo ./support-files/mysql.server stop</span><br><span class="line">sudo ./support-files/mysql.server start</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<p>修改密码：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">use mysql</span><br><span class="line">select * from user;</span><br><span class="line">update mysql.user <span class="built_in">set</span> authentication_string=password(<span class="string">'LiXiao520'</span>) <span class="built_in">where</span> user=<span class="string">'root'</span>;</span><br><span class="line">update mysql.user <span class="built_in">set</span> Host=<span class="string">'localhost'</span> <span class="built_in">where</span> user=<span class="string">'root'</span>;</span><br><span class="line">flush privileges;</span><br></pre></td></tr></table></figure>
+<p>mysqlsh 连接数据库</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">➜  ~ mysqlsh</span><br><span class="line">MySQL Shell 1.0.10</span><br><span class="line">mysql-js&gt; \connect root:LiXiao520@localhost:3306</span><br><span class="line">Creating a Session to <span class="string">'root@localhost:3306'</span></span><br></pre></td></tr></table></figure>
+<p>查看MySQL服务的状态，就是一个很简单的status：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">\status</span><br></pre></td></tr></table></figure>
+<p>切换到sql模式：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">\sql</span><br></pre></td></tr></table></figure>
+<p>尝试mysql-js</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">➜  world_x-db mysqlsh -u root --sql &lt; ./world_x.sql</span><br><span class="line">Enter password: </span><br><span class="line"></span><br><span class="line">Records: 4079  Duplicates: 0  Warnings: 0</span><br><span class="line">Records: 239  Duplicates: 0  Warnings: 0</span><br><span class="line">Records: 239  Duplicates: 0  Warnings: 0</span><br><span class="line">Records: 984  Duplicates: 0  Warnings: 0</span><br><span class="line"></span><br><span class="line">➜  world_x-db mysqlsh root@localhost/world_x</span><br><span class="line">Creating a Session to <span class="string">'root@localhost/world_x'</span></span><br><span class="line">Enter password: </span><br><span class="line">Your MySQL connection id is 594</span><br><span class="line">Server version: 5.7.20 MySQL Community Server (GPL)</span><br><span class="line">Default schema <span class="built_in">set</span> to `world_x`</span><br></pre></td></tr></table></figure>
+<p>连接语法：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[dbuser[:[dbpassword]]@]host[:port][/schema]</span><br><span class="line">mysqlsh root@localhost/world_x</span><br></pre></td></tr></table></figure>
+<p>然后执行查询操作：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysql-js&gt; db.getCollections()</span><br><span class="line">Invalid object member getCollections (AttributeError)</span><br></pre></td></tr></table></figure>
+<p>开启 xprotocol：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">➜  world_x-db mysqlsh -u root -h localhost --classic --dba enableXProtocol</span><br><span class="line">Creating a Classic Session to <span class="string">'root@localhost'</span></span><br><span class="line">Enter password: </span><br><span class="line">Your MySQL connection id is 884</span><br><span class="line">Server version: 5.7.20 MySQL Community Server (GPL)</span><br><span class="line">No default schema selected; <span class="built_in">type</span> \use &lt;schema&gt; to <span class="built_in">set</span> one.</span><br><span class="line">enableXProtocol: Installing plugin mysqlx...</span><br><span class="line">enableXProtocol: <span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+<p>再运行就有了：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mysql-js&gt; db.getCollections()                                                                                                                                                   [</span><br><span class="line">    &lt;Collection:countryinfo&gt;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+<p>创建集合：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mysql-js&gt; db.createCollection(<span class="string">"flags"</span>)</span><br><span class="line">&lt;Collection:flags&gt;</span><br><span class="line">mysql-js&gt; db.getCollections()</span><br><span class="line">[</span><br><span class="line">    &lt;Collection:countryinfo&gt;,</span><br><span class="line">    &lt;Collection:flags&gt;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+<p>删除集合：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysql-js&gt; session.dropCollection(<span class="string">"world_x"</span>, <span class="string">"flags"</span>)</span><br><span class="line">Query OK (0.02 sec)</span><br></pre></td></tr></table></figure>
+<p>查看当前数据库（如果不是则切换）：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mysql-js&gt; db</span><br><span class="line">&lt;Schema:world_x&gt;</span><br><span class="line">mysql-js&gt; \use world_x</span><br><span class="line">Schema `world_x` accessible through db.</span><br></pre></td></tr></table></figure>
+<p>添加文档：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">mysql-js&gt; db.countryinfo.add(</span><br><span class="line">      ...  &#123;</span><br><span class="line">      ...     GNP: .6,</span><br><span class="line">      ...     IndepYear: 1967,</span><br><span class="line">      ...     Name: <span class="string">"Sealand"</span>,</span><br><span class="line">      ...     _id: <span class="string">"SEA"</span>,</span><br><span class="line">      ...     demographics: &#123;</span><br><span class="line">      ...         LifeExpectancy: 79,</span><br><span class="line">      ...         Population: 27</span><br><span class="line">      ...     &#125;,</span><br><span class="line">      ...     geography: &#123;</span><br><span class="line">      ...         Continent: <span class="string">"Europe"</span>,</span><br><span class="line">      ...         Region: <span class="string">"British Islands"</span>,</span><br><span class="line">      ...         SurfaceArea: 193</span><br><span class="line">      ...     &#125;,</span><br><span class="line">      ...     government: &#123;</span><br><span class="line">      ...         GovernmentForm: <span class="string">"Monarchy"</span>,</span><br><span class="line">      ...         HeadOfState: <span class="string">"Michael Bates"</span></span><br><span class="line">      ...     &#125;</span><br><span class="line">      ...   &#125;</span><br><span class="line">      ... )</span><br></pre></td></tr></table></figure>
+<p>查看文档：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql-js&gt; db.countryinfo.find()</span><br></pre></td></tr></table></figure>
+<p>查询条件：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">mysql-js&gt; db.countryinfo.find(<span class="string">"_id = 'AUS'"</span>)</span><br><span class="line">[</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="string">"GNP"</span>: 351182, </span><br><span class="line">        <span class="string">"IndepYear"</span>: 1901, </span><br><span class="line">        <span class="string">"Name"</span>: <span class="string">"Australia"</span>, </span><br><span class="line">        <span class="string">"_id"</span>: <span class="string">"AUS"</span>, </span><br><span class="line">        <span class="string">"demographics"</span>: &#123;</span><br><span class="line">            <span class="string">"LifeExpectancy"</span>: 79.8, </span><br><span class="line">            <span class="string">"Population"</span>: 18886000</span><br><span class="line">        &#125;, </span><br><span class="line">        <span class="string">"geography"</span>: &#123;</span><br><span class="line">            <span class="string">"Continent"</span>: <span class="string">"Oceania"</span>, </span><br><span class="line">            <span class="string">"Region"</span>: <span class="string">"Australia and New Zealand"</span>, </span><br><span class="line">            <span class="string">"SurfaceArea"</span>: 7741220</span><br><span class="line">        &#125;, </span><br><span class="line">        <span class="string">"government"</span>: &#123;</span><br><span class="line">            <span class="string">"GovernmentForm"</span>: <span class="string">"Constitutional Monarchy, Federation"</span>, </span><br><span class="line">            <span class="string">"HeadOfState"</span>: <span class="string">"Elisabeth II"</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">]</span><br><span class="line">1 document <span class="keyword">in</span> <span class="built_in">set</span> (0.00 sec)</span><br><span class="line">mysql-js&gt; db.countryinfo.find(<span class="string">"GNP &gt; 5000000"</span>).fields([<span class="string">"GNP"</span>, <span class="string">"Name"</span>])</span><br><span class="line">[</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="string">"GNP"</span>: 8510700, </span><br><span class="line">        <span class="string">"Name"</span>: <span class="string">"United States"</span></span><br><span class="line">    &#125;</span><br><span class="line">]</span><br><span class="line">1 document <span class="keyword">in</span> <span class="built_in">set</span> (0.00 sec)</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/upgrade-mysql/" data-id="cjhn4hai200iuvqq3v32kp4hh" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/mongoose-2dsphere/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          mongodb 经纬度
+        
+      </div>
+    </a>
+  
+  
+    <a href="/angular-random-color/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Angular 随机换颜色</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

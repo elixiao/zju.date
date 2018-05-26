@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="通过 docker-compose 建立的应用，如果没有把某个服务的端口暴露在宿主机上，那么只能在容器内部访问，例如 mongodb，如果我们想通过 ssh 远程连接这个数据库应该怎么办呢？解决办法是再建立一个 ssh 容器，使用 mongodb 容器所在的网络，然后建立反向通道，将 mongodb 的 27017 端口映射到本地的 28018 端口。 创建 ssh 镜像随便创建一个 centos">
+<meta name="keywords" content="Linux">
+<meta property="og:type" content="article">
+<meta property="og:title" content="通过 docker ssh 到另一个容器">
+<meta property="og:url" content="https://zju.date/docker-ssh/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="通过 docker-compose 建立的应用，如果没有把某个服务的端口暴露在宿主机上，那么只能在容器内部访问，例如 mongodb，如果我们想通过 ssh 远程连接这个数据库应该怎么办呢？解决办法是再建立一个 ssh 容器，使用 mongodb 容器所在的网络，然后建立反向通道，将 mongodb 的 27017 端口映射到本地的 28018 端口。 创建 ssh 镜像随便创建一个 centos">
+<meta property="og:updated_time" content="2018-04-18T06:19:39.575Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="通过 docker ssh 到另一个容器">
+<meta name="twitter:description" content="通过 docker-compose 建立的应用，如果没有把某个服务的端口暴露在宿主机上，那么只能在容器内部访问，例如 mongodb，如果我们想通过 ssh 远程连接这个数据库应该怎么办呢？解决办法是再建立一个 ssh 容器，使用 mongodb 容器所在的网络，然后建立反向通道，将 mongodb 的 27017 端口映射到本地的 28018 端口。 创建 ssh 镜像随便创建一个 centos">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-docker-ssh" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/docker-ssh/" class="article-date">
+  <time datetime="2018-02-09T05:51:23.000Z" itemprop="datePublished">2018-02-09</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      通过 docker ssh 到另一个容器
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>通过 docker-compose 建立的应用，如果没有把某个服务的端口暴露在宿主机上，那么只能在容器内部访问，例如 mongodb，如果我们想通过 ssh 远程连接这个数据库应该怎么办呢？解决办法是再建立一个 ssh 容器，使用 mongodb 容器所在的网络，然后建立反向通道，将 mongodb 的 27017 端口映射到本地的 28018 端口。</p>
+<h2 id="创建-ssh-镜像"><a href="#创建-ssh-镜像" class="headerlink" title="创建 ssh 镜像"></a>创建 ssh 镜像</h2><p>随便创建一个 centos 容器，然后进入其内部：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -itd --name ssh centos sh</span><br></pre></td></tr></table></figure>
+<p>安装 ssh ：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">RUN yum install -y openssh-server openssh-clients</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<p>使用 sshd 命令：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">$ sshd</span><br><span class="line">sshd re-exec requires execution with an absolute path</span><br><span class="line"></span><br><span class="line">$ /usr/sbin/sshd</span><br><span class="line">Could not load host key: /etc/ssh/ssh_host_rsa_key</span><br><span class="line">Could not load host key: /etc/ssh/ssh_host_ecdsa_key</span><br><span class="line">Could not load host key: /etc/ssh/ssh_host_ed25519_key</span><br><span class="line">sshd: no hostkeys available -- exiting.</span><br><span class="line"></span><br><span class="line"><span class="comment"># 可以通过下面的命令生成所需的 key，-t 表示生成的密钥所使用的加密类型；-f 项后接要生成的密钥文件名</span></span><br><span class="line">$ ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key</span><br><span class="line">$ ssh-keygen -t ecdsa -f /etc/ssh/ssh_host_ecdsa_key</span><br><span class="line">$ ssh-keygen -t ed25519 -f /etc/ssh/ssh_host_ed25519_key</span><br><span class="line"></span><br><span class="line"><span class="comment"># 也可以用下面的命令一下生成全部的 key</span></span><br><span class="line">$ ssh-keygen -A</span><br><span class="line">ssh-keygen: generating new host keys: RSA1 ED25519</span><br></pre></td></tr></table></figure>
+<p>最终的 Dockerfile 为：</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">FROM</span> centos</span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> yum install -y openssh-server openssh-clients</span></span><br><span class="line"><span class="bash">RUN yum clean all</span></span><br><span class="line"><span class="bash">RUN <span class="built_in">echo</span> <span class="string">"root:password"</span> | chpasswd</span></span><br><span class="line"><span class="bash">RUN ssh-keygen -A</span></span><br><span class="line"><span class="bash">CMD /usr/sbin/sshd -D</span></span><br><span class="line"><span class="bash">EXPOSE 22</span></span><br></pre></td></tr></table></figure>
+<p>其中 <code>sshd -D</code> 的意思是不要让 sshd 以守护进程方式运行，而是直接在前台运行。生成 ssh 镜像：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker build -t ssh .</span><br></pre></td></tr></table></figure>
+<h2 id="在同一个网络内创建容器"><a href="#在同一个网络内创建容器" class="headerlink" title="在同一个网络内创建容器"></a>在同一个网络内创建容器</h2><p>根据 mongodb 所在网络和上面的 ssh 镜像，创建一个容器：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -itd -p 22222:22 --name=ssh --net=ssh-network ssh sh</span><br></pre></td></tr></table></figure>
+<p>或者可以动态地将容器连接到网络：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker run -itd -p 22222:22 --name=ssh ssh sh</span><br><span class="line">docker network connect ssh-network ssh</span><br></pre></td></tr></table></figure>
+<p>进入这个容器，看看能不能访问 mongodb 的容器：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it ssh sh</span><br><span class="line">ping mongo-container</span><br></pre></td></tr></table></figure>
+<p>这样就在宿主机上暴露了 22222 端口，可以以这个端口为跳板，访问 mongodb。如果想免密登录，并且免密规则与宿主机相同，可以添加文件映射：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d -p 22222:22 --restart=always -v /root/.ssh/authorized_keys:/root/.ssh/authorized_keys --net=ssh-network ssh sh</span><br></pre></td></tr></table></figure>
+<h2 id="建立-ssh-反向通道"><a href="#建立-ssh-反向通道" class="headerlink" title="建立 ssh 反向通道"></a>建立 ssh 反向通道</h2><p>反向通道：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh root@json.fit -p 22222 -Nf -L 28018:mongo-container:27017</span><br></pre></td></tr></table></figure>
+<p>其中：</p>
+<ul>
+<li><code>-L 28018:mongo-container:27017</code> 的意思是本地 ssh client 监听 28018 端口，一旦连接就会把命令转发到远程 ssh server。</li>
+<li><code>-f</code> 是在后台运行，不加此参数则保持在前台</li>
+<li><code>-N</code> 是不执行远程命令，只做端口转发</li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 建立 ssh 通道，映射到本地 28018 端口，mongodb 连接本地 28018 就是线上环境的数据库了</span></span><br><span class="line">mongo --port 28018 -u user -p superpwd db_name</span><br><span class="line">ssh -i ./db.pem root@host -p 22222 -Nf -L 28018:mongo-container:27017</span><br></pre></td></tr></table></figure>
+<h2 id="进一步优化"><a href="#进一步优化" class="headerlink" title="进一步优化"></a>进一步优化</h2><p>如果只是为了使用 ssh 服务，采用 centos 镜像有点大材小用，完全可以用 alpine 镜像代替，优点就是体积小，下面是对比：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ docker images</span><br><span class="line">REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE</span><br><span class="line">ssh                 alpine              b87506fd5b60        29 hours ago        8.29MB</span><br><span class="line">ssh                 centos              410449b7f85f        30 hours ago        325MB</span><br></pre></td></tr></table></figure>
+<p>Dockerfile 如下：</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">FROM</span> alpine</span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> apk --no-cache add openssh \</span></span><br><span class="line"><span class="bash">    &amp;&amp; sed -i s/<span class="comment">#PermitRootLogin.*/PermitRootLogin\ yes/ /etc/ssh/sshd_config \</span></span></span><br><span class="line"><span class="bash">    &amp;&amp; <span class="built_in">echo</span> <span class="string">"root:password"</span> | chpasswd</span></span><br><span class="line"><span class="bash">RUN ssh-keygen -A</span></span><br><span class="line"><span class="bash">CMD /usr/sbin/sshd -D</span></span><br><span class="line"><span class="bash">EXPOSE 22</span></span><br></pre></td></tr></table></figure>
+<p>这里和 centos 镜像不同的一点是：alpine 使用了更安全的策略，默认情况下不允许 root 用户使用密码登录，如果想取消这个限制，必须把配置文件里面的 PermitRootLogin 项设置为 yes 才行，所以上面 sed 那一行就是干这个事的。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/docker-ssh/" data-id="cjhn4ha9b0065vqq3rp14zukq" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/ssh-broken-pipe/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          ssh broken pipe
+        
+      </div>
+    </a>
+  
+  
+    <a href="/mac-install-unknown/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">mac 允许允许任意应用</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="JSON.stringify 有三个参数： 1JSON.stringify(value, replacer, space) 第一个参数 value 就是需要被序列化的对象。后面两个参数是可选的，replacer可以是函数、数组或null：  如果是一个函数，则在序列化过程中，被序列化的值的每个属性都会经过该函数的转换和处理； 如果是一个数组，则只有包含在这个数组中的属性名才会被序列化到最终的 JS">
+<meta name="keywords" content="JavaScript">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JSON.stringify详解">
+<meta property="og:url" content="https://zju.date/json-stringify/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="JSON.stringify 有三个参数： 1JSON.stringify(value, replacer, space) 第一个参数 value 就是需要被序列化的对象。后面两个参数是可选的，replacer可以是函数、数组或null：  如果是一个函数，则在序列化过程中，被序列化的值的每个属性都会经过该函数的转换和处理； 如果是一个数组，则只有包含在这个数组中的属性名才会被序列化到最终的 JS">
+<meta property="og:updated_time" content="2017-09-05T13:50:15.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="JSON.stringify详解">
+<meta name="twitter:description" content="JSON.stringify 有三个参数： 1JSON.stringify(value, replacer, space) 第一个参数 value 就是需要被序列化的对象。后面两个参数是可选的，replacer可以是函数、数组或null：  如果是一个函数，则在序列化过程中，被序列化的值的每个属性都会经过该函数的转换和处理； 如果是一个数组，则只有包含在这个数组中的属性名才会被序列化到最终的 JS">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-json-stringify" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/json-stringify/" class="article-date">
+  <time datetime="2017-03-30T02:02:07.000Z" itemprop="datePublished">2017-03-30</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      JSON.stringify详解
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><code>JSON.stringify</code> 有三个参数：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">JSON</span>.stringify(value, replacer, space)</span><br></pre></td></tr></table></figure>
+<p>第一个参数 <code>value</code> 就是需要被序列化的对象。后面两个参数是可选的，<code>replacer</code>可以是函数、数组或null：</p>
+<ul>
+<li>如果是一个函数，则在序列化过程中，被序列化的值的每个属性都会经过该函数的转换和处理；</li>
+<li>如果是一个数组，则只有包含在这个数组中的属性名才会被序列化到最终的 JSON 字符串中；</li>
+<li>如果该参数为null或者未提供，则对象所有的属性都会被序列化；</li>
+</ul>
+<a id="more"></a>
+<p>例如：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">replacer</span>(<span class="params">key, value</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (<span class="keyword">typeof</span> value === <span class="string">"string"</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">undefined</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> value</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> foo = &#123;<span class="attr">foundation</span>: <span class="string">"Mozilla"</span>, <span class="attr">model</span>: <span class="string">"box"</span>, <span class="attr">week</span>: <span class="number">45</span>, <span class="attr">transport</span>: <span class="string">"car"</span>, <span class="attr">month</span>: <span class="number">7</span>&#125;</span><br><span class="line"><span class="keyword">var</span> jsonString = <span class="built_in">JSON</span>.stringify(foo, replacer) <span class="comment">// &#123;"week":45,"month":7&#125;.</span></span><br></pre></td></tr></table></figure>
+<p>上面的replacer对需要序列化对象的字段起到了过滤作用，排除string类型的值，它是递归过滤的，比如把上面的 <code>foo</code> 对象修改一下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> foo = &#123;<span class="attr">foundation</span>: <span class="string">"Mozilla"</span>, <span class="attr">model</span>: &#123;<span class="attr">name</span>: <span class="string">"box"</span>, <span class="attr">week</span>: <span class="number">45</span>, <span class="attr">transport</span>: <span class="string">"car"</span>&#125;, <span class="attr">month</span>: <span class="number">7</span>&#125;</span><br><span class="line"><span class="keyword">var</span> jsonString = <span class="built_in">JSON</span>.stringify(foo, replacer) <span class="comment">// &#123;"model":&#123;"week":45&#125;,"month":7&#125;</span></span><br></pre></td></tr></table></figure>
+<p>当replacer时函数的时候，它接收两个参数：键(key)和值(value)，而它的返回值决定了该字段是否被序列化：</p>
+<ul>
+<li>返回 Number, 转换成相应的字符串被添加入JSON字符串。</li>
+<li>返回 String, 该字符串作为属性值被添加入JSON。</li>
+<li>返回 Boolean, “true” 或者 “false”被作为属性值被添加入JSON字符串。</li>
+<li>返回任何其他对象，该对象递归地序列化成JSON字符串，对每个属性调用replacer方法。除非该对象是一个函数，这种情况将不会被序列化成JSON字符串。</li>
+<li>返回 undefined，该属性值不会在JSON字符串中输出。</li>
+</ul>
+<p>其他都好理解，返回对象是什么意思呢？</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">replacer</span>(<span class="params">key, value</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (key === <span class="string">"model"</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="attr">hello</span>: <span class="string">"world"</span>, <span class="attr">model</span>: <span class="number">3</span>&#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> value</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> foo = &#123;<span class="attr">foundation</span>: <span class="string">"Mozilla"</span>, <span class="attr">model</span>: &#123;<span class="attr">name</span>: <span class="string">"box"</span>, <span class="attr">week</span>: <span class="number">45</span>, <span class="attr">transport</span>: <span class="string">"car"</span>&#125;, <span class="attr">month</span>: <span class="number">7</span>&#125;</span><br><span class="line"><span class="keyword">var</span> jsonString = <span class="built_in">JSON</span>.stringify(foo, replacer) <span class="comment">// &#123;"foundation":"Mozilla","model":&#123;"hello":"world"&#125;,"month":7&#125;</span></span><br></pre></td></tr></table></figure>
+<p>原来就是用新对象替换了原来key的值，但是需要注意的是，在替换之前也会对该对象使用replacer方法进行过滤，加入上面的replacer函数写成下面的形式就会报错 <code>Maximum call stack size exceeded</code>，因为出现了无限递归：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">replacer</span>(<span class="params">key, value</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (key === <span class="string">"model"</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="attr">hello</span>: <span class="string">"world"</span>, <span class="attr">model</span>: <span class="number">3</span>&#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> value</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>改成：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> count = <span class="number">0</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">replacer</span>(<span class="params">key, value</span>) </span>&#123;</span><br><span class="line">  count++</span><br><span class="line">  <span class="keyword">if</span> (<span class="keyword">typeof</span> value === <span class="string">"string"</span> &amp;&amp; count &lt; <span class="number">5</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="attr">name</span>: <span class="string">"Davlid"</span>, count&#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> value</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> foo = &#123;<span class="attr">foundation</span>: <span class="string">"Mozilla"</span>, <span class="attr">model</span>: &#123;<span class="attr">name</span>: <span class="string">"box"</span>, <span class="attr">week</span>: <span class="number">45</span>, <span class="attr">transport</span>: <span class="string">"car"</span>&#125;, <span class="attr">month</span>: <span class="string">'7'</span>&#125;</span><br><span class="line"><span class="keyword">var</span> jsonString = <span class="built_in">JSON</span>.stringify(foo, replacer)</span><br></pre></td></tr></table></figure>
+<p>上面的输出结果是：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="attr">"foundation"</span>:&#123;<span class="attr">"name"</span>:&#123;<span class="attr">"name"</span>:&#123;<span class="attr">"name"</span>:<span class="string">"Davlid"</span>,<span class="attr">"count"</span>:<span class="number">4</span>&#125;,<span class="attr">"count"</span>:<span class="number">3</span>&#125;,<span class="attr">"count"</span>:<span class="number">2</span>&#125;,<span class="attr">"model"</span>:&#123;<span class="attr">"name"</span>:<span class="string">"box"</span>,<span class="attr">"week"</span>:<span class="number">45</span>,<span class="attr">"transport"</span>:<span class="string">"car"</span>&#125;,<span class="attr">"month"</span>:<span class="string">"7"</span>&#125;</span><br></pre></td></tr></table></figure>
+<p><code>replacer</code> 除了可以是函数，还可以是数组：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> foo = &#123;<span class="attr">foundation</span>: <span class="string">"Mozilla"</span>, <span class="attr">model</span>: <span class="string">"box"</span>, <span class="attr">week</span>: <span class="number">45</span>, <span class="attr">transport</span>: <span class="string">"car"</span>, <span class="attr">month</span>: <span class="number">7</span>&#125;</span><br><span class="line"><span class="built_in">JSON</span>.stringify(foo, [<span class="string">'model'</span>, <span class="string">'month'</span>]) <span class="comment">// &#123;"model":"box","month":7&#125;</span></span><br></pre></td></tr></table></figure>
+<p>第二个参数 <code>space</code> 用来控制结果字符串里面的间距，取值可以是一个数字或字符串：</p>
+<ul>
+<li>如果是数字, 则在字符串化时每一级别会比上一级别缩进多这个数字值的空格（最多10个空格）；</li>
+<li>如果是字符串，则每一级别会比上一级别多缩进用该字符串（或该字符串的前十个字符）。</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> foo = &#123;<span class="attr">foundation</span>: <span class="string">"Mozilla"</span>, <span class="attr">model</span>: <span class="string">"box"</span>, <span class="attr">week</span>: <span class="number">45</span>, <span class="attr">transport</span>: <span class="string">"car"</span>, <span class="attr">month</span>: <span class="number">7</span>&#125;</span><br><span class="line"><span class="built_in">JSON</span>.stringify(foo, <span class="literal">null</span>, <span class="number">2</span>)</span><br></pre></td></tr></table></figure>
+<p>会缩进2个空格，结果是：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"foundation"</span>: <span class="string">"Mozilla"</span>,</span><br><span class="line">  <span class="attr">"model"</span>: <span class="string">"box"</span>,</span><br><span class="line">  <span class="attr">"week"</span>: <span class="number">45</span>,</span><br><span class="line">  <span class="attr">"transport"</span>: <span class="string">"car"</span>,</span><br><span class="line">  <span class="attr">"month"</span>: <span class="number">7</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果用：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> foo = &#123;<span class="attr">foundation</span>: <span class="string">"Mozilla"</span>, <span class="attr">model</span>: <span class="string">"box"</span>, <span class="attr">week</span>: <span class="number">45</span>, <span class="attr">transport</span>: <span class="string">"car"</span>, <span class="attr">month</span>: <span class="number">7</span>&#125;</span><br><span class="line"><span class="built_in">JSON</span>.stringify(foo, <span class="literal">null</span>, <span class="string">'$'</span>)</span><br></pre></td></tr></table></figure>
+<p>结果是：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">$$"foundation": "Mozilla",</span><br><span class="line">$$"model": "box",</span><br><span class="line">$$"week": 45,</span><br><span class="line">$$"transport": "car",</span><br><span class="line">$$"month": 7</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/json-stringify/" data-id="cjhn4hadd00bwvqq3sw3mimte" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/feathers-client/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          feathers client 用法
+        
+      </div>
+    </a>
+  
+  
+    <a href="/mongodb-update/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">mongodb update</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

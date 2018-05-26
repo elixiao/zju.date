@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="使用nvm对node版本进行管理，有个问题就是每次升级新版本的node，原来在全局安装的包都要重新安装一次，非常麻烦。例如安装了8.2.1版本的node，原来的全局包都是放在下面的目录中的： 1/Users/lixiao/.nvm/versions/node/v8.2.1/lib/node_modules 如果查看全局安装了哪些依赖，可以使用下面的命令： 12345npm ls -g --dept">
+<meta name="keywords" content="JavaScript">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用yarn安装全局包">
+<meta property="og:url" content="https://zju.date/install-global-packages-using-yarn/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="使用nvm对node版本进行管理，有个问题就是每次升级新版本的node，原来在全局安装的包都要重新安装一次，非常麻烦。例如安装了8.2.1版本的node，原来的全局包都是放在下面的目录中的： 1/Users/lixiao/.nvm/versions/node/v8.2.1/lib/node_modules 如果查看全局安装了哪些依赖，可以使用下面的命令： 12345npm ls -g --dept">
+<meta property="og:updated_time" content="2017-08-16T02:25:40.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="使用yarn安装全局包">
+<meta name="twitter:description" content="使用nvm对node版本进行管理，有个问题就是每次升级新版本的node，原来在全局安装的包都要重新安装一次，非常麻烦。例如安装了8.2.1版本的node，原来的全局包都是放在下面的目录中的： 1/Users/lixiao/.nvm/versions/node/v8.2.1/lib/node_modules 如果查看全局安装了哪些依赖，可以使用下面的命令： 12345npm ls -g --dept">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-install-global-packages-using-yarn" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/install-global-packages-using-yarn/" class="article-date">
+  <time datetime="2017-07-24T01:36:32.000Z" itemprop="datePublished">2017-07-24</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      使用yarn安装全局包
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>使用nvm对node版本进行管理，有个问题就是每次升级新版本的node，原来在全局安装的包都要重新安装一次，非常麻烦。例如安装了8.2.1版本的node，原来的全局包都是放在下面的目录中的：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/Users/lixiao/.nvm/versions/node/v8.2.1/lib/node_modules</span><br></pre></td></tr></table></figure>
+<p>如果查看全局安装了哪些依赖，可以使用下面的命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">npm ls -g --depth=0   </span><br><span class="line">/Users/lixiao/.nvm/versions/node/v8.2.1/lib</span><br><span class="line">├── gulp@3.9.1</span><br><span class="line">├── json-server@0.11.2</span><br><span class="line">└── npm@5.3.0</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<p>假如从8.2.1升级到8.3.0，<code>nvm use 8.3.0</code>之后，所有的全局包都要重新安装，心累。所以打算把包都用yarn安装：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">yarn global bin</span><br><span class="line">/Users/lixiao/.nvm/versions/node/v8.2.1/bin</span><br></pre></td></tr></table></figure>
+<p>上面的命令是查看yarn安装全局包时的默认存放位置，它是和当前node的位置放在一起的，这样肯定不行，因为nvm升级node版本之后位置会变，于是手动更改存放位置：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">yarn config <span class="built_in">set</span> prefix ~/.yarn</span><br><span class="line">yarn config v0.27.5</span><br><span class="line">success Set <span class="string">"prefix"</span> to <span class="string">"/Users/lixiao/.yarn"</span>.</span><br></pre></td></tr></table></figure>
+<p>把yarn全局包都放在用户根目录叫做<code>.yarn</code>的隐藏文件夹里面，这个时候再查看全局位置就会发现已经变更完毕：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">yarn global bin          </span><br><span class="line">/Users/lixiao/.yarn/bin</span><br></pre></td></tr></table></figure>
+<p>尝试用yarn安装第一个全局包<code>hexo-cli</code>，用于快速生成博客系统：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">yarn global add hexo-cli</span><br><span class="line">yarn global v0.27.5</span><br><span class="line">[1/4] Resolving packages...</span><br><span class="line">[2/4] Fetching packages...</span><br><span class="line">[3/4] Linking dependencies...</span><br><span class="line">[4/4] Building fresh packages...</span><br><span class="line">success Installed <span class="string">"hexo-cli@1.0.3"</span> with binaries:</span><br><span class="line">      - hexo</span><br><span class="line">Done <span class="keyword">in</span> 136.82s.</span><br></pre></td></tr></table></figure>
+<p>安装成功之后运行<code>hexo server</code>发现失败了，</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">which</span> hexo</span><br><span class="line">hexo not found</span><br></pre></td></tr></table></figure>
+<p>肯定是路径不在环境变量里面，在<code>.bashrc</code>里面把yarn的全局目录加进去：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$PATH</span>:/Users/lixiao/.yarn/bin</span><br></pre></td></tr></table></figure>
+<p>然后开启新的terminal或者<code>source ~/.bashrc</code>更新一下，这个时候就能找到了：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">which</span> hexo</span><br><span class="line">/Users/lixiao/.yarn/bin/hexo</span><br></pre></td></tr></table></figure>
+<p>最后，在<code>~/.yarn/bin</code>里面保存的实际上是包的符号链接，真正存放的位置在<code>/Users/lixiao/.config/yarn/global</code>目录下，不妨进去看看：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /Users/lixiao/.config/yarn/global</span><br><span class="line">ls</span><br><span class="line">node_modules package.json yarn.lock</span><br><span class="line">cat package.json </span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">"dependencies"</span>: &#123;</span><br><span class="line">    <span class="string">"hexo-cli"</span>: <span class="string">"^1.0.3"</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>另外，你会发现除了刚才你安装的命令之外，还有其他的命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">ls -l</span><br><span class="line">total 112</span><br><span class="line">bunyan -&gt; ../../.config/yarn/global/node_modules/bunyan/bin/bunyan</span><br><span class="line">hexo -&gt; ../../.config/yarn/global/node_modules/hexo-cli/bin/hexo</span><br><span class="line">mkdirp -&gt; ../../.config/yarn/global/node_modules/mkdirp/bin/cmd.js</span><br><span class="line">ncp -&gt; ../../.config/yarn/global/node_modules/ncp/bin/ncp</span><br></pre></td></tr></table></figure>
+<p>为什么会有这些乱七八糟的东西呢？原来这些都是<code>hexo</code>包用到的一些依赖，它们都在<code>/Users/lixiao/.config/yarn/global/node_modules/.bin</code>目录下，yarn不过是把该目录下所有的命令都做了符号链接到刚才你指定的全局目录而已。</p>
+<p>那如果升级yarn会不会导致之前安装的全局包找不到了呢？为了验证，用homebrew升级yarn：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew upgrade yarn</span><br></pre></td></tr></table></figure>
+<p>输出：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Updating Homebrew...</span><br><span class="line">==&gt; Upgrading 1 outdated package, with result:</span><br><span class="line">yarn 0.27.5_1</span><br><span class="line">==&gt; Upgrading yarn </span><br><span class="line">==&gt; Downloading https://yarnpkg.com/downloads/0.27.5/yarn-v0.27.5.tar.gz</span><br><span class="line">Already downloaded: /Users/lixiao/Library/Caches/Homebrew/yarn-0.27.5.tar.gz</span><br><span class="line">🍺  /usr/<span class="built_in">local</span>/Cellar/yarn/0.27.5_1: 13 files, 3.6MB, built <span class="keyword">in</span> 1 second</span><br></pre></td></tr></table></figure>
+<p>查看homebrew存放yarn的文件夹：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ls /usr/local/Cellar/yarn </span><br><span class="line">0.27.5   0.27.5_1</span><br></pre></td></tr></table></figure>
+<p>发现新加了0.27.5_1文件夹，再查看yarn版本，发现链接已更新：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ll /usr/local/bin/yarn</span><br><span class="line">lrwxr-xr-x  1 lixiao  admin    32B  8 12 10:58 /usr/local/bin/yarn -&gt; ../Cellar/yarn/0.27.5_1/bin/yarn</span><br></pre></td></tr></table></figure>
+<p>那之前的全局包能用吗？放心，原来的包都还在呢！</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">which hexo</span><br><span class="line">/Users/lixiao/.yarn/bin/hexo</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/install-global-packages-using-yarn/" data-id="cjhn4hac2009uvqq3p39ludgq" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/use-zone-in-angular/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          angular手动触发视图更新
+        
+      </div>
+    </a>
+  
+  
+    <a href="/nodejs-command-line-arguments/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">nodejs 获取命令行参数</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

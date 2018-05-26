@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="sharp是node.js服务端非常强大的图片处理工具，在此记录一下它的部分API： metadata读取图片的metadata信息： 12const image = sharp(&apos;image/flower.jpg&apos;);image.metadata().then(metadata =&amp;gt; console.log(metadata))">
+<meta name="keywords" content="JavaScript">
+<meta property="og:type" content="article">
+<meta property="og:title" content="node.js图片处理工具sharp">
+<meta property="og:url" content="https://zju.date/using-sharp-on-node.js/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="sharp是node.js服务端非常强大的图片处理工具，在此记录一下它的部分API： metadata读取图片的metadata信息： 12const image = sharp(&apos;image/flower.jpg&apos;);image.metadata().then(metadata =&amp;gt; console.log(metadata))">
+<meta property="og:updated_time" content="2017-08-16T02:25:40.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="node.js图片处理工具sharp">
+<meta name="twitter:description" content="sharp是node.js服务端非常强大的图片处理工具，在此记录一下它的部分API： metadata读取图片的metadata信息： 12const image = sharp(&apos;image/flower.jpg&apos;);image.metadata().then(metadata =&amp;gt; console.log(metadata))">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-using-sharp-on-node.js" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/using-sharp-on-node.js/" class="article-date">
+  <time datetime="2017-05-14T03:35:35.000Z" itemprop="datePublished">2017-05-14</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      node.js图片处理工具sharp
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><a href="https://github.com/lovell/sharp" target="_blank" rel="noopener">sharp</a>是node.js服务端非常强大的图片处理工具，在此记录一下它的部分API：</p>
+<h2 id="metadata"><a href="#metadata" class="headerlink" title="metadata"></a>metadata</h2><p>读取图片的metadata信息：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> image = sharp(<span class="string">'image/flower.jpg'</span>);</span><br><span class="line">image.metadata().then(<span class="function"><span class="params">metadata</span> =&gt;</span> <span class="built_in">console</span>.log(metadata))</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<h2 id="clone"><a href="#clone" class="headerlink" title="clone"></a>clone</h2><p>对原始图片进行克隆，这样方便用pipeline输出多个处理结果：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> readableStream = fs.createReadStream(<span class="string">'image/computer.jpg'</span>);</span><br><span class="line"><span class="keyword">const</span> firstWritableStream = fs.createWriteStream(<span class="string">'image/write1.jpg'</span>)</span><br><span class="line"><span class="keyword">const</span> secondWritableStream = fs.createWriteStream(<span class="string">'image/write2.jpg'</span>)</span><br><span class="line"><span class="keyword">const</span> pipeline = sharp().rotate();</span><br><span class="line">pipeline.clone().resize(<span class="number">800</span>, <span class="number">600</span>).pipe(firstWritableStream);</span><br><span class="line">pipeline.clone().extract(&#123; <span class="attr">left</span>: <span class="number">20</span>, <span class="attr">top</span>: <span class="number">20</span>, <span class="attr">width</span>: <span class="number">100</span>, <span class="attr">height</span>: <span class="number">100</span> &#125;).pipe(secondWritableStream);</span><br><span class="line">readableStream.pipe(pipeline);</span><br></pre></td></tr></table></figure>
+<h2 id="rotate"><a href="#rotate" class="headerlink" title="rotate"></a>rotate</h2><p>图片根据exif中的orientation数值自动旋转：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> pipeline = sharp().rotate().jpeg()</span><br><span class="line"><span class="keyword">const</span> readableStream = fs.createReadStream(<span class="string">'image/origin.jpg'</span>);</span><br><span class="line"><span class="keyword">const</span> writableStream = fs.createWriteStream(<span class="string">'image/rotate.jpg'</span>)</span><br><span class="line">readableStream.pipe(pipeline).pipe(writableStream);</span><br></pre></td></tr></table></figure>
+<h2 id="resize"><a href="#resize" class="headerlink" title="resize"></a>resize</h2><p>拉伸或缩放图片至指定尺寸，这个API用到的最多了。宽高可以只填一个，这样就能安装原图宽高比例进行自适应了，例如：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sharp(<span class="string">'image/flower.jpg'</span>)</span><br><span class="line">  .resize(<span class="number">500</span>,<span class="literal">null</span>)</span><br><span class="line">  .background(&#123;<span class="attr">r</span>: <span class="number">0</span>, <span class="attr">g</span>: <span class="number">0</span>, <span class="attr">b</span>: <span class="number">0</span>, <span class="attr">alpha</span>: <span class="number">0</span>&#125;)</span><br><span class="line">  .toFile(<span class="string">'image/flower-resize.png'</span>)</span><br><span class="line">  .then(<span class="function"><span class="params">data</span> =&gt;</span> <span class="built_in">console</span>.log(data));</span><br></pre></td></tr></table></figure>
+<h2 id="max和min"><a href="#max和min" class="headerlink" title="max和min"></a>max和min</h2><p>max表示保留原始比例的前提下拉伸或缩放图片，且不超过指定尺寸。相反，min表示保留原始比例的前提下拉伸或缩放图片，且不少于指定尺寸。由于resize指定的尺寸比例不一定与图片原始比例相同，max完全嵌入resize尺寸的最大尺寸，min就是完全覆盖resize尺寸的最小尺寸。例如把一张图片拉伸或缩放图片，保持原始比例且min(width,height)=1024：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">sharp(<span class="string">'image/computer.jpg'</span>)</span><br><span class="line">  .resize(<span class="number">1024</span>, <span class="number">1024</span>)</span><br><span class="line">  .min()</span><br><span class="line">  .toFormat(<span class="string">'jpeg'</span>)</span><br><span class="line">  .toFile(<span class="string">'image/computer-min.jpg'</span>)</span><br><span class="line">  .then(<span class="function"><span class="params">data</span>=&gt;</span>log(data))</span><br><span class="line">  .catch(<span class="function"><span class="params">e</span>=&gt;</span>log(e))</span><br></pre></td></tr></table></figure>
+<h2 id="withoutEnlargement"><a href="#withoutEnlargement" class="headerlink" title="withoutEnlargement"></a>withoutEnlargement</h2><p>如果图片本身的宽或高比resize尺寸小的时候，禁止拉伸放大。这个非常有用，因为我们经常对那些大图片进行压缩处理，小图片可以保留原图。上面的代码最好在<code>.min()</code>的后面加一句：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.withoutEnlargement()</span><br></pre></td></tr></table></figure>
+<h2 id="ignoreAspectRatio"><a href="#ignoreAspectRatio" class="headerlink" title="ignoreAspectRatio"></a>ignoreAspectRatio</h2><p>忽略原始尺寸比例，拉伸图片完全充满resize尺寸。这个用到的不多。</p>
+<h2 id="overlayWith"><a href="#overlayWith" class="headerlink" title="overlayWith"></a>overlayWith</h2><p>在原图上附加图层进行合成，这个非常强大，例如制作一个圆形头像：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> roundedCorners = <span class="keyword">new</span> Buffer(</span><br><span class="line">  <span class="string">'&lt;svg&gt;&lt;rect x="0" y="0" width="200" height="200" rx="100" ry="100"/&gt;&lt;/svg&gt;'</span></span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> roundedCornerResizer = sharp()</span><br><span class="line">  .resize(<span class="number">200</span>, <span class="number">200</span>)</span><br><span class="line">  .overlayWith(roundedCorners, &#123;<span class="attr">cutout</span>: <span class="literal">true</span>&#125;)</span><br><span class="line">  .png();</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> readableStream = fs.createReadStream(<span class="string">'image/avatar.png'</span>);</span><br><span class="line"><span class="keyword">const</span> writableStream = fs.createWriteStream(<span class="string">'image/avatar-rounded.png'</span>)</span><br><span class="line"></span><br><span class="line">readableStream.pipe(roundedCornerResizer).pipe(writableStream);</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/using-sharp-on-node.js/" data-id="cjhn4haib00j8vqq3a1dx2g78" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/git-cherry-pick/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          将分支 A 上的某些 commit 提交到分支 B
+        
+      </div>
+    </a>
+  
+  
+    <a href="/browserify-notes/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">browserify使用简介</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

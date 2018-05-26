@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="在同一个项目中使用 pm2 与 node-config 的时候发现它们之间冲突。原因是pm2启动的时候会开多个线程（process），每个线程都配置了一个环境变量，名字叫NODE_APP_INSTANCE，值从0开始，如果有8个线程，就是0-7，这样做的好处是可以动态监听端口： 1server.listen(8000 + process.env.NODE_APP_INSTANCE) 但问题来了，n">
+<meta name="keywords" content="JavaScript">
+<meta property="og:type" content="article">
+<meta property="og:title" content="pm2与node-config冲突原因">
+<meta property="og:url" content="https://zju.date/pm2-conflict-vs-node-config/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="在同一个项目中使用 pm2 与 node-config 的时候发现它们之间冲突。原因是pm2启动的时候会开多个线程（process），每个线程都配置了一个环境变量，名字叫NODE_APP_INSTANCE，值从0开始，如果有8个线程，就是0-7，这样做的好处是可以动态监听端口： 1server.listen(8000 + process.env.NODE_APP_INSTANCE) 但问题来了，n">
+<meta property="og:updated_time" content="2017-09-05T13:53:10.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="pm2与node-config冲突原因">
+<meta name="twitter:description" content="在同一个项目中使用 pm2 与 node-config 的时候发现它们之间冲突。原因是pm2启动的时候会开多个线程（process），每个线程都配置了一个环境变量，名字叫NODE_APP_INSTANCE，值从0开始，如果有8个线程，就是0-7，这样做的好处是可以动态监听端口： 1server.listen(8000 + process.env.NODE_APP_INSTANCE) 但问题来了，n">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-pm2-conflict-vs-node-config" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/pm2-conflict-vs-node-config/" class="article-date">
+  <time datetime="2017-05-13T02:06:07.000Z" itemprop="datePublished">2017-05-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      pm2与node-config冲突原因
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在同一个项目中使用 <code>pm2</code> 与 <code>node-config</code> 的时候发现它们之间冲突。原因是pm2启动的时候会开多个线程（process），每个线程都配置了一个环境变量，名字叫NODE_APP_INSTANCE，值从0开始，如果有8个线程，就是0-7，这样做的好处是可以动态监听端口：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">server.listen(<span class="number">8000</span> + process.env.NODE_APP_INSTANCE)</span><br></pre></td></tr></table></figure>
+<p>但问题来了，<code>node-config</code> 会根据当前线程的环境变量去 <code>config</code> 文件夹下面寻找对应的 json 文件，因为：</p>
+<ul>
+<li>如果设置了 <code>NODE_ENV = development</code> 就去找 <code>development.json</code> 或者 <code>dev.json</code></li>
+<li>如果设置了 <code>NODE_ENV = production</code> 就去找 <code>production.json</code> 或者 <code>prod.json</code></li>
+<li>如果 <code>NODE_ENV</code> 是 <code>undefined</code> 就会去找 <code>config/development.json</code>，然后是 <code>config/dev.json</code>，最后是<code>default.json</code></li>
+<li><p>如果指定一个具体的名称，例如 <code>NODE_ENV=apple</code>，那么就会去找 <code>config/apple.json</code>，如果找不到就会给下面的提示：</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">WARNING: NODE_ENV value of <span class="string">'asf'</span> did not match any deployment config file names.</span><br><span class="line">WARNING: See https://github.com/lorenwest/node-config/wiki/Strict-Mode</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>所以冲突的原因是<code>node-config</code>和<code>pm2</code>都用了 <code>NODE_APP_INSTANCE</code> 这个环境变量名但是并没有对应的json文件。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/pm2-conflict-vs-node-config/" data-id="cjhn4hafv00fivqq3k9kdtjlz" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/publish-your-own-npm-package/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          发布自己npm包
+        
+      </div>
+    </a>
+  
+  
+    <a href="/linux-du/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">du 的使用</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

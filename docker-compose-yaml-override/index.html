@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="docker-compose.override.yaml 文件可以覆盖 docker-compose.yaml，详细规则如下：  build 和 image 是互斥的，以覆盖文件为准。  单值的选项，例如 image, command 和 mem_limit, 以覆盖文件为准。  12345678# original servicecommand: python app.py# local ser">
+<meta name="keywords" content="Docker">
+<meta property="og:type" content="article">
+<meta property="og:title" content="docker compose 覆盖">
+<meta property="og:url" content="https://zju.date/docker-compose-yaml-override/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="docker-compose.override.yaml 文件可以覆盖 docker-compose.yaml，详细规则如下：  build 和 image 是互斥的，以覆盖文件为准。  单值的选项，例如 image, command 和 mem_limit, 以覆盖文件为准。  12345678# original servicecommand: python app.py# local ser">
+<meta property="og:updated_time" content="2018-03-20T05:31:18.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="docker compose 覆盖">
+<meta name="twitter:description" content="docker-compose.override.yaml 文件可以覆盖 docker-compose.yaml，详细规则如下：  build 和 image 是互斥的，以覆盖文件为准。  单值的选项，例如 image, command 和 mem_limit, 以覆盖文件为准。  12345678# original servicecommand: python app.py# local ser">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-docker-compose-yaml-override" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/docker-compose-yaml-override/" class="article-date">
+  <time datetime="2018-01-11T14:37:07.000Z" itemprop="datePublished">2018-01-11</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      docker compose 覆盖
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><code>docker-compose.override.yaml</code> 文件可以覆盖 <code>docker-compose.yaml</code>，详细规则如下：</p>
+<ol>
+<li><p><code>build</code> 和 <code>image</code> 是互斥的，以覆盖文件为准。</p>
+</li>
+<li><p>单值的选项，例如 <code>image</code>, <code>command</code> 和 <code>mem_limit</code>, 以覆盖文件为准。</p>
+ <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># original service</span></span><br><span class="line"><span class="attr">command:</span> <span class="string">python</span> <span class="string">app.py</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># local service</span></span><br><span class="line"><span class="attr">command:</span> <span class="string">python</span> <span class="string">otherapp.py</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># result</span></span><br><span class="line"><span class="attr">command:</span> <span class="string">python</span> <span class="string">otherapp.py</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>多值的选项，例如： <code>ports</code>, <code>expose</code>, <code>external_links</code>, <code>dns</code>, <code>dns_search</code>, 和 <code>tmpfs</code>, 会将值合并。</p>
+ <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># original service</span></span><br><span class="line"><span class="attr">expose:</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">"3000"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># local service</span></span><br><span class="line"><span class="attr">expose:</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">"4000"</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">"5000"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># result</span></span><br><span class="line"><span class="attr">expose:</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">"3000"</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">"4000"</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">"5000"</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>有键值对的 <code>environment</code>, <code>labels</code>, <code>volumes</code> and <code>devices</code>, 也会合并，但是当键相同的时候以覆盖文件为准。</p>
+ <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># original service</span></span><br><span class="line"><span class="attr">environment:</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">FOO=original</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">BAR=original</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># local service</span></span><br><span class="line"><span class="attr">environment:</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">BAR=local</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">BAZ=local</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># result</span></span><br><span class="line"><span class="attr">environment:</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">FOO=original</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">BAR=local</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">BAZ=local</span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/docker-compose-yaml-override/" data-id="cjhn4ha95005vvqq33artgg38" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/">Docker</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/js-comma/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          js 中的逗号
+        
+      </div>
+    </a>
+  
+  
+    <a href="/docker-compose-env/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">docker-compose 环境变量</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

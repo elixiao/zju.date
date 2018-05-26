@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="网页上有些图片的src或css背景图片的url后面跟了一大串字符，比如： 1data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAMAAABiM0N1AAAAn1BMVEVHcEz/3Wf/3WeBudb/3GfJzp3/3Wf/3Wf/3mf/3Wf/3Wf/3WfHzZplse9lse//3mdlsu//3mhlse//3mf/3Wfa">
+<meta name="keywords" content="JavaScript">
+<meta property="og:type" content="article">
+<meta property="og:title" content="node.js图片与base64编码转换">
+<meta property="og:url" content="https://zju.date/base64-image-convert/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="网页上有些图片的src或css背景图片的url后面跟了一大串字符，比如： 1data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAMAAABiM0N1AAAAn1BMVEVHcEz/3Wf/3WeBudb/3GfJzp3/3Wf/3Wf/3mf/3Wf/3Wf/3WfHzZplse9lse//3mdlsu//3mhlse//3mf/3Wfa">
+<meta property="og:updated_time" content="2017-08-16T02:25:40.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="node.js图片与base64编码转换">
+<meta name="twitter:description" content="网页上有些图片的src或css背景图片的url后面跟了一大串字符，比如： 1data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAMAAABiM0N1AAAAn1BMVEVHcEz/3Wf/3WeBudb/3GfJzp3/3Wf/3Wf/3mf/3Wf/3Wf/3WfHzZplse9lse//3mdlsu//3mhlse//3mf/3Wfa">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-base64-image-convert" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/base64-image-convert/" class="article-date">
+  <time datetime="2017-02-18T07:37:20.000Z" itemprop="datePublished">2017-02-18</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      node.js图片与base64编码转换
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>网页上有些图片的src或css背景图片的url后面跟了一大串字符，比如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAMAAABiM0N1AAAAn1BMVEVHcEz/3Wf/3WeBudb/3GfJzp3/3Wf/3Wf/3mf/3Wf/3Wf/3WfHzZplse9lse//3mdlsu//3mhlse//3mf/3Wfa04n/3mfEzKFmTif/3Wdlse////9ONiaPdDitoYzMrlL/cX/x0GGni0JvVC6XwMO3mkjy2XN9ZDHcvFjbZmy0XlVtc2izyKubfz3e1IVlo9RokKmi0PWVU0Xc7vtuRTQ7m22qAAAAGHRSTlMASrr9GQmg6Gg0rcj6tp+QSHx5hY3LmGJr+7+vAAAC+0lEQVRYw9WYa3eiMBCGq4Cg4KW1PQcobBYERBTb2v7/37YYbplJCEjt7tn3Q3tkMg+TmSQkeXj4v6ROjPVsMZ0uZmtjoo6FGDPdAdJnxs0wbTJ1hFpMtFswhu50Sn8cjJJhKMoYhJmbTq/MeT/n0RmkdU//VNMZKFNawLnuDJY+vw9HRpo7N2p+j3i6Y1Jv5hQkUcZNZ4RMnrN1Rmn77UR3JdwcC0KdM5zRAjNY08eDdO32mdob0ncCAiFNOGNKUqFTQASGSQPC6zPZ27a9i3lMWDy39wSv483kQAbavJAfIM6+MuBXqOLa15zi3YGQw5HqdM9gv+xWIWvwGQNM1KwCgZoFO1vswL7A3sO6iVIU2h0O4AWocypf/IC6x4SQmHalqVB8LaR/NYS0poIBAHJdtPfr/gR58aM2FN5hwAwPwmd7DTMawsQ3ke7YBOd2zno980UL4GhLG28CBxX8WZZtIZgKSffUEpkWgglyPkWK6566QSfXVaLTGTybIlBiRW4pOYgqshIEqrt2rimFrG6Q1baKzqBrZbITBuO6R79TR7ZdlDDJXrMBV4LDGGgHW57a8l8HZASt7i+JUNOoGZDFFFGQ8eNVog/UWKmniMrFcxuoiKla2SxscT9loE+uuVWtRwpneZWKa66UnA1neLeleuccNhT0xD0/ykFHzuGJglb48Rvr5Xle9afVG/ZYUdBSFpBXgzxZSCthRG+I4zX/OkNaCZN97AB53SGVyda6S9b445BQ4aptBCibQoaAiMIXDaZbSeiHB+aaA8VOwpCW7f5oBdaXEIXk4RSFYP1asVu2zbJcPfHX9uuSHaiyyxfeEVg0qOUGHz9fzu0aTOjCtssOvxkdsvJp+8FKzi9azxHi+pEVg8CmSXiEQIeaNKevv2TXvmVZdqHh5OmQgxba/QexDyerHweDjlmCg1aQkjDMfT8PQ5IGP3SE1KUnbXU6lDPtud3QBh4Ctn/vAuF+Vxp3vGSh1z6Le1z73PEiirsaex5/Nfav9AcXnmyUW4IorQAAAABJRU5ErkJggg==</span><br></pre></td></tr></table></figure>
+<p>那么这是什么呢？这是Data URI scheme。Data URI scheme是在RFC2397中定义的，目的是将一些小的数据，直接嵌入到网页中，从而不用再从外部文件载入。比如上面那串字符，其实是一张表情图片，将这些字符复制黏贴到浏览器的地址栏中就能看到了。</p>
+<p>在上面的Data URI中，data表示取得数据的协定名称，image/png 是数据类型名称，base64 是数据的编码方法，逗号后面就是这个image/png文件base64编码后的数据。目前，Data URI scheme支持的类型有：</p>
+<a id="more"></a>
+<blockquote>
+<p>data:,文本数据<br>data:text/plain,文本数据<br>data:text/html,HTML代码<br>data:text/html;base64,base64编码的HTML代码<br>data:text/css,CSS代码<br>data:text/css;base64,base64编码的CSS代码<br>data:text/javascript,Javascript代码<br>data:text/javascript;base64,base64编码的Javascript代码<br>data:image/gif;base64,base64编码的gif图片数据<br>data:image/png;base64,base64编码的png图片数据<br>data:image/jpeg;base64,base64编码的jpeg图片数据<br>data:image/x-icon;base64,base64编码的icon图片数据</p>
+</blockquote>
+<p>　　</p>
+<h2 id="图片与base64编码转换"><a href="#图片与base64编码转换" class="headerlink" title="图片与base64编码转换"></a>图片与base64编码转换</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> fs = <span class="built_in">require</span>(<span class="string">'fs'</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 把图片转换为base64编码</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">base64_encode</span>(<span class="params">file</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> bitmap = fs.readFileSync(file);</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> Buffer(bitmap).toString(<span class="string">'base64'</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 将base64编码转换为图片</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">base64_decode</span>(<span class="params">base64str, file</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> bitmap = <span class="keyword">new</span> Buffer(base64str, <span class="string">'base64'</span>);</span><br><span class="line">    fs.writeFileSync(file, bitmap);</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'******** 编码已转换为图片 ********'</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> base64str = base64_encode(<span class="string">'angular.png'</span>);</span><br><span class="line"><span class="built_in">console</span>.log(base64str);</span><br><span class="line">base64_decode(base64str, <span class="string">'copy.jpg'</span>);</span><br></pre></td></tr></table></figure>
+<!--more-->
+<h2 id="普通字符串编码解码转换"><a href="#普通字符串编码解码转换" class="headerlink" title="普通字符串编码解码转换"></a>普通字符串编码解码转换</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> b1 = <span class="keyword">new</span> Buffer(<span class="string">'JavaScript'</span>);</span><br><span class="line"><span class="keyword">var</span> s1 = b.toString(<span class="string">'base64'</span>);</span><br><span class="line"><span class="built_in">console</span>.log(s1); <span class="comment">// SmF2YVNjcmlwdA==</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> b2 = <span class="keyword">new</span> Buffer(<span class="string">'SmF2YVNjcmlwdA=='</span>, <span class="string">'base64'</span>)</span><br><span class="line"><span class="keyword">var</span> s2 = b.toString();</span><br><span class="line"><span class="built_in">console</span>.log(s2); <span class="comment">// JavaScript</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> b3 = <span class="keyword">new</span> Buffer(<span class="string">'SmF2YVNjcmlwdA=='</span>, <span class="string">'base64'</span>)</span><br><span class="line"><span class="keyword">var</span> s3 = b.toString(<span class="string">'hex'</span>);</span><br><span class="line"><span class="built_in">console</span>.log(s3); <span class="comment">// 4a617661536372697074</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> b4 = <span class="keyword">new</span> Buffer(<span class="string">'4a617661536372697074'</span>, <span class="string">'hex'</span>)</span><br><span class="line"><span class="keyword">var</span> s4 = b.toString(<span class="string">'utf8'</span>);</span><br><span class="line"><span class="built_in">console</span>.log(s4); <span class="comment">// JavaScript</span></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/base64-image-convert/" data-id="cjhn4ha83003xvqq3llwuveun" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/typescript-cannot-find-name-require/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Cannot find name &#39;require&#39;
+        
+      </div>
+    </a>
+  
+  
+    <a href="/docker-container-hosts-mapping/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">修改 docker 容器内 host 映射</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

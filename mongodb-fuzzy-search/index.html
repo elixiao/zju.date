@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="mongoose 如何实现类似于SQL中 nick LIKE ‘%keyword%’ or email LIKE ‘%keyword%’ 这种多条件模糊搜索的问题。 用到了 query.$or 和 query.$regex 这两个 find 参数。其中 query.$or 用于实现多条件查询，其值是一个数组。示例代码： 1query.or([&amp;#123; color: &apos;red&apos; &amp;#125;,">
+<meta name="keywords" content="Database">
+<meta property="og:type" content="article">
+<meta property="og:title" content="mongodb模糊查询">
+<meta property="og:url" content="https://zju.date/mongodb-fuzzy-search/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="mongoose 如何实现类似于SQL中 nick LIKE ‘%keyword%’ or email LIKE ‘%keyword%’ 这种多条件模糊搜索的问题。 用到了 query.$or 和 query.$regex 这两个 find 参数。其中 query.$or 用于实现多条件查询，其值是一个数组。示例代码： 1query.or([&amp;#123; color: &apos;red&apos; &amp;#125;,">
+<meta property="og:updated_time" content="2017-12-30T15:38:22.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="mongodb模糊查询">
+<meta name="twitter:description" content="mongoose 如何实现类似于SQL中 nick LIKE ‘%keyword%’ or email LIKE ‘%keyword%’ 这种多条件模糊搜索的问题。 用到了 query.$or 和 query.$regex 这两个 find 参数。其中 query.$or 用于实现多条件查询，其值是一个数组。示例代码： 1query.or([&amp;#123; color: &apos;red&apos; &amp;#125;,">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-mongodb-fuzzy-search" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/mongodb-fuzzy-search/" class="article-date">
+  <time datetime="2017-05-07T05:32:07.000Z" itemprop="datePublished">2017-05-07</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      mongodb模糊查询
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>mongoose 如何实现类似于SQL中 nick LIKE ‘%keyword%’ or email LIKE ‘%keyword%’ 这种多条件模糊搜索的问题。 用到了 query.$or 和 query.$regex 这两个 find 参数。其中 query.$or 用于实现多条件查询，其值是一个数组。示例代码：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">query.or([&#123; <span class="attr">color</span>: <span class="string">'red'</span> &#125;, &#123; <span class="attr">status</span>: <span class="string">'emergency'</span> &#125;])</span><br></pre></td></tr></table></figure>
+<p>query.$regex用于实现模糊查询。示例代码:</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&#123; &lt;field&gt;: &#123; <span class="attr">$regex</span>: <span class="regexp">/pattern/</span>, <span class="attr">$options</span>: <span class="string">'&lt;options&gt;'</span> &#125; &#125;</span><br><span class="line">&#123; &lt;field&gt;: <span class="regexp">/pattern/</span><span class="xml"><span class="tag">&lt;<span class="name">options</span>&gt;</span> &#125;</span></span><br></pre></td></tr></table></figure>
+<p>通过以上两个参数就可以实现多条件模糊查询了。以User表为例,通过输入一个关键字,来匹配昵称或者邮箱与关键字相近的记录。示例代码:</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> keyword = <span class="keyword">this</span>.params.keyword <span class="comment">//从URL中传来的 keyword参数</span></span><br><span class="line"><span class="keyword">const</span> reg = <span class="keyword">new</span> <span class="built_in">RegExp</span>(keyword, <span class="string">'i'</span>) <span class="comment">//不区分大小写</span></span><br><span class="line"><span class="keyword">const</span> result = <span class="keyword">yield</span> User.find(</span><br><span class="line">    &#123;</span><br><span class="line">        $or : [ <span class="comment">//多条件，数组</span></span><br><span class="line">            &#123;<span class="attr">nick</span> : &#123;<span class="attr">$regex</span> : reg&#125;&#125;,</span><br><span class="line">            &#123;<span class="attr">email</span> : &#123;<span class="attr">$regex</span> : reg&#125;&#125;</span><br><span class="line">        ]</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">        password : <span class="number">0</span></span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">        sort : &#123; <span class="attr">_id</span> : <span class="number">-1</span> &#125;,</span><br><span class="line">        limit : <span class="number">100</span></span><br><span class="line">    &#125;</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/mongodb-fuzzy-search/" data-id="cjhn4hael00dovqq3qei2djaf" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/package.json-notes/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          package.json中包的版本语法
+        
+      </div>
+    </a>
+  
+  
+    <a href="/mac-clear-dns/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Mac 清除 DNS 缓存</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

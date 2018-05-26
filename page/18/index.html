@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta property="og:type" content="website">
+<meta property="og:title" content=".">
+<meta property="og:url" content="https://zju.date/page/18/index.html">
+<meta property="og:site_name" content=".">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content=".">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main">
+  
+    <article id="post-mongoose-findByIdAndUpdate" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/mongoose-findByIdAndUpdate/" class="article-date">
+  <time datetime="2017-05-06T03:25:07.000Z" itemprop="datePublished">2017-05-06</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/mongoose-findByIdAndUpdate/">mongoose findByIdAndUpdate 返回新数据</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Mongoose 中 <code>Model.findByIdAndUpdate</code> 操作对象之后，虽然数据库变了，但返回的不是更改之后的值，而是之前的值。如果想让返回结果是新值的话，可以用下面的语法：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Model.findByIdAndUpdate(id, updateObj, &#123;<span class="attr">new</span>: <span class="literal">true</span>&#125;, <span class="function"><span class="keyword">function</span>(<span class="params">err, model</span>) </span>&#123;&#125;)</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/mongoose-findByIdAndUpdate/" data-id="cjhn4haex00e6vqq3e7qwybg7" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-feathersjs-notes" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/feathersjs-notes/" class="article-date">
+  <time datetime="2017-05-05T05:31:20.000Z" itemprop="datePublished">2017-05-05</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/feathersjs-notes/">feathersjs学习笔记</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>feathersjs是基于express的轻量级node.js框架，借助websocket提供实时通信功能，是面向切片编程（AOP：Aspect Oriented Programming）思想的一种实现。</p>
+<p>在feathersjs中，最核心的概念就是service和hook，hook就是小的中间件函数，能够在应用在service方法的前后。hook和协议无关，无论是http还是websocket都支持，同时hooks和service也没有绑定关系，可以应用于任何service。</p>
+<h2 id="Service"><a href="#Service" class="headerlink" title="Service"></a>Service</h2><p>Service提供了如下方法：</p>
+<ul>
+<li>find</li>
+<li>get</li>
+<li>create</li>
+<li>update</li>
+<li>patch</li>
+<li>remove</li>
+<li>setup</li>
+</ul>
+<p>Service可以作为express中间件，例如：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> messageService = &#123;</span><br><span class="line">  find(params [, callback]) &#123;&#125;, <span class="comment">// GET /messages 获取资源列表</span></span><br><span class="line">  get(id, params [, callback]) &#123;&#125;, <span class="comment">// GET /messages/&lt;id&gt; 获取指定id资源</span></span><br><span class="line">  create(data, params [, callback]) &#123;&#125;, <span class="comment">// POST /messages 创建新资源</span></span><br><span class="line">  update(id, data, params [, callback]) &#123;&#125;, <span class="comment">// PUT /messages[/&lt;id&gt;] 更新指定id资源</span></span><br><span class="line">  patch(id, data, params [, callback]) &#123;&#125;, <span class="comment">// PATCH /messages[/&lt;id&gt;] 为指定id资源增删数据</span></span><br><span class="line">  remove(id, params [, callback]) &#123;&#125;, <span class="comment">// DELETE /messages[/&lt;id&gt;] 删除指定id资源</span></span><br><span class="line">  setup(app, path) &#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">app.use(<span class="string">'/messages'</span>, messageService);</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/feathersjs-notes/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/feathersjs-notes/" data-id="cjhn4haa2007avqq3jgdrwc8m" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-typescript-cannot-call-a-namespace" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/typescript-cannot-call-a-namespace/" class="article-date">
+  <time datetime="2017-04-30T07:45:07.000Z" itemprop="datePublished">2017-04-30</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/typescript-cannot-call-a-namespace/">cannot call a namespace</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>使用下面的方式引用moment日期处理包：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> moment <span class="keyword">from</span> <span class="string">'moment'</span></span><br></pre></td></tr></table></figure>
+<p><code>ng serve</code> 编译报错：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">node_modules/moment/moment&quot;&apos; has no default export</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/typescript-cannot-call-a-namespace/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/typescript-cannot-call-a-namespace/" data-id="cjhn4haho00i8vqq3h8l7j4rn" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-javascript-task" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/javascript-task/" class="article-date">
+  <time datetime="2017-04-30T02:45:07.000Z" itemprop="datePublished">2017-04-30</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/javascript-task/">JavaScript中的任务</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>题目1：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">setImmediate(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="number">1</span>)</span><br><span class="line">&#125;, <span class="number">0</span>)</span><br><span class="line">setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="number">2</span>)</span><br><span class="line">&#125;, <span class="number">0</span>)</span><br><span class="line"><span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="params">resolve</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="number">3</span>)</span><br><span class="line">    resolve()</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="number">4</span>)</span><br><span class="line">&#125;).then(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="number">5</span>)</span><br><span class="line">&#125;)</span><br><span class="line"><span class="built_in">console</span>.log(<span class="number">6</span>)</span><br><span class="line">process.nextTick(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="number">7</span>)</span><br><span class="line">&#125;)</span><br><span class="line"><span class="built_in">console</span>.log(<span class="number">8</span>)</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/javascript-task/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/javascript-task/" data-id="cjhn4hacu00ayvqq37ug1ik7e" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-using-brew-on-mac" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/using-brew-on-mac/" class="article-date">
+  <time datetime="2017-04-26T06:08:25.000Z" itemprop="datePublished">2017-04-26</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/using-brew-on-mac/">Mac上包管理工具brew的使用</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <h2 id="查看已安装的包"><a href="#查看已安装的包" class="headerlink" title="查看已安装的包"></a>查看已安装的包</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew list</span><br></pre></td></tr></table></figure>
+<p>输出：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">autoconf	gd		git-flow-avh	httpie ...</span><br></pre></td></tr></table></figure>
+<h2 id="查看可更新的包"><a href="#查看可更新的包" class="headerlink" title="查看可更新的包"></a>查看可更新的包</h2><p>用 <code>brew outdated</code> 查看可以更新的包。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew outdated</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/using-brew-on-mac/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/using-brew-on-mac/" data-id="cjhn4hai900j4vqq3uektvv4r" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Mac/">Mac</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-feathers-search" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/feathers-search/" class="article-date">
+  <time datetime="2017-04-11T01:06:07.000Z" itemprop="datePublished">2017-04-11</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/feathers-search/">Feathersjs 客户端查询参数</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <ol>
+<li><p>指定数量（<code>$limit</code>）</p>
+<p> 查询列表时使用，用于指定服务器一次性返回的数量。</p>
+<p> 【案例】一次返回10条数据：</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://xxx.com/books?<span class="variable">$limit</span>=10</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<ol>
+<li><p>起始位置（<code>$skip</code>）</p>
+<p> 查询列表时使用，用于指定服务器忽略前面多少条数据。</p>
+<p> 【案例】忽略前面10条数据：</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://xxx.com/books?<span class="variable">$limit</span>=10&amp;<span class="variable">$skip</span>=10</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/feathers-search/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/feathers-search/" data-id="cjhn4ha9w0070vqq3dpoj3hai" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-self-referencing-literal" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/self-referencing-literal/" class="article-date">
+  <time datetime="2017-04-05T02:00:00.000Z" itemprop="datePublished">2017-04-05</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/self-referencing-literal/">JavaScript对象引用自身属性</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> obj = &#123;</span><br><span class="line">    a: <span class="number">18</span>,</span><br><span class="line">    b: <span class="string">'my age is '</span>,</span><br><span class="line">    c: <span class="keyword">this</span>.b + <span class="keyword">this</span>.a</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">console</span>.log(obj.c)</span><br></pre></td></tr></table></figure>
+<p>希望输出 <code>my age is 18</code> 但是实际上输出 <code>NaN</code>，为什么呢？因为 <code>this</code> 指代的是全局，那怎样得到想要的结果呢？用下面的方法：</p>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/self-referencing-literal/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/self-referencing-literal/" data-id="cjhn4hagv00gyvqq3fpwjutcc" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-js-collection-operation" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/js-collection-operation/" class="article-date">
+  <time datetime="2017-04-05T01:06:07.000Z" itemprop="datePublished">2017-04-05</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/js-collection-operation/">js集合运算</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>js小工具用于处理集合的并集、交集和差集：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> utils = &#123;</span><br><span class="line">  union: <span class="function">(<span class="params">a, b</span>) =&gt;</span> [...new <span class="built_in">Set</span>(a), ...new <span class="built_in">Set</span>(b)],</span><br><span class="line">  intersection: <span class="function">(<span class="params">a, b</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> sa = <span class="keyword">new</span> <span class="built_in">Set</span>(a),</span><br><span class="line">      sb = <span class="keyword">new</span> <span class="built_in">Set</span>(b)</span><br><span class="line">    <span class="keyword">return</span> [...sa].filter(<span class="function"><span class="params">x</span> =&gt;</span> sb.has(x))</span><br><span class="line">  &#125;,</span><br><span class="line">  difference: <span class="function">(<span class="params">a, b</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> sa = <span class="keyword">new</span> <span class="built_in">Set</span>(a),</span><br><span class="line">      sb = <span class="keyword">new</span> <span class="built_in">Set</span>(b)</span><br><span class="line">    <span class="keyword">return</span> [...sa].filter(<span class="function"><span class="params">x</span> =&gt;</span> !sb.has(x))</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/js-collection-operation/" data-id="cjhn4had200bcvqq3h7t1jfhw" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-feathers-client" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/feathers-client/" class="article-date">
+  <time datetime="2017-03-30T03:18:29.000Z" itemprop="datePublished">2017-03-30</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/feathers-client/">feathers client 用法</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="class"><span class="keyword">class</span> <span class="title">AppComponent</span> </span>&#123;</span><br><span class="line">    private messageService: any</span><br><span class="line"></span><br><span class="line">    <span class="keyword">constructor</span>(private feathers: Feathers) &#123;</span><br><span class="line">        feathers.login(<span class="string">'tem8@qq.com'</span>, <span class="string">'lixiao520'</span>)</span><br><span class="line">        <span class="keyword">this</span>.messageService = feathers.service(<span class="string">'messages'</span>)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ngOnInit() &#123;</span><br><span class="line">        <span class="keyword">this</span>.messageService.listen(<span class="string">'created'</span>, <span class="keyword">this</span>.onCreated)</span><br><span class="line">        <span class="keyword">this</span>.messageService.listen(<span class="string">'patched'</span>, <span class="keyword">this</span>.onPatched)</span><br><span class="line">        <span class="keyword">this</span>.messageService.listen(<span class="string">'removed'</span>, <span class="keyword">this</span>.onRemoved)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// GET /messages/&lt;id&gt;</span></span><br><span class="line">    getMessage() &#123;</span><br><span class="line">        <span class="comment">// get(id, params ) &#123;&#125;,</span></span><br><span class="line">        <span class="keyword">this</span>.messageService.get(<span class="number">1</span>,&#123;&#125;)</span><br><span class="line">            .then(<span class="function"><span class="params">message</span> =&gt;</span> &#123;&#125;)</span><br><span class="line">            .catch(<span class="function"><span class="params">e</span> =&gt;</span> &#123;&#125;)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// GET /messages</span></span><br><span class="line">    findMessage() &#123;</span><br><span class="line">        <span class="comment">// find(params) &#123;&#125;,</span></span><br><span class="line">        <span class="keyword">this</span>.messageService.find()</span><br><span class="line">            .then(<span class="function"><span class="params">page</span> =&gt;</span> &#123;&#125;)</span><br><span class="line">            .catch(<span class="function"><span class="params">e</span> =&gt;</span> &#123;&#125;)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// POST /messages</span></span><br><span class="line">    createMessage() &#123;</span><br><span class="line">        <span class="comment">// create(data, params ) &#123;&#125;</span></span><br><span class="line">        <span class="keyword">this</span>.messageService.create(&#123;<span class="attr">name</span>:<span class="string">'中国移动'</span>&#125;,&#123;&#125;)</span><br><span class="line">            .then(<span class="function"><span class="params">message</span> =&gt;</span> &#123;&#125;)</span><br><span class="line">            .catch(<span class="function"><span class="params">e</span> =&gt;</span> &#123;&#125;)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// PATCH /messages[/&lt;id&gt;]</span></span><br><span class="line">    patchMessage() &#123;</span><br><span class="line">        <span class="comment">// patch(id, data, params ) &#123;&#125;,</span></span><br><span class="line">        <span class="keyword">this</span>.messageService.patch(<span class="number">1</span>,&#123;<span class="attr">name</span>:<span class="string">'中国联通'</span>&#125;,&#123;&#125;)</span><br><span class="line">            .then(<span class="function"><span class="params">message</span> =&gt;</span> &#123;&#125;)</span><br><span class="line">            .catch(<span class="function"><span class="params">e</span> =&gt;</span> &#123;&#125;)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// DELETE /messages/&lt;id&gt;</span></span><br><span class="line">    removeMessage() &#123;</span><br><span class="line">        <span class="comment">// remove(id, params ) &#123;&#125;,</span></span><br><span class="line">        <span class="keyword">this</span>.messageService.remove(<span class="number">1</span>,&#123;&#125;)</span><br><span class="line">            .then(<span class="function"><span class="params">mesage</span> =&gt;</span> &#123;&#125;)</span><br><span class="line">            .catch(<span class="function"><span class="params">e</span>=&gt;</span>&#123;&#125;)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 创建异步回调</span></span><br><span class="line">    onCreated(message: any) &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">'监听到创建消息！'</span>, message)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 更新异步回调</span></span><br><span class="line">    onPatched(message: any) &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">'监听到更新消息！'</span>, message)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 删除异步回调</span></span><br><span class="line">    onRemoved(message: any) &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">'监听到删除消息！'</span>, message)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/feathers-client/" data-id="cjhn4ha9v006yvqq3f3rn8xbg" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-json-stringify" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/json-stringify/" class="article-date">
+  <time datetime="2017-03-30T02:02:07.000Z" itemprop="datePublished">2017-03-30</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/json-stringify/">JSON.stringify详解</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p><code>JSON.stringify</code> 有三个参数：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">JSON</span>.stringify(value, replacer, space)</span><br></pre></td></tr></table></figure>
+<p>第一个参数 <code>value</code> 就是需要被序列化的对象。后面两个参数是可选的，<code>replacer</code>可以是函数、数组或null：</p>
+<ul>
+<li>如果是一个函数，则在序列化过程中，被序列化的值的每个属性都会经过该函数的转换和处理；</li>
+<li>如果是一个数组，则只有包含在这个数组中的属性名才会被序列化到最终的 JSON 字符串中；</li>
+<li>如果该参数为null或者未提供，则对象所有的属性都会被序列化；</li>
+</ul>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/json-stringify/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/json-stringify/" data-id="cjhn4hadd00bwvqq3sw3mimte" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+
+
+  <nav id="page-nav">
+    <a class="extend prev" rel="prev" href="/page/17/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/16/">16</a><a class="page-number" href="/page/17/">17</a><span class="page-number current">18</span><a class="page-number" href="/page/19/">19</a><a class="page-number" href="/page/20/">20</a><span class="space">&hellip;</span><a class="page-number" href="/page/36/">36</a><a class="extend next" rel="next" href="/page/19/">Next &raquo;</a>
+  </nav>
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

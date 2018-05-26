@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="feathersjs是基于express的轻量级node.js框架，借助websocket提供实时通信功能，是面向切片编程（AOP：Aspect Oriented Programming）思想的一种实现。 在feathersjs中，最核心的概念就是service和hook，hook就是小的中间件函数，能够在应用在service方法的前后。hook和协议无关，无论是http还是websocket都支">
+<meta name="keywords" content="JavaScript">
+<meta property="og:type" content="article">
+<meta property="og:title" content="feathersjs学习笔记">
+<meta property="og:url" content="https://zju.date/feathersjs-notes/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="feathersjs是基于express的轻量级node.js框架，借助websocket提供实时通信功能，是面向切片编程（AOP：Aspect Oriented Programming）思想的一种实现。 在feathersjs中，最核心的概念就是service和hook，hook就是小的中间件函数，能够在应用在service方法的前后。hook和协议无关，无论是http还是websocket都支">
+<meta property="og:updated_time" content="2017-09-05T01:52:22.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="feathersjs学习笔记">
+<meta name="twitter:description" content="feathersjs是基于express的轻量级node.js框架，借助websocket提供实时通信功能，是面向切片编程（AOP：Aspect Oriented Programming）思想的一种实现。 在feathersjs中，最核心的概念就是service和hook，hook就是小的中间件函数，能够在应用在service方法的前后。hook和协议无关，无论是http还是websocket都支">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-feathersjs-notes" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/feathersjs-notes/" class="article-date">
+  <time datetime="2017-05-05T05:31:20.000Z" itemprop="datePublished">2017-05-05</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      feathersjs学习笔记
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>feathersjs是基于express的轻量级node.js框架，借助websocket提供实时通信功能，是面向切片编程（AOP：Aspect Oriented Programming）思想的一种实现。</p>
+<p>在feathersjs中，最核心的概念就是service和hook，hook就是小的中间件函数，能够在应用在service方法的前后。hook和协议无关，无论是http还是websocket都支持，同时hooks和service也没有绑定关系，可以应用于任何service。</p>
+<h2 id="Service"><a href="#Service" class="headerlink" title="Service"></a>Service</h2><p>Service提供了如下方法：</p>
+<ul>
+<li>find</li>
+<li>get</li>
+<li>create</li>
+<li>update</li>
+<li>patch</li>
+<li>remove</li>
+<li>setup</li>
+</ul>
+<p>Service可以作为express中间件，例如：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> messageService = &#123;</span><br><span class="line">  find(params [, callback]) &#123;&#125;, <span class="comment">// GET /messages 获取资源列表</span></span><br><span class="line">  get(id, params [, callback]) &#123;&#125;, <span class="comment">// GET /messages/&lt;id&gt; 获取指定id资源</span></span><br><span class="line">  create(data, params [, callback]) &#123;&#125;, <span class="comment">// POST /messages 创建新资源</span></span><br><span class="line">  update(id, data, params [, callback]) &#123;&#125;, <span class="comment">// PUT /messages[/&lt;id&gt;] 更新指定id资源</span></span><br><span class="line">  patch(id, data, params [, callback]) &#123;&#125;, <span class="comment">// PATCH /messages[/&lt;id&gt;] 为指定id资源增删数据</span></span><br><span class="line">  remove(id, params [, callback]) &#123;&#125;, <span class="comment">// DELETE /messages[/&lt;id&gt;] 删除指定id资源</span></span><br><span class="line">  setup(app, path) &#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">app.use(<span class="string">'/messages'</span>, messageService);</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<p>这里的messageService是一个具有特定方法的普通对象，也可以通过ES6里面的一个类（class）来创建这样的一个对象：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyService</span> </span>&#123;</span><br><span class="line">  find(params [, callback]) &#123;&#125;</span><br><span class="line">  get(id, params [, callback]) &#123;&#125;</span><br><span class="line">  create(data, params [, callback]) &#123;&#125;</span><br><span class="line">  update(id, data, params [, callback]) &#123;&#125;</span><br><span class="line">  patch(id, data, params [, callback]) &#123;&#125;</span><br><span class="line">  remove(id, params [, callback]) &#123;&#125;</span><br><span class="line">  setup(app, path) &#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">app.use(<span class="string">'/my-service'</span>, <span class="keyword">new</span> MyService());</span><br></pre></td></tr></table></figure>
+<p>映射表：</p>
+<table>
+<thead>
+<tr>
+<th>feathers方法</th>
+<th>HTTP方法</th>
+<th>路径</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>find()</td>
+<td>GET</td>
+<td>/messages</td>
+</tr>
+<tr>
+<td>get()</td>
+<td>GET</td>
+<td>/messages/1</td>
+</tr>
+<tr>
+<td>create()</td>
+<td>POST</td>
+<td>/messages</td>
+</tr>
+<tr>
+<td>update()</td>
+<td>PUT</td>
+<td>/messages/1</td>
+</tr>
+<tr>
+<td>patch()</td>
+<td>PATCH</td>
+<td>/messages/1</td>
+</tr>
+<tr>
+<td>remove()</td>
+<td>DELETE</td>
+<td>/messages/1</td>
+</tr>
+</tbody>
+</table>
+<p>而最后一个setup方法用于初始化Service时进行一些配置，还可以轻度耦合一些Service。值得注意的是，所有的服务都会注册事件监听器，当资源发生改变的时候，即：create、update、patch、remove方法被调用的时候，即触发事件。</p>
+<p>Service有三种用途：</p>
+<ol>
+<li>封装数据层，快速建立映射关系（例如mysql、sqlserver、mongodb等）</li>
+<li>与外部API进行通信（例如twilio、stripe、mailgun）</li>
+<li>实时代理</li>
+</ol>
+<p>Service方法必须返回一个Promise对象，其中需要包含下面4个参数：</p>
+<ul>
+<li>资源id</li>
+<li>数据data</li>
+<li>参数params</li>
+<li>回调函数callback</li>
+</ul>
+<p>那如何对REST封装好的service进行定制呢？可以用继承。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">StudentService</span> <span class="keyword">extends</span> <span class="title">Service</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  find(params) &#123;</span><br><span class="line">    <span class="comment">// 在这里可以添加额外的逻辑，例如添加针对于student的查询条件，只返回25岁以上的结果。在hooks里面也能完成这个功能。</span></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">super</span>.find(params);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  get(id, params) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">super</span>.get(id, params)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  create(data, params) &#123;</span><br><span class="line">    data.created_at = <span class="keyword">new</span> <span class="built_in">Date</span>();</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">super</span>.create(data, params);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  update(id, data, params) &#123;</span><br><span class="line">    data.updated_at = <span class="keyword">new</span> <span class="built_in">Date</span>();</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">super</span>.update(id, data, params);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="hook"><a href="#hook" class="headerlink" title="hook"></a>hook</h2><p>哪些场景适合用hook呢？例如：</p>
+<ul>
+<li>验证</li>
+<li>数据预处理</li>
+<li>数据序列化</li>
+<li>发送通知</li>
+</ul>
+<p>使用Hooks的方法：</p>
+<ol>
+<li><p>安装并引入依赖</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ npm install feathers-hooks</span><br><span class="line">const hooks = require(&apos;feathers-hooks&apos;);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>为service注册hook</p>
+ <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> MyService = &#123;</span><br><span class="line">	get(id, params) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="built_in">Promise</span>.resolve(<span class="string">'ok'</span>);</span><br><span class="line">	&#125;,</span><br><span class="line">	find(params, callback) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="built_in">Promise</span>.resolve([<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>]);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">app.use(<span class="string">'/myservices'</span>, MyService);</span><br><span class="line"><span class="keyword">const</span> myHook = <span class="function"><span class="params">options</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="function"><span class="params">hook</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'My custom hook ran'</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">Promise</span>.resolve(hook); 	  &#125;;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> myService = app.service(<span class="string">'/myservices'</span>);</span><br><span class="line">myService.before(&#123;</span><br><span class="line">  find: [myHook()],</span><br><span class="line">  get: [myHook()]</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p> 除了通过上面的方法为service添加hook，其实还可以在创建service的时候就直接添加进去：</p>
+</li>
+</ol>
+<pre><code><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> MyService = &#123;</span><br><span class="line">	get(id, params) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="built_in">Promise</span>.resolve(<span class="string">'ok'</span>);</span><br><span class="line">	&#125;,</span><br><span class="line">	find(params, callback) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="built_in">Promise</span>.resolve([<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>]);</span><br><span class="line">	&#125;,</span><br><span class="line">	before: &#123;</span><br><span class="line">		find(hook) &#123;&#125;,</span><br><span class="line">		create(hook) &#123;&#125;</span><br><span class="line">	&#125;,</span><br><span class="line">	after: &#123;</span><br><span class="line">		get(hook) &#123;&#125;,</span><br><span class="line">		find(hook) &#123;&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</code></pre><p>其实，feathers框架内置了一些常用的Hook功能，帮助我们在数据插入到数据库之前或从数据库读取之后做一些处理，在此列举一些常见的hook：</p>
+<h3 id="populate"><a href="#populate" class="headerlink" title="populate"></a>populate</h3><p>在after hook里面使用，用于注入相关对象：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">app.service(<span class="string">'messages'</span>).after(&#123;</span><br><span class="line">  find: hooks.populate(<span class="string">'user'</span>, &#123;</span><br><span class="line">    service: <span class="string">'users'</span>,</span><br><span class="line">    field: <span class="string">'user_id'</span>  </span><br><span class="line">  &#125;)</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h3 id="remove-和-pluck"><a href="#remove-和-pluck" class="headerlink" title="remove 和 pluck"></a>remove 和 pluck</h3><p>用在after hook或者before hook的create, update, patch方法里面：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">app.service(<span class="string">'users'</span>).after(hooks.remove(<span class="string">'password'</span>, <span class="string">'salt'</span>));</span><br><span class="line"></span><br><span class="line">app.service(<span class="string">'users'</span>).before(&#123;</span><br><span class="line">  create: hooks.remove(<span class="string">'_id'</span>),</span><br><span class="line">  update: hooks.remove(<span class="string">'_id'</span>),</span><br><span class="line">  patch: hooks.remove(<span class="string">'_id'</span>)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>pluck与remove使用方法相同，但作用相反，只保留指定的字段。</p>
+<h3 id="lowerCase"><a href="#lowerCase" class="headerlink" title="lowerCase"></a>lowerCase</h3><p>把字段的值变为小写。</p>
+<h3 id="setCreatedAt-和-setUpdatedAt"><a href="#setCreatedAt-和-setUpdatedAt" class="headerlink" title="setCreatedAt 和 setUpdatedAt"></a>setCreatedAt 和 setUpdatedAt</h3><p>用在after hook或者before hook的create, update, patch方法里面，用于设置创建和更新时间。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">app.service(<span class="string">'users'</span>).before(&#123;</span><br><span class="line">  create: [ hooks.setCreatedAt(<span class="string">'createdAt'</span>) ]</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h3 id="removeQuery-和-pluckQuery"><a href="#removeQuery-和-pluckQuery" class="headerlink" title="removeQuery 和 pluckQuery"></a>removeQuery 和 pluckQuery</h3><p>用在before hook里面，删除或只保留请求参数里面的指定字段。</p>
+<h3 id="softDelete"><a href="#softDelete" class="headerlink" title="softDelete"></a>softDelete</h3><p>用在before hook里面，如果用在remove方法就软删除，即标记为删除，实际上是patch方法起作用，find方法里面就忽略标记为删除的行。</p>
+<h3 id="validation"><a href="#validation" class="headerlink" title="validation"></a>validation</h3><p>用在before hook的create, update, patch方法里面，用于有效性验证。</p>
+<h3 id="setSlug"><a href="#setSlug" class="headerlink" title="setSlug"></a>setSlug</h3><p>应用在before hook当中，把类型为<code>app.use(&#39;/stores/:storeId/candies&#39;, new Service());</code>服务中的<code>hook.params.query</code>都标准化为一致的，因为如果没有应用这个hook，websocket、rest和普通http请求中的<code>hook.params.query</code>是不一样的。</p>
+<h2 id="debug"><a href="#debug" class="headerlink" title="debug"></a>debug</h2><p>把当前hook中的基本信息打印出来，用于调试，可用于before hook或after hook。</p>
+<h2 id="iff-和-isNot"><a href="#iff-和-isNot" class="headerlink" title="iff 和 isNot"></a>iff 和 isNot</h2><p>用于条件使用hook，即满足某种条件才应用该hook，可应用于before hook或after hook。</p>
+<p>hook本身也可以是异步的，可以通过返回promise或异步回调两种方式。</p>
+<h3 id="返回promise"><a href="#返回promise" class="headerlink" title="返回promise"></a>返回promise</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">myService.before(&#123;</span><br><span class="line">	find(hook) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve,reject</span>)=&gt;</span>&#123;&#125;)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>上面的代码仅仅是在hook中执行某个异步操作，如果需要更改hook对象的话，可以链式使用then：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">myService.before(&#123;</span><br><span class="line">	find(hook) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve,reject</span>)=&gt;</span>&#123;&#125;).then(<span class="function"><span class="params">data</span>=&gt;</span>&#123;</span><br><span class="line">			<span class="comment">// 对hook的修改</span></span><br><span class="line">			<span class="keyword">return</span> hook; <span class="comment">//注意这里一定要返回hook</span></span><br><span class="line">		&#125;)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<h2 id="异步回调"><a href="#异步回调" class="headerlink" title="异步回调"></a>异步回调</h2><p>这种方式即将被废弃，用promise代替吧！</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">myService.before(&#123;</span><br><span class="line">	find(hook, next) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve,reject</span>)=&gt;</span>&#123;&#125;).then(<span class="function"><span class="params">data</span>=&gt;</span>&#123;</span><br><span class="line">			next(); <span class="comment">// 如果没有更改hook对象</span></span><br><span class="line">			next(<span class="literal">null</span>,hook); <span class="comment">// 如果更改了hook对象</span></span><br><span class="line">		&#125;)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>hook是可以注册多次的，如果在一个service上面被注册了多次，那么feathers-hooks会按照注册顺序来执行，例如：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> userService = app.service(<span class="string">'users'</span>);</span><br><span class="line">userService.before(&#123;</span><br><span class="line">	get(hook) &#123;&#125;,</span><br><span class="line">	create(hook) &#123;&#125;</span><br><span class="line">&#125;);</span><br><span class="line">userService.before(&#123;</span><br><span class="line">	get(hook) &#123;&#125;,</span><br><span class="line">	<span class="keyword">delete</span>(hook) &#123;&#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>也可以一下注册多个hook：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> userService = app.service(<span class="string">'users'</span>);</span><br><span class="line">userService.before(&#123;</span><br><span class="line">	get:[], <span class="comment">// 函数数组</span></span><br><span class="line">	create:[] <span class="comment">// 函数数组</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>在某个service的hook里面与其他service进行交互非常简单：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> myHook = <span class="function"><span class="keyword">function</span>(<span class="params">hook</span>) </span>&#123;</span><br><span class="line">	<span class="keyword">const</span> accounts = hook.app.service(<span class="string">'accounts'</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>基于已有的hook进行定制和包装也非常简单，例如：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> &#123;hooks&#125; = <span class="built_in">require</span>(<span class="string">'feathers-authentication'</span>);</span><br><span class="line">exports.myHashPassword = <span class="function"><span class="keyword">function</span>(<span class="params">options</span>) </span>&#123;</span><br><span class="line">	<span class="keyword">const</span> hashPassword = hooks.hashPassword(options);</span><br><span class="line">	<span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params">hook</span>) </span>&#123;</span><br><span class="line">		<span class="keyword">if</span>(myCondition) &#123;</span><br><span class="line">			<span class="keyword">return</span> hashPassword.call(<span class="keyword">this</span>,hook);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">const</span> &#123; myHashPassword&#125; = <span class="built_in">require</span>(<span class="string">'./hooks/myHashPassword'</span>);</span><br><span class="line">userService.before(&#123;</span><br><span class="line">	create: [myHashPassword()]</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>另外，<code>feathers-authentication</code>还提供了一些常用的权限类Hook：</p>
+<ul>
+<li>hashPassword：对明文密码进行加密</li>
+<li>verifyToken：权限验证</li>
+<li>verifyOrRestrict：对没有权限用户加以限制</li>
+<li>populateUser：根据token注入user对象</li>
+<li>populateOrRestrict：对未知用户加以限制</li>
+<li>restrictToAuthenticated：仅限登录用户</li>
+<li>queryWithCurrentUser：自动添加userId作为查询条件</li>
+<li>associateCurrentUser：创建数据前自动将userId添加到指定字段</li>
+<li>restrictToOwner：仅限用户自己创建的内容</li>
+<li>restrictToRoles：仅限指定角色拥有权限的内容</li>
+<li>hasRoleOrRestrict：对不具有指定解决色的用户加以限制</li>
+</ul>
+<h2 id="事件："><a href="#事件：" class="headerlink" title="事件："></a>事件：</h2><p>通过WebSocket可以保证消息的实时传递，WebSocket有多种实现，以socket.io为例：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> feathers = <span class="built_in">require</span>(<span class="string">'feathers'</span>);</span><br><span class="line"><span class="keyword">const</span> socketio = <span class="built_in">require</span>(<span class="string">'feathers-socketio'</span>);</span><br><span class="line"><span class="keyword">const</span> app = feathers().configure(socketio());</span><br><span class="line">app.listen(<span class="number">3030</span>);</span><br></pre></td></tr></table></figure>
+<p>这个时候就为服务器配置了socket.io模块，可以通过app.io获取到该对象。还可以传递一个函数作为参数，该函数接收io作为参数，方便在内部做一些启动工作和注册中间件。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">app.configure(socketio(<span class="function"><span class="keyword">function</span>(<span class="params">io</span>) </span>&#123;</span><br><span class="line">  </span><br><span class="line">    io.on(<span class="string">'connection'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">socket</span>) </span>&#123;</span><br><span class="line">      socket.emit(<span class="string">'news'</span>, &#123; <span class="attr">text</span>: <span class="string">'A client connected!'</span> &#125;);</span><br><span class="line">      socket.on(<span class="string">'my other event'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">data</span>) </span>&#123;</span><br><span class="line">        <span class="built_in">console</span>.log(data);</span><br><span class="line">      &#125;);</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 注册 Socket.io 中间件</span></span><br><span class="line">    io.use(<span class="function"><span class="keyword">function</span> (<span class="params">socket, next</span>) </span>&#123;</span><br><span class="line">      <span class="comment">// 暴露请求属性给service和hook</span></span><br><span class="line">      socket.feathers.referrer = socket.request.referrer;</span><br><span class="line">      next();</span><br><span class="line">    &#125;);</span><br><span class="line">    </span><br><span class="line">  &#125;));</span><br></pre></td></tr></table></figure>
+<p>还可以对socket.io进行一些配置：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">app.configure(socketio(&#123;</span><br><span class="line">    path: <span class="string">'/ws/'</span></span><br><span class="line">  &#125;, <span class="function"><span class="keyword">function</span>(<span class="params">io</span>) </span>&#123;</span><br><span class="line">  	 <span class="comment">// 函数作用同上，可选</span></span><br><span class="line">  &#125;));</span><br></pre></td></tr></table></figure>
+<p>µWebSockets简称µWS，是一个超轻量级的、高效的、可扩展的WebSocket服务器实现，基于Node.js开发，主要特征是易于使用、完全异步的面向对象的接口，并且可以扩展到数百万的连接，与同类的产品相比，其内存占用只有竞品的几分之一，采用zlib/libpng许可证（非常宽松的许可证，适合商业应用）。可以在启动socket.io时默认配置为该引擎。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> app = feathers()</span><br><span class="line">  .configure(socketio(&#123;</span><br><span class="line">    wsEngine: <span class="string">'uws'</span></span><br><span class="line">  &#125;);</span><br></pre></td></tr></table></figure>
+<p>事件在所有的after hook调用之后才触发，事件的触发行为可以通过事件过滤器（event filters）自定义。事件分两类：标准事件和自定义事件。标准事件是指：</p>
+<ul>
+<li>created：创建成功后触发</li>
+<li>updated：更新成功后触发</li>
+<li>patched：补丁成功后触发</li>
+<li>removed：删除成功后触发</li>
+</ul>
+<p>例如：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> messageService = app.service(<span class="string">'messages'</span>);</span><br><span class="line">messageService.on(<span class="string">'created'</span>, message =&gt; <span class="built_in">console</span>.log(<span class="string">'Someone created a message'</span>, message));</span><br></pre></td></tr></table></figure>
+<p>自定义事件：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PaymentService</span> </span>&#123;</span><br><span class="line">  <span class="keyword">constructor</span>() &#123;</span><br><span class="line">    <span class="keyword">this</span>.events = [<span class="string">'status'</span>];</span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  create(data, params) &#123;</span><br><span class="line">    createStripeCustomer(params.user).then(<span class="function"><span class="params">customer</span> =&gt;</span> &#123;</span><br><span class="line">      <span class="keyword">this</span>.emit(<span class="string">'status'</span>, &#123; <span class="attr">status</span>: <span class="string">'created'</span> &#125;);</span><br><span class="line">      <span class="keyword">return</span> createPayment(data).then(<span class="function"><span class="params">result</span> =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">this</span>.emit(<span class="string">'status'</span>, &#123; <span class="attr">status</span>: <span class="string">'completed'</span> &#125;);</span><br><span class="line">      &#125;);</span><br><span class="line">    &#125;);</span><br><span class="line">    createPayment(data)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>默认情况下，事件会被发送给所有客户端，这可能不是你想要的，于是需要定义事件过滤器来进行筛选。事件过滤器就是一个函数<code>function(data, connection, hook)</code>。例如只发消息给登录用户：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">messages.filter(<span class="function"><span class="keyword">function</span>(<span class="params">data, connection</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span>(!connection.user) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> data;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>事件过滤器可以链式使用，例如发给指定公司的用户：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">messages.filter(<span class="function"><span class="keyword">function</span>(<span class="params">data, connection</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span>(data.company_id !== connection.user.company_id) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> data;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>指定事件，并只发给好友：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">messages.filter(<span class="string">'created'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">data, connection, hook</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> messageUserId = hook.params.user._id;</span><br><span class="line">  <span class="keyword">const</span> currentUserFriends = connection.user.friends;</span><br><span class="line">  <span class="keyword">if</span>(currentUserFriends.indexOf(messageUserId) === <span class="number">-1</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> data;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>自定义事件也是类似的：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">app.service(<span class="string">'payments'</span>).filter(<span class="string">'status'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">data, connection, hook</span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>filter和hook有很多相似之处：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> todos = app.service(<span class="string">'todos'</span>);</span><br><span class="line">todos.filter(<span class="function"><span class="keyword">function</span>(<span class="params">data, connection, hook</span>) </span>&#123;&#125;); <span class="comment">// 对所有事件进行过滤</span></span><br><span class="line">todos.filter(<span class="string">'created'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">data, connection, hook</span>) </span>&#123;&#125;); <span class="comment">// 对 `created` 事件进行过滤</span></span><br><span class="line">todos.filter(&#123; <span class="comment">// 对 `created` 和 `updated` 事件进行过滤</span></span><br><span class="line">  created(data, connection, hook) &#123;&#125;,</span><br><span class="line">  updated(data, connection, hook) &#123;&#125;</span><br><span class="line">&#125;);</span><br><span class="line">todos.filter(&#123; <span class="comment">// 创建 `created` 和 `removed` 事件的过滤链</span></span><br><span class="line">  created: [ filterA, filterB ],</span><br><span class="line">  removed: [ filterA, filterB ]</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h2 id="feathers-5个核心API"><a href="#feathers-5个核心API" class="headerlink" title="feathers 5个核心API"></a>feathers 5个核心API</h2><ol>
+<li>configure</li>
+</ol>
+<p>可以用于初始化service，例如：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">setupService</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.use(<span class="string">'/todos'</span>, todoService);</span><br><span class="line">&#125;</span><br><span class="line">app.configure(setupService);</span><br></pre></td></tr></table></figure>
+<ol>
+<li>listen</li>
+</ol>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">app.listen([port])</span><br></pre></td></tr></table></figure>
+<ol>
+<li>setup</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<ol>
+<li>use</li>
+</ol>
+<p><code>app.use([path],service)</code>和express框架里面的<code>app.use([path],middleware)</code>是类似的，不过除了可以注册一个中间件之外呢，还允许你注册一个service对象</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">app.use(feathers.static(__dirname + <span class="string">'/public'</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//普通的中间件</span></span><br><span class="line">app.use(<span class="function"><span class="keyword">function</span>(<span class="params">req,res,next</span>)</span>&#123;</span><br><span class="line">  <span class="keyword">if</span>(req.isAuthenticated())&#123;</span><br><span class="line">    next();</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    next(<span class="keyword">new</span> <span class="built_in">Error</span>(<span class="number">401</span>));</span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">//service对象</span></span><br><span class="line">app.use(<span class="string">'/todos'</span>, &#123;</span><br><span class="line">  get(id) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">Promise</span>.resolve(&#123;</span><br><span class="line">      id,</span><br><span class="line">      description: <span class="string">`You have to do <span class="subst">$&#123;name&#125;</span>!`</span></span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<ol>
+<li>service</li>
+</ol>
+<p><code>app.service(path)</code>——返回在该路径上注册的服务<br><code>app.service(path,service)</code>——在该路径上注册一个服务</p>
+<p>这个服务会被feathers及其插件封装过，所以更好用，例如可以监听created事件：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">app.use(<span class="string">'/my/todos'</span>, &#123;</span><br><span class="line">  create(data) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">Promise</span>.resolve(data);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> todoService = app.service(<span class="string">'my/todos'</span>);</span><br><span class="line">todoService.on(<span class="string">'created'</span>, todo =&gt; </span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'Created todo'</span>, todo)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<p>app.service和app.use功能是不一样的。</p>
+<p>创建中间件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">feathers generate middleware</span><br></pre></td></tr></table></figure>
+<p>find里头的参数params一定要是{query:{}}</p>
+<p>因为service是被封装过的，要传一个params，而params的结构是：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="string">"query"</span>: &#123;&#125;,</span><br><span class="line">  <span class="string">"provider"</span>: <span class="string">"rest"</span>,</span><br><span class="line">  <span class="string">"token"</span>: <span class="string">"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJfaWQiOiI1ODhkNzk5NWQ4ZGQ4MzVhZjMwNDI5OTAiLCJpYXQiOjE0ODk0NjAzMjgsImV4cCI6MTQ4OTU0NjcyOCwiaXNzIjoiZmVhdGhlcnMifQ.5perou33vMSwI95HMLH7zs4cmNc_i6CnAvmALv0-2Cg"</span>,</span><br><span class="line">  <span class="string">"payload"</span>: &#123;<span class="string">"_id"</span>: <span class="string">"588d7995d8dd835af3042990"</span>, <span class="string">"iat"</span>: <span class="number">1489460328</span>, <span class="string">"exp"</span>: <span class="number">1489546728</span>, <span class="string">"iss"</span>: <span class="string">"feathers"</span>&#125;,</span><br><span class="line">  <span class="string">"user"</span>: &#123;</span><br><span class="line">    <span class="string">"_id"</span>: <span class="string">"588d7995d8dd835af3042990"</span>,</span><br><span class="line">    <span class="string">"username"</span>: <span class="string">"tem8@qq.com"</span>,</span><br><span class="line">    <span class="string">"password"</span>: <span class="string">"$2a$10$9RB30t.GTaoo4NiGpvQQAuU2.5O6lqPe/OZtjG.L2vSY1hmjHbJ4W"</span>,</span><br><span class="line">    <span class="string">"email"</span>: <span class="string">"tem8@qq.com"</span>,</span><br><span class="line">    <span class="string">"activeToken"</span>: <span class="string">"SRsAAILWVtfuUMl4HajVvQ"</span>,</span><br><span class="line">    <span class="string">"activeExpires"</span>: <span class="string">"2017-01-30T05:12:32.251Z"</span>,</span><br><span class="line">    <span class="string">"updatedAt"</span>: <span class="string">"2017-01-29T05:11:49.581Z"</span>,</span><br><span class="line">    <span class="string">"createdAt"</span>: <span class="string">"2017-01-29T05:11:49.581Z"</span>,</span><br><span class="line">    <span class="string">"active"</span>: <span class="literal">true</span>,</span><br><span class="line">    <span class="string">"roles"</span>: [],</span><br><span class="line">    <span class="string">"__v"</span>: <span class="number">0</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里头涉及到查询的就是query参数了，所以自己调用service查询的时候需要创建一个params对象一定要指定query属性。</p>
+<p>注意，默认是带有分页的，如果不显式指定所有，那么就会按照分页结果来查询，真坑爹！这个是在options里头进行控制：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> options = &#123;</span><br><span class="line">    Model: member,</span><br><span class="line">    paginate: &#123;</span><br><span class="line">      <span class="keyword">default</span>: <span class="number">5</span>,</span><br><span class="line">      max: <span class="number">25</span></span><br><span class="line">    &#125;,</span><br><span class="line">    lean:<span class="literal">true</span></span><br><span class="line">  &#125;;</span><br></pre></td></tr></table></figure>
+<p>就是这个default和max的作用。</p>
+<p>详见：<a href="https://docs.feathersjs.com/databases/pagination.html" target="_blank" rel="noopener">https://docs.feathersjs.com/databases/pagination.html</a></p>
+<p>如果在配置service的时候就写了，后面后台进行查询的时候就比较麻烦了！</p>
+<p>注意事项：</p>
+<ol>
+<li>params.query里面的查询条件会伴随restful的整个过程，即使是在create、patch、delete里面写了查询参数，也会影响到最后的输出结果的。</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/feathersjs-notes/" data-id="cjhn4haa2007avqq3jgdrwc8m" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/mongoose-findByIdAndUpdate/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          mongoose findByIdAndUpdate 返回新数据
+        
+      </div>
+    </a>
+  
+  
+    <a href="/typescript-cannot-call-a-namespace/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">cannot call a namespace</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

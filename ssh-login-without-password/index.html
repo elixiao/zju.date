@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="用SSH免密码远程登录总共分三步：  第一步：在本地用ssh-keygen生成公钥和私钥  第二步：将公钥拷贝到远程服务器的.ssh/authorized_key目录下  123cat ~/.ssh/id_rsa.pub | ssh username@domain.com &quot;umask 077; mkdir -p .ssh ; cat &amp;gt;&amp;gt; .ssh/authorized_keys&quot;#">
+<meta name="keywords" content="Linux">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SSH免密码远程登录">
+<meta property="og:url" content="https://zju.date/ssh-login-without-password/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="用SSH免密码远程登录总共分三步：  第一步：在本地用ssh-keygen生成公钥和私钥  第二步：将公钥拷贝到远程服务器的.ssh/authorized_key目录下  123cat ~/.ssh/id_rsa.pub | ssh username@domain.com &quot;umask 077; mkdir -p .ssh ; cat &amp;gt;&amp;gt; .ssh/authorized_keys&quot;#">
+<meta property="og:updated_time" content="2017-11-24T11:52:54.959Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="SSH免密码远程登录">
+<meta name="twitter:description" content="用SSH免密码远程登录总共分三步：  第一步：在本地用ssh-keygen生成公钥和私钥  第二步：将公钥拷贝到远程服务器的.ssh/authorized_key目录下  123cat ~/.ssh/id_rsa.pub | ssh username@domain.com &quot;umask 077; mkdir -p .ssh ; cat &amp;gt;&amp;gt; .ssh/authorized_keys&quot;#">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-ssh-login-without-password" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/ssh-login-without-password/" class="article-date">
+  <time datetime="2016-05-13T13:16:37.000Z" itemprop="datePublished">2016-05-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      SSH免密码远程登录
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>用SSH免密码远程登录总共分三步：</p>
+<ol>
+<li><p>第一步：在本地用ssh-keygen生成公钥和私钥</p>
+</li>
+<li><p>第二步：将公钥拷贝到远程服务器的.ssh/authorized_key目录下</p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cat ~/.ssh/id_rsa.pub | ssh username@domain.com <span class="string">"umask 077; mkdir -p .ssh ; cat &gt;&gt; .ssh/authorized_keys"</span></span><br><span class="line"><span class="comment"># 或者</span></span><br><span class="line">ssh-copy-id -i ~/.ssh/id_rsa.pub remote-host</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>第三步：登录</p>
+</li>
+</ol>
+<p>有时候我们用ssh远程免密码登录时会遇到authorized都设置好了，但是依然需要输入密码，这个时候一定要检查文件的权限：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls -al</span><br></pre></td></tr></table></figure>
+<p>我把.ssh目录权限设置为：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod 755 .ssh</span><br></pre></td></tr></table></figure>
+<p>再把authorized_keys权限设为：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod 644 authorized_keys</span><br></pre></td></tr></table></figure>
+<p>这样再访问就没问题啦！</p>
+<!--用ssh命令通过第二台服务器直接连接到第三台服务器：
+ssh $SERVER_A
+ssh $SERVER_B
+ssh -t $SERVER_A ssh $SERVER_B
+firewall-cmd --zone=public --remove-port=1234/tcp
+firewall-cmd --permanent --zone=public --add-port=1235/tcp
+firewall-cmd --reload
+nc -z -v -w 2 42.96.248.197 9300
+nc -v -w 42.96.248.197 -i 3901-3905
+nc -z localhost 80-100
+nc -z -v localhost 9200
+nc 10.25.109.15 9200
+nc -vn 42.96.248.197 22
+nc -vnz -w 1 42.96.248.197 1-30
+nc -vnz -w 1 127.0.0.1 1-30-->
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/ssh-login-without-password/" data-id="cjhn4hah800hivqq32zdnmki7" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/how-to-save-disk-spaces-for-node_modules/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          巧用node_modules节省空间
+        
+      </div>
+    </a>
+  
+  
+    <a href="/mongodb-notes/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">mongodb学习笔记</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

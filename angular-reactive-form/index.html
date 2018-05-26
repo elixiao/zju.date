@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="基础概念 FormControl 代表 form 中的一个具体的元件，例如 input、select、radio、dropdown 等，是表单中不可分割的最小单元。 123import &amp;#123; FormControl &amp;#125; from &apos;@angular/forms&apos;;myName: FormControl;this.myName = new FormControl(&apos;初始值&apos;);">
+<meta name="keywords" content="JavaScript">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Angular 中的响应式表单">
+<meta property="og:url" content="https://zju.date/angular-reactive-form/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="基础概念 FormControl 代表 form 中的一个具体的元件，例如 input、select、radio、dropdown 等，是表单中不可分割的最小单元。 123import &amp;#123; FormControl &amp;#125; from &apos;@angular/forms&apos;;myName: FormControl;this.myName = new FormControl(&apos;初始值&apos;);">
+<meta property="og:updated_time" content="2018-05-26T07:38:29.836Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Angular 中的响应式表单">
+<meta name="twitter:description" content="基础概念 FormControl 代表 form 中的一个具体的元件，例如 input、select、radio、dropdown 等，是表单中不可分割的最小单元。 123import &amp;#123; FormControl &amp;#125; from &apos;@angular/forms&apos;;myName: FormControl;this.myName = new FormControl(&apos;初始值&apos;);">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-angular-reactive-form" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/angular-reactive-form/" class="article-date">
+  <time datetime="2018-05-24T02:01:12.000Z" itemprop="datePublished">2018-05-24</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Angular 中的响应式表单
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="基础概念"><a href="#基础概念" class="headerlink" title="基础概念"></a>基础概念</h2><ol>
+<li><p>FormControl</p>
+<p>代表 form 中的一个具体的元件，例如 input、select、radio、dropdown 等，是表单中不可分割的最小单元。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; FormControl &#125; <span class="keyword">from</span> <span class="string">'@angular/forms'</span>;</span><br><span class="line">myName: FormControl;</span><br><span class="line"><span class="keyword">this</span>.myName = <span class="keyword">new</span> FormControl(<span class="string">'初始值'</span>);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>FormGroup</p>
+<p>一组 FormControl 的合集，如果 FormControl 的值发生变化，那么 FormGroup 也发生变化。FormGroup 本身有很多 API，例如表单验证等，注意这里的验证器是针对 FormGroup 本身，而不是里面的 FormControl。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; FormGroup &#125; <span class="keyword">from</span> <span class="string">'@angular/forms'</span>;</span><br><span class="line">myName: FormGroup;</span><br><span class="line"><span class="keyword">this</span>.myForm = <span class="keyword">new</span> FormGroup(&#123;</span><br><span class="line">  name: <span class="keyword">new</span> FormControl(<span class="string">'名字'</span>)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>这里面隐含的逻辑关系是：</p>
+<ol>
+<li>只要任何一个 FormControl 验证失败，整个 FormGroup 就验证失败</li>
+<li>即使所有 FormControl 验证通过，但 FormGroup 验证失败，那结果也是失败</li>
+<li>所有 FormControl 验证通过且 FormGroup 验证通过，才算通过</li>
+</ol>
+</li>
+<li><p>FormArray</p>
+<p>一组 FormControl/FormGroup/FormArray 的合集。</p>
+</li>
+</ol>
+<a id="more"></a>
+<p>我们知道，基础数据类型、对象和数组的组合就构成了 JS 世界的全部了，因此 FormControl、FormGroup 和 FormArray 的组合也就构成表单验证的全部。所以其实可以这么理解：</p>
+<blockquote>
+<ul>
+<li>FormControl：JS 中的基础数据类型，例如字符串、数值、布尔</li>
+<li>FormGroup：JS 中的对象</li>
+<li>FormArray：JS 中的数组</li>
+</ul>
+</blockquote>
+<p>它们都继承自 AbstractControl ，所有都有 valid、value、errors、touched、untouched 等属性和 setValue、patchValue、reset 等方法。最重要的就是下面两个：</p>
+<ol>
+<li><p>setValue</p>
+<p>使用方法为：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">c.setValue(&#123;</span><br><span class="line">  login: <span class="string">'newLogin'</span>,</span><br><span class="line">  password: &#123;</span><br><span class="line">    origin: <span class="string">'newPassword'</span>,</span><br><span class="line">    confirm: <span class="string">'newPassword'</span></span><br><span class="line">  &#125;,</span><br><span class="line">  hobbies: [<span class="string">'football'</span>,<span class="string">'reading'</span>]</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>注意：setValue 必须是全集，如果想局部更新就会报错！</p>
+</li>
+<li><p>patchValue</p>
+<p>使用方法和 setValue 一样，但是可以局部更新。</p>
+</li>
+</ol>
+<h2 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h2><ul>
+<li><p>什么时候用 FormGroup，什么时候用 FormArray ？</p>
+<p>  FormGroup 一般是定义好的对象：</p>
+  <figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> form = <span class="keyword">new</span> FormGroup(&#123;</span><br><span class="line">  first: <span class="keyword">new</span> FormControl(<span class="string">'Li'</span>, Validators.minLength(<span class="number">2</span>)),</span><br><span class="line">  last: <span class="keyword">new</span> FormControl(<span class="string">'Ke'</span>),</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>  FormArray 可以动态的添加数组成员：</p>
+  <figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> arr = <span class="keyword">new</span> FormArray([</span><br><span class="line">  <span class="keyword">new</span> FormControl(<span class="string">'Li'</span>, Validators.minLength(<span class="number">2</span>)),</span><br><span class="line">  <span class="keyword">new</span> FormControl(<span class="string">'Ke'</span>),</span><br><span class="line">]);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>如何对 FormGroup 整体添加验证器？</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">fb.group(&#123;</span><br><span class="line">  name: [<span class="string">''</span>, Validators.required],</span><br><span class="line">  birthday: [<span class="string">''</span>, Validators.required]</span><br><span class="line">&#125;, &#123; validator: GroupValidator &#125;)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>如果对 FormArray 整体添加验证器？</p>
+  <figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fb.array([], ArrayValidator)</span><br></pre></td></tr></table></figure>
+<p>  如果在<code>FormArray</code>中有一个子节点验证失败，那么最终整个数组验证也会失败。</p>
+</li>
+</ul>
+<ul>
+<li><p>如何对 FormGroup 进行交叉验证？</p>
+<p>  例如密码和确认密码字段必须相等，表单验证才能通过。</p>
+  <figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">this</span>.registrationForm = fb.group(&#123;</span><br><span class="line">  email: [<span class="string">''</span>, Validators.compose([Validators.required,  emailValidator])],</span><br><span class="line">  password: [<span class="string">''</span>, Validators.required],</span><br><span class="line">  confirmPassword: [<span class="string">''</span>, Validators.required]</span><br><span class="line">&#125;, &#123;validator: matchingPasswords(<span class="string">'password'</span>, <span class="string">'confirmPassword'</span>)&#125;)</span><br></pre></td></tr></table></figure>
+<p>  第二个参数就是 <code>FormGroup</code> 的验证器了。</p>
+  <figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">matchingPasswords</span>(<span class="params">passwordKey: <span class="built_in">string</span>, confirmPasswordKey: <span class="built_in">string</span></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> (group: FormGroup): &#123;[key: <span class="built_in">string</span>]: <span class="built_in">any</span>&#125; =&gt; &#123;</span><br><span class="line">    <span class="keyword">let</span> password = group.controls[passwordKey];</span><br><span class="line">    <span class="keyword">let</span> confirmPassword = group.controls[confirmPasswordKey];</span><br><span class="line">    <span class="keyword">if</span> (password.value !== confirmPassword.value) &#123;</span><br><span class="line">      <span class="keyword">return</span> &#123;</span><br><span class="line">        mismatchedPasswords: <span class="literal">true</span></span><br><span class="line">      &#125;;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>如何对 FromArray 进行交叉验证？</p>
+<p>  例如至少添加3个兴趣爱好，可以在 fb.array 的第二个参数添加验证器。</p>
+  <figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">this</span>.fb.group(&#123;</span><br><span class="line">  <span class="string">'name'</span>: [<span class="string">''</span>,Validators.required],</span><br><span class="line">  <span class="string">'age'</span>: [<span class="string">''</span>, Validators.required],</span><br><span class="line">  <span class="string">'hobbies'</span>: <span class="keyword">this</span>.fb.array([], <span class="keyword">this</span>.validationService.minLengthArray(<span class="number">3</span>)) </span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>  验证器逻辑为：</p>
+  <figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">minLengthArray(min: <span class="built_in">number</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> (c: AbstractControl): &#123;[key: <span class="built_in">string</span>]: <span class="built_in">any</span>&#125; =&gt; &#123;</span><br><span class="line">        <span class="keyword">if</span> (c.value.length &gt;= min)</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">        <span class="keyword">return</span> &#123; <span class="string">'minLengthArray'</span>: &#123;valid: <span class="literal">false</span> &#125;&#125;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>如果 formArray 里面是 formControl 的列表，而不是 formGroup 的列表，应该如何设置 formControlName 属性呢？</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">span</span> *<span class="attr">ngFor</span>=<span class="string">"let day of week.controls;let i = index"</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"checkbox"</span> [<span class="attr">formControl</span>]=<span class="string">"day"</span>/&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">label</span>&gt;</span>&#123;&#123;i&#125;&#125;<span class="tag">&lt;/<span class="name">label</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/angular-reactive-form/" data-id="cjhn4ha7m003hvqq3v325cau2" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/angular-dirty-touched-changed/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Angular 判断表单是否真的 dirty
+        
+      </div>
+    </a>
+  
+  
+    <a href="/export-html-to-word/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">将 HTML 导出为 word</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

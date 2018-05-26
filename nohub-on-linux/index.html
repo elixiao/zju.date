@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="将Linux命令放到后台运行有两种方式：  command &amp;amp; ： 后台运行，但关掉终端会停止运行 nohup command &amp;amp; ： 后台运行，但关掉终端也会继续运行  如果命令行正在执行一个命令，需要很长的等待时间，但你不想干等着，而是需要干其他的事情，这时候可以用 Ctrl-Z 挂起这个程序，例如：">
+<meta name="keywords" content="Linux">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux命令后台运行">
+<meta property="og:url" content="https://zju.date/nohub-on-linux/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="将Linux命令放到后台运行有两种方式：  command &amp;amp; ： 后台运行，但关掉终端会停止运行 nohup command &amp;amp; ： 后台运行，但关掉终端也会继续运行  如果命令行正在执行一个命令，需要很长的等待时间，但你不想干等着，而是需要干其他的事情，这时候可以用 Ctrl-Z 挂起这个程序，例如：">
+<meta property="og:updated_time" content="2017-08-16T02:11:01.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Linux命令后台运行">
+<meta name="twitter:description" content="将Linux命令放到后台运行有两种方式：  command &amp;amp; ： 后台运行，但关掉终端会停止运行 nohup command &amp;amp; ： 后台运行，但关掉终端也会继续运行  如果命令行正在执行一个命令，需要很长的等待时间，但你不想干等着，而是需要干其他的事情，这时候可以用 Ctrl-Z 挂起这个程序，例如：">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-nohub-on-linux" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/nohub-on-linux/" class="article-date">
+  <time datetime="2016-04-12T05:42:32.000Z" itemprop="datePublished">2016-04-12</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Linux命令后台运行
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>将Linux命令放到后台运行有两种方式：</p>
+<ol>
+<li>command &amp; ： 后台运行，但关掉终端会停止运行</li>
+<li>nohup command &amp; ： 后台运行，但关掉终端也会继续运行</li>
+</ol>
+<p>如果命令行正在执行一个命令，需要很长的等待时间，但你不想干等着，而是需要干其他的事情，这时候可以用 <code>Ctrl-Z</code> 挂起这个程序，例如：</p>
+<a id="more"></a>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@iZ94woglhdoZ js] node server.js</span><br><span class="line">server running at http://110.120.119.911:3005/</span><br></pre></td></tr></table></figure>
+<p>这个时候按 <code>Ctrl-Z</code>，进程到了后台并挂起：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[1]+  已停止               node server.js</span><br></pre></td></tr></table></figure>
+<p>输入<code>jobs</code>查看所有当前 shell 环境中已启动的作业：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@iZ94woglhdoZ clink] jobs</span><br><span class="line">[1]+  已停止               node server.js</span><br></pre></td></tr></table></figure>
+<p>然后让它在后台运行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@iZ94woglhdoZ clink] <span class="built_in">bg</span> %1</span><br><span class="line">[1]+ node server.js &amp;</span><br></pre></td></tr></table></figure>
+<p>这个时候如果关闭shell作业也停止了：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">disown</span> %1</span><br></pre></td></tr></table></figure>
+<p>当使用过 disown 之后，会将把目标作业从作业列表中移除，我们将不能再使用jobs来查看它，但是依然能够用ps -ef查找到它。不过，作业在后台运行一样会将结果输出到屏幕上，干扰你的工作。因此最好在启动的时候就使用nohup把输出重定向到nohup.out文件中，并放在后台运行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@iZ94woglhdoZ js] (nohup node server.js &amp;)</span><br><span class="line">(nohup node server.js &amp;)</span><br><span class="line">appending output to nohup.out</span><br></pre></td></tr></table></figure>
+<p>注意那个括号一定要加，如果不加的后果是这样的：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@iZ94woglhdoZ js] nohup node server.js &amp;</span><br><span class="line">[1] 59288</span><br><span class="line">appending output to nohup.out</span><br></pre></td></tr></table></figure>
+<p>没有摆脱当前shell，如果shell关闭依然会终止任务，因为它在jobs里面：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@iZ94woglhdoZ js] <span class="built_in">jobs</span></span><br><span class="line">[1]  + running    nohup node server.js</span><br></pre></td></tr></table></figure>
+<p>除非使用<code>disown %1</code>把它放到后台，而()括号的左右是将父进程设为init进程(进程号为1)，最后如果想杀死进程可以用以下三种方法之一：</p>
+<ol>
+<li>pkill -9 name</li>
+<li>killall name</li>
+<li>kill pid</li>
+</ol>
+<p>整理一下命令：</p>
+<ul>
+<li><code>ctrl + z</code>：将一个正在前台执行的命令放到后台，并且暂停</li>
+<li><code>jobs</code>：查看当前有多少作业</li>
+<li><code>fg</code>：将后台中的命令调至前台继续运行（Foreground）。如果后台中有多个命令，可以用 fg %jobnumber将选中的命令调出，%jobnumber是通过jobs命令查到的后台正在执行的命令的序号(不是pid)</li>
+<li><code>bg</code>：将一个在后台暂停的命令，变成继续执行（Background）。如果后台中有多个命令，可以用bg %jobnumber将选中的命令调出，%jobnumber是通过jobs命令查到的后台正在执行的命令的序号(不是pid)</li>
+<li><code>()</code>：设置父进程为init进程。</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/nohub-on-linux/" data-id="cjhn4haft00fevqq3lg28mfqd" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/svg-sprite-notes/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Sprite技术
+        
+      </div>
+    </a>
+  
+  
+    <a href="/linux-progress-status/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Linux进程状态</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

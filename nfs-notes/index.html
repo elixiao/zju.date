@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="NFS (network file system) 网络文件系统，类似 Windows 中的文件夹共享，多台机器可以访问同一个目录。 服务端NFS 其实可以被视为一个 RPC 服务，可以通过下面的命令开启： 12systemctl start rpcbind # 开启 rpcbindsystemctl start nfs # 开启 nfs 如果系统没安装的话，使用下面的命令安装： 12345yum">
+<meta name="keywords" content="Linux">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NFS笔记">
+<meta property="og:url" content="https://zju.date/nfs-notes/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="NFS (network file system) 网络文件系统，类似 Windows 中的文件夹共享，多台机器可以访问同一个目录。 服务端NFS 其实可以被视为一个 RPC 服务，可以通过下面的命令开启： 12systemctl start rpcbind # 开启 rpcbindsystemctl start nfs # 开启 nfs 如果系统没安装的话，使用下面的命令安装： 12345yum">
+<meta property="og:updated_time" content="2018-03-19T09:41:01.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="NFS笔记">
+<meta name="twitter:description" content="NFS (network file system) 网络文件系统，类似 Windows 中的文件夹共享，多台机器可以访问同一个目录。 服务端NFS 其实可以被视为一个 RPC 服务，可以通过下面的命令开启： 12systemctl start rpcbind # 开启 rpcbindsystemctl start nfs # 开启 nfs 如果系统没安装的话，使用下面的命令安装： 12345yum">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-nfs-notes" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/nfs-notes/" class="article-date">
+  <time datetime="2018-01-23T08:04:07.000Z" itemprop="datePublished">2018-01-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      NFS笔记
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>NFS (network file system) 网络文件系统，类似 Windows 中的文件夹共享，多台机器可以访问同一个目录。</p>
+<h2 id="服务端"><a href="#服务端" class="headerlink" title="服务端"></a>服务端</h2><p>NFS 其实可以被视为一个 RPC 服务，可以通过下面的命令开启：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">systemctl start rpcbind <span class="comment"># 开启 rpcbind</span></span><br><span class="line">systemctl start nfs <span class="comment"># 开启 nfs</span></span><br></pre></td></tr></table></figure>
+<p>如果系统没安装的话，使用下面的命令安装：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">yum install nfs-utils</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加开启启动</span></span><br><span class="line">systemctl <span class="built_in">enable</span> rpcbind.service</span><br><span class="line">systemctl <span class="built_in">enable</span> nfs-server.service</span><br></pre></td></tr></table></figure>
+<p>然后就可以添加从机了，假如我们想共享本地文件夹 /home/nfs：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">vim  /etc/exports</span><br><span class="line">/home/nfs   192.168.120.8(rw,sync,fsid=0)   192.168.120.9(rw,sync,fsid=0)</span><br><span class="line">/home/nfs 192.168.120.8(rw,all_squash,anonuid=1000,anongid=1000) 192.168.120.9(rw,all_squash,anonuid=1000,anongid=1000)</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<p>解释如下：</p>
+<ul>
+<li>192.168.120.7 是允许访问的主机，可以是指定IP，也可以是IP段</li>
+<li>rw：读写</li>
+<li>ro：只读</li>
+<li>sync：同步模式，内存数据时时写入硬盘</li>
+<li>no_root_squash：root用户就会对共享的目录拥有至高的权限控制，就像是对本机的目录操作一样。不安全，不建议使用</li>
+<li>root_squash：和上面的选项对应，root用户对共享目录的权限不高，只有普通用户的权限，即限制了root；</li>
+<li>all_squash：不管使用NFS的用户是谁，他的身份都会被限定成为一个指定的普通用户身份；</li>
+<li>anonuid/anongid：匿名用户的 uid/gid，要和root_squash 以及all_squash一同使用，用于指定使用NFS的用户限定后的uid和gid，前提是本机的/etc/passwd中存在这个uid和gid，uid 和 gid 最好为客户端和服务端都存在的 uid 和 gid 值。</li>
+<li>fsid=0表示将/home/nfs整个目录包装成根目录</li>
+</ul>
+<p>NFS 修改配置文件后无需重启服务，如下命令刷新即可：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo exportfs -rv</span><br><span class="line">exporting 192.168.120.8:/home/nfs</span><br><span class="line">exporting 192.168.120.9:/home/nfs</span><br></pre></td></tr></table></figure>
+<p>其中参数的含义是：</p>
+<ul>
+<li><code>-a</code> ：全部挂载或者卸载；</li>
+<li><code>-r</code> ：重新挂载；</li>
+<li><code>-u</code> ：卸载某一个目录；</li>
+<li><code>-v</code> ：显示共享的目录；</li>
+</ul>
+<p>确认NFS服务器启动成功，通过查看 service 列中是否有 nfs 服务来确认：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rpcinfo -p</span><br></pre></td></tr></table></figure>
+<h2 id="客户端"><a href="#客户端" class="headerlink" title="客户端"></a>客户端</h2><p>查看可挂载目录及可连接的IP：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">showmount -e 192.168.120.7</span><br><span class="line">Export list <span class="keyword">for</span> 192.168.120.7:</span><br><span class="line">/home/nfs 192.168.120.9,192.168.120.8</span><br></pre></td></tr></table></figure>
+<p>上配置 client：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ssh -i ~/sportplatform.pem 192.168.120.8</span><br><span class="line">ssh -i ~/sportplatform.pem 192.168.120.9</span><br></pre></td></tr></table></figure>
+<p>客户端不需要启动 nfs 服务，只需要启动 rpcbind 服务</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">yum install -y rpcbind</span><br><span class="line">systemctl start rpcbind.service</span><br><span class="line">systemctl <span class="built_in">enable</span> rpcbind.service</span><br></pre></td></tr></table></figure>
+<p>使用 mount 挂载服务器端的目录 /home/nfs 到客户端目录 /home/nfs 下</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mkdir /home/nfs</span><br><span class="line">mount -t nfs 192.168.120.7:/home/nfs/ /home/nfs/</span><br><span class="line">df -h</span><br><span class="line">sudo mkdir /ali</span><br><span class="line">sudo chown urcentos:urcentos /ali</span><br><span class="line">sudo mount -t nfs 192.168.120.7:/ali /ali</span><br></pre></td></tr></table></figure>
+<p>挂载完成，可以正常访问本机下的 /home/nfs，如果服务端在共享目录 /home/nfs 中写入文件，客户端上可以看到。如果不用了，可以卸载：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">umount /home/nfs/</span><br></pre></td></tr></table></figure>
+<p>查看当前挂载：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nfsstat -m</span><br></pre></td></tr></table></figure>
+<h2 id="完整流程"><a href="#完整流程" class="headerlink" title="完整流程"></a>完整流程</h2><p>在服务器上再建立一个共享目录</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mkdir /home/nfs1</span><br></pre></td></tr></table></figure>
+<p>获取用户 id 号：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">id your_server_username</span><br><span class="line">uid=0(root) gid=0(root) 组=0(root)</span><br><span class="line">uid=1000(urcentos) gid=1000(urcentos) 组=1000(urcentos),4(adm),10(wheel),190(systemd-journal)</span><br></pre></td></tr></table></figure>
+<p>编辑 exports</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/home/nfs 192.168.120.8(rw,sync,fsid=0) 192.168.120.9(rw,sync,fsid=0)</span><br><span class="line">/home/nfs1 192.168.120.0/24(rw,sync,all_squash,anonuid=0,anongid=0)</span><br></pre></td></tr></table></figure>
+<p>使配置生效：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">exportfs  -rv</span><br></pre></td></tr></table></figure>
+<p>想在客户端实现开机挂载，则需要编辑 /etc/fstab 或者将挂载命令写入到 /etc/rc.local</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/fstab</span><br></pre></td></tr></table></figure>
+<p>修改：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">192.168.222.200:/home/nfs /home/nfs nfs nolock 0 0</span><br><span class="line">192.168.222.200:/home/nfs1 /home/nfs1 nfs nolock 0 0</span><br></pre></td></tr></table></figure>
+<p>重新挂载：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mount -a</span><br><span class="line">vim /etc/rc.local</span><br><span class="line">mount  -t nfs  192.168.222.200:/home/nfs1/  /home/nfs1/</span><br></pre></td></tr></table></figure>
+<h2 id="错误解决"><a href="#错误解决" class="headerlink" title="错误解决"></a>错误解决</h2><p>执行 mount 报错</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">clnt_create: RPC: Port mapper failure - Unable to receive: errno 113 (No route to host)</span><br></pre></td></tr></table></figure>
+<p>关闭防火墙，或者执行如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rpcinfo  -p  192.168.221.100</span><br></pre></td></tr></table></figure>
+<p>将列出端口都添加至防火墙规则，放行。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/nfs-notes/" data-id="cjhn4haf600eivqq3n13grdfg" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/load-balance/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          负载均衡配置
+        
+      </div>
+    </a>
+  
+  
+    <a href="/supervisor-notes/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">使用 supervisor 管理进程</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

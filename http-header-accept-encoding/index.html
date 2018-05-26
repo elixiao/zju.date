@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="什么是Accept-Encoding？这篇博客里面的解释非常到位：  浏览器发送请求时，通过 Accept-Encoding 带上自己支持的内容编码格式列表；服务端从中挑选一种用来对正文进行编码，并通过 Content-Encoding 响应头指明选定的格式；浏览器拿到响应正文后，依据 Content-Encoding 进行解压。当然，服务端也可以返回未压缩的正文，但这种情况不允许返回 Conte">
+<meta name="keywords" content="HTTP">
+<meta property="og:type" content="article">
+<meta property="og:title" content="http header中的Accept-Encoding字段">
+<meta property="og:url" content="https://zju.date/http-header-accept-encoding/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="什么是Accept-Encoding？这篇博客里面的解释非常到位：  浏览器发送请求时，通过 Accept-Encoding 带上自己支持的内容编码格式列表；服务端从中挑选一种用来对正文进行编码，并通过 Content-Encoding 响应头指明选定的格式；浏览器拿到响应正文后，依据 Content-Encoding 进行解压。当然，服务端也可以返回未压缩的正文，但这种情况不允许返回 Conte">
+<meta property="og:updated_time" content="2017-08-16T02:27:09.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="http header中的Accept-Encoding字段">
+<meta name="twitter:description" content="什么是Accept-Encoding？这篇博客里面的解释非常到位：  浏览器发送请求时，通过 Accept-Encoding 带上自己支持的内容编码格式列表；服务端从中挑选一种用来对正文进行编码，并通过 Content-Encoding 响应头指明选定的格式；浏览器拿到响应正文后，依据 Content-Encoding 进行解压。当然，服务端也可以返回未压缩的正文，但这种情况不允许返回 Conte">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-http-header-accept-encoding" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/http-header-accept-encoding/" class="article-date">
+  <time datetime="2017-07-25T11:40:07.000Z" itemprop="datePublished">2017-07-25</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      http header中的Accept-Encoding字段
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>什么是<code>Accept-Encoding</code>？这篇<a href="https://imququ.com/post/content-encoding-header-in-http.html" target="_blank" rel="noopener">博客</a>里面的解释非常到位：</p>
+<blockquote>
+<p>浏览器发送请求时，通过 Accept-Encoding 带上自己支持的内容编码格式列表；<br>服务端从中挑选一种用来对正文进行编码，并通过 Content-Encoding 响应头指明选定的格式；<br>浏览器拿到响应正文后，依据 Content-Encoding 进行解压。<br>当然，服务端也可以返回未压缩的正文，但这种情况不允许返回 Content-Encoding。</p>
+</blockquote>
+<p><code>Accept-Encoding</code>的语法如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Accept-Encoding: gzip</span><br><span class="line">Accept-Encoding: compress</span><br><span class="line">Accept-Encoding: deflate</span><br><span class="line">Accept-Encoding: br</span><br><span class="line">Accept-Encoding: identity</span><br><span class="line">Accept-Encoding: *</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<p>其实默认值是*，表示客户端没有偏好，前面四个<code>gzip</code>,<code>compress</code>,<code>deflate</code>和<code>br</code>是四种不同的压缩算法，<code>identity</code>表示不准压缩。另外还有一种添加权重的写法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// Multiple algorithms, weighted with the quality value syntax:</span><br><span class="line">Accept-Encoding: deflate, gzip;q=1.0, *;q=0.5</span><br></pre></td></tr></table></figure>
+<p>那这个有哪些应用场景呢？如果用node.js接收http请求时候，出现乱码，有可能是gzip/deflate没有解压导致的。例如在express服务端这么用：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">const compression = require(&apos;compression&apos;)</span><br><span class="line">app.use(compression(&#123;threshold: 0&#125;))</span><br><span class="line">app.get(&apos;/test&apos;, function (req, res) &#123;</span><br><span class="line">    res.send(`&lt;div style=&quot;color:red&quot;&gt;Hello World&lt;/div&gt;`)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>其中threshold表示压缩取决于response body的大小，默认是1kb，如果超出则压缩，由于这里就返回Hello World，不足1kb，因此必须手动把threshold改为0。此时如果发起请求：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -i &quot;http://localhost:3030/test&quot; -H &quot;Accept-Encoding: gzip, deflate&quot; --raw</span><br></pre></td></tr></table></figure>
+<p>返回结果是：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">HTTP/1.1 200 OK</span><br><span class="line">X-Powered-By: Express</span><br><span class="line">Access-Control-Allow-Origin: *</span><br><span class="line">Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept</span><br><span class="line">Content-Type: text/html; charset=utf-8</span><br><span class="line">ETag: W/&quot;28-JA/cfQU8zS/666C7Gv+7yKKAu1g&quot;</span><br><span class="line">Vary: Accept-Encoding</span><br><span class="line">Content-Encoding: gzip</span><br><span class="line">Date: Tue, 08 Aug 2017 02:50:58 GMT</span><br><span class="line">Connection: keep-alive</span><br><span class="line">Transfer-Encoding: chunked</span><br><span class="line"></span><br><span class="line">a</span><br><span class="line">?</span><br><span class="line">31</span><br><span class="line">?I?,S(.??I?UJ???/?*JMQ??H????/?I??*??3?(</span><br><span class="line">0</span><br></pre></td></tr></table></figure>
+<p>呀，这个返回数据完全是乱码，那怎么办呢？可以调用zlib包对gzip或defalte过的压缩数据进行解码：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> request = http.get(&#123;</span><br><span class="line">  host: <span class="string">'localhost'</span>,</span><br><span class="line">  path: <span class="string">'/test'</span>,</span><br><span class="line">  port: <span class="number">3030</span>,</span><br><span class="line">  headers: &#123;<span class="string">'accept-encoding'</span>: <span class="string">'gzip,deflate'</span>&#125;</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">request.on(<span class="string">'response'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">response</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> output = process.stdout</span><br><span class="line">  <span class="keyword">switch</span> (response.headers[<span class="string">'content-encoding'</span>]) &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="string">'gzip'</span>:</span><br><span class="line">      response.pipe(zlib.createGunzip()).pipe(output);</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">case</span> <span class="string">'deflate'</span>:</span><br><span class="line">      response.pipe(zlib.createInflate()).pipe(output);</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">      response.pipe(output);</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>最后，再来说一说response header里面的<code>Vary: Accept-Encoding</code>字段：</p>
+<p>当浏览器发出一个请求时，会包含一些HTTP头信息，服务器会根据这些头信息决定返回什么样的东西（这是一个移动客户端吗？它能否处理压缩内容？它是否需要特定的语言支持？）。但现在网络使用了中间高速缓存（cache）和内容分发网络（CDN）。这就产生了一个问题，缓存如何使用头信息决定返回什么？它能否复制服务器端的决策逻辑？（<a href="http://www.webkaka.com/blog/archives/how-to-set-Vary-Accept-Encoding-header.html" target="_blank" rel="noopener">原文</a>）流行的缓存代理服务器，像squid，通常会根据请求的URI和vary response header的内容产生一个hash值。当缓存服务器接收到一个请求的时候，它会根据输入产生一个hash，之后检查缓存看是否已经有这个资源在硬盘上或者在内存中匹配这个hash值。缓存服务器以此来判断命中与否。（<a href="http://shunter.blog.51cto.com/2183398/1076521" target="_blank" rel="noopener">原文</a>）<code>Vary</code>解决了这个问题，<code>Vary</code>头描述什么信息“唯一地”标识一个请求——传入的请求只有完全匹配缓存的<code>Vary</code>信息，缓存才被使用。设想有两个客户，一个使用的旧浏览器不支持压缩，一个使用新的浏览器支持压缩，如果他们都请求同一个网页，那么取决于谁先请求，压缩或非压缩版本便存储在CDN上。这样就可能导致：旧浏览器请求常规网页但获得缓存的压缩版本，而新浏览器会获得缓存的非压缩版本但尝试去“解压”它，解决方法就是源服务器回送<code>Vary: Accept-Encoding</code>（<a href="http://www.webkaka.com/blog/archives/how-to-set-Vary-Accept-Encoding-header.html" target="_blank" rel="noopener">原文</a>）</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/http-header-accept-encoding/" data-id="cjhn4habo009gvqq3onlrlr2g" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/HTTP/">HTTP</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/ps-cut/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          photoshop 切片功能
+        
+      </div>
+    </a>
+  
+  
+    <a href="/use-zone-in-angular/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">angular手动触发视图更新</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

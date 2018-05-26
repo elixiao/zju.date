@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="首先声明ui.bootstrap.tabs模块，该模块无任何依赖。 1angular.module(&apos;ui.bootstrap.tabs&apos;, []) 定义tab容器controller，用于存放多个标签，并处理响应逻辑。 12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849">
+<meta name="keywords" content="JavaScript">
+<meta property="og:type" content="article">
+<meta property="og:title" content="angular-ui-tab源码剖析">
+<meta property="og:url" content="https://zju.date/angularjs-ui-tab/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="首先声明ui.bootstrap.tabs模块，该模块无任何依赖。 1angular.module(&apos;ui.bootstrap.tabs&apos;, []) 定义tab容器controller，用于存放多个标签，并处理响应逻辑。 12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849">
+<meta property="og:updated_time" content="2017-12-30T12:53:22.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="angular-ui-tab源码剖析">
+<meta name="twitter:description" content="首先声明ui.bootstrap.tabs模块，该模块无任何依赖。 1angular.module(&apos;ui.bootstrap.tabs&apos;, []) 定义tab容器controller，用于存放多个标签，并处理响应逻辑。 12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-angularjs-ui-tab" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/angularjs-ui-tab/" class="article-date">
+  <time datetime="2016-08-09T07:22:37.000Z" itemprop="datePublished">2016-08-09</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      angular-ui-tab源码剖析
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>首先声明<code>ui.bootstrap.tabs</code>模块，该模块无任何依赖。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">angular.module(<span class="string">'ui.bootstrap.tabs'</span>, [])</span><br></pre></td></tr></table></figure>
+<p>定义tab容器controller，用于存放多个标签，并处理响应逻辑。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br></pre></td><td class="code"><pre><span class="line">.controller(<span class="string">'UibTabsetController'</span>, [<span class="string">'$scope'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">$scope</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> ctrl = <span class="keyword">this</span>,</span><br><span class="line">      oldIndex; <span class="comment">// 上次选中的标签页</span></span><br><span class="line">      ctrl.tabs = []; <span class="comment">//标签列表</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">// 选择标签页</span></span><br><span class="line">  ctrl.select = <span class="function"><span class="keyword">function</span>(<span class="params">index, evt</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (!destroyed) &#123;</span><br><span class="line">      <span class="keyword">var</span> previousIndex = findTabIndex(oldIndex); <span class="comment">//找到上次index值在tab数组中的位置</span></span><br><span class="line">      <span class="keyword">var</span> previousSelected = ctrl.tabs[previousIndex]; <span class="comment">//找到上次选中的tab</span></span><br><span class="line">      <span class="keyword">if</span> (previousSelected) &#123; <span class="comment">//如果上次选中的tab存在，则取消选中</span></span><br><span class="line">        previousSelected.tab.onDeselect(&#123;</span><br><span class="line">          $event: evt,</span><br><span class="line">          $selectedIndex: index</span><br><span class="line">        &#125;);</span><br><span class="line">        <span class="keyword">if</span> (evt &amp;&amp; evt.isDefaultPrevented()) &#123;</span><br><span class="line">          <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        previousSelected.tab.active = <span class="literal">false</span>;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">var</span> selected = ctrl.tabs[index];<span class="comment">//当前选中的tab</span></span><br><span class="line">      <span class="keyword">if</span> (selected) &#123;</span><br><span class="line">        selected.tab.onSelect(&#123;</span><br><span class="line">          $event: evt</span><br><span class="line">        &#125;);</span><br><span class="line">        selected.tab.active = <span class="literal">true</span>;<span class="comment">//被选中的tab页的active为true</span></span><br><span class="line">        ctrl.active = selected.index;<span class="comment">//ctrl的active是当前选中tab的index</span></span><br><span class="line">        oldIndex = selected.index;<span class="comment">//上次index也是</span></span><br><span class="line">      &#125; <span class="keyword">else</span> <span class="keyword">if</span> (!selected &amp;&amp; angular.isDefined(oldIndex)) &#123; <span class="comment">//如果选中的不存在</span></span><br><span class="line">        ctrl.active = <span class="literal">null</span>;</span><br><span class="line">        oldIndex = <span class="literal">null</span>;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 增加标签页</span></span><br><span class="line">  ctrl.addTab = <span class="function"><span class="keyword">function</span> <span class="title">addTab</span>(<span class="params">tab</span>) </span>&#123;</span><br><span class="line">    ctrl.tabs.push(&#123;</span><br><span class="line">      tab: tab,</span><br><span class="line">      index: tab.index</span><br><span class="line">    &#125;);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 按照index进行排序，如果是字符串就按照字母表排序了</span></span><br><span class="line">    ctrl.tabs.sort(<span class="function"><span class="keyword">function</span>(<span class="params">t1, t2</span>) </span>&#123;</span><br><span class="line">      <span class="keyword">if</span> (t1.index &gt; t2.index) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">if</span> (t1.index &lt; t2.index) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (tab.index === ctrl.active || !angular.isDefined(ctrl.active) &amp;&amp; ctrl.tabs.length === <span class="number">1</span>) &#123;</span><br><span class="line">      <span class="keyword">var</span> newActiveIndex = findTabIndex(tab.index);</span><br><span class="line">      ctrl.select(newActiveIndex);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 删除标签页</span></span><br><span class="line">  ctrl.removeTab = <span class="function"><span class="keyword">function</span> <span class="title">removeTab</span>(<span class="params">tab</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> index;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; ctrl.tabs.length; i++) &#123;</span><br><span class="line">      <span class="keyword">if</span> (ctrl.tabs[i].tab === tab) &#123;</span><br><span class="line">        index = i;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 如果删除了当前的标签页，那么会自动选择下一个标签页</span></span><br><span class="line">    <span class="keyword">if</span> (ctrl.tabs[index].index === ctrl.active) &#123;</span><br><span class="line">      <span class="keyword">var</span> newActiveTabIndex = index === ctrl.tabs.length - <span class="number">1</span> ?</span><br><span class="line">        index - <span class="number">1</span> : index + <span class="number">1</span> % ctrl.tabs.length;</span><br><span class="line">      ctrl.select(newActiveTabIndex);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ctrl.tabs.splice(index, <span class="number">1</span>);</span><br><span class="line">  &#125;;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 监听index的变化，并选择相应标签页</span></span><br><span class="line">  $scope.$watch(<span class="string">'tabset.active'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">val</span>) </span>&#123;</span><br><span class="line">    <span class="comment">// 如果active被定义存在并且不等于旧值，那么选中这个新标签页</span></span><br><span class="line">    <span class="keyword">if</span> (angular.isDefined(val) &amp;&amp; val !== oldIndex) &#123;</span><br><span class="line">      ctrl.select(findTabIndex(val)); </span><br><span class="line">    &#125;</span><br><span class="line">  &#125;);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">var</span> destroyed;</span><br><span class="line">  $scope.$on(<span class="string">'$destroy'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    destroyed = <span class="literal">true</span>;</span><br><span class="line">  &#125;);</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 发现当前标签页在数组中的位置（和用户传的index不一样）</span></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">findTabIndex</span>(<span class="params">index</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; ctrl.tabs.length; i++) &#123;</span><br><span class="line">      <span class="keyword">if</span> (ctrl.tabs[i].index === index) &#123;</span><br><span class="line">        <span class="keyword">return</span> i;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;])</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<p><code>uibTabset</code>指令，包裹在<code>uibTab</code>外面：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">.directive(<span class="string">'uibTabset'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> &#123;</span><br><span class="line">    transclude: <span class="literal">true</span>,</span><br><span class="line">    replace: <span class="literal">true</span>,</span><br><span class="line">    scope: &#123;&#125;,</span><br><span class="line">    bindToController: &#123;</span><br><span class="line">      active: <span class="string">'=?'</span>,</span><br><span class="line">      type: <span class="string">'@'</span></span><br><span class="line">    &#125;,</span><br><span class="line">    controller: <span class="string">'UibTabsetController'</span>,</span><br><span class="line">    controllerAs: <span class="string">'tabset'</span>,</span><br><span class="line">    <span class="comment">// 如果没有定义templateUrl，就用uib/template/tabs/tabset.html模板</span></span><br><span class="line">    templateUrl: <span class="function"><span class="keyword">function</span>(<span class="params">element, attrs</span>) </span>&#123;</span><br><span class="line">      <span class="keyword">return</span> attrs.templateUrl || <span class="string">'uib/template/tabs/tabset.html'</span>;</span><br><span class="line">    &#125;,</span><br><span class="line">    link: <span class="function"><span class="keyword">function</span>(<span class="params">scope, element, attrs</span>) </span>&#123;</span><br><span class="line">      scope.vertical = angular.isDefined(attrs.vertical) ?</span><br><span class="line">        scope.$parent.$<span class="built_in">eval</span>(attrs.vertical) : <span class="literal">false</span>;</span><br><span class="line">      scope.justified = angular.isDefined(attrs.justified) ?</span><br><span class="line">        scope.$parent.$<span class="built_in">eval</span>(attrs.justified) : <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line">.directive(<span class="string">'uibTab'</span>, [<span class="string">'$parse'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">$parse</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> &#123;</span><br><span class="line">    <span class="built_in">require</span>: <span class="string">'^uibTabset'</span>,</span><br><span class="line">    replace: <span class="literal">true</span>,</span><br><span class="line">    <span class="comment">// 如果没有定义templateUrl，就用uib/template/tabs/tab.html模板</span></span><br><span class="line">    templateUrl: <span class="function"><span class="keyword">function</span>(<span class="params">element, attrs</span>) </span>&#123;</span><br><span class="line">      <span class="keyword">return</span> attrs.templateUrl || <span class="string">'uib/template/tabs/tab.html'</span>;</span><br><span class="line">    &#125;,</span><br><span class="line">    transclude: <span class="literal">true</span>,</span><br><span class="line">    scope: &#123;</span><br><span class="line">      heading: <span class="string">'@'</span>,</span><br><span class="line">      index: <span class="string">'=?'</span>,</span><br><span class="line">      classes: <span class="string">'@?'</span>,</span><br><span class="line">      onSelect: <span class="string">'&amp;select'</span>, </span><br><span class="line">      onDeselect: <span class="string">'&amp;deselect'</span></span><br><span class="line">    &#125;,</span><br><span class="line">    controller: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">      <span class="comment">//Empty controller so other directives can require being 'under' a tab</span></span><br><span class="line">    &#125;,</span><br><span class="line">    controllerAs: <span class="string">'tab'</span>,</span><br><span class="line">    link: <span class="function"><span class="keyword">function</span>(<span class="params">scope, elm, attrs, tabsetCtrl, transclude</span>) </span>&#123;</span><br><span class="line">      scope.disabled = <span class="literal">false</span>;</span><br><span class="line">      <span class="keyword">if</span> (attrs.disable) &#123;</span><br><span class="line">        scope.$parent.$watch($parse(attrs.disable), <span class="function"><span class="keyword">function</span>(<span class="params">value</span>) </span>&#123;</span><br><span class="line">          scope.disabled = !! value;</span><br><span class="line">        &#125;);</span><br><span class="line">      &#125;</span><br><span class="line">      </span><br><span class="line">      <span class="comment">//如果没传index属性</span></span><br><span class="line">      <span class="keyword">if</span> (angular.isUndefined(attrs.index)) &#123;</span><br><span class="line">        <span class="keyword">if</span> (tabsetCtrl.tabs &amp;&amp; tabsetCtrl.tabs.length) &#123;</span><br><span class="line">          scope.index = <span class="built_in">Math</span>.max.apply(<span class="literal">null</span>, tabsetCtrl.tabs.map(<span class="function"><span class="keyword">function</span>(<span class="params">t</span>) </span>&#123; <span class="keyword">return</span> t.index; &#125;)) + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">          scope.index = <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="comment">//如果没传classes属性</span></span><br><span class="line">      <span class="keyword">if</span> (angular.isUndefined(attrs.classes)) &#123;</span><br><span class="line">        scope.classes = <span class="string">''</span>;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="comment">//传过来的select</span></span><br><span class="line">      scope.select = <span class="function"><span class="keyword">function</span>(<span class="params">evt</span>) </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (!scope.disabled) &#123;</span><br><span class="line">          <span class="keyword">var</span> index;</span><br><span class="line">          <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; tabsetCtrl.tabs.length; i++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (tabsetCtrl.tabs[i].tab === scope) &#123;</span><br><span class="line">              index = i;</span><br><span class="line">              <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">          &#125;</span><br><span class="line">          <span class="comment">//调用tabsetCtrl的select方法</span></span><br><span class="line">          tabsetCtrl.select(index, evt);</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;;</span><br><span class="line"></span><br><span class="line">      tabsetCtrl.addTab(scope);</span><br><span class="line">      scope.$on(<span class="string">'$destroy'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        tabsetCtrl.removeTab(scope);</span><br><span class="line">      &#125;);</span><br><span class="line"></span><br><span class="line">      <span class="comment">//We need to transclude later, once the content container is ready.</span></span><br><span class="line">      <span class="comment">//when this link happens, we're inside a tab heading.</span></span><br><span class="line">      scope.$transcludeFn = transclude;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;])</span><br></pre></td></tr></table></figure>
+<p>转换标题，自定义标题样式，并保留原来<code>uib-tab-heading</code>标签里面的东西。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">.directive(<span class="string">'uibTabHeadingTransclude'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> &#123;</span><br><span class="line">    restrict: <span class="string">'A'</span>,</span><br><span class="line">    <span class="comment">// 上一层必须有uib-tab标签</span></span><br><span class="line">    <span class="built_in">require</span>: <span class="string">'^uibTab'</span>,</span><br><span class="line">    link: <span class="function"><span class="keyword">function</span>(<span class="params">scope, elm</span>) </span>&#123;</span><br><span class="line">      scope.$watch(<span class="string">'headingElement'</span>, <span class="function"><span class="keyword">function</span> <span class="title">updateHeadingElement</span>(<span class="params">heading</span>) </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (heading) &#123;</span><br><span class="line">          elm.html(<span class="string">''</span>);</span><br><span class="line">          elm.append(heading);</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>转换内容：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">.directive(<span class="string">'uibTabContentTransclude'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> &#123;</span><br><span class="line">    restrict: <span class="string">'A'</span>,</span><br><span class="line">    <span class="comment">// 上一层必须有uib-tabset标签</span></span><br><span class="line">    <span class="built_in">require</span>: <span class="string">'^uibTabset'</span>,</span><br><span class="line">    link: <span class="function"><span class="keyword">function</span>(<span class="params">scope, elm, attrs</span>) </span>&#123;</span><br><span class="line">      <span class="keyword">var</span> tab = scope.$<span class="built_in">eval</span>(attrs.uibTabContentTransclude).tab;</span><br><span class="line"></span><br><span class="line">      <span class="comment">//Now our tab is ready to be transcluded: both the tab heading area</span></span><br><span class="line">      <span class="comment">//and the tab content area are loaded.  Transclude 'em both.</span></span><br><span class="line">      tab.$transcludeFn(tab.$parent, <span class="function"><span class="keyword">function</span>(<span class="params">contents</span>) </span>&#123;</span><br><span class="line">        angular.forEach(contents, <span class="function"><span class="keyword">function</span>(<span class="params">node</span>) </span>&#123;</span><br><span class="line">          <span class="keyword">if</span> (isTabHeading(node)) &#123;</span><br><span class="line">            <span class="comment">//Let tabHeadingTransclude know.</span></span><br><span class="line">            tab.headingElement = node;</span><br><span class="line">          &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            elm.append(node);</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">      &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 判断是否为head标签</span></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">isTabHeading</span>(<span class="params">node</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> node.tagName &amp;&amp; (</span><br><span class="line">      node.hasAttribute(<span class="string">'uib-tab-heading'</span>) ||</span><br><span class="line">      node.hasAttribute(<span class="string">'data-uib-tab-heading'</span>) ||</span><br><span class="line">      node.hasAttribute(<span class="string">'x-uib-tab-heading'</span>) ||</span><br><span class="line">      node.tagName.toLowerCase() === <span class="string">'uib-tab-heading'</span> ||</span><br><span class="line">      node.tagName.toLowerCase() === <span class="string">'data-uib-tab-heading'</span> ||</span><br><span class="line">      node.tagName.toLowerCase() === <span class="string">'x-uib-tab-heading'</span> ||</span><br><span class="line">      node.tagName.toLowerCase() === <span class="string">'uib:tab-heading'</span></span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">angular.module(<span class="string">"uib/template/tabs/tab.html"</span>, []).run([<span class="string">"$templateCache"</span>, <span class="function"><span class="keyword">function</span>(<span class="params">$templateCache</span>) </span>&#123;</span><br><span class="line">  $templateCache.put(<span class="string">"uib/template/tabs/tab.html"</span>,</span><br><span class="line">    <span class="string">"&lt;li ng-class=\"[&#123;active: active, disabled: disabled&#125;, classes]\" class=\"uib-tab nav-item\"&gt;\n"</span> +</span><br><span class="line">    <span class="string">"  &lt;a href ng-click=\"select($event)\" class=\"nav-link\" uib-tab-heading-transclude&gt;&#123;&#123;heading&#125;&#125;&lt;/a&gt;\n"</span> +</span><br><span class="line">    <span class="string">"&lt;/li&gt;\n"</span> +</span><br><span class="line">    <span class="string">""</span>);</span><br><span class="line">&#125;]);</span><br></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">angular.module(<span class="string">"uib/template/tabs/tabset.html"</span>, []).run([<span class="string">"$templateCache"</span>, <span class="function"><span class="keyword">function</span>(<span class="params">$templateCache</span>) </span>&#123;</span><br><span class="line">  $templateCache.put(<span class="string">"uib/template/tabs/tabset.html"</span>,</span><br><span class="line">    <span class="string">"&lt;div&gt;\n"</span> +</span><br><span class="line">    <span class="string">"  &lt;ul class=\"nav nav-&#123;&#123;tabset.type || 'tabs'&#125;&#125;\" ng-class=\"&#123;'nav-stacked': vertical, 'nav-justified': justified&#125;\" ng-transclude&gt;&lt;/ul&gt;\n"</span> +</span><br><span class="line">    <span class="string">"  &lt;div class=\"tab-content\"&gt;\n"</span> +</span><br><span class="line">    <span class="string">"    &lt;div class=\"tab-pane\"\n"</span> +</span><br><span class="line">    <span class="string">"         ng-repeat=\"tab in tabset.tabs\"\n"</span> +</span><br><span class="line">    <span class="string">"         ng-class=\"&#123;active: tabset.active === tab.index&#125;\"\n"</span> +</span><br><span class="line">    <span class="string">"         uib-tab-content-transclude=\"tab\"&gt;\n"</span> +</span><br><span class="line">    <span class="string">"    &lt;/div&gt;\n"</span> +</span><br><span class="line">    <span class="string">"  &lt;/div&gt;\n"</span> +</span><br><span class="line">    <span class="string">"&lt;/div&gt;\n"</span> +</span><br><span class="line">    <span class="string">""</span>);</span><br><span class="line">&#125;]);</span><br></pre></td></tr></table></figure>
+<p>在angular里面，一个指令可以依赖另一个指令：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">angluar.module(<span class="string">'app'</span>)</span><br><span class="line">  .directive(<span class="string">'foo'</span>,<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">    	template: <span class="string">'&lt;div&gt;foo&lt;/div&gt;'</span>,</span><br><span class="line">    	controller:<span class="function"><span class="keyword">function</span>(<span class="params">$scope</span>) </span>&#123;</span><br><span class="line">    	  <span class="comment">//stuff</span></span><br><span class="line">    	&#125;,</span><br><span class="line">    	link:<span class="function"><span class="keyword">function</span>(<span class="params">scope</span>) </span>&#123;</span><br><span class="line">    	</span><br><span class="line">    	&#125;</span><br><span class="line">    &#125;;</span><br><span class="line">  &#125;)</span><br><span class="line"></span><br><span class="line">  .directive(<span class="string">'bar'</span>,<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">      <span class="built_in">require</span>: <span class="string">'foo'</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;);</span><br></pre></td></tr></table></figure>
+<p>bar require foo 的意思是：bar 能够获得 foo 的controller！就像service的注入一样，你可以把foo的controller 注入到 bar 里面</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">link: function(scope,element,attrs,ctrl) &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>获取了 controller 的实例。注意，这里只能获取到绑定在controller this上面的变量，其他变量无法获取，例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">controller: function($scope) &#123;</span><br><span class="line">  this.foo = &apos;foo&apos;;</span><br><span class="line">  $scope.something = &apos;something&apos;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>只能获得</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  foo:&apos;foo&apos;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>几种不同的表达：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">require:&apos;foo&apos;, //foo指令和bar指令在同一个元素上</span><br><span class="line">require:&apos;^foo&apos;,//foo指令在bar指令同一元素或父元素上</span><br><span class="line">require:&apos;^^foo&apos;,//foo指令在bar指令父元素上</span><br><span class="line">require:&apos;?foo&apos;,//在同一元素上，可选</span><br><span class="line">require:&apos;?^foo&apos;,//在同一元素或父元素上，可选</span><br><span class="line">require:&apos;?^^foo&apos;,//在父元素上，可选</span><br><span class="line">// 下面两个一样的，顺序并不重要。</span><br><span class="line">require:&apos;?^foo&apos;</span><br><span class="line">require:&apos;^?foo&apos;</span><br></pre></td></tr></table></figure>
+<p>还可以同时依赖多个指令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">require:[&apos;foo&apos;,&apos;^bar&apos;,&apos;^?baz&apos;]</span><br></pre></td></tr></table></figure>
+<p>这个时候ctrl变成数组了：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">require:[&apos;foo&apos;,&apos;bar&apos;]</span><br><span class="line">link:function(scope,element,attrs,ctrls) &#123;</span><br><span class="line">  var fooCtrl = ctrls[0], barCtrl = ctrls[1];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>特别是当我们require另一个controller的时候，就丢失了自己的ctrl，这个时候可以通过数组的方式找回来。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/angularjs-ui-tab/" data-id="cjhn4ha82003vvqq31jomb45j" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/unpredictable-css-margins/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          令人琢磨不透的上下外边距
+        
+      </div>
+    </a>
+  
+  
+    <a href="/powerful-chrome-console/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">厉害了，我的chrome控制台</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

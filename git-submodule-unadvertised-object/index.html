@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="使用 git submodule 进行 update 的时候，出现下面的错误： 1234$ git submodule updateSubmodule path &apos;project1&apos;: checked out &apos;f0246e6589fcb0f80e62f99c5ac39cfb397aff9d&apos;error: Server does not allow request for unadvertised">
+<meta name="keywords" content="Git">
+<meta property="og:type" content="article">
+<meta property="og:title" content="git submodule unadvertised object">
+<meta property="og:url" content="https://zju.date/git-submodule-unadvertised-object/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="使用 git submodule 进行 update 的时候，出现下面的错误： 1234$ git submodule updateSubmodule path &apos;project1&apos;: checked out &apos;f0246e6589fcb0f80e62f99c5ac39cfb397aff9d&apos;error: Server does not allow request for unadvertised">
+<meta property="og:updated_time" content="2018-05-26T03:43:23.243Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="git submodule unadvertised object">
+<meta name="twitter:description" content="使用 git submodule 进行 update 的时候，出现下面的错误： 1234$ git submodule updateSubmodule path &apos;project1&apos;: checked out &apos;f0246e6589fcb0f80e62f99c5ac39cfb397aff9d&apos;error: Server does not allow request for unadvertised">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-git-submodule-unadvertised-object" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/git-submodule-unadvertised-object/" class="article-date">
+  <time datetime="2018-03-21T10:12:07.000Z" itemprop="datePublished">2018-03-21</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      git submodule unadvertised object
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>使用 git submodule 进行 update 的时候，出现下面的错误：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ git submodule update</span><br><span class="line">Submodule path <span class="string">'project1'</span>: checked out <span class="string">'f0246e6589fcb0f80e62f99c5ac39cfb397aff9d'</span></span><br><span class="line">error: Server does not allow request <span class="keyword">for</span> unadvertised object 1c82bfd3c5b066f8b47b70330beeef091f990e7e</span><br><span class="line">Fetched <span class="keyword">in</span> submodule path <span class="string">'project2'</span>, but it did not contain 1c82bfd3c5b066f8b47b70330beeef091f990e7e. Direct fetching of that commit failed.</span><br></pre></td></tr></table></figure>
+<p>这种情况是如何产生的呢？请看下面的场景：</p>
+<blockquote>
+<p>现有主仓库 main，里面有子模块对应的仓库 sub。用户修改了 sub 中的文件，但没有提交到 sub 的远程库，然后把 main 提交到了远程库。现在，另外一个人尝试把 main 拉去下来并同步 sub 中的修改时，由于 sub 的改动并未 push 到其对应的远程库，但 update 命令尝试从 sub 的远程库 pull 对应的改动(1c82bfd3c5b066f8b47b70330beeef091f990e7e)，因此也就不存在，就会报错。</p>
+</blockquote>
+<a id="more"></a>
+<p>让我们通过下面的步骤一步一步来还原问题：</p>
+<ol>
+<li><p>小明创建两个仓库 main 和 sub</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ mkdir main</span><br><span class="line">$ mkdir sub</span><br><span class="line">$ <span class="built_in">cd</span> main;git init;<span class="built_in">cd</span> ../sub;git init</span><br><span class="line">Initialized empty Git repository <span class="keyword">in</span> ~/main/.git/</span><br><span class="line">Initialized empty Git repository <span class="keyword">in</span> ~/sub/.git/</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>然后在 sub 仓库中添加文件</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ touch README.md &amp;&amp; git add .</span><br><span class="line">$ git commit -m <span class="string">"add README"</span></span><br><span class="line">$ git remote add origin git@115.28.xx.17:elixiao/sub.git</span><br><span class="line">$ git push -u origin master</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>然后在 main 仓库中添加 sub仓库 作为子模块</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> ../main</span><br><span class="line">$ git submodule add git@115.28.xx.17:elixiao/sub.git sub</span><br><span class="line">Cloning into <span class="string">'~/main/sub'</span>...</span><br><span class="line"><span class="keyword">done</span>.</span><br><span class="line">$ git commit -am <span class="string">"Added submodule sub"</span></span><br><span class="line">[master (root-commit) 74f4d5f] Added submodule sub</span><br><span class="line"> 2 files changed, 4 insertions(+)</span><br><span class="line"> create mode 100644 .gitmodules</span><br><span class="line"> create mode 160000 sub</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>小明修改了 main 中的 sub</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> sub</span><br><span class="line">$ <span class="built_in">echo</span> <span class="string">"Monkey patch"</span> &gt;&gt; README.md</span><br><span class="line">$ git commit -am <span class="string">"Local hotfix"</span></span><br><span class="line">[master b84f2c0] Local hotfix</span><br><span class="line"> 1 file changed, 1 insertion(+)</span><br><span class="line">$ <span class="built_in">cd</span> ..</span><br><span class="line">$ git status</span><br><span class="line">	<span class="comment"># xxxxx</span></span><br><span class="line">	modified:   sub (new commits)</span><br><span class="line"></span><br><span class="line">$ git commit -am <span class="string">"Hijacked sub-module"</span></span><br><span class="line">[master a4e419f] Hijacked sub-module</span><br><span class="line"> 1 file changed, 1 insertion(+), 1 deletion(-)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>小明把 main 仓库提交到了服务器</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ git remote add origin git@115.28.xx.17:elixiao/main.git</span><br><span class="line">$ git push -u origin master</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>小红 clone 了 main 仓库</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ git <span class="built_in">clone</span> git@115.28.xx.17:elixiao/main.git</span><br><span class="line">$ <span class="built_in">cd</span> main</span><br><span class="line">$ git submodule init</span><br><span class="line">Submodule <span class="string">'sub'</span> (git@115.28.xx.17:elixiao/sub) registered <span class="keyword">for</span> path <span class="string">'sub'</span></span><br><span class="line">$ git submodule update</span><br><span class="line">Cloning into <span class="string">'~/main/sub'</span>...</span><br><span class="line">error: Server does not allow request <span class="keyword">for</span> unadvertised object 16f38a223583f6771843c2a3333377e7219119a2</span><br><span class="line">Fetched <span class="keyword">in</span> submodule path <span class="string">'sub'</span>, but it did not contain 16f38a223583f6771843c2a3333377e7219119a2. Direct fetching of that commit failed.</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>问题出现在这里：git 并没有在 main 仓库中记录了 monkey patch，只是在本地的 sub-module 中记录。就是说小明修改了 <code>~/main/sub</code>，而不是 <code>~/sub</code>，小红 clone 了 <code>~/main</code>，其子模块引用了小明电脑中的 <code>~/sub</code>，而不是 <code>~/main/sub</code>，由于 <code>~/main/sub</code> 中的 commit 没有 push，但这次提交又记录在了 <code>~/main</code> 中，所以在小红的 main 中找不到那个只存在小明本地的 commit。</p>
+<p>怎么解决这个问题呢？很简单：</p>
+<ol>
+<li><p>小明把 main 仓库中对子模块 sub 的修改提交了</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> ~/main/sub</span><br><span class="line">$ git push</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>小红在 clone 下来的 main 仓库 update</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> ~/main</span><br><span class="line">$ git submodule update</span><br><span class="line">remote: Counting objects: 3, <span class="keyword">done</span>.</span><br><span class="line">remote: Total 3 (delta 0), reused 0 (delta 0)</span><br><span class="line">Unpacking objects: 100% (3/3), <span class="keyword">done</span>.</span><br><span class="line">From 115.28.xx.17:elixiao/sub</span><br><span class="line">   dc3bc98..16f38a2  master     -&gt; origin/master</span><br><span class="line">Submodule path <span class="string">'sub'</span>: checked out <span class="string">'16f38a223583f6771843c2a3333377e7219119a2'</span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>所以如果你在 main 仓库中修改了子模块 sub，记得一定要先 push sub 中的修改，再 push main 中的修改，否则别人 update 的时候会报错哦！</p>
+<p>但最后我还是有个疑问：万一小明失联了咋办，小红等着要上线呢！或者说小明不小心把它的 main 仓库连通 sub 子模块都删了咋办？难道在小明将 sub 改动 push 之前别人做不了任何操作吗？</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/git-submodule-unadvertised-object/" data-id="cjhn4haat008gvqq3mhma7seu" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/">Git</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/mac-sed/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Mac 中的 sed 命令
+        
+      </div>
+    </a>
+  
+  
+    <a href="/shell-echo-cmd/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">shell 命令回显</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

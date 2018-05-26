@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="使用RESTful接口，在做开发的时候前端和后端可以完全分离。 完全分离的好处就是前端代码更新可以实时生效，不需要重启服务器。 前端：HTML、CSS、JS文件后端：JSP等 在本机上测试，需要同时启动两个tomcat，一个部署后台，一个部署前端。 Tomcat 官方网站上下载需要的 Mac 版本，确定 Mac 上 Java 版本与之对应。解压 Tomcat 到想安装到的位置，进入 Tomcat/">
+<meta name="keywords" content="Linux">
+<meta property="og:type" content="article">
+<meta property="og:title" content="tomcat部署静态war包">
+<meta property="og:url" content="https://zju.date/tomcat-deploy-war/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="使用RESTful接口，在做开发的时候前端和后端可以完全分离。 完全分离的好处就是前端代码更新可以实时生效，不需要重启服务器。 前端：HTML、CSS、JS文件后端：JSP等 在本机上测试，需要同时启动两个tomcat，一个部署后台，一个部署前端。 Tomcat 官方网站上下载需要的 Mac 版本，确定 Mac 上 Java 版本与之对应。解压 Tomcat 到想安装到的位置，进入 Tomcat/">
+<meta property="og:updated_time" content="2017-08-16T02:14:05.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="tomcat部署静态war包">
+<meta name="twitter:description" content="使用RESTful接口，在做开发的时候前端和后端可以完全分离。 完全分离的好处就是前端代码更新可以实时生效，不需要重启服务器。 前端：HTML、CSS、JS文件后端：JSP等 在本机上测试，需要同时启动两个tomcat，一个部署后台，一个部署前端。 Tomcat 官方网站上下载需要的 Mac 版本，确定 Mac 上 Java 版本与之对应。解压 Tomcat 到想安装到的位置，进入 Tomcat/">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-tomcat-deploy-war" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/tomcat-deploy-war/" class="article-date">
+  <time datetime="2016-01-27T09:41:23.000Z" itemprop="datePublished">2016-01-27</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      tomcat部署静态war包
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>使用RESTful接口，在做开发的时候前端和后端可以完全分离。</p>
+<p>完全分离的好处就是前端代码更新可以实时生效，不需要重启服务器。</p>
+<p>前端：HTML、CSS、JS文件<br>后端：JSP等</p>
+<p>在本机上测试，需要同时启动两个tomcat，一个部署后台，一个部署前端。</p>
+<p>Tomcat 官方网站上下载需要的 Mac 版本，确定 Mac 上 Java 版本与之对应。<br>解压 Tomcat 到想安装到的位置，进入 Tomcat/bin 目录下执行：</p>
+<pre><code>./catalina.sh run
+</code></pre><a id="more"></a>
+<p>在此之前，后台的tomcat已经占用了8080端口，如果重新启动新的tomcat，需要更改其端口，</p>
+<h2 id="修改tomcat运行端口"><a href="#修改tomcat运行端口" class="headerlink" title="修改tomcat运行端口"></a>修改tomcat运行端口</h2><p>安装第二个Tomcat完成后，到安装目录下的conf子目录中打开server.xml文件，查找以下三处：<br> (1) 修改http访问端口（默认为8080端口）</p>
+<pre><code>&lt;Connector port=&quot;8080&quot; protocol=&quot;HTTP/1.1&quot;
+            connectionTimeout=&quot;20000&quot;
+            redirectPort=&quot;8443&quot; /&gt;
+</code></pre><p>把8080改成其他端口号，例如1234.</p>
+<p>(2) 修改Shutdown端口（默认为8005端口）</p>
+<pre><code>&lt;Server port=&quot;8005&quot; shutdown=&quot;SHUTDOWN&quot;&gt;
+&lt;Listener className=&quot;org.apache.catalina.startup.VersionLoggerListener&quot; /&gt;
+</code></pre><p>把8005改成其他端口号，例如4321.</p>
+<p>(3) 修改JVM启动端口（默认为8009端口）</p>
+<pre><code>&lt;Connector port=&quot;8009&quot; protocol=&quot;AJP/1.3&quot; redirectPort=&quot;8443&quot; /&gt;
+</code></pre><p>把8009改成其他端口号，例如1324 </p>
+<h2 id="在tomcat中部署war包"><a href="#在tomcat中部署war包" class="headerlink" title="在tomcat中部署war包"></a>在tomcat中部署war包</h2><p>首先，直接把相应的war包放到$TOMCAT_HOME/webapps下，不用建目录；<br>然后，修改$TOMCAT_HOME/conf/server.xml，在Host配置段中添加类似于如下内容：</p>
+<pre><code>&lt;Context path=&quot;/&quot; docBase=&quot;app.war&quot; debug=&quot;0&quot; privileged=&quot;true&quot; reloadable=&quot;true&quot;/&gt; 
+</code></pre><p>其中，docBase参数标识的是war包的名称，使用如下地址进行访问：<a href="http://localhost:port/app/访问。" target="_blank" rel="noopener">http://localhost:port/app/访问。</a></p>
+<p><a href="http://www.sitepoint.com/creating-crud-app-minutes-angulars-resource/" target="_blank" rel="noopener">http://www.sitepoint.com/creating-crud-app-minutes-angulars-resource/</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/tomcat-deploy-war/" data-id="cjhn4hahm00i4vqq3r72m2y4u" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/grails-url-mapping/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Grails-URL映射
+        
+      </div>
+    </a>
+  
+  
+    <a href="/angular1-ngClass/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">AngularJS——ngClass</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

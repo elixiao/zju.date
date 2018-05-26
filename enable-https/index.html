@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="安装EPEL软件源： 1yum install epel-release 安装Certbot 1yum install certbot-nginx 如果不行，可以试试： 12wget https://dl.eff.org/certbot-autochmod a+x certbot-auto">
+<meta name="keywords" content="Linux">
+<meta property="og:type" content="article">
+<meta property="og:title" content="搭建HTTPS网站">
+<meta property="og:url" content="https://zju.date/enable-https/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="安装EPEL软件源： 1yum install epel-release 安装Certbot 1yum install certbot-nginx 如果不行，可以试试： 12wget https://dl.eff.org/certbot-autochmod a+x certbot-auto">
+<meta property="og:updated_time" content="2018-04-02T14:09:19.749Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="搭建HTTPS网站">
+<meta name="twitter:description" content="安装EPEL软件源： 1yum install epel-release 安装Certbot 1yum install certbot-nginx 如果不行，可以试试： 12wget https://dl.eff.org/certbot-autochmod a+x certbot-auto">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-enable-https" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/enable-https/" class="article-date">
+  <time datetime="2018-01-16T01:46:23.000Z" itemprop="datePublished">2018-01-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      搭建HTTPS网站
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>安装EPEL软件源：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install epel-release</span><br></pre></td></tr></table></figure>
+<p>安装Certbot</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install certbot-nginx</span><br></pre></td></tr></table></figure>
+<p>如果不行，可以试试：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">wget https://dl.eff.org/certbot-auto</span><br><span class="line">chmod a+x certbot-auto</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<p>申请证书：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用方法：certbot certonly --webroot -w [Web站点目录] -d [站点域名] -m [联系人email地址] --agree-tos</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 例如：</span></span><br><span class="line">certbot certonly --webroot -w /opt/www/demo.mydomain.com -d demo.mydomain.com -m myname@gmail.com --agree-tos</span><br><span class="line"></span><br><span class="line"><span class="comment"># standalone 模式：</span></span><br><span class="line"></span><br><span class="line">certbot certonly --standalone</span><br></pre></td></tr></table></figure>
+<!--more-->
+<p>重点讲解 standalone 模式：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">[root@li1887-34 json.fit]<span class="comment"># certbot certonly</span></span><br><span class="line">Saving debug <span class="built_in">log</span> to /var/<span class="built_in">log</span>/letsencrypt/letsencrypt.log</span><br><span class="line"></span><br><span class="line">How would you like to authenticate with the ACME CA?</span><br><span class="line">-------------------------------------------------------------------------------</span><br><span class="line">1: Spin up a temporary webserver (standalone)</span><br><span class="line">2: Place files <span class="keyword">in</span> webroot directory (webroot)</span><br><span class="line">-------------------------------------------------------------------------------</span><br><span class="line">Select the appropriate number [1-2] <span class="keyword">then</span> [enter] (press <span class="string">'c'</span> to cancel): 1</span><br><span class="line">Plugins selected: Authenticator standalone, Installer None</span><br><span class="line">Starting new HTTPS connection (1): acme-v01.api.letsencrypt.org</span><br><span class="line">Please enter <span class="keyword">in</span> your domain name(s) (comma and/or space separated)  (Enter <span class="string">'c'</span></span><br><span class="line">to cancel):</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>如果出现类似于下面的错误：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">[root@izm5ejd7dsj2hb73remwksz ~]<span class="comment"># certbot certonly</span></span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">"/usr/bin/certbot"</span>, line 9, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    load_entry_point(<span class="string">'certbot==0.20.0'</span>, <span class="string">'console_scripts'</span>, <span class="string">'certbot'</span>)()</span><br><span class="line">  File <span class="string">"/usr/lib/python2.7/site-packages/pkg_resources/__init__.py"</span>, line 570, <span class="keyword">in</span> load_entry_point</span><br><span class="line">    <span class="built_in">return</span> get_distribution(dist).load_entry_point(group, name)</span><br><span class="line">  File <span class="string">"/usr/lib/python2.7/site-packages/pkg_resources/__init__.py"</span>, line 2751, <span class="keyword">in</span> load_entry_point</span><br><span class="line">    <span class="built_in">return</span> ep.load()</span><br><span class="line">  File <span class="string">"/usr/lib/python2.7/site-packages/pkg_resources/__init__.py"</span>, line 2405, <span class="keyword">in</span> load</span><br><span class="line">    <span class="built_in">return</span> self.resolve()</span><br><span class="line">  File <span class="string">"/usr/lib/python2.7/site-packages/pkg_resources/__init__.py"</span>, line 2411, <span class="keyword">in</span> resolve</span><br><span class="line">    module = __import__(self.module_name, fromlist=[<span class="string">'__name__'</span>], level=0)</span><br><span class="line">  File <span class="string">"/usr/lib/python2.7/site-packages/certbot/main.py"</span>, line 16, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    from certbot import account</span><br><span class="line">  File <span class="string">"/usr/lib/python2.7/site-packages/certbot/account.py"</span>, line 17, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    from acme import messages</span><br><span class="line">  File <span class="string">"/usr/lib/python2.7/site-packages/acme/messages.py"</span>, line 5, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    from acme import challenges</span><br><span class="line">  File <span class="string">"/usr/lib/python2.7/site-packages/acme/challenges.py"</span>, line 10, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    import requests</span><br><span class="line">  File <span class="string">"/usr/lib/python2.7/site-packages/requests/__init__.py"</span>, line 58, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    from . import utils</span><br><span class="line">  File <span class="string">"/usr/lib/python2.7/site-packages/requests/utils.py"</span>, line 32, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    from .exceptions import InvalidURL</span><br><span class="line">  File <span class="string">"/usr/lib/python2.7/site-packages/requests/exceptions.py"</span>, line 10, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    from .packages.urllib3.exceptions import HTTPError as BaseHTTPError</span><br><span class="line">  File <span class="string">"/usr/lib/python2.7/site-packages/requests/packages/__init__.py"</span>, line 95, <span class="keyword">in</span> load_module</span><br><span class="line">    raise ImportError(<span class="string">"No module named '%s'"</span> % (name,))</span><br><span class="line">ImportError: No module named <span class="string">'requests.packages.urllib3'</span></span><br></pre></td></tr></table></figure>
+<p>尝试更新：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">pip uninstall requests</span><br><span class="line">pip uninstall urllib3</span><br><span class="line">yum remove python-urllib3</span><br><span class="line">yum remove python-requests</span><br><span class="line">yum install python-urllib3</span><br><span class="line">yum install python-requests</span><br><span class="line">yum install certbot</span><br></pre></td></tr></table></figure>
+<p>certbot 支持几种不同的插件（apache、webroot、standalone、manual、nginx），用来获取和安装证书。但插件 nginx 还是试验阶段，可以使用 webroot 或 standalone 插件。区别是 webroot 插件用在已经运行着网站的服务器上，可以通过指定网站的目录来获取并安装证书：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">certbot certonly --webroot -w /var/www/example/ -d www.example.com -d example.com -w /var/www/other -d other.example.net -d another.other.example.net</span><br></pre></td></tr></table></figure>
+<p>而 standalone 插件则用在本地机器上，通过指定网站的域名来获取和安装证书，安装之前要先停止占用80，433端口的程序：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">certbot certonly --standalone -d example.com -d www.example.com</span><br></pre></td></tr></table></figure>
+<p>也可以像下面这样，然后根据提示操作：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">certbot certonly --standalone</span><br></pre></td></tr></table></figure>
+<p>如果成功会提示 Congrantulations，证书文件保存位置是：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/etc/letsencrypt/live/</span><br></pre></td></tr></table></figure>
+<h2 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h2><ol>
+<li><p><strong>在证书获取与更新时，为何使用 standalone 而不是 webroot 模式？</strong></p>
+<p> standalone 模式比 webroot 简单，只要停几秒服务器即可。</p>
+</li>
+</ol>
+<ol>
+<li><p><strong>如何发现占用某个端口的进程？</strong></p>
+<p> 下面的指令可以列出占用每个 TCP 端口的进程。</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo netstat -ntlp</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<pre><code>找到进程号之后可以用 `kill -9` 强制关闭程序。
+</code></pre><div style="display:none"><br><br><strong>如何续签</strong><br><br>Let’s Encrypt 证书有效期为三个月，你需要在证书到期之前续约。官方会在证书到期前向你发送邮件，因此不必担心错过日期。你可以运用 <code>cron</code> 实现证书的自动更新，不过手动操作已经足够简单了。证书的更新：<br><br><br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 先停止 Nginx, 释放端口</span></span><br><span class="line">sudo service nginx stop</span><br><span class="line"><span class="comment"># 更新证书</span></span><br><span class="line">sudo letsencrypt certonly --standalone</span><br><span class="line"><span class="comment"># 启动 Nginx</span></span><br><span class="line">sudo service nginx start</span><br></pre></td></tr></table></figure><br><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># 更新测试</span><br><span class="line"># 30 3 * * 1 /sbin/certbot-auto renew --quiet --no-self-upgrade35 3 * * 1 /etc/init.d/nginx reload</span><br><span class="line">certbot renew --dry-run</span><br></pre></td></tr></table></figure><br><br>一切正常的话，添加<code>cron</code>任务：<br><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">crontab -e</span><br><span class="line"># 每天1.11更新证书</span><br><span class="line">1 1 * * * certbot renew &gt;&gt; ~/cron/cert.log --renew-hook &quot;/usr/local/nginx/sbin/nginx -s reload&quot;</span><br><span class="line"># 查看所有任务</span><br><span class="line">crontab -l</span><br></pre></td></tr></table></figure><br><br><em>注意</em>：必须添上<code>--renew-hook</code>证书更新后自动重启nginx，否则还会<em>一直用过期的证书</em>，虽然证书更新了，但不会生效。<br></div>
+
+<div style="display:none"><br><br><a href="http://www.json.fit" target="_blank" rel="noopener">www.json.fit</a><br><br>&gt; <a href="http://www.json.fit,json.fit,api.json.fit,desk.json.fit,console.json.fit,m.json.fit,mapi.json.fit,app.json.fit,appi.json.fit,desk-apply.json.fit" target="_blank" rel="noopener">www.json.fit,json.fit,api.json.fit,desk.json.fit,console.json.fit,m.json.fit,mapi.json.fit,app.json.fit,appi.json.fit,desk-apply.json.fit</a><br><br><a href="http://www.jsonfit.com" target="_blank" rel="noopener">www.jsonfit.com</a><br><br>&gt; <a href="http://www.jsonfit.com,jsonfit.com,api.jsonfit.com,desk.jsonfit.com,console.jsonfit.com,m.jsonfit.com,mapi.jsonfit.com,app.jsonfit.com,appi.jsonfit.com,desk-apply.jsonfit.com" target="_blank" rel="noopener">www.jsonfit.com,jsonfit.com,api.jsonfit.com,desk.jsonfit.com,console.jsonfit.com,m.jsonfit.com,mapi.jsonfit.com,app.jsonfit.com,appi.jsonfit.com,desk-apply.jsonfit.com</a><br><br><a href="http://www.alanfit.com" target="_blank" rel="noopener">www.alanfit.com</a><br><br>&gt; <!--www.alanfit.com,alanfit.com,api.alanfit.com,desk.alanfit.com,console.alanfit.com,m.alanfit.com,mapi.alanfit.com,app.alanfit.com,appi.alanfit.com,desk-apply.alanfit.com--><br><br></div>
+
+
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/enable-https/" data-id="cjhn4ha9m006jvqq3uy50axjo" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/js-random-id/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          js 随机字符串
+        
+      </div>
+    </a>
+  
+  
+    <a href="/replace-angular-favicon/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">更改 angular 项目默认 favicon</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>
