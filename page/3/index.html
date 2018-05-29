@@ -54,6 +54,242 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-mac-sed" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/mac-sed/" class="article-date">
+  <time datetime="2018-03-22T05:51:07.000Z" itemprop="datePublished">2018-03-22</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/mac-sed/">Mac 中的 sed 命令</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>使用 sed 做文件替换，删除指定匹配模式以及后面5行：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sed -e <span class="string">'/pattern/,+5d'</span> file.txt</span><br></pre></td></tr></table></figure>
+<p>和不含匹配模式行的后面5行：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sed -e <span class="string">'/pattern/&#123;n;N;N;N;N;d&#125;'</span> file.txt</span><br></pre></td></tr></table></figure>
+<p>在 Linux 下没问题，但是在 Mac 下报错：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sed: 1: <span class="string">"/pattern/,+5d</span></span><br><span class="line"><span class="string">"</span>: expected context address</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/mac-sed/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/mac-sed/" data-id="cjhq778pg00cyizq3jyyecs7z" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-git-subtree" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/git-subtree/" class="article-date">
+  <time datetime="2018-03-22T01:09:07.000Z" itemprop="datePublished">2018-03-22</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/git-subtree/">git subtree 介绍</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h3><p>git subtree 特别适合那些需要 <strong>双向同步</strong> 的项目，例如：</p>
+<blockquote>
+<p>A 项目中依赖了子项目 B，直接在 A 项目里改 B 子项目对应的目录里的代码，然后提交代码，这个更改也提交到 B 子项目的 Git 仓库里。同时子项目 B 也可以单独提交到 Git 仓库，再在 A 项目里把子项目 B 的代码update。</p>
+</blockquote>
+<h3 id="与-submodule-的区别是"><a href="#与-submodule-的区别是" class="headerlink" title="与 submodule 的区别是"></a>与 submodule 的区别是</h3><table>
+<thead>
+<tr>
+<th>方式</th>
+<th>区别</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>submodule</td>
+<td>允许其他的仓库指定以一个commit嵌入仓库的子目录仓库<br> clone下来需要 init 和 update   <br>.gitmodule 文件记录 submodule 版本信息<br>删除起来比较费劲</td>
+</tr>
+<tr>
+<td>subtree</td>
+<td>避免上述问题<br>管理和更新流程比较方便<br>git subtree合并子仓库到项目中的子目录<br>git v1.5.2以后建议使用git subtree</td>
+</tr>
+</tbody>
+</table>
+<h3 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h3><ol>
+<li><p>添加关联</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git subtree add --prefix=&lt;sub-path&gt; &lt;sub-repo&gt; &lt;branch&gt; --squash</span><br></pre></td></tr></table></figure>
+<p> <code>—squash</code> 意思是把 <code>subtree</code> 的改动合并成一次commit，这样就不用拉取子项目完整的历史记录。<code>—prefix</code> 之后的=等号也可以用空格。</p>
+</li>
+<li><p>提交更改到子项目</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git subtree push --prefix=&lt;sub-path&gt; &lt;sub-repo&gt; &lt;branch&gt;</span><br></pre></td></tr></table></figure>
+<p> 在 main 中各种 commit，其中有些可能涉及 sub 目录的修改也没有任何关系，上面的命令能够遍历所有 commit ，从中找到针对 sub 目录的修改，然后把这些记录提交到 sub 的仓库。</p>
+</li>
+<li><p>更新子目录</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git subtree pull --prefix=&lt;sub-path&gt; &lt;sub-repo&gt; &lt;branch&gt; --squash</span><br></pre></td></tr></table></figure>
+<p> 其他人可以用上面的命令即可同步 sub </p>
+</li>
+<li><p>删除子目录：</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git rm &lt;subtree&gt;</span><br><span class="line">git commit</span><br><span class="line">git subtree add --prefix=&lt;subtree&gt; &lt;repository_url&gt; &lt;branch&gt;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="存在的问题"><a href="#存在的问题" class="headerlink" title="存在的问题"></a>存在的问题</h3><ol>
+<li>切换分支不方便，如果想要把本地某个子项目的代码切换到某个分支，就需要执行 <code>git rm -rf</code> 和 <code>git subtree add</code> 的操作，没有 <code>submodule</code> 中  <code>git checkout branch</code> 来的方便。</li>
+<li>代码提交速度比 <code>submodule</code> 慢，因为 <code>submodule</code> 是提交对子模块某次提交的引用，而 <code>subtree</code> 提交了 <code>subtree</code> 目录下的全部文件。</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/git-subtree/" data-id="cjhq778l80088izq3x61r86bc" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/">Git</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-git-submodule-unadvertised-object" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/git-submodule-unadvertised-object/" class="article-date">
+  <time datetime="2018-03-21T10:12:07.000Z" itemprop="datePublished">2018-03-21</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/git-submodule-unadvertised-object/">git submodule unadvertised object</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>使用 git submodule 进行 update 的时候，出现下面的错误：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ git submodule update</span><br><span class="line">Submodule path <span class="string">'project1'</span>: checked out <span class="string">'f0246e6589fcb0f80e62f99c5ac39cfb397aff9d'</span></span><br><span class="line">error: Server does not allow request <span class="keyword">for</span> unadvertised object 1c82bfd3c5b066f8b47b70330beeef091f990e7e</span><br><span class="line">Fetched <span class="keyword">in</span> submodule path <span class="string">'project2'</span>, but it did not contain 1c82bfd3c5b066f8b47b70330beeef091f990e7e. Direct fetching of that commit failed.</span><br></pre></td></tr></table></figure>
+<p>这种情况是如何产生的呢？请看下面的场景：</p>
+<blockquote>
+<p>现有主仓库 main，里面有子模块对应的仓库 sub。用户修改了 sub 中的文件，但没有提交到 sub 的远程库，然后把 main 提交到了远程库。现在，另外一个人尝试把 main 拉去下来并同步 sub 中的修改时，由于 sub 的改动并未 push 到其对应的远程库，但 update 命令尝试从 sub 的远程库 pull 对应的改动(1c82bfd3c5b066f8b47b70330beeef091f990e7e)，因此也就不存在，就会报错。</p>
+</blockquote>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/git-submodule-unadvertised-object/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/git-submodule-unadvertised-object/" data-id="cjhq778l70086izq38c5onyyn" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/">Git</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-shell-echo-cmd" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/shell-echo-cmd/" class="article-date">
+  <time datetime="2018-03-09T05:37:02.000Z" itemprop="datePublished">2018-03-09</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/shell-echo-cmd/">shell 命令回显</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>写脚本的时候有个需求：执行命令之前先打印这个命令，例如：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">DIRNAME=/usr/share</span><br><span class="line">ls <span class="variable">$DIRNAME</span></span><br></pre></td></tr></table></figure>
+<p>希望控制台能够打印：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls /usr/share</span><br></pre></td></tr></table></figure>
+<p>网上找到了解决办法：</p>
+<p><code>set -x</code> or <code>set -o xtrace</code> 可以开启这种效果，然后可以用 <code>set +x</code> 关闭。如果整个脚本都想这样，可以在文件第一行这么写：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/bin/sh -x</span></span><br></pre></td></tr></table></figure>
+<p>还发现了另外一个有趣的选项： <code>set -v</code>，区别在于它打印的是：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls <span class="variable">$DIRNAME</span></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/shell-echo-cmd/" data-id="cjhq778so00h0izq3zroyzvtq" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-docker-foreground" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/docker-foreground/" class="article-date">
@@ -96,7 +332,7 @@
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/docker-foreground/" data-id="cjhn4lbob005zstq3o946jd6e" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/docker-foreground/" data-id="cjhq778jk005qizq31hbtp41p" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/">Docker</a></li></ul>
 
@@ -143,7 +379,7 @@
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/centos-install-nginx/" data-id="cjhn4lbnb004estq3wa69z2me" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/centos-install-nginx/" data-id="cjhq778i60043izq3kxyjnl6f" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
 
@@ -194,7 +430,7 @@
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/tmux-copy-paste/" data-id="cjhn4lbwj00i1stq3ava8gwax" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/tmux-copy-paste/" data-id="cjhq778to00hyizq3avl0ifgc" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Mac/">Mac</a></li></ul>
 
@@ -240,7 +476,7 @@
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/mac-@/" data-id="cjhn4lbsu00ctstq3ujhbk7z3" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/mac-@/" data-id="cjhq778p800coizq3le8650ds" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
 
@@ -290,7 +526,7 @@
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/echo/" data-id="cjhn4lbok006cstq37omy41m1" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/echo/" data-id="cjhq778jv0065izq308f8k0yv" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
 
@@ -339,216 +575,7 @@
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/ssh-auto-password/" data-id="cjhn4lbw100hdstq3gu8n9e1z" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-wordpress-backup" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/wordpress-backup/" class="article-date">
-  <time datetime="2018-02-24T09:09:03.000Z" itemprop="datePublished">2018-02-24</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/wordpress-backup/">docker wordpress 备份</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>数据库在 mysql 容器里面，用户上传的文件在 wordpress 容器里面。</p>
-<h2 id="备份-MySQL-数据库"><a href="#备份-MySQL-数据库" class="headerlink" title="备份 MySQL 数据库"></a>备份 MySQL 数据库</h2><p><code>ssh</code> 到服务器，然后使用 <code>docker exec</code> 或 <code>docker-compose exec</code> 进入 MySQL 容器内查看数据库结构：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql -uwordpress -pwordpress</span><br></pre></td></tr></table></figure>
-<p>在 mysql 命令行：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show databases;</span><br><span class="line">+--------------------+</span><br><span class="line">| Database           |</span><br><span class="line">+--------------------+</span><br><span class="line">| information_schema |</span><br><span class="line">| wordpress          |</span><br><span class="line">+--------------------+</span><br><span class="line">2 rows <span class="keyword">in</span> <span class="built_in">set</span> (0.01 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; use wordpress;</span><br><span class="line">Reading table information <span class="keyword">for</span> completion of table and column names</span><br><span class="line">You can turn off this feature to get a quicker startup with -A</span><br><span class="line"></span><br><span class="line">Database changed</span><br><span class="line"></span><br><span class="line">mysql&gt; show tables;</span><br><span class="line">+-----------------------+</span><br><span class="line">| Tables_in_wordpress   |</span><br><span class="line">+-----------------------+</span><br><span class="line">| wp_commentmeta        |</span><br><span class="line">| wp_comments           |</span><br><span class="line">| wp_hfcm_scripts       |</span><br><span class="line">| wp_links              |</span><br><span class="line">| wp_options            |</span><br><span class="line">| wp_postmeta           |</span><br><span class="line">| wp_posts              |</span><br><span class="line">| wp_term_relationships |</span><br><span class="line">| wp_term_taxonomy      |</span><br><span class="line">| wp_termmeta           |</span><br><span class="line">| wp_terms              |</span><br><span class="line">| wp_usermeta           |</span><br><span class="line">| wp_users              |</span><br><span class="line">+-----------------------+</span><br><span class="line">13 rows <span class="keyword">in</span> <span class="built_in">set</span> (0.00 sec)</span><br></pre></td></tr></table></figure>
-<p>备份的时候可以在容器内备份完毕后拷贝到宿主机，也可以直接备份到宿主机。</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 进入容器内备份</span></span><br><span class="line">docker-compose <span class="built_in">exec</span> mysql sh</span><br><span class="line">mysqldump -uwordpress -pwordpress wordpress &gt; /var/backups/db.sql</span><br><span class="line">docker cp mysql:/var/backups/db.sql /ali/bak/wordpress/db.sql</span><br><span class="line"></span><br><span class="line"><span class="comment"># 直接备份出来</span></span><br><span class="line">docker-compose <span class="built_in">exec</span> mysql \</span><br><span class="line">    mysqldump -uwordpress -pwordpress wordpress &gt; /ali/bak/wordpress/db.sql</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/wordpress-backup/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/wordpress-backup/" data-id="cjhn4lbxy00k3stq3165ezaol" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-ssh-broken-pipe" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/ssh-broken-pipe/" class="article-date">
-  <time datetime="2018-02-09T06:05:03.000Z" itemprop="datePublished">2018-02-09</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/ssh-broken-pipe/">ssh broken pipe</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>使用ssh，如果很长一段时间不登录，会出现：</p>
-<blockquote>
-<p>  Write failed: Broken pipe<br>  <a href="https://www.logcg.com/archives/tag/write-failed-broken-pipe" target="_blank" rel="noopener"></a></p>
-</blockquote>
-<p>因为空闲时间太长了，可以修改SSH默认配置来让它自动关闭链接。</p>
-<blockquote>
-<p>ServerAliveInterval</p>
-<p>Sets a timeout interval in seconds after which if no data has been received from the server, ssh(1) will send a message through the encrypted channel to request a response from the server.  The default is 0, indicating that these messages will not be sent to the server.  This option applies to protocol version 2 only.</p>
-<p>ClientAliveInterval</p>
-<p>Sets a timeout interval in seconds after which if no data has  been received from the client, sshd(8) will send a message  through the encrypted channel to request a response from the  client.  The default is 0, indicating that these messages will not be sent to the client.  This option applies to protocol version 2 only.</p>
-</blockquote>
-<p>开启发送keep-alive包的功能，允许客户端/服务器在一定时间内发送一个特定的包给对方，这样就避免了链接长时间挂着导致报错。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/ssh-broken-pipe/" data-id="cjhn4lbw200hfstq3jzb72281" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-docker-ssh" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/docker-ssh/" class="article-date">
-  <time datetime="2018-02-09T05:51:23.000Z" itemprop="datePublished">2018-02-09</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/docker-ssh/">通过 docker ssh 到另一个容器</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>通过 docker-compose 建立的应用，如果没有把某个服务的端口暴露在宿主机上，那么只能在容器内部访问，例如 mongodb，如果我们想通过 ssh 远程连接这个数据库应该怎么办呢？解决办法是再建立一个 ssh 容器，使用 mongodb 容器所在的网络，然后建立反向通道，将 mongodb 的 27017 端口映射到本地的 28018 端口。</p>
-<h2 id="创建-ssh-镜像"><a href="#创建-ssh-镜像" class="headerlink" title="创建 ssh 镜像"></a>创建 ssh 镜像</h2><p>随便创建一个 centos 容器，然后进入其内部：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -itd --name ssh centos sh</span><br></pre></td></tr></table></figure>
-<p>安装 ssh ：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">RUN yum install -y openssh-server openssh-clients</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/docker-ssh/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/docker-ssh/" data-id="cjhn4lbof0064stq3e835zug7" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-mac-install-unknown" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/mac-install-unknown/" class="article-date">
-  <time datetime="2018-02-08T02:12:55.000Z" itemprop="datePublished">2018-02-08</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/mac-install-unknown/">mac 允许允许任意应用</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Mac 升级之后只有：</p>
-<ul>
-<li>App Store</li>
-<li>App Store 和被认可的开发者</li>
-</ul>
-<p>运行下面的命令：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo spctl --master-disable</span><br></pre></td></tr></table></figure>
-<p>会变成：</p>
-<ul>
-<li>App Store</li>
-<li>App Store 和被认可的开发者</li>
-<li>任何来源</li>
-</ul>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/mac-install-unknown/" data-id="cjhn4lbt000czstq39ktf1t0a" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/ssh-auto-password/" data-id="cjhq778su00h8izq3b7xgvonm" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
 

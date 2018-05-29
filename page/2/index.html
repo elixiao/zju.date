@@ -54,6 +54,154 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-do-not-forget-to-unsubscribe-in-angular" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/do-not-forget-to-unsubscribe-in-angular/" class="article-date">
+  <time datetime="2018-04-22T03:58:12.000Z" itemprop="datePublished">2018-04-22</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/do-not-forget-to-unsubscribe-in-angular/">别忘了取消 rxjs 订阅</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>RxJS 是很强大的状态管理库，一个可观察对象可以在任何时候被订阅，但是需要注意的是：<strong>别忘了取消订阅！</strong></p>
+<ol>
+<li><p>为什么需要取消订阅？</p>
+<p> 因为在组件中订阅了可观察对象，但是组件销毁的时候没有取消订阅，可能会导致内存泄漏。例如：</p>
+ <figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span>(&#123;</span><br><span class="line">  selector: <span class="string">'zju-date'</span>,</span><br><span class="line">  template: <span class="string">`&lt;h2&gt;zju.date&lt;/h2&gt;`</span>,</span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> ZjuDateComponent &#123;</span><br><span class="line">  seq$;</span><br><span class="line">  <span class="keyword">constructor</span>(<span class="params"></span>) &#123;&#125;</span><br><span class="line">  ngOnInit() &#123;</span><br><span class="line">    <span class="keyword">this</span>.seq$ = Observable.interval(<span class="number">1000</span>).subscribe(<span class="function"><span class="params">data</span> =&gt;</span> <span class="built_in">console</span>.log(data));</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> 组件每次初始化都会重新订阅一次，但组件销毁的时候并没有取消订阅，所以导致内存泄漏。</p>
+</li>
+</ol>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/do-not-forget-to-unsubscribe-in-angular/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/do-not-forget-to-unsubscribe-in-angular/" data-id="cjhq778jg005jizq3lxn8p3mc" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-speed-measure-webpack-plugin" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/speed-measure-webpack-plugin/" class="article-date">
+  <time datetime="2018-04-18T11:11:07.000Z" itemprop="datePublished">2018-04-18</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/speed-measure-webpack-plugin/">计算 webpack 插件/加载器的运行时间</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>webpack 有时候打包很慢，用了很多 plugin 和 loader，想知道到底是哪个环节慢，下面这个插件可以计算 plugin 和 loader 的耗时。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn add -D speed-measure-webpack-plugin</span><br></pre></td></tr></table></figure>
+<p>使用方法很简单，把 webpack 配置对象包裹起来即可：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> SpeedMeasurePlugin = <span class="built_in">require</span>(<span class="string">"speed-measure-webpack-plugin"</span>);</span><br><span class="line"><span class="keyword">const</span> smp = <span class="keyword">new</span> SpeedMeasurePlugin();</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> webpackConfig = smp.wrap(&#123;</span><br><span class="line">  entry: &#123;</span><br><span class="line">    app: [<span class="string">"./app.js"</span>]</span><br><span class="line">  &#125;,</span><br><span class="line">  output: <span class="string">"./public"</span>,</span><br><span class="line">  <span class="built_in">module</span>: &#123;</span><br><span class="line">    rules: [</span><br><span class="line">      &#123;</span><br><span class="line">        test: <span class="regexp">/\.js$/</span>,</span><br><span class="line">        use: [&#123; <span class="attr">loader</span>: <span class="string">"babel-loader"</span> &#125;]</span><br><span class="line">      &#125;</span><br><span class="line">    ]</span><br><span class="line">  &#125;,</span><br><span class="line">  plugins: [</span><br><span class="line">    <span class="keyword">new</span> MyPlugin(),</span><br><span class="line">    <span class="keyword">new</span> MyOtherPlugin()</span><br><span class="line">  ]</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/speed-measure-webpack-plugin/" data-id="cjhq778sv00haizq39miouwjv" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-angular-dynamic-import" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/angular-dynamic-import/" class="article-date">
+  <time datetime="2018-04-13T07:40:07.000Z" itemprop="datePublished">2018-04-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/angular-dynamic-import/">Angular 动态引入模块</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>根据阮一峰的<a href="http://es6.ruanyifeng.com/#docs/module#import-%E5%91%BD%E4%BB%A4" target="_blank" rel="noopener">文章</a>，ES6中的 <code>import</code> 是静态执行，不能使用表达式和变量，下面几种情况都会报错：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 报错</span></span><br><span class="line"><span class="keyword">import</span> &#123; <span class="string">'f'</span> + <span class="string">'oo'</span> &#125; <span class="keyword">from</span> <span class="string">'my_module'</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 报错</span></span><br><span class="line"><span class="keyword">let</span> <span class="built_in">module</span> = <span class="string">'my_module'</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; foo &#125; <span class="keyword">from</span> <span class="built_in">module</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 报错</span></span><br><span class="line"><span class="keyword">if</span> (x === <span class="number">1</span>) &#123;</span><br><span class="line">  <span class="keyword">import</span> &#123; foo &#125; <span class="keyword">from</span> <span class="string">'module1'</span>;</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">  <span class="keyword">import</span> &#123; foo &#125; <span class="keyword">from</span> <span class="string">'module2'</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>而从 Typescript 2.4 版本开始，可以动态引用模块了，例如：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (myCondition === <span class="literal">true</span>) &#123;</span><br><span class="line">  <span class="keyword">import</span>(<span class="string">'/common/helpers/string'</span>).then(<span class="function"><span class="params">stringHelpers</span> =&gt;</span> &#123;</span><br><span class="line">    stringHelpers.reverse(<span class="string">'Hello World'</span>);</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/angular-dynamic-import/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/angular-dynamic-import/" data-id="cjhq778ha002rizq3h4ghrh3e" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-common-rxjs-error" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/common-rxjs-error/" class="article-date">
@@ -94,7 +242,7 @@
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/common-rxjs-error/" data-id="cjhn4lbnl004vstq3n63r204e" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/common-rxjs-error/" data-id="cjhq778in004mizq37tepkx29" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
@@ -156,7 +304,7 @@
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/jwt-notes/" data-id="cjhn4lbs800bxstq35lqehtqe" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/jwt-notes/" data-id="cjhq778ok00buizq35ewzbl79" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
@@ -221,7 +369,7 @@
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/nginx-location/" data-id="cjhn4lbu600eqstq3rmzt42ea" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/nginx-location/" data-id="cjhq778qm00elizq355e9573x" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Nginx/">Nginx</a></li></ul>
 
@@ -275,7 +423,7 @@
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/nginx-server-name/" data-id="cjhn4lbua00evstq3uhztev6r" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/nginx-server-name/" data-id="cjhq778qs00esizq3wr4w45to" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Nginx/">Nginx</a></li></ul>
 
@@ -325,7 +473,7 @@
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/angular-ngif/" data-id="cjhn4lbmp003astq3eyoud6uf" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/angular-ngif/" data-id="cjhq778hj0035izq3fzjd8b77" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
@@ -388,7 +536,7 @@
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/insert-code-in-ppt/" data-id="cjhn4lbqu009nstq3c9agh2lz" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/insert-code-in-ppt/" data-id="cjhq778mm009kizq32v1ppbi8" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
@@ -445,162 +593,9 @@
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/quickly-setup-node-env/" data-id="cjhn4lbv500g1stq3prrmiexi" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/quickly-setup-node-env/" data-id="cjhq778rs00fyizq3gz5kumyh" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-mac-sed" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/mac-sed/" class="article-date">
-  <time datetime="2018-03-22T05:51:07.000Z" itemprop="datePublished">2018-03-22</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/mac-sed/">Mac 中的 sed 命令</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>使用 sed 做文件替换，删除指定匹配模式以及后面5行：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sed -e <span class="string">'/pattern/,+5d'</span> file.txt</span><br></pre></td></tr></table></figure>
-<p>和不含匹配模式行的后面5行：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sed -e <span class="string">'/pattern/&#123;n;N;N;N;N;d&#125;'</span> file.txt</span><br></pre></td></tr></table></figure>
-<p>在 Linux 下没问题，但是在 Mac 下报错：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sed: 1: <span class="string">"/pattern/,+5d</span></span><br><span class="line"><span class="string">"</span>: expected context address</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/mac-sed/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/mac-sed/" data-id="cjhn4lbt200d3stq35bdazpj4" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-git-submodule-unadvertised-object" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/git-submodule-unadvertised-object/" class="article-date">
-  <time datetime="2018-03-21T10:12:07.000Z" itemprop="datePublished">2018-03-21</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/git-submodule-unadvertised-object/">git submodule unadvertised object</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>使用 git submodule 进行 update 的时候，出现下面的错误：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ git submodule update</span><br><span class="line">Submodule path <span class="string">'project1'</span>: checked out <span class="string">'f0246e6589fcb0f80e62f99c5ac39cfb397aff9d'</span></span><br><span class="line">error: Server does not allow request <span class="keyword">for</span> unadvertised object 1c82bfd3c5b066f8b47b70330beeef091f990e7e</span><br><span class="line">Fetched <span class="keyword">in</span> submodule path <span class="string">'project2'</span>, but it did not contain 1c82bfd3c5b066f8b47b70330beeef091f990e7e. Direct fetching of that commit failed.</span><br></pre></td></tr></table></figure>
-<p>这种情况是如何产生的呢？请看下面的场景：</p>
-<blockquote>
-<p>现有主仓库 main，里面有子模块对应的仓库 sub。用户修改了 sub 中的文件，但没有提交到 sub 的远程库，然后把 main 提交到了远程库。现在，另外一个人尝试把 main 拉去下来并同步 sub 中的修改时，由于 sub 的改动并未 push 到其对应的远程库，但 update 命令尝试从 sub 的远程库 pull 对应的改动(1c82bfd3c5b066f8b47b70330beeef091f990e7e)，因此也就不存在，就会报错。</p>
-</blockquote>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/git-submodule-unadvertised-object/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/git-submodule-unadvertised-object/" data-id="cjhn4lbq3008dstq3wzr697si" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/">Git</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-shell-echo-cmd" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/shell-echo-cmd/" class="article-date">
-  <time datetime="2018-03-09T05:37:02.000Z" itemprop="datePublished">2018-03-09</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/shell-echo-cmd/">shell 命令回显</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>写脚本的时候有个需求：执行命令之前先打印这个命令，例如：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">DIRNAME=/usr/share</span><br><span class="line">ls <span class="variable">$DIRNAME</span></span><br></pre></td></tr></table></figure>
-<p>希望控制台能够打印：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls /usr/share</span><br></pre></td></tr></table></figure>
-<p>网上找到了解决办法：</p>
-<p><code>set -x</code> or <code>set -o xtrace</code> 可以开启这种效果，然后可以用 <code>set +x</code> 关闭。如果整个脚本都想这样，可以在文件第一行这么写：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/bin/sh -x</span></span><br></pre></td></tr></table></figure>
-<p>还发现了另外一个有趣的选项： <code>set -v</code>，区别在于它打印的是：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls <span class="variable">$DIRNAME</span></span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/shell-echo-cmd/" data-id="cjhn4lbvu00h3stq324imxkuw" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
 
     </footer>
   </div>

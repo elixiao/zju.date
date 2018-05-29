@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="数据库模型12345678910111213141516171819202122232425const mongoose = require(&apos;mongoose&apos;)const Schema = mongoose.Schemaconst ObjectId = Schema.Types.ObjectIdconst Model = mongoose.model(&apos;comment&apos;, new Schema">
+<meta name="keywords" content="Database">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MongoDB 评论模型设计">
+<meta property="og:url" content="https://zju.date/mongodb-comment-design/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="数据库模型12345678910111213141516171819202122232425const mongoose = require(&apos;mongoose&apos;)const Schema = mongoose.Schemaconst ObjectId = Schema.Types.ObjectIdconst Model = mongoose.model(&apos;comment&apos;, new Schema">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-05-28T01:49:54.862Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="MongoDB 评论模型设计">
+<meta name="twitter:description" content="数据库模型12345678910111213141516171819202122232425const mongoose = require(&apos;mongoose&apos;)const Schema = mongoose.Schemaconst ObjectId = Schema.Types.ObjectIdconst Model = mongoose.model(&apos;comment&apos;, new Schema">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-mongodb-comment-design" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/mongodb-comment-design/" class="article-date">
+  <time datetime="2018-05-04T02:57:03.000Z" itemprop="datePublished">2018-05-04</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      MongoDB 评论模型设计
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="数据库模型"><a href="#数据库模型" class="headerlink" title="数据库模型"></a>数据库模型</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> mongoose = <span class="built_in">require</span>(<span class="string">'mongoose'</span>)</span><br><span class="line"><span class="keyword">const</span> Schema = mongoose.Schema</span><br><span class="line"><span class="keyword">const</span> ObjectId = Schema.Types.ObjectId</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> Model = mongoose.model(<span class="string">'comment'</span>, <span class="keyword">new</span> Schema(&#123;</span><br><span class="line">  user: &#123;<span class="attr">type</span>: ObjectId, <span class="attr">ref</span>: <span class="string">'user'</span>, <span class="attr">required</span>: <span class="literal">true</span>&#125;,</span><br><span class="line">  targetId: &#123;<span class="attr">type</span>: ObjectId, <span class="attr">required</span>: <span class="literal">true</span>&#125;,</span><br><span class="line">  targetName: &#123;<span class="attr">type</span>: <span class="built_in">String</span>, <span class="attr">required</span>: <span class="literal">true</span>, <span class="attr">default</span>: <span class="string">'article'</span>&#125;,</span><br><span class="line">  type: &#123;<span class="attr">type</span>: <span class="built_in">String</span>, <span class="attr">required</span>: <span class="literal">true</span>, <span class="attr">default</span>: <span class="string">'text'</span>&#125;,</span><br><span class="line">  content: &#123;<span class="attr">type</span>: <span class="built_in">String</span>&#125;,</span><br><span class="line">  resource: &#123;<span class="attr">type</span>: ObjectId, <span class="attr">ref</span>: <span class="string">'resource'</span>&#125;,</span><br><span class="line">  targetUser: &#123;<span class="attr">type</span>: ObjectId, <span class="attr">ref</span>: <span class="string">'user'</span>&#125;, <span class="comment">// 预留字段：评论的评论的评论</span></span><br><span class="line">  likes: &#123;<span class="attr">type</span>: <span class="built_in">Number</span>&#125;, <span class="comment">// 预留字段：对评论的赞</span></span><br><span class="line">  createdAt: &#123;<span class="attr">type</span>: <span class="built_in">Date</span>, <span class="attr">default</span>: <span class="built_in">Date</span>.now&#125;,</span><br><span class="line">  updatedAt: &#123;<span class="attr">type</span>: <span class="built_in">Date</span>, <span class="attr">default</span>: <span class="built_in">Date</span>.now&#125;,</span><br><span class="line">&#125;))</span><br><span class="line"></span><br><span class="line"><span class="built_in">module</span>.exports = Model</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> type 评论类型 文字text、图片image、地理位置location、语音voice等</span></span><br><span class="line"><span class="comment"> targetName 取值 对文章或评论的评论 article、comment</span></span><br><span class="line"><span class="comment"> 评论默认针对对作者的文字，评论的评论（可以有多级，但所有评论下的评论都视为在同一个评论下的聊天）</span></span><br><span class="line"><span class="comment"> 评论排序应按照热门程度，即评论的评论数量</span></span><br><span class="line"><span class="comment"> */</span></span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<h3 id="增删改查逻辑"><a href="#增删改查逻辑" class="headerlink" title="增删改查逻辑"></a>增删改查逻辑</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> Feathers = <span class="built_in">require</span>(<span class="string">'../feathers.class'</span>)</span><br><span class="line"><span class="keyword">const</span> Model = <span class="built_in">require</span>(<span class="string">'../../models'</span>)</span><br><span class="line"><span class="keyword">const</span> errors = <span class="built_in">require</span>(<span class="string">'../../errors'</span>)</span><br><span class="line"><span class="keyword">const</span> utils = <span class="built_in">require</span>(<span class="string">'../../utils'</span>)</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Comment</span> <span class="keyword">extends</span> <span class="title">Feathers</span> </span>&#123;</span><br><span class="line">  find(params) &#123;</span><br><span class="line">    <span class="keyword">const</span> query = params.query</span><br><span class="line">    <span class="keyword">return</span> <span class="function">(<span class="params"><span class="keyword">async</span> (</span>) =&gt;</span> &#123;</span><br><span class="line">      <span class="comment">// 按照热门程度排序</span></span><br><span class="line">      <span class="keyword">const</span> targetId = query.targetId</span><br><span class="line">      <span class="keyword">if</span> (targetId) &#123;</span><br><span class="line">        <span class="keyword">const</span> comments = <span class="keyword">await</span> Model.Comment.find(&#123;targetId&#125;)</span><br><span class="line">          , replies = <span class="keyword">await</span> <span class="built_in">Promise</span>.all(comments.map(<span class="function"><span class="params">comment</span> =&gt;</span> Model.Comment.find(&#123;<span class="attr">targetId</span>: comment._id&#125;)))</span><br><span class="line">        comments.forEach(<span class="function">(<span class="params">it, idx</span>) =&gt;</span> it._doc.replies = replies[idx] || [])</span><br><span class="line">        <span class="keyword">return</span> comments</span><br><span class="line">      &#125;</span><br><span class="line">      query.$sort = &#123;<span class="attr">createdAt</span>: <span class="number">-1</span>&#125;</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">super</span>.find(params)</span><br><span class="line">    &#125;)()</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  get(id, params) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">super</span>.get(id, params)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  create(data, params) &#123;</span><br><span class="line">    <span class="keyword">if</span> (!data.type || data.type === <span class="string">'text'</span>) &#123; <span class="comment">// 文本类型的评论</span></span><br><span class="line">      data.content = data.content.toString().trim()</span><br><span class="line">      <span class="keyword">if</span> (!data.content) <span class="keyword">throw</span> errors.validationFailedError(<span class="string">'评论内容不能为空！'</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="function">(<span class="params"><span class="keyword">async</span> (</span>) =&gt;</span> &#123;</span><br><span class="line">      <span class="comment">// 评论评论或评论的评论时需要验证，其targetId的targetName一定不能是comment</span></span><br><span class="line">      <span class="keyword">if</span> (data.targetName === <span class="string">'comment'</span>) &#123;</span><br><span class="line">        <span class="keyword">const</span> comment = <span class="keyword">await</span> Model.Comment.findById(data.targetId)</span><br><span class="line">        <span class="keyword">if</span> (comment.targetName === <span class="string">'comment'</span>) <span class="keyword">throw</span> errors.validationFailedError(<span class="string">'评论标的不能是二级（含）以上评论！'</span>)</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">super</span>.create(data, params)</span><br><span class="line">    &#125;)()</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  patch(id, data, params) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">super</span>.patch(id, data, params)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  remove(id, params) &#123;</span><br><span class="line">    <span class="comment">// 删除评论之后，评论的评论也要级联删除</span></span><br><span class="line">    <span class="keyword">return</span> Model.Comment.find(&#123;<span class="attr">targetId</span>: id&#125;).then(<span class="keyword">async</span> comments =&gt; &#123;</span><br><span class="line">      <span class="built_in">console</span>.log(comments)</span><br><span class="line">      <span class="keyword">if</span> (comments.length) &#123;</span><br><span class="line">        <span class="keyword">const</span> ids = comments.map(<span class="function"><span class="params">it</span> =&gt;</span> it._id)</span><br><span class="line">        <span class="keyword">await</span> Model.Comment.remove(&#123;<span class="attr">_id</span>: &#123;<span class="attr">$in</span>: ids&#125;&#125;)</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">super</span>.remove(id, params)</span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> CommentInstance = <span class="keyword">new</span> Comment(&#123;</span><br><span class="line">  name: <span class="string">'comment'</span>,</span><br><span class="line">  Model: Model.Comment,</span><br><span class="line">  paginate: Model.paginate</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="built_in">module</span>.exports = CommentInstance</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/mongodb-comment-design/" data-id="cjhq778pt00dgizq3s5h8fk09" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/js-module/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          JS 模块化
+        
+      </div>
+    </a>
+  
+  
+    <a href="/angular-component-communication/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Angular 兄弟组件通信</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>
