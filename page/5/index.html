@@ -54,10 +54,10 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-git-branch-manage" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-ssh-broken-pipe" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/git-branch-manage/" class="article-date">
-  <time datetime="2018-02-01T07:50:13.000Z" itemprop="datePublished">2018-02-01</time>
+    <a href="/ssh-broken-pipe/" class="article-date">
+  <time datetime="2018-02-09T06:05:03.000Z" itemprop="datePublished">2018-02-09</time>
 </a>
     
   </div>
@@ -68,7 +68,59 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/git-branch-manage/">git 分支管理</a>
+      <a class="article-title" href="/ssh-broken-pipe/">ssh broken pipe</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>使用ssh，如果很长一段时间不登录，会出现：</p>
+<blockquote>
+<p>  Write failed: Broken pipe<br>  <a href="https://www.logcg.com/archives/tag/write-failed-broken-pipe" target="_blank" rel="noopener"></a></p>
+</blockquote>
+<p>因为空闲时间太长了，可以修改SSH默认配置来让它自动关闭链接。</p>
+<blockquote>
+<p>ServerAliveInterval</p>
+<p>Sets a timeout interval in seconds after which if no data has been received from the server, ssh(1) will send a message through the encrypted channel to request a response from the server.  The default is 0, indicating that these messages will not be sent to the server.  This option applies to protocol version 2 only.</p>
+<p>ClientAliveInterval</p>
+<p>Sets a timeout interval in seconds after which if no data has  been received from the client, sshd(8) will send a message  through the encrypted channel to request a response from the  client.  The default is 0, indicating that these messages will not be sent to the client.  This option applies to protocol version 2 only.</p>
+</blockquote>
+<p>开启发送keep-alive包的功能，允许客户端/服务器在一定时间内发送一个特定的包给对方，这样就避免了链接长时间挂着导致报错。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/ssh-broken-pipe/" data-id="cjhq778sx00hcizq3pmxyaifv" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-docker-ssh" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/docker-ssh/" class="article-date">
+  <time datetime="2018-02-09T05:51:23.000Z" itemprop="datePublished">2018-02-09</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/docker-ssh/">通过 docker ssh 到另一个容器</a>
     </h1>
   
 
@@ -80,40 +132,177 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <h2 id="Git-分支管理"><a href="#Git-分支管理" class="headerlink" title="Git 分支管理"></a>Git 分支管理</h2><p>首先要明确下面两个分支的概念：</p>
-<table>
-<thead>
-<tr>
-<th>分支</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>develop</td>
-<td>包含的是下个版本需要发布的内容</td>
-</tr>
-<tr>
-<td>master</td>
-<td>包含的是可以部署到生产环境中的代码</td>
-</tr>
-</tbody>
-</table>
-<p>意思是说：</p>
-<ul>
-<li>develop 分支，是用于随时可以发布到 <code>develop</code> 的代码，便于线上测试；</li>
-<li>master 分支，是用于随时可以发布到 <code>master.com</code> 生产环境的代码。</li>
-</ul>
+            <p>通过 docker-compose 建立的应用，如果没有把某个服务的端口暴露在宿主机上，那么只能在容器内部访问，例如 mongodb，如果我们想通过 ssh 远程连接这个数据库应该怎么办呢？解决办法是再建立一个 ssh 容器，使用 mongodb 容器所在的网络，然后建立反向通道，将 mongodb 的 27017 端口映射到本地的 28018 端口。</p>
+<h2 id="创建-ssh-镜像"><a href="#创建-ssh-镜像" class="headerlink" title="创建 ssh 镜像"></a>创建 ssh 镜像</h2><p>随便创建一个 centos 容器，然后进入其内部：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -itd --name ssh centos sh</span><br></pre></td></tr></table></figure>
+<p>安装 ssh ：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">RUN yum install -y openssh-server openssh-clients</span><br></pre></td></tr></table></figure>
         </div>
         
           <p class="article-more-link">
-            <a href="/git-branch-manage/#more">Read More</a>
+            <a href="/docker-ssh/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/git-branch-manage/" data-id="cjhq778kv007oizq3p4z1rf4l" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/docker-ssh/" data-id="cjhq778jo005vizq3v896fwl5" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-mac-install-unknown" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/mac-install-unknown/" class="article-date">
+  <time datetime="2018-02-08T02:12:55.000Z" itemprop="datePublished">2018-02-08</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/mac-install-unknown/">mac 允许任意应用</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Mac 升级之后只有：</p>
+<ul>
+<li>App Store</li>
+<li>App Store 和被认可的开发者</li>
+</ul>
+<p>运行下面的命令：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo spctl --master-disable</span><br></pre></td></tr></table></figure>
+<p>会变成：</p>
+<ul>
+<li>App Store</li>
+<li>App Store 和被认可的开发者</li>
+<li>任何来源</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/mac-install-unknown/" data-id="cjhq778pd00cuizq35kcsouoc" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-docker-version-install" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/docker-version-install/" class="article-date">
+  <time datetime="2018-02-04T02:52:13.000Z" itemprop="datePublished">2018-02-04</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/docker-version-install/">安装指定版本的 docker</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>首先要确保 docker 卸载干净：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sudo yum remove docker \</span><br><span class="line">                  docker-common \</span><br><span class="line">                  container-selinux \</span><br><span class="line">                  docker-selinux \</span><br><span class="line">                  docker-engine</span><br></pre></td></tr></table></figure>
+<p>然后添加源：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ sudo yum-config-manager \</span><br><span class="line">&gt;     --add-repo \</span><br><span class="line">&gt;     https://download.docker.com/linux/centos/docker-ce.repo</span><br><span class="line">Loaded plugins: langpacks</span><br><span class="line">adding repo from: https://download.docker.com/linux/centos/docker-ce.repo</span><br><span class="line">grabbing file https://download.docker.com/linux/centos/docker-ce.repo to /etc/yum.repos.d/docker-ce.repo</span><br><span class="line">repo saved to /etc/yum.repos.d/docker-ce.repo</span><br></pre></td></tr></table></figure>
+<p>查找版本：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">yum list docker-ce --showduplicates | sort -r</span><br><span class="line">已加载插件：fastestmirror</span><br><span class="line">可安装的软件包</span><br><span class="line">Loading mirror speeds from cached hostfile</span><br><span class="line">docker-ce.x86_64            17.12.0.ce-1.el7.centos             docker-ce-stable</span><br><span class="line">docker-ce.x86_64            17.09.1.ce-1.el7.centos             docker-ce-stable</span><br><span class="line">docker-ce.x86_64            17.09.0.ce-1.el7.centos             docker-ce-stable</span><br><span class="line">docker-ce.x86_64            17.06.2.ce-1.el7.centos             docker-ce-stable</span><br><span class="line">docker-ce.x86_64            17.06.1.ce-1.el7.centos             docker-ce-stable</span><br><span class="line">docker-ce.x86_64            17.06.0.ce-1.el7.centos             docker-ce-stable</span><br><span class="line">docker-ce.x86_64            17.03.2.ce-1.el7.centos             docker-ce-stable</span><br><span class="line">docker-ce.x86_64            17.03.1.ce-1.el7.centos             docker-ce-stable</span><br><span class="line">docker-ce.x86_64            17.03.0.ce-1.el7.centos             docker-ce-stable</span><br></pre></td></tr></table></figure>
+<p>指定版本安装：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ yum install --<span class="built_in">setopt</span>=obsoletes=0 \</span><br><span class="line">   docker-ce-17.03.2.ce-1.el7.centos.x86_64 \</span><br><span class="line">   docker-ce-selinux-17.03.2.ce-1.el7.centos.noarch <span class="comment"># on a new system with yum repo defined, forcing older version and ignoring obsoletes introduced by 17.06.0</span></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/docker-version-install/" data-id="cjhq778jr005zizq36a584eir" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-git-rename-branch" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/git-rename-branch/" class="article-date">
+  <time datetime="2018-02-04T02:52:13.000Z" itemprop="datePublished">2018-02-04</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/git-rename-branch/">git 重命名分支</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>假设分支名称为oldName，想要修改为 newName，-m 是 move（或mv）的意思：</p>
+<ol>
+<li><p>本地分支重命名（还没有推送到远程）</p>
+<p> a. 重命名任意分支</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git branch -m &lt;oldname&gt; &lt;newname&gt;</span><br></pre></td></tr></table></figure>
+<p> b. 重命名当前分支</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git branch -m &lt;newname&gt;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/git-rename-branch/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/git-rename-branch/" data-id="cjhq778l60084izq30s29zphb" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/">Git</a></li></ul>
 
@@ -124,10 +313,10 @@
 
 
   
-    <article id="post-load-balance" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-mongoose-create-if-not-exists" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/load-balance/" class="article-date">
-  <time datetime="2018-01-27T01:57:07.000Z" itemprop="datePublished">2018-01-27</time>
+    <a href="/mongoose-create-if-not-exists/" class="article-date">
+  <time datetime="2018-02-02T14:04:07.000Z" itemprop="datePublished">2018-02-02</time>
 </a>
     
   </div>
@@ -138,7 +327,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/load-balance/">负载均衡配置</a>
+      <a class="article-title" href="/mongoose-create-if-not-exists/">mongoose “没有则创建”语法</a>
     </h1>
   
 
@@ -149,28 +338,21 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <div class="article-preview">
-            <p>负载均衡，单从字面上的意思来理解就可以解释N台服务器平均分担负载，不会因为某台服务器负载高宕机和某台服务器闲置的情况，那么负载均衡的前提就是要2台以上服务器才能实现。假设我现在有三个 server，分别是：</p>
+        <p>如果没有就创建：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> query = &#123;&#125;,</span><br><span class="line">  update = &#123; <span class="attr">expire</span>: <span class="keyword">new</span> <span class="built_in">Date</span>() &#125;,</span><br><span class="line">  options = &#123; <span class="attr">upsert</span>: <span class="literal">true</span>, <span class="attr">new</span>: <span class="literal">true</span>, <span class="attr">setDefaultsOnInsert</span>: <span class="literal">true</span> &#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Find the document</span></span><br><span class="line">Model.findOneAndUpdate(query, update, options, <span class="function"><span class="keyword">function</span>(<span class="params">error, result</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (error) <span class="keyword">return</span>;</span><br><span class="line">  <span class="comment">// do something with the document</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>注意这些参数：</p>
 <ul>
-<li>master（192.168.120.7）</li>
-<li>minion1 （192.168.120.8）</li>
-<li>minion2（192.168.120.9）</li>
+<li><code>new</code> 代表返回更新后的值</li>
+<li><code>upsert</code> 代表如果没有就创建</li>
+<li><code>setDefaultsOnInsert</code> 设置默认值。</li>
 </ul>
-<p>我们把域名解析到 master 服务器的 80 端口，然后由 master 服务器的 80 端口转发到 minion1 服务器的 8080 端口和 minion2 服务器的 8081 端口。如果没有多台服务器，也可以用一台进行测试，使用不同端口即可。下面使用 nginx 和 haproxy 来实现负载均衡。</p>
-<h2 id="nginx"><a href="#nginx" class="headerlink" title="nginx"></a>nginx</h2><p>单配置：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">upstream anyname &#123;</span><br><span class="line">      server minion1:8080;</span><br><span class="line">      server minion2:8081;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">server&#123; </span><br><span class="line">    listen 80; </span><br><span class="line">    server_name 192.168.120.7; </span><br><span class="line">    location / &#123; </span><br><span class="line">        proxy_pass         http://anyname; </span><br><span class="line">        proxy_set_header   Host             $host; </span><br><span class="line">        proxy_set_header   X-Real-IP        $remote_addr; </span><br><span class="line">        proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for; </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/load-balance/#more">Read More</a>
-          </p>
-        
+
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/load-balance/" data-id="cjhq778p500ckizq3y1j8cfb5" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/mongoose-create-if-not-exists/" data-id="cjhq778q700e0izq30rmm4v89" class="article-share-link">Share</a>
      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
 
     </footer>
   </div>
@@ -179,10 +361,10 @@
 
 
   
-    <article id="post-nfs-notes" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-nginx-alias-vs-root" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/nfs-notes/" class="article-date">
-  <time datetime="2018-01-23T08:04:07.000Z" itemprop="datePublished">2018-01-23</time>
+    <a href="/nginx-alias-vs-root/" class="article-date">
+  <time datetime="2018-02-02T14:04:07.000Z" itemprop="datePublished">2018-02-02</time>
 </a>
     
   </div>
@@ -193,7 +375,100 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/nfs-notes/">NFS笔记</a>
+      <a class="article-title" href="/nginx-alias-vs-root/">nginx alias 和 root</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>alias 语法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">location /abc/ &#123;</span><br><span class="line">    alias /home/html/abc/;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>/abc/a.html</code> 就指的是 <code>/home/html/abc/a.html</code>，与下面的配置相同：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">location /abc/ &#123;</span><br><span class="line">    root /home/html/;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>使用 root 设置目录的绝对路径时，少了 /abc,也就是说，使用 root 来设置前端非根目录时，nginx 会组合 root 和 location 的路径。例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">location /static/ &#123;</span><br><span class="line">	root /var/www/app/static/;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>表示 <code>/var/www/app/static/static</code>，而：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">location /static/ &#123;</span><br><span class="line"> alias /var/www/app/static/;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>表示 <code>/var/www/app/static</code></p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/nginx-alias-vs-root/" data-id="cjhq778qh00eeizq3g3rs9ldq" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Nginx/">Nginx</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-zsh" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/zsh/" class="article-date">
+  <time datetime="2018-02-02T08:01:11.000Z" itemprop="datePublished">2018-02-02</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/zsh/">zsh kill</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>如果你的电脑安装了 oh my zsh，那么只需要在终端输入</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">kill</span> xxx</span><br></pre></td></tr></table></figure>
+<p>按 tab，会自动替换成 xxx 对应的 pid，例如：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">kill</span> redis</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/zsh/" data-id="cjhq778vu00k8izq34utzz72v" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-git-branch" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/git-branch/" class="article-date">
+  <time datetime="2018-02-02T05:10:13.000Z" itemprop="datePublished">2018-02-02</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/git-branch/">git 分支</a>
     </h1>
   
 
@@ -205,25 +480,24 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <p>NFS (network file system) 网络文件系统，类似 Windows 中的文件夹共享，多台机器可以访问同一个目录。</p>
-<h2 id="服务端"><a href="#服务端" class="headerlink" title="服务端"></a>服务端</h2><p>NFS 其实可以被视为一个 RPC 服务，可以通过下面的命令开启：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">systemctl start rpcbind <span class="comment"># 开启 rpcbind</span></span><br><span class="line">systemctl start nfs <span class="comment"># 开启 nfs</span></span><br></pre></td></tr></table></figure>
-<p>如果系统没安装的话，使用下面的命令安装：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">yum install nfs-utils</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加开启启动</span></span><br><span class="line">systemctl <span class="built_in">enable</span> rpcbind.service</span><br><span class="line">systemctl <span class="built_in">enable</span> nfs-server.service</span><br></pre></td></tr></table></figure>
-<p>然后就可以添加从机了，假如我们想共享本地文件夹 /home/nfs：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">vim  /etc/exports</span><br><span class="line">/home/nfs   192.168.120.8(rw,sync,fsid=0)   192.168.120.9(rw,sync,fsid=0)</span><br><span class="line">/home/nfs 192.168.120.8(rw,all_squash,anonuid=1000,anongid=1000) 192.168.120.9(rw,all_squash,anonuid=1000,anongid=1000)</span><br></pre></td></tr></table></figure>
+            <p>刚 clone 下来的仓库，执行 git branch 会看到</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">* master</span><br></pre></td></tr></table></figure>
+<p>并不会看到其他分支，即便远程仓库上有其他分支，使用</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git branch -va</span><br></pre></td></tr></table></figure>
+<p>可以查看本地和远程分支列表</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">* master              0840594 merge master and 1.0.0</span><br><span class="line">remotes/origin/hello  743012a update</span><br><span class="line">remotes/origin/HEAD   -&gt; origin/master</span><br><span class="line">remotes/origin/master 0840594 merge master and 1.0.0</span><br></pre></td></tr></table></figure>
         </div>
         
           <p class="article-more-link">
-            <a href="/nfs-notes/#more">Read More</a>
+            <a href="/git-branch/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/nfs-notes/" data-id="cjhq778qj00egizq33h62dfti" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/git-branch/" data-id="cjhq778ku007mizq3h98tzo1y" class="article-share-link">Share</a>
      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/">Git</a></li></ul>
 
     </footer>
   </div>
@@ -232,10 +506,10 @@
 
 
   
-    <article id="post-supervisor-notes" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-debounce-vs-throttle" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/supervisor-notes/" class="article-date">
-  <time datetime="2018-01-20T01:35:39.000Z" itemprop="datePublished">2018-01-20</time>
+    <a href="/debounce-vs-throttle/" class="article-date">
+  <time datetime="2018-02-01T09:23:13.000Z" itemprop="datePublished">2018-02-01</time>
 </a>
     
   </div>
@@ -246,7 +520,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/supervisor-notes/">使用 supervisor 管理进程</a>
+      <a class="article-title" href="/debounce-vs-throttle/">在 Angular 中使用 debounce 和 throttle</a>
     </h1>
   
 
@@ -258,312 +532,27 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <p>supervisor 是 Python 写的进程管理工具，可以很方便的用来启动、重启、关闭多个进程。</p>
-<ul>
-<li>不可以在 Windows 上运行</li>
-<li>可以运行在 Python 2.4 或者更高的 Python版本，但是不可以在任何 Python 3 的版本上运行。</li>
-</ul>
-<p>安装方法有两种：</p>
-<ol>
-<li><p>使用 pip 安装</p>
- <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo pip install supervisor</span><br></pre></td></tr></table></figure>
-<p> 如果报错：</p>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">command not found: pip</span><br></pre></td></tr></table></figure>
-<p> 说明电脑里面未安装 pip，可使用下面的命令安装：</p>
- <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo easy_install pip</span><br></pre></td></tr></table></figure>
-<p> 安装成功之后查看版本：</p>
- <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pip --version</span><br><span class="line">pip 9.0.1 from /Library/Python/2.7/site-packages/pip-9.0.1-py2.7.egg (python 2.7)</span><br></pre></td></tr></table></figure>
-<p> 然后再运行：</p>
- <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo pip install supervisor</span><br></pre></td></tr></table></figure>
+            <h2 id="debounce"><a href="#debounce" class="headerlink" title="debounce"></a>debounce</h2><ol>
+<li><p>名词释义</p>
+<p> 对于某事件流，自触发时刻开始，若持续指定时间内未有事件发生，则触发最后的事件；否则只更新最后事件，并不触发事件，直到满足持续指定时间未有事件发生的条件。</p>
+</li>
+<li><p>应用场景</p>
+<p> 搜索手牌或商品的时候，keyup事件并不需要每次都触发请求，而是当用户某两次keyup中间的间隔超过指定时间才去请求，否则用户噼里啪啦打字，你发了几十个请求，浪费资源。</p>
+</li>
+<li><p>代码：</p>
+ <figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123;Directive, EventEmitter, HostListener, Input, OnInit, Output&#125; <span class="keyword">from</span> <span class="string">'@angular/core'</span></span><br><span class="line"><span class="keyword">import</span> &#123;Subject&#125; <span class="keyword">from</span> <span class="string">'rxjs/Subject'</span></span><br><span class="line"><span class="keyword">import</span> &#123;debounceTime&#125; <span class="keyword">from</span> <span class="string">'rxjs/operators'</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@Directive</span>(&#123;</span><br><span class="line">  selector: <span class="string">'[debounce]'</span></span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> DebounceDirective <span class="keyword">implements</span> OnInit &#123;</span><br><span class="line">  <span class="meta">@Input</span>() debounce</span><br><span class="line">  <span class="meta">@Output</span>() debounceKeyup = <span class="keyword">new</span> EventEmitter()</span><br><span class="line">  <span class="keyword">private</span> keyupSubject = <span class="keyword">new</span> Subject()</span><br><span class="line"></span><br><span class="line">  <span class="keyword">constructor</span>(<span class="params"></span>) &#123;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  ngOnInit() &#123;</span><br><span class="line">    <span class="keyword">this</span>.keyupSubject</span><br><span class="line">      .pipe(debounceTime(<span class="keyword">this</span>.debounce || <span class="number">500</span>))</span><br><span class="line">      .subscribe(<span class="function"><span class="params">e</span> =&gt;</span> <span class="keyword">this</span>.debounceKeyup.emit(e))</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@HostListener</span>(<span class="string">'keyup'</span>, [<span class="string">'$event'</span>])</span><br><span class="line">  keyupEvent(event) &#123;</span><br><span class="line">    event.preventDefault()</span><br><span class="line">    event.stopPropagation()</span><br><span class="line">    <span class="keyword">this</span>.keyupSubject.next(event)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
         </div>
         
           <p class="article-more-link">
-            <a href="/supervisor-notes/#more">Read More</a>
+            <a href="/debounce-vs-throttle/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/supervisor-notes/" data-id="cjhq778t500hmizq3xeotrlxy" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-custom-http-header" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/custom-http-header/" class="article-date">
-  <time datetime="2018-01-19T01:36:13.000Z" itemprop="datePublished">2018-01-19</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/custom-http-header/">自定义 http header</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>自定义header往往是以X开头的，后来被规范废弃了，建议以相关字符串开头。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Account-ID</span><br><span class="line">Host-Name</span><br><span class="line">Storage-Policy</span><br></pre></td></tr></table></figure>
-<p>最好能换成带前缀的：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">OpenStack-Identity-Account-ID</span><br><span class="line">OpenStack-Networking-Host-Name</span><br><span class="line">OpenStack-Object-Storage-Policy</span><br></pre></td></tr></table></figure>
-<p>带版本字符串的：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">OpenStack-Nova-API-Version: 2.1</span><br></pre></td></tr></table></figure>
-<p>最好换成：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">OpenStack-API-Version: Nova 2.1</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/custom-http-header/" data-id="cjhq778j5005bizq3o3e3k2d2" class="article-share-link">Share</a>
-     
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-js-base64" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/js-base64/" class="article-date">
-  <time datetime="2018-01-18T09:08:45.000Z" itemprop="datePublished">2018-01-18</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/js-base64/">JavaScript 转换 base64</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>下面的代码可以将字符串转换为 base64，也可以将 base64 还原为字符串：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Define the string</span></span><br><span class="line"><span class="keyword">var</span> string = <span class="string">'Hello World!'</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Encode the String</span></span><br><span class="line"><span class="keyword">var</span> encodedString = btoa(string);</span><br><span class="line"><span class="built_in">console</span>.log(encodedString); <span class="comment">// Outputs: "SGVsbG8gV29ybGQh"</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Decode the String</span></span><br><span class="line"><span class="keyword">var</span> decodedString = atob(encodedString);</span><br><span class="line"><span class="built_in">console</span>.log(decodedString); <span class="comment">// Outputs: "Hello World!"</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Create Base64 Object</span></span><br><span class="line"><span class="keyword">var</span> Base64=&#123;<span class="attr">_keyStr</span>:<span class="string">"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/="</span>,<span class="attr">encode</span>:<span class="function"><span class="keyword">function</span>(<span class="params">e</span>)</span>&#123;<span class="keyword">var</span> t=<span class="string">""</span>;<span class="keyword">var</span> n,r,i,s,o,u,a;<span class="keyword">var</span> f=<span class="number">0</span>;e=Base64._utf8_encode(e);<span class="keyword">while</span>(f&lt;e.length)&#123;n=e.charCodeAt(f++);r=e.charCodeAt(f++);i=e.charCodeAt(f++);s=n&gt;&gt;<span class="number">2</span>;o=(n&amp;<span class="number">3</span>)&lt;&lt;<span class="number">4</span>|r&gt;&gt;<span class="number">4</span>;u=(r&amp;<span class="number">15</span>)&lt;&lt;<span class="number">2</span>|i&gt;&gt;<span class="number">6</span>;a=i&amp;<span class="number">63</span>;<span class="keyword">if</span>(<span class="built_in">isNaN</span>(r))&#123;u=a=<span class="number">64</span>&#125;<span class="keyword">else</span> <span class="keyword">if</span>(<span class="built_in">isNaN</span>(i))&#123;a=<span class="number">64</span>&#125;t=t+<span class="keyword">this</span>._keyStr.charAt(s)+<span class="keyword">this</span>._keyStr.charAt(o)+<span class="keyword">this</span>._keyStr.charAt(u)+<span class="keyword">this</span>._keyStr.charAt(a)&#125;<span class="keyword">return</span> t&#125;,<span class="attr">decode</span>:<span class="function"><span class="keyword">function</span>(<span class="params">e</span>)</span>&#123;<span class="keyword">var</span> t=<span class="string">""</span>;<span class="keyword">var</span> n,r,i;<span class="keyword">var</span> s,o,u,a;<span class="keyword">var</span> f=<span class="number">0</span>;e=e.replace(<span class="regexp">/[^A-Za-z0-9+/=]/g</span>,<span class="string">""</span>);<span class="keyword">while</span>(f&lt;e.length)&#123;s=<span class="keyword">this</span>._keyStr.indexOf(e.charAt(f++));o=<span class="keyword">this</span>._keyStr.indexOf(e.charAt(f++));u=<span class="keyword">this</span>._keyStr.indexOf(e.charAt(f++));a=<span class="keyword">this</span>._keyStr.indexOf(e.charAt(f++));n=s&lt;&lt;<span class="number">2</span>|o&gt;&gt;<span class="number">4</span>;r=(o&amp;<span class="number">15</span>)&lt;&lt;<span class="number">4</span>|u&gt;&gt;<span class="number">2</span>;i=(u&amp;<span class="number">3</span>)&lt;&lt;<span class="number">6</span>|a;t=t+<span class="built_in">String</span>.fromCharCode(n);<span class="keyword">if</span>(u!=<span class="number">64</span>)&#123;t=t+<span class="built_in">String</span>.fromCharCode(r)&#125;<span class="keyword">if</span>(a!=<span class="number">64</span>)&#123;t=t+<span class="built_in">String</span>.fromCharCode(i)&#125;&#125;t=Base64._utf8_decode(t);<span class="keyword">return</span> t&#125;,<span class="attr">_utf8_encode</span>:<span class="function"><span class="keyword">function</span>(<span class="params">e</span>)</span>&#123;e=e.replace(<span class="regexp">/rn/g</span>,<span class="string">"n"</span>);<span class="keyword">var</span> t=<span class="string">""</span>;<span class="keyword">for</span>(<span class="keyword">var</span> n=<span class="number">0</span>;n&lt;e.length;n++)&#123;<span class="keyword">var</span> r=e.charCodeAt(n);<span class="keyword">if</span>(r&lt;<span class="number">128</span>)&#123;t+=<span class="built_in">String</span>.fromCharCode(r)&#125;<span class="keyword">else</span> <span class="keyword">if</span>(r&gt;<span class="number">127</span>&amp;&amp;r&lt;<span class="number">2048</span>)&#123;t+=<span class="built_in">String</span>.fromCharCode(r&gt;&gt;<span class="number">6</span>|<span class="number">192</span>);t+=<span class="built_in">String</span>.fromCharCode(r&amp;<span class="number">63</span>|<span class="number">128</span>)&#125;<span class="keyword">else</span>&#123;t+=<span class="built_in">String</span>.fromCharCode(r&gt;&gt;<span class="number">12</span>|<span class="number">224</span>);t+=<span class="built_in">String</span>.fromCharCode(r&gt;&gt;<span class="number">6</span>&amp;<span class="number">63</span>|<span class="number">128</span>);t+=<span class="built_in">String</span>.fromCharCode(r&amp;<span class="number">63</span>|<span class="number">128</span>)&#125;&#125;<span class="keyword">return</span> t&#125;,<span class="attr">_utf8_decode</span>:<span class="function"><span class="keyword">function</span>(<span class="params">e</span>)</span>&#123;<span class="keyword">var</span> t=<span class="string">""</span>;<span class="keyword">var</span> n=<span class="number">0</span>;<span class="keyword">var</span> r=c1=c2=<span class="number">0</span>;<span class="keyword">while</span>(n&lt;e.length)&#123;r=e.charCodeAt(n);<span class="keyword">if</span>(r&lt;<span class="number">128</span>)&#123;t+=<span class="built_in">String</span>.fromCharCode(r);n++&#125;<span class="keyword">else</span> <span class="keyword">if</span>(r&gt;<span class="number">191</span>&amp;&amp;r&lt;<span class="number">224</span>)&#123;c2=e.charCodeAt(n+<span class="number">1</span>);t+=<span class="built_in">String</span>.fromCharCode((r&amp;<span class="number">31</span>)&lt;&lt;<span class="number">6</span>|c2&amp;<span class="number">63</span>);n+=<span class="number">2</span>&#125;<span class="keyword">else</span>&#123;c2=e.charCodeAt(n+<span class="number">1</span>);c3=e.charCodeAt(n+<span class="number">2</span>);t+=<span class="built_in">String</span>.fromCharCode((r&amp;<span class="number">15</span>)&lt;&lt;<span class="number">12</span>|(c2&amp;<span class="number">63</span>)&lt;&lt;<span class="number">6</span>|c3&amp;<span class="number">63</span>);n+=<span class="number">3</span>&#125;&#125;<span class="keyword">return</span> t&#125;&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Define the string</span></span><br><span class="line"><span class="keyword">var</span> string = <span class="string">'Hello World!'</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Encode the String</span></span><br><span class="line"><span class="keyword">var</span> encodedString = Base64.encode(string);</span><br><span class="line"><span class="built_in">console</span>.log(encodedString); <span class="comment">// Outputs: "SGVsbG8gV29ybGQh"</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Decode the String</span></span><br><span class="line"><span class="keyword">var</span> decodedString = Base64.decode(encodedString);</span><br><span class="line"><span class="built_in">console</span>.log(decodedString); <span class="comment">// Outputs: "Hello World!"</span></span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/js-base64/" data-id="cjhq778nw00b6izq3u9uxbwgb" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-js-random-id" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/js-random-id/" class="article-date">
-  <time datetime="2018-01-16T10:42:13.000Z" itemprop="datePublished">2018-01-16</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/js-random-id/">js 随机字符串</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>使用 crypto 生成随机字符串：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> crypto = <span class="built_in">require</span>(<span class="string">"crypto"</span>)</span><br><span class="line">crypto.randomBytes(<span class="number">16</span>).toString(<span class="string">"hex"</span>) <span class="comment">// f9b327e70bbcf42494ccb28b2d98e00e</span></span><br><span class="line"><span class="comment">// 或者</span></span><br><span class="line">crypto.randomBytes(<span class="number">12</span>).toString(<span class="string">'base64'</span>) <span class="comment">// 9uzHqCOWI9Kq2Jdw</span></span><br></pre></td></tr></table></figure>
-<p>或者最简单，无依赖的方法：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Math</span>.random().toString(<span class="number">26</span>).slice(<span class="number">2</span>) <span class="comment">// p7lc0519gdmh</span></span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/js-random-id/" data-id="cjhq778oa00biizq3lxi8xjd0" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-enable-https" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/enable-https/" class="article-date">
-  <time datetime="2018-01-16T01:46:23.000Z" itemprop="datePublished">2018-01-16</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/enable-https/">搭建HTTPS网站</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>安装EPEL软件源：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install epel-release</span><br></pre></td></tr></table></figure>
-<p>安装Certbot</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install certbot-nginx</span><br></pre></td></tr></table></figure>
-<p>如果不行，可以试试：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">wget https://dl.eff.org/certbot-auto</span><br><span class="line">chmod a+x certbot-auto</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/enable-https/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/enable-https/" data-id="cjhq778jz006bizq3xbn5i6o7" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-replace-angular-favicon" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/replace-angular-favicon/" class="article-date">
-  <time datetime="2018-01-15T03:20:12.000Z" itemprop="datePublished">2018-01-15</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/replace-angular-favicon/">更改 angular 项目默认 favicon</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>例如换成 <code>favicon.png</code> 了，在 index.html 中代码改为：</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">"icon"</span> <span class="attr">type</span>=<span class="string">"image/x-icon"</span> <span class="attr">href</span>=<span class="string">"favicon.png"</span> /&gt;</span></span><br></pre></td></tr></table></figure>
-<p>还需要配置一下 angular-cli.json:</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">"assets"</span>: [</span><br><span class="line">    <span class="string">"assets"</span>,</span><br><span class="line">    <span class="string">"favicon.png"</span> </span><br><span class="line">]</span><br></pre></td></tr></table></figure>
-<p>记得清一下缓存。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/replace-angular-favicon/" data-id="cjhq778sb00gmizq3sn0vv5gk" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-typescript-partial" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/typescript-partial/" class="article-date">
-  <time datetime="2018-01-15T03:20:12.000Z" itemprop="datePublished">2018-01-15</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/typescript-partial/">typescript 的 partial 语法</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>定义了用户模型：</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> UserModel &#123;</span><br><span class="line">  email: <span class="built_in">string</span>;</span><br><span class="line">  password: <span class="built_in">string</span>;</span><br><span class="line">  address: <span class="built_in">string</span>;</span><br><span class="line">  phone: <span class="built_in">string</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>假如说用户类有个更新用户的方法：</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> User &#123;</span><br><span class="line">  update( user: UserModel ) &#123;</span><br><span class="line">    <span class="comment">// Update user</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/typescript-partial/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/typescript-partial/" data-id="cjhq778u700iaizq319xafxg6" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/debounce-vs-throttle/" data-id="cjkajvcql00084eq3033qy33m" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
@@ -577,7 +566,7 @@
 
 
   <nav id="page-nav">
-    <a class="extend prev" rel="prev" href="/page/4/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/36/">36</a><a class="extend next" rel="next" href="/page/6/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/4/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/38/">38</a><a class="extend next" rel="next" href="/page/6/">Next &raquo;</a>
   </nav>
 </section>
 
@@ -592,7 +581,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mongodb/">mongodb</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
     </div>
   </div>
 

@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="安装与启动安装可参考文章，数据默认存储位置是：  Linux 和 OS X： /data/db Windows：\data\db  如果这个目录不存在，使用 mongod 启动的时候就会报错： 1exception in initAndListen: 29 Data directory /data/db not found., terminating 如果用包管理器安装MongoDB，可通过查看文">
+<meta name="keywords" content="mongodb">
+<meta property="og:type" content="article">
+<meta property="og:title" content="mongodb安全管理">
+<meta property="og:url" content="https://zju.date/safe-mongodb/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="安装与启动安装可参考文章，数据默认存储位置是：  Linux 和 OS X： /data/db Windows：\data\db  如果这个目录不存在，使用 mongod 启动的时候就会报错： 1exception in initAndListen: 29 Data directory /data/db not found., terminating 如果用包管理器安装MongoDB，可通过查看文">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-02-16T14:31:22.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="mongodb安全管理">
+<meta name="twitter:description" content="安装与启动安装可参考文章，数据默认存储位置是：  Linux 和 OS X： /data/db Windows：\data\db  如果这个目录不存在，使用 mongod 启动的时候就会报错： 1exception in initAndListen: 29 Data directory /data/db not found., terminating 如果用包管理器安装MongoDB，可通过查看文">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-safe-mongodb" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/safe-mongodb/" class="article-date">
+  <time datetime="2017-08-11T02:38:07.000Z" itemprop="datePublished">2017-08-11</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      mongodb安全管理
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="安装与启动"><a href="#安装与启动" class="headerlink" title="安装与启动"></a>安装与启动</h2><p>安装可参考<a href="http://zju.date/fast-install">文章</a>，数据默认存储位置是：</p>
+<ul>
+<li>Linux 和 OS X： <code>/data/db</code></li>
+<li>Windows：<code>\data\db</code></li>
+</ul>
+<p>如果这个目录不存在，使用 <code>mongod</code> 启动的时候就会报错：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">exception in initAndListen: 29 Data directory /data/db not found., terminating</span><br></pre></td></tr></table></figure>
+<p>如果用包管理器安装MongoDB，可通过查看文件 <code>/etc/mongod.conf</code> 来找到默认存储位置：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cat /etc/mongod.conf | grep dbPath</span><br><span class="line"><span class="comment"># dbPath: /var/lib/mongo</span></span><br></pre></td></tr></table></figure>
+<p>然后指定用这个配置文件来启动MongoDB：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">mongod --config /etc/mongod.conf</span><br><span class="line"><span class="comment"># 或者</span></span><br><span class="line">mongod -f /etc/mongod.conf</span><br><span class="line"><span class="comment"># 或者</span></span><br><span class="line">service mongod start <span class="comment"># 默认使用 /etc/mongod.conf配置</span></span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<h2 id="安全管理"><a href="#安全管理" class="headerlink" title="安全管理"></a>安全管理</h2><p>以下3种方式可以提高 MongoDB 数据库安全性： </p>
+<ol>
+<li>绑定IP内网地址访问 MongoDB 服务</li>
+<li>设置监听端口 </li>
+<li>使用用户名和口令登录</li>
+</ol>
+<h3 id="限制只允许某一特定-IP-来访问"><a href="#限制只允许某一特定-IP-来访问" class="headerlink" title="限制只允许某一特定 IP 来访问"></a>限制只允许某一特定 IP 来访问</h3><p>只要在启动时加一个参数 bind_ip 即可，如下: 服务端限制只有 192.168.12.99 这个IP可以访问 MongoDB 服务 </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost bin]<span class="comment"># ./mongod --bind_ip 192.168.12.99</span></span><br></pre></td></tr></table></figure>
+<p>或者在配置文件里面绑定：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># network interfaces</span><br><span class="line">net:</span><br><span class="line">      port: 27017</span><br><span class="line">      bindIp : [192.168.12.99]</span><br></pre></td></tr></table></figure>
+<p>当开启 0.0.0.0 时是比较危险的，因为外网可以访问到。</p>
+<h3 id="设置监听端口"><a href="#设置监听端口" class="headerlink" title="设置监听端口"></a>设置监听端口</h3><p>官方默认的监听端口是27017，为了安全起见，一般都会修改这个监听端口，例如改为28018： </p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">[root@localhost</span> <span class="string">bin]#</span> <span class="string">./mongod</span> <span class="bullet">--bind_ip</span> <span class="number">192.168</span><span class="number">.1</span><span class="number">.103</span> <span class="bullet">--port</span> <span class="number">28018</span></span><br></pre></td></tr></table></figure>
+<h3 id="使用用户名和口令登录"><a href="#使用用户名和口令登录" class="headerlink" title="使用用户名和口令登录"></a>使用用户名和口令登录</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost bin]<span class="comment"># ./mongod --auth</span></span><br></pre></td></tr></table></figure>
+<p>在配置文件里面用：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">security:</span></span><br><span class="line"><span class="attr">   authorization:</span> <span class="string">enabled</span></span><br></pre></td></tr></table></figure>
+<h3 id="建立系统-root-帐号"><a href="#建立系统-root-帐号" class="headerlink" title="建立系统 root 帐号"></a>建立系统 root 帐号</h3><p>在admin库中新添一个用户root:  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost bin]<span class="comment"># ./mongo </span></span><br><span class="line"></span><br><span class="line">MongoDB shell version: 1.8.1 </span><br><span class="line">connecting to: <span class="built_in">test</span> </span><br><span class="line">&gt; db.addUser(<span class="string">"root"</span>,<span class="string">"111"</span>) </span><br><span class="line">&#123; </span><br><span class="line">        <span class="string">"user"</span> : <span class="string">"root"</span>, </span><br><span class="line">        <span class="string">"readOnly"</span> : <span class="literal">false</span>, </span><br><span class="line">        <span class="string">"pwd"</span> : <span class="string">"e54950178e2fa777b1d174e9b106b6ab"</span> </span><br><span class="line">&#125; </span><br><span class="line">&gt; db.auth(<span class="string">"root"</span>,<span class="string">"111"</span>)</span><br></pre></td></tr></table></figure>
+<p>上述操作如果报错：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">2017-06-16T15:23:59.916+0800 E QUERY    [thread1] TypeError: db.addUser is not a <span class="keyword">function</span> :</span><br></pre></td></tr></table></figure>
+<p>是因为在 mongodb3.0 中 addUser 已被废弃，具体参考<a href="createUser">这里</a>，可使用如下写法：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 旧写法</span></span><br><span class="line">&gt; db.addUser(<span class="string">"easycost"</span>,<span class="string">"DA4Qkkg7SbU1cEJP"</span>) </span><br><span class="line">&#123; </span><br><span class="line">        <span class="string">"user"</span> : <span class="string">"root"</span>, </span><br><span class="line">        <span class="string">"readOnly"</span> : <span class="literal">false</span>, </span><br><span class="line">        <span class="string">"pwd"</span> : <span class="string">"e54950178e2fa777b1d174e9b106b6ab"</span> </span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line"><span class="comment"># 新写法</span></span><br><span class="line">db.createUser(</span><br><span class="line">   &#123;</span><br><span class="line">     user: <span class="string">"easycost"</span>,</span><br><span class="line">     <span class="built_in">pwd</span>: <span class="string">"DA4Qkkg7SbU1cEJP"</span>,</span><br><span class="line">     roles: [ <span class="string">"readWrite"</span>, <span class="string">"dbAdmin"</span> ]</span><br><span class="line">   &#125;</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<p>例如：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">use meican</span><br><span class="line">&gt; db.createUser(&#123;user: <span class="string">"meican"</span>,<span class="built_in">pwd</span>: <span class="string">"^Meican520$"</span>,roles: [ &#123; role: <span class="string">"readWrite"</span>, db: <span class="string">"meican"</span> &#125; ]&#125;)</span><br><span class="line">Successfully added user</span><br></pre></td></tr></table></figure>
+<p>本地客户端连接，指定用户，结果如下:  </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost bin]<span class="comment"># ./mongo -u root -p </span></span><br><span class="line"></span><br><span class="line">MongoDB shell version: 1.8.1 </span><br><span class="line">Enter password:  </span><br><span class="line">connecting to: <span class="built_in">test</span> </span><br><span class="line">&gt; show collections; </span><br><span class="line">system.indexes </span><br><span class="line">system.users</span><br></pre></td></tr></table></figure>
+<h3 id="建立指定权限用户"><a href="#建立指定权限用户" class="headerlink" title="建立指定权限用户"></a>建立指定权限用户</h3><p>MongoDB 也支持为某个特定的数据库来设置用户，如我们为 test 库设一个只读的用户 user_reader:  </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost bin]<span class="comment"># ./mongo -u root -p </span></span><br><span class="line">&gt; use <span class="built_in">test</span> </span><br><span class="line">switched to db <span class="built_in">test</span> </span><br><span class="line">&gt; db.addUser(<span class="string">"user_reader"</span>, <span class="string">"user_pwd"</span>, <span class="literal">true</span>) </span><br><span class="line">&#123; </span><br><span class="line">        <span class="string">"user"</span> : <span class="string">"user_reader"</span>, </span><br><span class="line">        <span class="string">"readOnly"</span> : <span class="literal">true</span>, </span><br><span class="line">        <span class="string">"pwd"</span> : <span class="string">"0809760bb61ee027199e513c5ecdedc6"</span> </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>开启验证：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mongod --auth --port 27017 --dbpath /data/db</span><br></pre></td></tr></table></figure>
+<p>用户名密码登录：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mongo --port 27017 -u <span class="string">"myTester"</span> -p <span class="string">"xyz123"</span> --authenticationDatabase <span class="string">"test"</span></span><br></pre></td></tr></table></figure>
+<p>或者进去之后再验证：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">db.auth(&#123;user:<span class="string">'meican'</span>,<span class="built_in">pwd</span>:<span class="string">'^Meican520$'</span>&#125;)</span><br></pre></td></tr></table></figure>
+<h2 id="其他操作"><a href="#其他操作" class="headerlink" title="其他操作"></a>其他操作</h2><ul>
+<li><p>修改密码</p>
+  <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">db.changeUserPassword()</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>删除用户</p>
+  <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">db.dropUser()</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h2><ol>
+<li>有时候mongodb用localhost连不上的原因竟然是 /etc/hosts 文件里面没有对localhost的映射关系，用 127.0.0.1 就行了！</li>
+<li>Failed to unlink socket file /tmp/mongodb-27017.sock Operation not permitted，这个文件是自动创建的，可能创建的时候是root权限，而现在是mongod权限，删除重建即可。</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/safe-mongodb/" data-id="cjiom0g4n0007rbq30qvdnozt" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mongodb/">mongodb</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/linux-hash/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Linux hash命令
+        
+      </div>
+    </a>
+  
+  
+    <a href="/env/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">脚本中的env</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mongodb/">mongodb</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

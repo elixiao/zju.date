@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="安装依赖：  12npm install -D @angularclass/hmr# yarn add @angularclass/hmr --dev  增加 hmr 环境变量：  1234567891011121314151617// src/enviroments/environment.hmr.tsexport const environment = &amp;#123;  production:">
+<meta name="keywords" content="JavaScript">
+<meta property="og:type" content="article">
+<meta property="og:title" content="配置 Angular 热加载">
+<meta property="og:url" content="https://zju.date/angular-hmr/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="安装依赖：  12npm install -D @angularclass/hmr# yarn add @angularclass/hmr --dev  增加 hmr 环境变量：  1234567891011121314151617// src/enviroments/environment.hmr.tsexport const environment = &amp;#123;  production:">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-08-01T03:07:05.722Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="配置 Angular 热加载">
+<meta name="twitter:description" content="安装依赖：  12npm install -D @angularclass/hmr# yarn add @angularclass/hmr --dev  增加 hmr 环境变量：  1234567891011121314151617// src/enviroments/environment.hmr.tsexport const environment = &amp;#123;  production:">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-angular-hmr" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/angular-hmr/" class="article-date">
+  <time datetime="2018-07-20T01:54:13.000Z" itemprop="datePublished">2018-07-20</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      配置 Angular 热加载
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <ol>
+<li><p>安装依赖：</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">npm install -D @angularclass/hmr</span><br><span class="line"><span class="comment"># yarn add @angularclass/hmr --dev</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>增加 hmr 环境变量：</p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// src/enviroments/environment.hmr.ts</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> environment = &#123;</span><br><span class="line">  production: <span class="literal">false</span>,</span><br><span class="line">  hmr: <span class="literal">true</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// src/enviroments/environment.ts</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> environment = &#123;</span><br><span class="line">  production: <span class="literal">false</span>,</span><br><span class="line">  hmr: <span class="literal">false</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// src/enviroments/environment.prod.ts</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> environment = &#123;</span><br><span class="line">  production: <span class="literal">true</span>,</span><br><span class="line">  hmr: <span class="literal">false</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<a id="more"></a>
+<ol>
+<li><p>增加热启动入口文件：</p>
+ <figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; NgModuleRef, ApplicationRef &#125; <span class="keyword">from</span> <span class="string">'@angular/core'</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; createNewHosts &#125; <span class="keyword">from</span> <span class="string">'@angularclass/hmr'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> hmrBootstrap = <span class="function">(<span class="params"><span class="built_in">module</span>: <span class="built_in">any</span>, bootstrap: (<span class="params"></span>) =&gt; <span class="built_in">Promise</span>&lt;NgModuleRef&lt;<span class="built_in">any</span>&gt;&gt;</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">let</span> ngModule: NgModuleRef&lt;<span class="built_in">any</span>&gt;;</span><br><span class="line">  <span class="built_in">module</span>.hot.accept();</span><br><span class="line">  bootstrap().then(<span class="function"><span class="params">mod</span> =&gt;</span> ngModule = mod);</span><br><span class="line">  <span class="built_in">module</span>.hot.dispose(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> appRef: ApplicationRef = ngModule.injector.get(ApplicationRef);</span><br><span class="line">    <span class="keyword">const</span> elements = appRef.components.map(<span class="function"><span class="params">c</span> =&gt;</span> c.location.nativeElement);</span><br><span class="line">    <span class="keyword">const</span> makeVisible = createNewHosts(elements);</span><br><span class="line">    ngModule.destroy();</span><br><span class="line">    makeVisible();</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>修改启动方式：</p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// src/main.ts</span></span><br><span class="line"><span class="keyword">import</span> &#123; enableProdMode &#125; <span class="keyword">from</span> <span class="string">'@angular/core'</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; platformBrowserDynamic &#125; <span class="keyword">from</span> <span class="string">'@angular/platform-browser-dynamic'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> &#123; AppModule &#125; <span class="keyword">from</span> <span class="string">'./app/app.module'</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; environment &#125; <span class="keyword">from</span> <span class="string">'./environments/environment'</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; hmrBootstrap &#125; <span class="keyword">from</span> <span class="string">'./hmr'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (environment.production) &#123;</span><br><span class="line">  enableProdMode();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> bootstrap = <span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> platformBrowserDynamic().bootstrapModule(AppModule);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (environment.hmr) &#123;</span><br><span class="line">  <span class="keyword">if</span> (<span class="built_in">module</span>[<span class="string">'hot'</span>]) &#123;</span><br><span class="line">    hmrBootstrap(<span class="built_in">module</span>, bootstrap);</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.error(<span class="string">'HMR is not enabled for webpack-dev-server!'</span>);</span><br><span class="line">    <span class="built_in">console</span>.info(<span class="string">'Are you using the --hmr flag for ng serve?'</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">  bootstrap();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>添加命令：</p>
+ <figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">"scripts": &#123;</span><br><span class="line">    "hmr": "ng serve --hmr -e=dev-hmr"</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>如果是 ng eject 之后的项目，上面的步骤就不起作用了，需要配置 webpack.config.js 文件，方法如下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// webpack.config.js</span></span><br><span class="line"><span class="keyword">const</span> webpackConfig = &#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">const</span> options = &#123;</span><br><span class="line">  <span class="string">'mainPath'</span>: <span class="string">'main.ts'</span>,</span><br><span class="line">  <span class="string">'platform'</span>: <span class="number">0</span>,</span><br><span class="line">  <span class="string">'hostReplacementPaths'</span>: &#123;</span><br><span class="line">    <span class="string">'environments/environment.ts'</span>: <span class="string">'environments/environment.ts'</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="string">'sourceMap'</span>: <span class="literal">true</span>,</span><br><span class="line">  <span class="string">'tsConfigPath'</span>: <span class="string">'src/tsconfig.app.json'</span>,</span><br><span class="line">  <span class="string">'skipCodeGeneration'</span>: <span class="literal">true</span>,</span><br><span class="line">  <span class="string">'compilerOptions'</span>: &#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (process.env.NODE_ENV === <span class="string">'hmr'</span>) &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'hot module reload...'</span>)</span><br><span class="line">  options.hostReplacementPaths[<span class="string">'environments/environment.ts'</span>] = <span class="string">'environments/environment.hmr.ts'</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">webpackConfig.plugins.push(<span class="keyword">new</span> AngularCompilerPlugin(options))</span><br><span class="line"></span><br><span class="line"><span class="built_in">module</span>.exports = webpackConfig</span><br></pre></td></tr></table></figure>
+<p>热加载总体上是很好的，但也存在一些问题，例如会破坏 dialog 的<a href="https://github.com/angular/material2/issues/749" target="_blank" rel="noopener">样式</a>。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/angular-hmr/" data-id="cjkajvcqc00014eq3oo5u9m5r" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/auto-increase-field/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          mongodb 自增字段
+        
+      </div>
+    </a>
+  
+  
+    <a href="/node-get-parent-file-path/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">js 获取引用自己的那个文件所在的目录</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mongodb/">mongodb</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

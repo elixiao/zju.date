@@ -54,10 +54,10 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-CFA-变异系数和夏普比率" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-browser-storage" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/CFA-变异系数和夏普比率/" class="article-date">
-  <time datetime="2015-11-17T13:34:00.000Z" itemprop="datePublished">2015-11-17</time>
+    <a href="/browser-storage/" class="article-date">
+  <time datetime="2016-01-22T05:01:20.000Z" itemprop="datePublished">2016-01-22</time>
 </a>
     
   </div>
@@ -68,7 +68,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/CFA-变异系数和夏普比率/">变异系数和夏普比率</a>
+      <a class="article-title" href="/browser-storage/">浏览器的Storage对象</a>
     </h1>
   
 
@@ -79,20 +79,40 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <div class="article-preview">
-            <h1 id="变异系数"><a href="#变异系数" class="headerlink" title="变异系数"></a>变异系数</h1><p>变异系数（CV：coefficient of variation）的定义为：<br>$$<br>CV=\frac{s_x}{\bar X}<br>$$<br>其中$s_x$是变量$x$的标准差，$\bar X$是均值。<br>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/CFA-变异系数和夏普比率/#more">Read More</a>
-          </p>
-        
+        <h2 id="Storage对象简介"><a href="#Storage对象简介" class="headerlink" title="Storage对象简介"></a><code>Storage</code>对象简介</h2><p>浏览器的<code>storage</code>对象包含<code>localStorage</code>和<code>sessionStorage</code>，它们的用法是一样的，区别在于：</p>
+<ul>
+<li><code>sessionStorage</code>为每一个给定的源维持一个独立的存储区域，该存储区域在页面会话期间可用（即只要浏览器处于打开状态，包括页面重新加载和恢复）。</li>
+<li><code>localStorage</code>拥有<code>sessionStorage</code>全部的功能，但不一样的是：如果关闭浏览器关闭，然后重新打开后数据仍然存在。</li>
+</ul>
+<blockquote>
+<p>也就是说它们的不同之处在于：存储在<code>localStorage</code>里面的数据没有过期时间，而存储在<code>sessionStorage</code>里面的数据会在浏览器会话结束（即浏览器关闭时）时被清除。这里面需要特别注意的是：<code>Storage</code>对象中保存的数据都仅限于该页面的协议。也就是说<code>a.com</code>下的<code>Storage</code>是不能被<code>b.com</code>所取到的，浏览器对于每个源使用不同的<code>Storage</code>对象进行独立运行和控制。</p>
+</blockquote>
+<h2 id="关于Storage对象的一些API"><a href="#关于Storage对象的一些API" class="headerlink" title="关于Storage对象的一些API"></a>关于<code>Storage</code>对象的一些API</h2><h4 id="属性"><a href="#属性" class="headerlink" title="属性"></a>属性</h4><ul>
+<li><code>Storage.length</code>：获取存储的数据项数量。</li>
+</ul>
+<h4 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h4><ul>
+<li><code>Storage.key(n)</code>：返回存储中的第n个键名。</li>
+<li><code>Storage.getItem(key)</code> ：从存储中获取值</li>
+<li><code>Storage.setItem(key,value)</code>：在存储中设置值</li>
+<li><code>Storage.removeItem(key)</code>：删除某项记录</li>
+<li><code>Storage.clear()</code>：删除全部记录</li>
+</ul>
+<h2 id="以localStorage为例详细介绍"><a href="#以localStorage为例详细介绍" class="headerlink" title="以localStorage为例详细介绍"></a>以<code>localStorage</code>为例详细介绍</h2><h4 id="判断浏览器是否支持本地存储"><a href="#判断浏览器是否支持本地存储" class="headerlink" title="判断浏览器是否支持本地存储"></a>判断浏览器是否支持本地存储</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="built_in">window</span>.localStorage)&#123;</span><br><span class="line">	alert(<span class="string">'This browser supports localStorage'</span>);</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">	alert(<span class="string">'This browser does NOT support localStorage'</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="本地存储赋值的3种方式："><a href="#本地存储赋值的3种方式：" class="headerlink" title="本地存储赋值的3种方式："></a>本地存储赋值的3种方式：</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">window</span>.localStorage.a = <span class="string">'value'</span></span><br><span class="line"><span class="built_in">window</span>.localStorage[<span class="string">'a'</span>] = <span class="string">'value'</span></span><br><span class="line"><span class="built_in">window</span>.localStorage.setItem(<span class="string">'a'</span>, <span class="string">'value'</span>)</span><br></pre></td></tr></table></figure>
+<h4 id="本地存储获取值的3种方式"><a href="#本地存储获取值的3种方式" class="headerlink" title="本地存储获取值的3种方式:"></a>本地存储获取值的3种方式:</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">window</span>.localStorage.a</span><br><span class="line"><span class="built_in">window</span>.localStorage[<span class="string">'a'</span>]</span><br><span class="line"><span class="built_in">window</span>.localStorage.getItem(<span class="string">'a'</span>)</span><br></pre></td></tr></table></figure>
+<h4 id="获取本地存储一共存储了多少了属性键值对"><a href="#获取本地存储一共存储了多少了属性键值对" class="headerlink" title="获取本地存储一共存储了多少了属性键值对"></a>获取本地存储一共存储了多少了属性键值对</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">window</span>.localStorage.length</span><br></pre></td></tr></table></figure>
+<h4 id="本地存储移除某个键值对"><a href="#本地存储移除某个键值对" class="headerlink" title="本地存储移除某个键值对"></a>本地存储移除某个键值对</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">window</span>.localStorage.removeItem(<span class="string">'a'</span>)</span><br></pre></td></tr></table></figure>
+<h4 id="一次性移除所有的键值对"><a href="#一次性移除所有的键值对" class="headerlink" title="一次性移除所有的键值对"></a>一次性移除所有的键值对</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">window</span>.localStorage.clear()</span><br></pre></td></tr></table></figure>
+<h4 id="有时候在我们不知道有哪些键的情况下，可以通过key-index-的方法来获取键"><a href="#有时候在我们不知道有哪些键的情况下，可以通过key-index-的方法来获取键" class="headerlink" title="有时候在我们不知道有哪些键的情况下，可以通过key(index)的方法来获取键"></a>有时候在我们不知道有哪些键的情况下，可以通过key(index)的方法来获取键</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">var</span> i=<span class="number">0</span>; i&lt;<span class="built_in">window</span>.localStorage.length; i++) &#123;</span><br><span class="line">	<span class="keyword">var</span> propertyName = <span class="built_in">window</span>.localStorage.key(i)</span><br><span class="line">	<span class="built_in">console</span>.log(propertyName + <span class="string">"----"</span> + <span class="built_in">window</span>.localStorage.getItem(propertyName))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="可以为本地存储添加事件监听器"><a href="#可以为本地存储添加事件监听器" class="headerlink" title="可以为本地存储添加事件监听器"></a>可以为本地存储添加事件监听器</h4><p><code>Storage</code>事件可以被监听，但是当前页面却收不到，只能是其他页面，也就是说同源下的两个不同页面之间可以通过监听<code>Storage</code>事件进行通信。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="built_in">window</span>.addEventListener)&#123;</span><br><span class="line">	<span class="built_in">window</span>.addEventListener(<span class="string">"storage"</span>,funciton()&#123;<span class="built_in">console</span>.log(<span class="string">'处理本地存储变化'</span>)&#125;,<span class="literal">false</span>)</span><br><span class="line">&#125;<span class="keyword">else</span> <span class="keyword">if</span>(<span class="built_in">window</span>.attachEvent)&#123;</span><br><span class="line">	<span class="built_in">window</span>.attachEvent(<span class="string">"onstorage"</span>,funciton()&#123;<span class="built_in">console</span>.log(<span class="string">'处理本地存储变化'</span>)&#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/CFA-变异系数和夏普比率/" data-id="cjhq778fo000hizq3judqse7d" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/browser-storage/" data-id="cjhq778i2003wizq3o9xkboo1" class="article-share-link">Share</a>
      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CFA/">CFA</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/学习笔记/">学习笔记</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
     </footer>
   </div>
@@ -101,10 +121,10 @@
 
 
   
-    <article id="post-CFA-相关系数" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-angular1-$resource" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/CFA-相关系数/" class="article-date">
-  <time datetime="2015-11-17T13:20:02.000Z" itemprop="datePublished">2015-11-17</time>
+    <a href="/angular1-$resource/" class="article-date">
+  <time datetime="2016-01-22T04:40:19.000Z" itemprop="datePublished">2016-01-22</time>
 </a>
     
   </div>
@@ -115,7 +135,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/CFA-相关系数/">相关系数</a>
+      <a class="article-title" href="/angular1-$resource/">AngularJS使用$resource进行增删改查</a>
     </h1>
   
 
@@ -127,19 +147,24 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <p>生活中对相关性的理解是：事物之间存在联系，而不是孤立的。相关性是隐藏在现象背后的规律，掌握了相关性有助于我们更好的理解这个世界，那如何用数据之间描述相关性呢？<br>
+            <p><code>$resource</code>服务是建立在<code>$http</code>服务之上的，对于RESTful接口，使用$resource服务进行增删改查非常容易。</p>
+<p>$resource服务是一个angular插件，需要单独下载，</p>
+<pre><code>bower install angular-resource --save
+</code></pre><p>在调用的时候还需要ngResource模块的支持，也就是说必须在定义模块的时候注入ngResource</p>
+<pre><code>angular.module(&apos;yourApp&apos;, [&apos;ui.router&apos;,&apos;ngResource&apos;])
+</code></pre><p>否则在调用的时候，例如：</p>
         </div>
         
           <p class="article-more-link">
-            <a href="/CFA-相关系数/#more">Read More</a>
+            <a href="/angular1-$resource/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/CFA-相关系数/" data-id="cjhq778fp000jizq3tz9ujm30" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/angular1-$resource/" data-id="cjhq778hr003fizq34sg92y7b" class="article-share-link">Share</a>
      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CFA/">CFA</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/学习笔记/">学习笔记</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
     </footer>
   </div>
@@ -148,10 +173,10 @@
 
 
   
-    <article id="post-CFA-货币加权和时间加权收益率" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-what-is-jsonp" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/CFA-货币加权和时间加权收益率/" class="article-date">
-  <time datetime="2015-11-16T13:00:00.000Z" itemprop="datePublished">2015-11-16</time>
+    <a href="/what-is-jsonp/" class="article-date">
+  <time datetime="2016-01-17T14:45:05.000Z" itemprop="datePublished">2016-01-17</time>
 </a>
     
   </div>
@@ -162,7 +187,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/CFA-货币加权和时间加权收益率/">货币加权和时间加权收益率</a>
+      <a class="article-title" href="/what-is-jsonp/">JavaScript中的jsonp技术</a>
     </h1>
   
 
@@ -173,397 +198,468 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <div class="article-preview">
-            <p>小明买了200股股票，价格5元/股，1年之后涨到7元/股，小明非常开心，再买100股，又过了1年，股价涨到8元/股，于是小明把300股全部卖掉。请问：小明的货币加权和时间加权收益率分别是多少？<br>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/CFA-货币加权和时间加权收益率/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/CFA-货币加权和时间加权收益率/" data-id="cjhq778fr000mizq3zfckj93q" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CFA/">CFA</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/学习笔记/">学习笔记</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-CFA-净现值NPV和内部收益率IRR" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/CFA-净现值NPV和内部收益率IRR/" class="article-date">
-  <time datetime="2015-11-16T11:35:08.000Z" itemprop="datePublished">2015-11-16</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/CFA-净现值NPV和内部收益率IRR/">净现值NPV和内部收益率IRR</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>在投资一个项目之前，要对该项目进行评价，其中净现值和内部收益率是最常用的两种方法。它们是怎么定义的？具体到项目评价，它们又有什么区别和联系呢？<br>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/CFA-净现值NPV和内部收益率IRR/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/CFA-净现值NPV和内部收益率IRR/" data-id="cjhq778ff0008izq38e0oqvbh" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CFA/">CFA</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/学习笔记/">学习笔记</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-Life-信用卡怎么用" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/Life-信用卡怎么用/" class="article-date">
-  <time datetime="2015-11-12T16:00:00.000Z" itemprop="datePublished">2015-11-13</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/Life-信用卡怎么用/">信用卡怎么用？</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>信用卡在当今社会是人人必备的金融工具，可是真的了解信用卡吗？账单日和到期还款日是什么意思？整理了一些信用卡的基本概念。<br>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/Life-信用卡怎么用/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/Life-信用卡怎么用/" data-id="cjhq778g20012izq3x104405h" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-VBA-notes" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/VBA-notes/" class="article-date">
-  <time datetime="2013-07-14T14:23:09.000Z" itemprop="datePublished">2013-07-14</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/VBA-notes/">VBA学习笔记</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <h2 id="变量"><a href="#变量" class="headerlink" title="变量"></a>变量</h2><p>定义变量：</p>
-<pre><code>Dim 变量名称 [AS 数据类型]
-</code></pre><p>在没有指定数据类型的时候，默认都是Variant类型。VBA的数据类型有：</p>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/VBA-notes/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/VBA-notes/" data-id="cjhq778gz0029izq31hohsmpa" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/学习笔记/">学习笔记</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-Life-数学文化衫设计" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/Life-数学文化衫设计/" class="article-date">
-  <time datetime="2013-06-14T15:26:12.000Z" itemprop="datePublished">2013-06-14</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/Life-数学文化衫设计/">数学文化衫设计</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <h1 id="构思"><a href="#构思" class="headerlink" title="构思"></a>构思</h1><p>毕业了，给班级同学定制文化衫，需要自己设计图案，我想到了两种设计方案：<br>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/Life-数学文化衫设计/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/Life-数学文化衫设计/" data-id="cjhq778g50017izq3jn4jd709" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-Study-C语言输出格式" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/Study-C语言输出格式/" class="article-date">
-  <time datetime="2013-06-11T13:03:44.000Z" itemprop="datePublished">2013-06-11</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/Study-C语言输出格式/">c语言输出格式</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <table>
+        <p>如果两个页面拥有相同的协议（protocol）、端口（如果指定）和主机，那么这两个页面就属于同一个源（origin）。</p>
+<p>下表给出了相对<code>http://sub.domain.com/dir1/page.html</code>同源检测的示例:</p>
+<table>
 <thead>
 <tr>
-<th>格式符</th>
-<th>功能</th>
+<th>URL</th>
+<th>结果</th>
+<th>原因</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>%d</td>
-<td>以带符号的十进制形式输出整数</td>
+<td><code>http://sub.domain.com/dir2/other.html</code></td>
+<td>成功</td>
+<td></td>
 </tr>
 <tr>
-<td>%o</td>
-<td>以不带符号的八进制形式输出整数</td>
+<td><code>http://sub.domain.com/dir/inner/another.html</code></td>
+<td>成功</td>
+<td></td>
 </tr>
 <tr>
-<td>%x</td>
-<td>以不带符号的十六进制形式输出整数</td>
+<td><code>https://sub.domain.com/secure.html</code></td>
+<td>失败</td>
+<td>协议不同</td>
 </tr>
 <tr>
-<td>%u</td>
-<td>以不带符号十进制形式输出整数</td>
+<td><code>http://sub.domain.com:81/dir/etc.html</code></td>
+<td>失败</td>
+<td>端口不同</td>
 </tr>
 <tr>
-<td>%c</td>
-<td>输出一个字符</td>
-</tr>
-<tr>
-<td>%s</td>
-<td>输出一个或多个字符</td>
-</tr>
-<tr>
-<td>%f</td>
-<td>以小数形式输出单、双精度数，默认输出6位小数</td>
-</tr>
-<tr>
-<td>%e</td>
-<td>以标准指数形式输出单、双精度数，数字部分小数位数为6位</td>
+<td><code>http://news.domain.com/dir/other.html</code></td>
+<td>失败</td>
+<td>主机名不同</td>
 </tr>
 </tbody>
 </table>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/Study-C语言输出格式/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/Study-C语言输出格式/" data-id="cjhq778gu0023izq3znvccyvw" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/学习笔记/">学习笔记</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-markdown-notes" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/markdown-notes/" class="article-date">
-  <time datetime="2013-06-09T03:15:33.000Z" itemprop="datePublished">2013-06-09</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/markdown-notes/">Markdown学习笔记</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <h2 id="一、什么是Markdown"><a href="#一、什么是Markdown" class="headerlink" title="一、什么是Markdown?"></a>一、什么是Markdown?</h2><p>通常可以这样理解，对于网络上写作的人，Markdown 是 一种text-to-html (文本到<br>html)的转换工具。它提供给你一种方便阅读、方便书写的纯文本格式，然后把纯文本转换成符合语意并且结构化良好的 HTML 或者 XHTML.</p>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/markdown-notes/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/markdown-notes/" data-id="cjhq778po00d8izq3ecip62ug" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/学习笔记/">学习笔记</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-vim-notes" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/vim-notes/" class="article-date">
-  <time datetime="2013-06-04T01:33:00.000Z" itemprop="datePublished">2013-06-04</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/vim-notes/">vim学习笔记</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>vim总共有三种模式：</p>
+<p>同源策略是指基于安全考虑，当前域不能访问其他域的东西。可使用<a href="https://developer.mozilla.org/zh-CN/docs/HTTP/Access_control_CORS" title="HTTP/Access_control_CORS" target="_blank" rel="noopener">CORS</a>来实现跨域访问。</p>
+<p>所谓同源是指：域名、协议、端口相同的两个域才能访问数据。但是<code>&lt;script&gt;</code>的<code>src</code>可以避开同源策略，跨域获取数据。</p>
+<p>给<code>&lt;script&gt;</code>的<code>src</code>属性添加一个地址，浏览器就会发送一个http请求下载src属性指向的url，如果返回的来的格式是<code>text/javascript</code>，那么就会立即执行。</p>
+<p>因此，使用script元素进行ajax传输的两个主要原因是：</p>
 <ol>
-<li>命令行模式</li>
-<li>编辑模式</li>
-<li>可视模式
+<li>它不受同源策略的影响；</li>
+<li>包含json编码的数据响应体会自动解码执行。</li>
+</ol>
+<p>如下是一段封装好的jsonp请求代码，需要两个参数，url是支持jsonp的服务器地址，第二个参数是本地定义的回调函数，改函数接收一个参数，这个参数就是通过jsonp获取到的json数据。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getJSONP</span>(<span class="params">url, callback</span>) </span>&#123;</span><br><span class="line">   <span class="keyword">if</span> (!getJSONP.counter) getJSONP.counter = <span class="number">0</span></span><br><span class="line">   <span class="keyword">var</span> cbnum = <span class="string">'cb'</span> + getJSONP.counter++</span><br><span class="line">   <span class="keyword">var</span> cbname = <span class="string">'getJSONP.'</span> + cbnum</span><br><span class="line">   <span class="keyword">var</span> cb = <span class="string">'callback'</span> <span class="comment">// 或者jsonp，根据服务器定</span></span><br><span class="line">   <span class="keyword">if</span> (url.indexOf(<span class="string">'?'</span>) === <span class="number">-1</span>) &#123;</span><br><span class="line">       url += <span class="string">'?'</span> + cb + <span class="string">'='</span> + cbname</span><br><span class="line">   &#125; <span class="keyword">else</span> url += <span class="string">'&amp;'</span> + cb + <span class="string">'='</span> + cbname</span><br><span class="line">   <span class="keyword">var</span> script = <span class="built_in">document</span>.createElement(<span class="string">'script'</span>)</span><br><span class="line">   getJSONP[cbnum] = <span class="function"><span class="keyword">function</span> (<span class="params">response</span>) </span>&#123;</span><br><span class="line">       <span class="keyword">try</span> &#123;</span><br><span class="line">           callback(response)</span><br><span class="line">       &#125; <span class="keyword">catch</span> (e) &#123;</span><br><span class="line">           <span class="built_in">console</span>.log(e)</span><br><span class="line">       &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">           <span class="keyword">delete</span> getJSONP[cbnum]</span><br><span class="line">           script.parentNode.removeChild(script)</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br><span class="line">   script.src = url</span><br><span class="line">   <span class="built_in">document</span>.body.appendChild(script)</span><br><span class="line"> &#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">handleResponse</span>(<span class="params">data</span>) </span>&#123;</span><br><span class="line">   <span class="built_in">console</span>.log(data)</span><br><span class="line">&#125;</span><br><span class="line">getJSONP(<span class="string">'http://ipinfo.io'</span>, handleResponse)</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/what-is-jsonp/" data-id="cjhq778vj00juizq37tud9owb" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-install-nginx-on-ubuntu" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/install-nginx-on-ubuntu/" class="article-date">
+  <time datetime="2016-01-17T06:25:32.000Z" itemprop="datePublished">2016-01-17</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/install-nginx-on-ubuntu/">Ubuntu安装nginx</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>修改文件 <code>/etc/apt/sources.list</code>，在底部添加下面两句话。 也可以在文件夹 <code>/etc/apt/sources.list.d/</code>下面添加文件, 例如 <code>/etc/apt/sources.list.d/nginx.list</code>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">deb http://nginx.org/packages/ubuntu/ xenial nginx</span><br><span class="line">deb-src http://nginx.org/packages/ubuntu/ xenial nginx</span><br></pre></td></tr></table></figure>
+<p>然后更新软件包：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install nginx</span><br></pre></td></tr></table></figure>
         </div>
         
           <p class="article-more-link">
-            <a href="/vim-notes/#more">Read More</a>
+            <a href="/install-nginx-on-ubuntu/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/vim-notes/" data-id="cjhq778v200j6izq3vlk4qwtx" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/install-nginx-on-ubuntu/" data-id="cjhq778n0009yizq3x68my3p1" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-linux-cmd-notes" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/linux-cmd-notes/" class="article-date">
+  <time datetime="2016-01-17T03:35:20.000Z" itemprop="datePublished">2016-01-17</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/linux-cmd-notes/">常用Linux命令</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>常用Linux命令</p>
+<h4 id="查找文件"><a href="#查找文件" class="headerlink" title="查找文件"></a>查找文件</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">find / -name filename.txt <span class="comment">#根据名称查找/目录下的filename.txt文件。</span></span><br><span class="line">find . -name <span class="string">"*.xml"</span> <span class="comment">#递归查找所有的xml文件</span></span><br><span class="line">find . -name <span class="string">"*.xml"</span> |xargs grep <span class="string">"hello world"</span> <span class="comment">#递归查找所有文件内容中包含hello world的xml文件</span></span><br><span class="line">grep -H <span class="string">'spring'</span> *.xml <span class="comment">#查找所以有的包含spring的xml文件</span></span><br><span class="line">find ./ -size 0 | xargs rm -f &amp;amp; <span class="comment">#删除文件大小为零的文件</span></span><br><span class="line">ls -l | grep <span class="string">'.jar'</span> <span class="comment">#查找当前目录中的所有jar文件</span></span><br><span class="line">grep <span class="string">'test'</span> d* <span class="comment">#显示所有以d开头的文件中包含test的行。</span></span><br><span class="line">grep <span class="string">'test'</span> aa bb cc <span class="comment">#显示在aa，bb，cc文件中匹配test的行。</span></span><br><span class="line">grep <span class="string">'[a-z]\&#123;5\&#125;'</span> aa <span class="comment">#显示所有包含每个字符串至少有5个连续小写字符的字符串的行。</span></span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/linux-cmd-notes/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/linux-cmd-notes/" data-id="cjhq778oq00c0izq3bph8d3lt" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-domain-notes" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/domain-notes/" class="article-date">
+  <time datetime="2016-01-13T04:44:55.000Z" itemprop="datePublished">2016-01-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/domain-notes/">域名解析名词解释</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>域名解析就是从域名到IP的转换过程，由DNS服务器完成。</p>
+<h3 id="A记录"><a href="#A记录" class="headerlink" title="A记录"></a>A记录</h3><p>IP指向，用户可以在此设置子域名并指向目标主机，从而实现通过域名找到服务器。应用场景是：已知主机IP，需要将域名解析到此IP。例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">www.a.com -——-&gt; IP：116.255.202.1</span><br><span class="line">web.b.cn -——-&gt; IP：116.255.202.11</span><br><span class="line">mail.c.la -——-&gt; IP：116.255.202.111</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/domain-notes/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/domain-notes/" data-id="cjhq778jp005xizq3d1ulvx5o" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/学习笔记/">学习笔记</a></li></ul>
 
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-joke" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/joke/" class="article-date">
+  <time datetime="2016-01-07T14:10:43.000Z" itemprop="datePublished">2016-01-07</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/joke/">开心一刻</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>孔子曰：中午不睡，下午崩溃。孟子曰：孔子说的对！</p>
+<hr>
+
+<p>老子曰：睡可睡，非常睡。</p>
+<hr>
+
+<p>你说…你喜欢我？其实…我一开始…其实我也…唉跟你说了吧，其实我也挺喜欢我自己的。</p>
+<hr>
+
+<p>作为失败的典型，你实在是太成功了。</p>
+<hr>
+
+<p>我这人从不记仇,一般有仇当场我就报了。</p>
+<hr>
+
+<p>是这样的张总，你在家里的电脑上按了CTRL+C，然后在公司的电脑上再按CTRL+V是肯定不行的。即使同一篇文章也不行。不不，多贵的电脑都不行。 </p>
+<hr>
+
+<p>人永远不知道谁哪次不经意的跟你说了再见之后就真的再也不见了。</p>
+<hr>
+
+<p>猜一句英文：「ABABBBAAAAAABBBABAAAABBBBAABBBAAAAA」？〈答案：Long time no C〉</p>
+<hr> 
+
+<p>每当困难的时候我就念藏经：“噢嘛呢哞嘛哄”， 翻译成英文就是：All money go my home! </p>
+<hr>
+
+<p>最简单的长寿秘决——保持呼吸，不要断气。</p>
+<hr>
+
+<p>执子之手，方知子丑，泪流满面，子不走我走。 </p>
+<hr>
+
+<p>人不犯我，我不犯人；人若犯我，礼让三分；人再犯我，我还一针；人还犯我，斩草除根。 </p>
+<hr>
+
+<p>单身并不难，难的是应付那些千方百计想让你结束单身的人 。 </p>
+<hr>
+
+<p>有空学风水去，死后占个好墓也算弥补了生前买不起好房的遗憾。</p>
+<hr>
+
+<p>自己好点，因为一辈子不长；对身边的人好点，因为下辈子不一定能够遇见。</p>
+<hr>
+
+<p>万事开头难，然后中间难，最后结尾难。</p>
+<hr>
+
+<p>世上无难事，只要肯放弃。</p>
+<hr>
+
+<p>等忙完这一阵，就可以忙下一阵了。</p>
+<hr>
+
+<p>有时候你不努力一下，你都不知道什么叫绝望。</p>
+<hr>
+
+<p>当你觉得自己又丑又穷的时候，不要悲伤，至少你的判断还是对的。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/joke/" data-id="cjhq778nt00b2izq3cu4b3a1x" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-angular2-ui-router" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/angular2-ui-router/" class="article-date">
+  <time datetime="2016-01-04T05:19:20.000Z" itemprop="datePublished">2016-01-04</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/angular2-ui-router/">AngularJS-ui-router学习笔记</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <h2 id="config"><a href="#config" class="headerlink" title="config"></a><code>config</code></h2><p>config函数就是用于各种provider的初始化配置，会在controller和service等之前运行。使用方法是：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">angular.module(<span class="string">'myApp'</span>)</span><br><span class="line">	.config(<span class="function"><span class="keyword">function</span>(<span class="params">FirstProvider,SecondProvider</span>)</span>&#123;</span><br><span class="line">		<span class="comment">//FirstProvider和SecondProvider都是依赖注入进来的，可在此进行配置</span></span><br><span class="line">	&#125;)</span><br></pre></td></tr></table></figure>
+<h2 id="stateProvider"><a href="#stateProvider" class="headerlink" title="$stateProvider"></a><code>$stateProvider</code></h2><p>系统定义的service、provider等都是以<code>$</code>开头的。<code>$stateProvider</code>的作用是在使用路由之前对其进行配置。</p>
+<ol>
+<li><code>$urlRouterProvider</code>(服务提供者) ： 用来配置路由重定向</li>
+<li><code>$stateProvider</code>(服务提供者) ： 用来配置路由</li>
+<li><code>$state</code>(服务) ： 用来显示当前路由状态信息，以及一些路由方法</li>
+<li><code>$stateParams</code>(服务) ： 用来存储路由匹配时的参数</li>
+<li><code>ui-view</code>(指令) ： 路由模板渲染，对应的dom相关联</li>
+<li><code>ui-sref</code>(指令) ： 用于跳转到指定路由</li>
+</ol>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/angular2-ui-router/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/angular2-ui-router/" data-id="cjhq778hs003hizq356cg0tid" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-webpack-dev-server-ip" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/webpack-dev-server-ip/" class="article-date">
+  <time datetime="2015-12-23T01:36:34.000Z" itemprop="datePublished">2015-12-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/webpack-dev-server-ip/">webpack-dev-server用IP访问</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>如果运行：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">webpack-dev-server --port 3000 --hot</span><br></pre></td></tr></table></figure>
+<p>可以用localhost进行访问：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:3000</span><br></pre></td></tr></table></figure>
+<p>但是用本地IP却不能访问，例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.1.112:3000 (my local IP).</span><br></pre></td></tr></table></figure>
+<p>这个时候，可以用如下的方式进行开启：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">webpack-dev-server --port 3000 --hot --host 0.0.0.0</span><br></pre></td></tr></table></figure>
+<p>也可以修改devServer的host属性：</p>
+<pre><code>devServer: {
+    host: &apos;0.0.0.0&apos;,
+    port: 8080,
+    ...
+  }
+</code></pre>
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/webpack-dev-server-ip/" data-id="cjhq778v700jeizq3ev4xuei1" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-temporary-images" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/temporary-images/" class="article-date">
+  <time datetime="2015-12-22T01:41:25.000Z" itemprop="datePublished">2015-12-22</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/temporary-images/">临时生成各种图片</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>有时候做项目mock数据的时候，会临时需要一些图片，比如用户头像、背景图等，这个<a href="https://placeimg.com/" target="_blank" rel="noopener">网站</a>提供动态生成指定大小的各种类型的图片，例如：</p>
+<ol>
+<li><p>生成640*480的科技类图片</p>
+<p> <a href="https://placeimg.com/640/480/tech" target="_blank" rel="noopener">https://placeimg.com/640/480/tech</a></p>
+</li>
+<li><p>生成100*100的头像</p>
+<p> <a href="https://placeimg.com/100/100/people" target="_blank" rel="noopener">https://placeimg.com/100/100/people</a></p>
+</li>
+<li><p>生成一张350*500动物的黑白照片</p>
+<p> <a href="https://placeimg.com/350/500/animals/grayscale" target="_blank" rel="noopener">https://placeimg.com/350/500/animals/grayscale</a></p>
+</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/temporary-images/" data-id="cjhq778tj00huizq38ijgge15" class="article-share-link">Share</a>
+     
     </footer>
   </div>
   
@@ -574,7 +670,7 @@
 
 
   <nav id="page-nav">
-    <a class="extend prev" rel="prev" href="/page/33/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/32/">32</a><a class="page-number" href="/page/33/">33</a><span class="page-number current">34</span><a class="page-number" href="/page/35/">35</a><a class="page-number" href="/page/36/">36</a><a class="extend next" rel="next" href="/page/35/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/33/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/32/">32</a><a class="page-number" href="/page/33/">33</a><span class="page-number current">34</span><a class="page-number" href="/page/35/">35</a><a class="page-number" href="/page/36/">36</a><span class="space">&hellip;</span><a class="page-number" href="/page/38/">38</a><a class="extend next" rel="next" href="/page/35/">Next &raquo;</a>
   </nav>
 </section>
 
@@ -589,7 +685,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mongodb/">mongodb</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
     </div>
   </div>
 

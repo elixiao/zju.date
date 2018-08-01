@@ -54,10 +54,10 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-reverse-proxy-nginx" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-docker-notes" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/reverse-proxy-nginx/" class="article-date">
-  <time datetime="2017-08-24T03:42:55.000Z" itemprop="datePublished">2017-08-24</time>
+    <a href="/docker-notes/" class="article-date">
+  <time datetime="2017-11-22T01:21:07.000Z" itemprop="datePublished">2017-11-22</time>
 </a>
     
   </div>
@@ -68,7 +68,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/reverse-proxy-nginx/">用nginx域名转发</a>
+      <a class="article-title" href="/docker-notes/">docker 笔记</a>
     </h1>
   
 
@@ -80,18 +80,137 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <p>nginx可以把同一端口上的连接根据不同的域名转发到不同的端口，例如在本地通过node.js起了两个server，分别监听3031和3032端口，nginx监听80端口，在 <code>/etc/hosts</code> 文件里面建立两个映射：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1	www.3031.com</span><br><span class="line">127.0.0.1	www.3032.com</span><br></pre></td></tr></table></figure>
+            <h2 id="基础"><a href="#基础" class="headerlink" title="基础"></a>基础</h2><ol>
+<li>检查 Docker 是否启动：<code>docker info</code></li>
+<li>help 选项：<code>docker help</code> 和 <code>docker &lt;command&gt; —help</code></li>
+</ol>
+<h2 id="镜像"><a href="#镜像" class="headerlink" title="镜像"></a>镜像</h2><ol>
+<li><p>搜索仓库：<code>docker search &lt;image&gt;</code></p>
+</li>
+<li><p>查看镜像：<code>docker images</code></p>
+</li>
+<li><p>下载镜像：<code>docker pull &lt;image&gt;</code></p>
+<blockquote>
+<p>  如果你使用的是 Docker for Mac 版本，那么所有的docker images 保存在下面这个文件里：</p>
+  <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt;   ~/Library/Containers/com.docker.docker/Data/com.docker.driver.amd64-linux/Docker.qcow2</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+</blockquote>
+</li>
+<li><p>获取镜像历史：<code>docker history &lt;image&gt;</code></p>
+<blockquote>
+<p>  注：只能对本地存在的 Docker 镜像执行这个命令。例如： docker history busybox</p>
+</blockquote>
+</li>
+<li><p>删除镜像：<code>docker rmi &lt;image&gt;</code> </p>
+<blockquote>
+<p>  如果该镜像创建的 container 正在运行，则不能删除这个镜像。另外，可能会有很多层的依赖，所以有时候需要用 <code>-f</code> 参数进行删除。</p>
+</blockquote>
+</li>
+<li><p>推送镜像： <code>docker push &lt;user&gt;/&lt;repo_name&gt;</code></p>
+<blockquote>
+<p>  注：不能直接使用 <code>docker push repo_name</code>，所有推送命令的格式必须是 <code>docker push &lt;user&gt;/&lt;repo_name&gt;</code>，不加 <code>&lt;user&gt;</code> 无法推送到 Docker registry。</p>
+</blockquote>
+</li>
+</ol>
         </div>
         
           <p class="article-more-link">
-            <a href="/reverse-proxy-nginx/#more">Read More</a>
+            <a href="/docker-notes/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/reverse-proxy-nginx/" data-id="cjhq778sh00gqizq3ylf18d9e" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/docker-notes/" data-id="cjhq778jm005tizq35m0i26oq" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/">Docker</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-promise-check" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/promise-check/" class="article-date">
+  <time datetime="2017-11-21T15:07:07.000Z" itemprop="datePublished">2017-11-21</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/promise-check/">如何判断一个对象是promise</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>如何判断一个对象是不是 promise 对象呢？最简单粗暴的方法就是判断有没有 then 方法，如果有就认为它是一个 promise 对象。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">function isPromise(e)&#123;</span><br><span class="line">  return !!e&amp;&amp;typeof e.then==&quot;function&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/promise-check/" data-id="cjhq778rh00foizq3k786h5fe" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-rabbitmq-notes" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/rabbitmq-notes/" class="article-date">
+  <time datetime="2017-11-17T02:15:13.000Z" itemprop="datePublished">2017-11-17</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/rabbitmq-notes/">rabbitmq 安装笔记</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <h3 id="1、安装"><a href="#1、安装" class="headerlink" title="1、安装"></a>1、安装</h3><p>在 Mac 下安装 RabbitMQ 只需要用下面两个命令（前提是homebrew已经被安装）：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">brew update</span><br><span class="line">brew install rabbitmq</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/rabbitmq-notes/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/rabbitmq-notes/" data-id="cjhq778ru00g0izq3yg0r1wwh" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
 
@@ -102,10 +221,10 @@
 
 
   
-    <article id="post-install-nginx-on-mac" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-mongoose-2dsphere" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/install-nginx-on-mac/" class="article-date">
-  <time datetime="2017-08-23T15:07:07.000Z" itemprop="datePublished">2017-08-23</time>
+    <a href="/mongoose-2dsphere/" class="article-date">
+  <time datetime="2017-11-15T05:36:07.000Z" itemprop="datePublished">2017-11-15</time>
 </a>
     
   </div>
@@ -116,7 +235,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/install-nginx-on-mac/">Mac安装nginx</a>
+      <a class="article-title" href="/mongoose-2dsphere/">mongodb 经纬度</a>
     </h1>
   
 
@@ -127,255 +246,119 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <div class="article-preview">
-            <p>安装nginx</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install nginx</span><br></pre></td></tr></table></figure>
-<p>查看nginx版本</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nginx -v</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/install-nginx-on-mac/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/install-nginx-on-mac/" data-id="cjhq778mz009wizq3f5lkj2ar" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-focus-not-working" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/focus-not-working/" class="article-date">
-  <time datetime="2017-08-23T02:37:39.000Z" itemprop="datePublished">2017-08-23</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/focus-not-working/">无法对输入框进行聚焦</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>在控制台想对一个输入框进行聚焦，使用：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$(<span class="string">'input[name="q"]'</span>).focus();</span><br></pre></td></tr></table></figure>
-<p>发现没反应，后来在 stackoverflow 找到<a href="https://stackoverflow.com/questions/15859113/focus-not-working" target="_blank" rel="noopener">原因</a>，是因为当时的焦点在控制台而不是网页，可以先设置一个延迟，然后迅速点击一下网页，然后就能看到输入框聚焦了。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">  $(<span class="string">'input[name="q"]'</span>).focus();</span><br><span class="line">&#125;, <span class="number">3000</span>);</span><br></pre></td></tr></table></figure>
-<p>同样的道理，如果一个元素不在 DOM 上面，对其使用 <code>focus</code> 也是无效的，所以当你发现始终无法对一个元素进行聚焦的时候，不妨检查一下该元素是否是动态的、在聚焦的时刻是否已经在 DOM 中了。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/focus-not-working/" data-id="cjhq778kl0078izq3doxc2brt" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-wechat-pay" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/wechat-pay/" class="article-date">
-  <time datetime="2017-08-22T01:06:07.000Z" itemprop="datePublished">2017-08-22</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/wechat-pay/">微信扫码支付</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>信扫码支付，官方提供了两种模式：</p>
-<ol>
-<li>商户根据微信支付规则链接生成二维码，带固定参数productid（订单号）。用户扫码后，微信支付系统将productid和用户唯一标识（openid）回调商户后台系统，商户后台系统根据productid生成支付交易，最后微信支付系统发起用户支付流程。</li>
-<li>商户后台系统调用微信支付预付交易接口，将返回的链接生成二维码，用户扫码后输入密码完成支付交易。</li>
-</ol>
-<p>模式2比较简单，逐一分析。</p>
-<h2 id="模式2"><a href="#模式2" class="headerlink" title="模式2"></a>模式2</h2><p>首先调用统一下单接口地址：<code>https://api.mch.weixin.qq.com/pay/unifiedorder</code>，这个地址需要提供以下参数，放在body里面通过POST请求调用：</p>
-<table>
-<thead>
-<tr>
-<th>参数名</th>
-<th>参数含义</th>
-<th>示例</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>appid</td>
-<td>公众号ID</td>
-<td>wxb77bcb162c53b0f8</td>
-</tr>
-<tr>
-<td>mch_id</td>
-<td>商户号</td>
-<td>1487713882</td>
-</tr>
-<tr>
-<td>nonce_str</td>
-<td>随机字符串</td>
-<td>abc123def</td>
-</tr>
-<tr>
-<td>sign</td>
-<td>签名</td>
-<td>签名</td>
-</tr>
-<tr>
-<td>body</td>
-<td>商品描述</td>
-<td>软件-购买</td>
-</tr>
-<tr>
-<td>out_trade_no</td>
-<td>商户订单号</td>
-<td>20150806125346</td>
-</tr>
-<tr>
-<td>total_fee</td>
-<td>金额</td>
-<td>10</td>
-</tr>
-<tr>
-<td>spbill_create_ip</td>
-<td>终端IP</td>
-<td>192.168.1.1</td>
-</tr>
-<tr>
-<td>notify_url</td>
-<td>支付结果通知地址</td>
-<td><a href="http://api.soft.cn/payment" target="_blank" rel="noopener">http://api.soft.cn/payment</a></td>
-</tr>
-<tr>
-<td>trade_type</td>
-<td>交易类型</td>
-<td>NATIVE</td>
-</tr>
-</tbody>
-</table>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/wechat-pay/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/wechat-pay/" data-id="cjhq778vh00jsizq3h29rqhc7" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-feathersjs-hook" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/feathersjs-hook/" class="article-date">
-  <time datetime="2017-08-20T04:07:12.000Z" itemprop="datePublished">2017-08-20</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/feathersjs-hook/">feathersjs hook</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>feathersjs hook 对象里面究竟都有什么？</p>
-<ol>
-<li><p><code>hook.app</code></p>
-<p> 只读属性，是 feathersjs 对象，可用于获取其他 service，例如：<code>hook.app.service(&#39;name&#39;)</code></p>
+        <ol>
+<li><p>创建 Schema</p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> mongoose = <span class="built_in">require</span>(<span class="string">'mongoose'</span>);</span><br><span class="line"><span class="keyword">const</span> shopSchema = <span class="keyword">new</span> mongoose.Schema(&#123;</span><br><span class="line"> name: <span class="built_in">String</span>,</span><br><span class="line"> price: <span class="built_in">Number</span>,</span><br><span class="line"> location: &#123;</span><br><span class="line">     type: [ <span class="built_in">Number</span> ],</span><br><span class="line">     index: &#123;</span><br><span class="line">         type: <span class="string">'2dsphere'</span>,</span><br><span class="line">         sparse: <span class="literal">true</span></span><br><span class="line">     &#125;</span><br><span class="line"> &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
 </li>
-</ol>
-<ol>
-<li><p><code>hook.service</code></p>
-<p> 只读属性，当前 hook 执行所在的 service</p>
+<li><p>创建 Model</p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> shopModel = mongoose.model(<span class="string">'Shops'</span>, shopSchema)</span><br></pre></td></tr></table></figure>
 </li>
-<li><p><code>hook.path</code></p>
-<p> 只读属性，表示当前 service 的路径</p>
+<li><p>插入数据</p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line"> <span class="string">"name"</span>:<span class="string">"名字"</span>,</span><br><span class="line"> <span class="string">"price"</span>:<span class="number">12</span>,</span><br><span class="line"> <span class="string">"location"</span>:[经度，纬度]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 </li>
-<li><p><code>hook.method</code></p>
-<p> 只读属性，是 <code>find</code>, <code>get</code>, <code>create</code>, <code>update</code>, <code>patch</code>, <code>remove</code> 中的一个</p>
-</li>
-<li><p><code>hook.type</code></p>
-<p> 只读属性，是 <code>before</code>, <code>after</code>, <code>error</code> 中的一个</p>
-</li>
-<li><p><code>hook.params</code></p>
-<p> 可写属性，包含客户端传过来的参数，例如 <code>params.query</code></p>
-</li>
-<li><p><code>hook.id</code></p>
-<p> 可写属性， <code>get</code>, <code>remove</code>, <code>update</code> 和 <code>patch</code> 方法才有</p>
-</li>
-<li><p><code>hook.data</code></p>
-<p> 可写属性，<code>create</code>, <code>update</code> 和 <code>patch</code> 方法才有</p>
-</li>
-<li><p><code>hook.error</code></p>
-<p> 可写属性，只有当 <code>hook.type = error</code> 时才有</p>
-</li>
-<li><p><code>hook.result</code></p>
-<p>可写属性，只有当 <code>hook.type = after</code> 时才有，但是可以在 before 或 error hooks 中设置它。</p>
+<li><p>查看附近的数据</p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">shopModel.find( &#123;</span><br><span class="line">     <span class="string">'location'</span>: &#123;</span><br><span class="line">         $near: &#123;</span><br><span class="line">                 $geometry: &#123;</span><br><span class="line">                   type: <span class="string">'Point'</span>,</span><br><span class="line">                   coordinates: [ <span class="built_in">parseFloat</span>(args.longitude), <span class="built_in">parseFloat</span>(args.latitude) ]</span><br><span class="line">                 &#125;,</span><br><span class="line">                 $maxDistance: <span class="number">100</span>   <span class="comment">//100米范围内</span></span><br><span class="line">               &#125;</span><br><span class="line">             &#125;</span><br><span class="line">     &#125;</span><br><span class="line"> &#125;).limit(<span class="number">10</span>).skip(<span class="number">0</span>).lean().exec()</span><br></pre></td></tr></table></figure>
 </li>
 </ol>
 
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/feathersjs-hook/" data-id="cjhq778ka006uizq3s2kchxbc" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/mongoose-2dsphere/" data-id="cjhq778q500dwizq3n7mmg4wb" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-upgrade-mysql" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/upgrade-mysql/" class="article-date">
+  <time datetime="2017-10-23T10:15:23.000Z" itemprop="datePublished">2017-10-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/upgrade-mysql/">mysql 升级指南</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>查看目录中与 mysql 相关的文件：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">➜  ~ ls -al /usr/<span class="built_in">local</span> | grep mysql</span><br><span class="line">lrwxr-xr-x    1 lixiao  admin     27 12 20  2015 mysql -&gt; mysql-5.7.10-osx10.9-x86_64</span><br><span class="line">drwxr-xr-x   14 lixiao  admin    476 10 23 17:54 mysql-5.7.10-osx10.9-x86_64</span><br><span class="line">lrwxr-xr-x    1 root    wheel     36  2 22  2017 mysql-shell -&gt; mysql-shell-1.0.5-osx10.11-x86-64bit</span><br><span class="line">drwxr-xr-x    4 root    wheel    136  8 26  2016 mysql-shell-1.0.5-osx10.11-x86-64bit</span><br></pre></td></tr></table></figure>
+<p>升级步骤：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 进入新版本目录</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> /usr/<span class="built_in">local</span>/mysql-5.7.20-macos10.12-x86_64</span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除新版本的数据目录</span></span><br><span class="line"></span><br><span class="line">sudo rm -rf ./data</span><br><span class="line"></span><br><span class="line"><span class="comment"># 复制老版本的数据目录到新版本目录</span></span><br><span class="line"></span><br><span class="line">sudo cp -R ../mysql-5.7.10-osx10.9-x86_64/data ./</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修复目录权限</span></span><br><span class="line"></span><br><span class="line">sudo chown -R _mysql ./data</span><br><span class="line"></span><br><span class="line"><span class="comment"># 启动MySQL（一定要加 --skip-grant-tables 关闭权限检查）</span></span><br><span class="line"></span><br><span class="line">sudo ./bin/mysqld_safe --skip-grant-tables</span><br><span class="line"></span><br><span class="line"><span class="comment"># 执行升级脚本（升级过程有一大堆升级信息输出, 最关键的是: Upgrade process completed successfully. 看到这个就说明升级成功了.）</span></span><br><span class="line"></span><br><span class="line">sudo ./bin/mysql_upgrade</span><br><span class="line"></span><br><span class="line"><span class="comment"># 停止通过 mysqld_safe 启动的服务器, 正常启动服务器</span></span><br><span class="line"></span><br><span class="line">sudo ./support-files/mysql.server stop</span><br><span class="line">sudo ./support-files/mysql.server start</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/upgrade-mysql/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/upgrade-mysql/" data-id="cjhq778us00isizq36u85c9if" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-angular-random-color" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/angular-random-color/" class="article-date">
+  <time datetime="2017-10-17T02:42:07.000Z" itemprop="datePublished">2017-10-17</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/angular-random-color/">Angular 随机换颜色</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>使用 <code>[style.property]</code> 来改变 Angular 组件的样式：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> [<span class="attr">style.color</span>]=<span class="string">"color"</span>&gt;</span>我的颜色是动态变化的哦！<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">button</span> (<span class="attr">click</span>)=<span class="string">"setColor()"</span>&gt;</span> 随机生成 <span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>随机颜色：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">color = <span class="keyword">this</span>.getRandomColor();</span><br><span class="line"></span><br><span class="line">getRandomColor() &#123;</span><br><span class="line">    <span class="keyword">let</span> letters = <span class="string">'0123456789ABCDEF'</span>.split(<span class="string">''</span>), color = <span class="string">'#'</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">6</span>; i++)&#123;</span><br><span class="line">        color += letters[<span class="built_in">Math</span>.floor(<span class="built_in">Math</span>.random() * <span class="number">16</span>)];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> color;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">setColor() &#123;</span><br><span class="line">    <span class="keyword">this</span>.color = <span class="keyword">this</span>.getRandomColor();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/angular-random-color/" data-id="cjhq778hi0033izq3pp8w373m" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
@@ -386,10 +369,10 @@
 
 
   
-    <article id="post-gulp-uncss" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-centos-releaserver-and-basearch" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/gulp-uncss/" class="article-date">
-  <time datetime="2017-08-20T01:06:07.000Z" itemprop="datePublished">2017-08-20</time>
+    <a href="/centos-releaserver-and-basearch/" class="article-date">
+  <time datetime="2017-09-29T05:36:07.000Z" itemprop="datePublished">2017-09-29</time>
 </a>
     
   </div>
@@ -400,52 +383,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/gulp-uncss/">去除无用的CSS</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><code>gulp purifycss</code> 去除无用的 CSS 非常方便，先安装：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install -g uncss</span><br></pre></td></tr></table></figure>
-<p>然后执行：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uncss http://www.***.com &gt; styles.css</span><br></pre></td></tr></table></figure>
-<p>执行输出的结果就是一个你想要的、剔除了所有无用的CSS规则的完整的样式表文件。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/gulp-uncss/" data-id="cjhq778lz0092izq3eyuxotrv" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CSS/">CSS</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-fast-install" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/fast-install/" class="article-date">
-  <time datetime="2017-08-20T01:06:07.000Z" itemprop="datePublished">2017-08-20</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/fast-install/">快速配置服务器</a>
+      <a class="article-title" href="/centos-releaserver-and-basearch/">releasever 和 basearch</a>
     </h1>
   
 
@@ -457,24 +395,29 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <h2 id="Nginx"><a href="#Nginx" class="headerlink" title="Nginx"></a>Nginx</h2><p>添加源：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># nginx 源</span></span><br><span class="line">cat &gt; /etc/yum.repos.d/nginx.repo &lt;&lt;EOF</span><br><span class="line">[nginx]</span><br><span class="line">name=nginx repo</span><br><span class="line">baseurl=http://nginx.org/packages/centos/\<span class="variable">$releasever</span>/\<span class="variable">$basearch</span>/</span><br><span class="line">gpgcheck=0</span><br><span class="line">enabled=1</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
-<p>安装：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install -y nginx</span><br></pre></td></tr></table></figure>
-<p>启动：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo service nginx start</span><br></pre></td></tr></table></figure>
+            <p>centos 软件源配置的时候经常见到：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">baseurl=http://mirror.centos.org/centos/<span class="variable">$releasever</span>/os/<span class="variable">$basearch</span>/</span><br></pre></td></tr></table></figure>
+<p>那么 <code>$releasever</code> 和 <code>$basearch</code> 是什么意思呢？</p>
+<ol>
+<li><p><code>$releasever</code></p>
+<p> 表示当前系统的发行版本，可以通过 <code>rpm -qi centos-release</code> 命令查看，结果如下：</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">[root@jdu4e00u53f7 ~]# rpm -qi centos-release</span><br><span class="line">Name        : centos-release</span><br><span class="line">Version     : 7</span><br><span class="line">Release     : 3.1611.el7.centos</span><br><span class="line">Architecture: x86_64</span><br><span class="line">Install Date: Tue 20 Dec 2016 10:39:24 AM CST</span><br><span class="line">Group       : System Environment/Base</span><br><span class="line">Size        : 37000</span><br><span class="line">License     : GPLv2</span><br><span class="line">Signature   : RSA/SHA256, Wed 30 Nov 2016 02:57:12 AM CST, Key ID 24c6a8a7f4a80eb5</span><br><span class="line">Source RPM  : centos-release-7-3.1611.el7.centos.src.rpm</span><br><span class="line">Build Date  : Wed 30 Nov 2016 02:12:59 AM CST</span><br><span class="line">Build Host  : c1bm.rdu2.centos.org</span><br><span class="line">Relocations : (not relocatable)</span><br><span class="line">Packager    : CentOS BuildSystem &lt;http://bugs.centos.org&gt;</span><br><span class="line">Vendor      : CentOS</span><br><span class="line">Summary     : CentOS Linux release file</span><br><span class="line">Description :</span><br><span class="line">CentOS Linux release files</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<pre><code>其中的 Version：7就是我们系统的版本号。
+</code></pre>
         </div>
         
           <p class="article-more-link">
-            <a href="/fast-install/#more">Read More</a>
+            <a href="/centos-releaserver-and-basearch/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/fast-install/" data-id="cjhq778k5006mizq3813q8mlk" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/centos-releaserver-and-basearch/" data-id="cjhq778i90045izq3f1k6ja25" class="article-share-link">Share</a>
      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CSS/">CSS</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
 
     </footer>
   </div>
@@ -483,10 +426,10 @@
 
 
   
-    <article id="post-url-in-express" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-angular-cli-notes" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/url-in-express/" class="article-date">
-  <time datetime="2017-08-18T05:07:07.000Z" itemprop="datePublished">2017-08-18</time>
+    <a href="/angular-cli-notes/" class="article-date">
+  <time datetime="2017-09-22T03:25:07.000Z" itemprop="datePublished">2017-09-22</time>
 </a>
     
   </div>
@@ -497,7 +440,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/url-in-express/">express 里面的各种 url</a>
+      <a class="article-title" href="/angular-cli-notes/">angular cli 笔记</a>
     </h1>
   
 
@@ -509,18 +452,18 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <p>express 中 <code>req</code> 对象有 <code>baseUrl</code>, <code>originalUrl</code>, <code>url</code> 属性，它们有何区别与联系？</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> express = <span class="built_in">require</span>(<span class="string">'express'</span>)</span><br><span class="line"><span class="keyword">const</span> app = express()</span><br><span class="line"><span class="keyword">const</span> router1 = express.Router()</span><br><span class="line"><span class="keyword">const</span> router2 = express.Router()</span><br><span class="line"></span><br><span class="line">app.use(<span class="string">'/a'</span>, router1)</span><br><span class="line">router1.use(<span class="string">'/b'</span>, router2)</span><br><span class="line">router2.get(<span class="string">'/c'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">req, res</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> obj = &#123;</span><br><span class="line">        path: req.path,</span><br><span class="line">        baseUrl: req.baseUrl,</span><br><span class="line">        originalUrl: req.originalUrl,</span><br><span class="line">        url: req.url</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">console</span>.log(obj)</span><br><span class="line">    res.send(obj)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> server = app.listen(<span class="number">3030</span>, <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> host = server.address().address</span><br><span class="line">    <span class="keyword">const</span> port = server.address().port</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'Example app listening at http://%s:%s'</span>, host, port)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+            <p>angular-cli 的一些配置是放在 <code>.angular-cli.json</code> 中的，例如不想生成测试文件，可以配置如下：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">   ...</span><br><span class="line">   "defaults" : &#123;</span><br><span class="line">       ...</span><br><span class="line">       "spec": &#123;</span><br><span class="line">           ...</span><br><span class="line">           "component": false</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
         </div>
         
           <p class="article-more-link">
-            <a href="/url-in-express/#more">Read More</a>
+            <a href="/angular-cli-notes/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/url-in-express/" data-id="cjhq778uq00iqizq3d1r6w14f" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/angular-cli-notes/" data-id="cjhq778h5002jizq31zx2bl15" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
@@ -531,10 +474,10 @@
 
 
   
-    <article id="post-redirect-in-feathersjs" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-import-from-vs-import-as" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/redirect-in-feathersjs/" class="article-date">
-  <time datetime="2017-08-17T06:57:38.000Z" itemprop="datePublished">2017-08-17</time>
+    <a href="/import-from-vs-import-as/" class="article-date">
+  <time datetime="2017-09-16T15:07:07.000Z" itemprop="datePublished">2017-09-16</time>
 </a>
     
   </div>
@@ -545,7 +488,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/redirect-in-feathersjs/">feathersjs重定向</a>
+      <a class="article-title" href="/import-from-vs-import-as/">import from 和 import as 的区别</a>
     </h1>
   
 
@@ -557,18 +500,20 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <p>重定向在express里面就是简单的<code>res.redirect</code>，但是在feathersjs的rest service里面却找不到实现办法。本质上feathersjs是基于express的框架，在其基础上进行了封装，而rest service也是一个中间件，因此我们可以在service前后自定义中间件来处理<code>req</code>和<code>res</code>。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> app = feathers()</span><br><span class="line">  .use(<span class="string">'/todos'</span>, beforeTodo, todoService, afterTodo)</span><br></pre></td></tr></table></figure>
+            <p>有时候傻傻分不清下面两句话有什么区别：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> * <span class="keyword">as</span> NAME <span class="keyword">from</span> <span class="string">'package'</span></span><br><span class="line"><span class="keyword">import</span> NAME <span class="keyword">from</span> <span class="string">'package'</span></span><br></pre></td></tr></table></figure>
+<p>说 <code>import</code> 离不开 <code>export</code>，<code>export</code> 的目的是对外暴露接口，这个接口需要一个名称，方便在 <code>import</code> 的时候进行指定，因为一个模块可以暴露多个接口。而这个接口名必须与模块内部的变量建立一一对应关系。例如：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> name = <span class="string">'Lee'</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">sayHello</span>(<span class="params"></span>) </span>&#123;<span class="built_in">console</span>.log(<span class="string">'hello'</span>)&#125;</span><br><span class="line"><span class="keyword">export</span> &#123;name, sayHello&#125;</span><br></pre></td></tr></table></figure>
         </div>
         
           <p class="article-more-link">
-            <a href="/redirect-in-feathersjs/#more">Read More</a>
+            <a href="/import-from-vs-import-as/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/redirect-in-feathersjs/" data-id="cjhq778s800giizq3oqtvpoq7" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/import-from-vs-import-as/" data-id="cjhq778mi009eizq30cm6njmq" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
@@ -579,10 +524,10 @@
 
 
   
-    <article id="post-session-vs-cookie" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-mysql-join" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/session-vs-cookie/" class="article-date">
-  <time datetime="2017-08-17T06:57:38.000Z" itemprop="datePublished">2017-08-17</time>
+    <a href="/mysql-join/" class="article-date">
+  <time datetime="2017-09-16T05:46:32.000Z" itemprop="datePublished">2017-09-16</time>
 </a>
     
   </div>
@@ -593,7 +538,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/session-vs-cookie/">session和cookie的区别</a>
+      <a class="article-title" href="/mysql-join/">MySQL join 查询</a>
     </h1>
   
 
@@ -604,21 +549,21 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <div class="article-preview">
-            <p><code>http</code>是无状态的，只知道响应客户端的请求，即：<code>request——&gt;response</code>。</p>
-<p><img src="http://img.react.ren/blog/http-session.jpg" alt="request --&gt; response"></p>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/session-vs-cookie/#more">Read More</a>
-          </p>
-        
+        <p>现有 Student 类保存学生的姓名 (username) 和国籍 (location)，那么在数据库里面这两张表的存储结构为：</p>
+<p>Student类：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">id    location     username</span><br><span class="line">34      Australia    krkrff</span><br><span class="line">64      india        dieiei</span><br><span class="line">574     pakistan     frkfrf</span><br><span class="line">253     japan        frfffrk</span><br><span class="line">633     india        ifirf</span><br><span class="line">26      Australia    riiri</span><br><span class="line">63      Australia    frffjrr</span><br></pre></td></tr></table></figure>
+<p>这样每添加一个学生就增加一行记录。中文系的学生都要写论文，然后又建立了一个Essay类，用于保存学生写的文章话题(topic)，在数据库里面这张表的存储结构为：</p>
+<p>Essay类：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">id   student_id   topic</span><br><span class="line">1     34          love</span><br><span class="line">3     64          friendship</span><br><span class="line">35    574         romance</span><br><span class="line">32    253         games</span><br><span class="line">95    633         football</span><br><span class="line">54    26          cricket</span><br><span class="line">648    63         music</span><br></pre></td></tr></table></figure>
+<p>这样只要有学生写了一篇文章就增加一条记录。现有这样的需求：来自 Australia 的同学都写过哪些话题？查询语句为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select e.topic from Essay e join Student s on s.id = e.student_id and s.location = &apos;Australia&apos;</span><br></pre></td></tr></table></figure>
+
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/session-vs-cookie/" data-id="cjhq778sl00gwizq3zth18x02" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/mysql-join/" data-id="cjhq778qd00e8izq3wyxuavrt" class="article-share-link">Share</a>
      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/HTTP/">HTTP</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
 
     </footer>
   </div>
@@ -630,7 +575,7 @@
 
 
   <nav id="page-nav">
-    <a class="extend prev" rel="prev" href="/page/9/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><a class="page-number" href="/page/9/">9</a><span class="page-number current">10</span><a class="page-number" href="/page/11/">11</a><a class="page-number" href="/page/12/">12</a><span class="space">&hellip;</span><a class="page-number" href="/page/36/">36</a><a class="extend next" rel="next" href="/page/11/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/9/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><a class="page-number" href="/page/9/">9</a><span class="page-number current">10</span><a class="page-number" href="/page/11/">11</a><a class="page-number" href="/page/12/">12</a><span class="space">&hellip;</span><a class="page-number" href="/page/38/">38</a><a class="extend next" rel="next" href="/page/11/">Next &raquo;</a>
   </nav>
 </section>
 
@@ -645,7 +590,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mongodb/">mongodb</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
     </div>
   </div>
 

@@ -13,7 +13,7 @@
 <meta property="og:site_name" content=".">
 <meta property="og:description" content="mongoose 聚合查询语法：  12345db.collection.aggregrate([   pipe1_operator : &amp;#123;....&amp;#125;,   pipe2_operator : &amp;#123;....&amp;#125;,   pipe3_operator : &amp;#123;....&amp;#125;]) 分组 $group123456&amp;#123;  $group: &amp;#123;">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2017-12-30T15:16:31.000Z">
+<meta property="og:updated_time" content="2018-06-25T08:05:26.134Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="mongoose 聚合查询">
 <meta name="twitter:description" content="mongoose 聚合查询语法：  12345db.collection.aggregrate([   pipe1_operator : &amp;#123;....&amp;#125;,   pipe2_operator : &amp;#123;....&amp;#125;,   pipe3_operator : &amp;#123;....&amp;#125;]) 分组 $group123456&amp;#123;  $group: &amp;#123;">
@@ -60,7 +60,7 @@
         <section id="main"><article id="post-mongoose-aggregation" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/mongoose-aggregation/" class="article-date">
-  <time datetime="2017-09-16T01:06:07.000Z" itemprop="datePublished">2017-09-16</time>
+  <time datetime="2017-09-16T04:27:07.000Z" itemprop="datePublished">2017-09-16</time>
 </a>
     
   </div>
@@ -92,7 +92,7 @@
 <h2 id="展开-unwind"><a href="#展开-unwind" class="headerlink" title="展开 $unwind"></a>展开 <code>$unwind</code></h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  $unwind: &#123;</span><br><span class="line">    path: &apos;$partner&apos;,</span><br><span class="line">    preserveNullAndEmptyArrays: true</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h2 id="排序-sort"><a href="#排序-sort" class="headerlink" title="排序 $sort"></a>排序 <code>$sort</code></h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123; $sort: &#123; money: -1 &#125; &#125;</span><br></pre></td></tr></table></figure>
 <h2 id="分页-limit"><a href="#分页-limit" class="headerlink" title="分页 $limit"></a>分页 <code>$limit</code></h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123; $limit: 6 &#125;</span><br></pre></td></tr></table></figure>
-<h2 id="其他-sf"><a href="#其他-sf" class="headerlink" title="其他 sf"></a>其他 <code>sf</code></h2><ul>
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><ul>
 <li><code>$sum</code>：求和</li>
 <li><code>$avg</code>：求平均</li>
 <li><code>$min</code>：最小值</li>
@@ -104,10 +104,12 @@
 </ul>
 <p>X.1 在mongoose 中aggregate中match id 时出现错误的解决办法:</p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Product.aggregate(</span><br><span class="line">    &#123;<span class="string">"$unwind"</span>: <span class="string">"$products"</span>&#125;,</span><br><span class="line"> <span class="comment">// 执行成功</span></span><br><span class="line">    &#123;<span class="string">"$match"</span>: &#123;<span class="string">"products.price"</span>: <span class="number">9</span>&#125;&#125;,</span><br><span class="line"> <span class="comment">// 执行失败</span></span><br><span class="line">    &#123;<span class="string">"$match"</span>: &#123;<span class="string">"products._id"</span>: <span class="string">"58b77e509219010a6eac48ed"</span>&#125;&#125;,</span><br></pre></td></tr></table></figure>
-<p>下边方法成功</p>
+<p>下面方法成功：</p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="string">"$match"</span>: &#123;<span class="string">"products._id"</span>: <span class="keyword">new</span> mongoose.Types.ObjectId(<span class="string">'58b77e509219010a6eac48ed'</span>)&#125;&#125;, </span><br><span class="line"><span class="function"><span class="keyword">function</span>(<span class="params">err, result</span>)</span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (err) &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(err);</span><br><span class="line">  &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">    res.send(result);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>mongoose中有两个地方定义了ObjectId，mongoose.schema.Types.ObjectId 和 mongoose.Types.ObjectId，在这里只有mongoose.Types.ObjectId才起作用。</p>
-<p>map reduce</p>
+<blockquote>
+<p>注意：mongoose 中有两个地方定义了 ObjectId，mongoose.schema.Types.ObjectId 和 mongoose.Types.ObjectId，在这里只有mongoose.Types.ObjectId 才起作用。</p>
+</blockquote>
+<p>还可以做 map 和 reduce 操作：</p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> ObjectId = mongoose.Types.ObjectId</span><br><span class="line">Model.Bill.db.db.command(&#123;</span><br><span class="line">  group: &#123;</span><br><span class="line">    ns: <span class="string">'bills'</span>,</span><br><span class="line">    key: <span class="string">'pay'</span>,</span><br><span class="line">    condition: &#123; <span class="attr">book</span>: ObjectId(<span class="string">'58f483feebfdff7c8e162533'</span>), <span class="attr">month</span>: <span class="string">'201605'</span> &#125;,</span><br><span class="line">    initial: &#123; <span class="attr">expense</span>: <span class="number">0</span>, <span class="attr">income</span>: <span class="number">0</span> &#125;,</span><br><span class="line">    $reduce: <span class="function"><span class="keyword">function</span>(<span class="params">doc, pre</span>) </span>&#123;</span><br><span class="line">      <span class="keyword">if</span> (doc.pay &gt; <span class="number">0</span>) pre.income += doc.money</span><br><span class="line">      <span class="keyword">else</span> pre.expense += doc.money</span><br><span class="line">    &#125;.toString()</span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
 
       
@@ -123,19 +125,19 @@
     
 <nav id="article-nav">
   
-    <a href="/linux-sudo-lost/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/change-system-environment/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
-          sudo找不到命令
+          修改系统环境变量
         
       </div>
     </a>
   
   
-    <a href="/node-module-mjs/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/linux-sudo-lost/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">nodejs支持es6模块语法</div>
+      <div class="article-nav-title">sudo找不到命令</div>
     </a>
   
 </nav>
@@ -156,7 +158,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mongodb/">mongodb</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
     </div>
   </div>
 
