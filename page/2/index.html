@@ -54,6 +54,228 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-angular-dirty-touched-changed" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/angular-dirty-touched-changed/" class="article-date">
+  <time datetime="2018-05-24T11:57:12.000Z" itemprop="datePublished">2018-05-24</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/angular-dirty-touched-changed/">Angular 判断表单是否真的 dirty</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>Angular 的动态表单验证，有 dirty 和 touched 属性可以用来判断是否被修改和是否失去焦点等状态，但是遗憾的是即使修改后撤销修改（改回原值），Angular 也认为已经 dirty 了。</p>
+<p>有人认为这样不合理，理由是：</p>
+<blockquote>
+<p>input 中原本是 3，你改成 4 之后自然 dirty，然后你再改回 3，就不应该是 dirty，只有值变化才能算 dirty。</p>
+</blockquote>
+<p>也有人认为这样很合理，给出的理由是：</p>
+<blockquote>
+<p>假如你面前有一杯白开水，你端起来喝了，然后又倒上一杯，虽然新的水跟之前喝掉的一样，但是由于你触碰了杯子，被子上已经粘上了你的指纹，所以 dirty 了，这里的杯子就是 input，水就是 3，当然你可以用洗洁精把指纹抹掉还原为 pristine，这就是 angular 提供的 <code>markAsPristine()</code> 方法。</p>
+</blockquote>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/angular-dirty-touched-changed/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/angular-dirty-touched-changed/" data-id="cjhq778h8002nizq3jpq260su" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-angular-reactive-form" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/angular-reactive-form/" class="article-date">
+  <time datetime="2018-05-24T02:01:12.000Z" itemprop="datePublished">2018-05-24</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/angular-reactive-form/">Angular 中的响应式表单</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <h2 id="基础概念"><a href="#基础概念" class="headerlink" title="基础概念"></a>基础概念</h2><ol>
+<li><p>FormControl</p>
+<p>代表 form 中的一个具体的元件，例如 input、select、radio、dropdown 等，是表单中不可分割的最小单元。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; FormControl &#125; <span class="keyword">from</span> <span class="string">'@angular/forms'</span>;</span><br><span class="line">myName: FormControl;</span><br><span class="line"><span class="keyword">this</span>.myName = <span class="keyword">new</span> FormControl(<span class="string">'初始值'</span>);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>FormGroup</p>
+<p>一组 FormControl 的合集，如果 FormControl 的值发生变化，那么 FormGroup 也发生变化。FormGroup 本身有很多 API，例如表单验证等，注意这里的验证器是针对 FormGroup 本身，而不是里面的 FormControl。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; FormGroup &#125; <span class="keyword">from</span> <span class="string">'@angular/forms'</span>;</span><br><span class="line">myName: FormGroup;</span><br><span class="line"><span class="keyword">this</span>.myForm = <span class="keyword">new</span> FormGroup(&#123;</span><br><span class="line">  name: <span class="keyword">new</span> FormControl(<span class="string">'名字'</span>)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>这里面隐含的逻辑关系是：</p>
+<ol>
+<li>只要任何一个 FormControl 验证失败，整个 FormGroup 就验证失败</li>
+<li>即使所有 FormControl 验证通过，但 FormGroup 验证失败，那结果也是失败</li>
+<li>所有 FormControl 验证通过且 FormGroup 验证通过，才算通过</li>
+</ol>
+</li>
+<li><p>FormArray</p>
+<p>一组 FormControl/FormGroup/FormArray 的合集。</p>
+</li>
+</ol>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/angular-reactive-form/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/angular-reactive-form/" data-id="cjhq778hn0039izq3bsbxh6xe" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-export-html-to-word" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/export-html-to-word/" class="article-date">
+  <time datetime="2018-05-22T01:55:33.000Z" itemprop="datePublished">2018-05-22</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/export-html-to-word/">将 HTML 导出为 word</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <ol>
+<li><p>导出 <code>.doc</code> 文件</p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Export2Doc</span>(<span class="params">element, filename = <span class="string">''</span></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> preHtml = <span class="string">'&lt;html xmlns:o=\'urn:schemas-microsoft-com:office:office\' xmlns:w=\'urn:schemas-microsoft-com:office:word\' xmlns=\'http://www.w3.org/TR/REC-html40\'&gt;&lt;head&gt;&lt;meta charset=\'utf-8\'&gt;&lt;title&gt;Export HTML To Doc&lt;/title&gt;&lt;/head&gt;&lt;body&gt;'</span></span><br><span class="line">  <span class="keyword">var</span> postHtml = <span class="string">'&lt;/body&gt;&lt;/html&gt;'</span></span><br><span class="line">  <span class="keyword">var</span> html = preHtml + <span class="built_in">document</span>.getElementById(element).innerHTML + postHtml</span><br><span class="line">  <span class="keyword">var</span> blob = <span class="keyword">new</span> Blob([<span class="string">'\ufeff'</span>, html], &#123; <span class="attr">type</span>: <span class="string">'application/msword'</span> &#125;)</span><br><span class="line">  <span class="keyword">var</span> url = <span class="string">'data:application/vnd.ms-word;charset=utf-8,'</span> + <span class="built_in">encodeURIComponent</span>(html)</span><br><span class="line">  filename = filename ? filename + <span class="string">'.doc'</span> : <span class="string">'document.doc'</span> <span class="comment">// 指定文件名</span></span><br><span class="line">  <span class="keyword">var</span> downloadLink = <span class="built_in">document</span>.createElement(<span class="string">'a'</span>) <span class="comment">// 创建下载链接</span></span><br><span class="line">  <span class="built_in">document</span>.body.appendChild(downloadLink)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (navigator.msSaveOrOpenBlob) &#123;</span><br><span class="line">    navigator.msSaveOrOpenBlob(blob, filename)</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    downloadLink.href = url <span class="comment">// 链接到文件</span></span><br><span class="line">    downloadLink.download = filename <span class="comment">// 设置文件名</span></span><br><span class="line">    downloadLink.click() <span class="comment">// 触发下载</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">document</span>.body.removeChild(downloadLink)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/export-html-to-word/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/export-html-to-word/" data-id="cjhq778k4006kizq3l0dzovlb" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-angular-component-css-selector" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/angular-component-css-selector/" class="article-date">
+  <time datetime="2018-05-20T04:22:12.000Z" itemprop="datePublished">2018-05-20</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/angular-component-css-selector/">Angular 组件中的 CSS 选择器</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <h3 id="host-选择器"><a href="#host-选择器" class="headerlink" title=":host 选择器"></a>:host 选择器</h3><p>使用 <code>:host</code> 伪类选择器，用来选择组件宿主元素中的元素。</p>
+<p>为宿主元素添加边框</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-pseudo">:host</span> &#123;</span><br><span class="line">  <span class="attribute">display</span>: block;</span><br><span class="line">  <span class="attribute">border</span>: <span class="number">1px</span> solid black;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当宿主元素带 <code>.active</code> 类的时候，边框加粗：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-pseudo">:host(.active)</span> &#123;</span><br><span class="line">  <span class="attribute">border-width</span>: <span class="number">3px</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/angular-component-css-selector/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/angular-component-css-selector/" data-id="cjhq778h4002hizq3tj5lc953" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-js-module" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/js-module/" class="article-date">
@@ -372,209 +594,10 @@
 
 
   
-    <article id="post-do-not-forget-to-unsubscribe-in-angular" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/do-not-forget-to-unsubscribe-in-angular/" class="article-date">
-  <time datetime="2018-04-22T03:58:12.000Z" itemprop="datePublished">2018-04-22</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/do-not-forget-to-unsubscribe-in-angular/">别忘了取消 rxjs 订阅</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>RxJS 是很强大的状态管理库，一个可观察对象可以在任何时候被订阅，但是需要注意的是：<strong>别忘了取消订阅！</strong></p>
-<ol>
-<li><p>为什么需要取消订阅？</p>
-<p> 因为在组件中订阅了可观察对象，但是组件销毁的时候没有取消订阅，可能会导致内存泄漏。例如：</p>
- <figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span>(&#123;</span><br><span class="line">  selector: <span class="string">'zju-date'</span>,</span><br><span class="line">  template: <span class="string">`&lt;h2&gt;zju.date&lt;/h2&gt;`</span>,</span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> ZjuDateComponent &#123;</span><br><span class="line">  seq$;</span><br><span class="line">  <span class="keyword">constructor</span>(<span class="params"></span>) &#123;&#125;</span><br><span class="line">  ngOnInit() &#123;</span><br><span class="line">    <span class="keyword">this</span>.seq$ = Observable.interval(<span class="number">1000</span>).subscribe(<span class="function"><span class="params">data</span> =&gt;</span> <span class="built_in">console</span>.log(data));</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p> 组件每次初始化都会重新订阅一次，但组件销毁的时候并没有取消订阅，所以导致内存泄漏。</p>
-</li>
-</ol>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/do-not-forget-to-unsubscribe-in-angular/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/do-not-forget-to-unsubscribe-in-angular/" data-id="cjhq778jg005jizq3lxn8p3mc" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-speed-measure-webpack-plugin" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/speed-measure-webpack-plugin/" class="article-date">
-  <time datetime="2018-04-18T11:11:07.000Z" itemprop="datePublished">2018-04-18</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/speed-measure-webpack-plugin/">计算 webpack 插件/加载器的运行时间</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>webpack 有时候打包很慢，用了很多 plugin 和 loader，想知道到底是哪个环节慢，下面这个插件可以计算 plugin 和 loader 的耗时。</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn add -D speed-measure-webpack-plugin</span><br></pre></td></tr></table></figure>
-<p>使用方法很简单，把 webpack 配置对象包裹起来即可：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> SpeedMeasurePlugin = <span class="built_in">require</span>(<span class="string">"speed-measure-webpack-plugin"</span>);</span><br><span class="line"><span class="keyword">const</span> smp = <span class="keyword">new</span> SpeedMeasurePlugin();</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> webpackConfig = smp.wrap(&#123;</span><br><span class="line">  entry: &#123;</span><br><span class="line">    app: [<span class="string">"./app.js"</span>]</span><br><span class="line">  &#125;,</span><br><span class="line">  output: <span class="string">"./public"</span>,</span><br><span class="line">  <span class="built_in">module</span>: &#123;</span><br><span class="line">    rules: [</span><br><span class="line">      &#123;</span><br><span class="line">        test: <span class="regexp">/\.js$/</span>,</span><br><span class="line">        use: [&#123; <span class="attr">loader</span>: <span class="string">"babel-loader"</span> &#125;]</span><br><span class="line">      &#125;</span><br><span class="line">    ]</span><br><span class="line">  &#125;,</span><br><span class="line">  plugins: [</span><br><span class="line">    <span class="keyword">new</span> MyPlugin(),</span><br><span class="line">    <span class="keyword">new</span> MyOtherPlugin()</span><br><span class="line">  ]</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/speed-measure-webpack-plugin/" data-id="cjhq778sv00haizq39miouwjv" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-angular-dynamic-import" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/angular-dynamic-import/" class="article-date">
-  <time datetime="2018-04-13T07:40:07.000Z" itemprop="datePublished">2018-04-13</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/angular-dynamic-import/">Angular 动态引入模块</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>根据阮一峰的<a href="http://es6.ruanyifeng.com/#docs/module#import-%E5%91%BD%E4%BB%A4" target="_blank" rel="noopener">文章</a>，ES6中的 <code>import</code> 是静态执行，不能使用表达式和变量，下面几种情况都会报错：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 报错</span></span><br><span class="line"><span class="keyword">import</span> &#123; <span class="string">'f'</span> + <span class="string">'oo'</span> &#125; <span class="keyword">from</span> <span class="string">'my_module'</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 报错</span></span><br><span class="line"><span class="keyword">let</span> <span class="built_in">module</span> = <span class="string">'my_module'</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; foo &#125; <span class="keyword">from</span> <span class="built_in">module</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 报错</span></span><br><span class="line"><span class="keyword">if</span> (x === <span class="number">1</span>) &#123;</span><br><span class="line">  <span class="keyword">import</span> &#123; foo &#125; <span class="keyword">from</span> <span class="string">'module1'</span>;</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">  <span class="keyword">import</span> &#123; foo &#125; <span class="keyword">from</span> <span class="string">'module2'</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>而从 Typescript 2.4 版本开始，可以动态引用模块了，例如：</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (myCondition === <span class="literal">true</span>) &#123;</span><br><span class="line">  <span class="keyword">import</span>(<span class="string">'/common/helpers/string'</span>).then(<span class="function"><span class="params">stringHelpers</span> =&gt;</span> &#123;</span><br><span class="line">    stringHelpers.reverse(<span class="string">'Hello World'</span>);</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/angular-dynamic-import/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/angular-dynamic-import/" data-id="cjhq778ha002rizq3h4ghrh3e" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-common-rxjs-error" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/common-rxjs-error/" class="article-date">
-  <time datetime="2018-04-13T07:22:28.000Z" itemprop="datePublished">2018-04-13</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/common-rxjs-error/">rxjs 中常见的错误</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <ol>
-<li><p>把异步订阅当做同步处理</p>
- <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">init() &#123;</span><br><span class="line">  <span class="keyword">let</span> id;</span><br><span class="line">  <span class="keyword">this</span>.router.subscribe(<span class="function"><span class="params">params</span> =&gt;</span> id = params[<span class="string">'id'</span>]);</span><br><span class="line">  <span class="keyword">if</span> (id) &#123;</span><br><span class="line">    <span class="keyword">this</span>.getUser(id).subscribe(<span class="function"><span class="params">user</span> =&gt;</span> <span class="keyword">this</span>.user = user);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/common-rxjs-error/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/common-rxjs-error/" data-id="cjhq778in004mizq37tepkx29" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
 
 
   <nav id="page-nav">
-    <a class="extend prev" rel="prev" href="/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/38/">38</a><a class="extend next" rel="next" href="/page/3/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/39/">39</a><a class="extend next" rel="next" href="/page/3/">Next &raquo;</a>
   </nav>
 </section>
 

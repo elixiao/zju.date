@@ -54,6 +54,189 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-js-base64" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/js-base64/" class="article-date">
+  <time datetime="2018-01-18T09:08:45.000Z" itemprop="datePublished">2018-01-18</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/js-base64/">JavaScript 转换 base64</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>下面的代码可以将字符串转换为 base64，也可以将 base64 还原为字符串：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Define the string</span></span><br><span class="line"><span class="keyword">var</span> string = <span class="string">'Hello World!'</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Encode the String</span></span><br><span class="line"><span class="keyword">var</span> encodedString = btoa(string);</span><br><span class="line"><span class="built_in">console</span>.log(encodedString); <span class="comment">// Outputs: "SGVsbG8gV29ybGQh"</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Decode the String</span></span><br><span class="line"><span class="keyword">var</span> decodedString = atob(encodedString);</span><br><span class="line"><span class="built_in">console</span>.log(decodedString); <span class="comment">// Outputs: "Hello World!"</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Create Base64 Object</span></span><br><span class="line"><span class="keyword">var</span> Base64=&#123;<span class="attr">_keyStr</span>:<span class="string">"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/="</span>,<span class="attr">encode</span>:<span class="function"><span class="keyword">function</span>(<span class="params">e</span>)</span>&#123;<span class="keyword">var</span> t=<span class="string">""</span>;<span class="keyword">var</span> n,r,i,s,o,u,a;<span class="keyword">var</span> f=<span class="number">0</span>;e=Base64._utf8_encode(e);<span class="keyword">while</span>(f&lt;e.length)&#123;n=e.charCodeAt(f++);r=e.charCodeAt(f++);i=e.charCodeAt(f++);s=n&gt;&gt;<span class="number">2</span>;o=(n&amp;<span class="number">3</span>)&lt;&lt;<span class="number">4</span>|r&gt;&gt;<span class="number">4</span>;u=(r&amp;<span class="number">15</span>)&lt;&lt;<span class="number">2</span>|i&gt;&gt;<span class="number">6</span>;a=i&amp;<span class="number">63</span>;<span class="keyword">if</span>(<span class="built_in">isNaN</span>(r))&#123;u=a=<span class="number">64</span>&#125;<span class="keyword">else</span> <span class="keyword">if</span>(<span class="built_in">isNaN</span>(i))&#123;a=<span class="number">64</span>&#125;t=t+<span class="keyword">this</span>._keyStr.charAt(s)+<span class="keyword">this</span>._keyStr.charAt(o)+<span class="keyword">this</span>._keyStr.charAt(u)+<span class="keyword">this</span>._keyStr.charAt(a)&#125;<span class="keyword">return</span> t&#125;,<span class="attr">decode</span>:<span class="function"><span class="keyword">function</span>(<span class="params">e</span>)</span>&#123;<span class="keyword">var</span> t=<span class="string">""</span>;<span class="keyword">var</span> n,r,i;<span class="keyword">var</span> s,o,u,a;<span class="keyword">var</span> f=<span class="number">0</span>;e=e.replace(<span class="regexp">/[^A-Za-z0-9+/=]/g</span>,<span class="string">""</span>);<span class="keyword">while</span>(f&lt;e.length)&#123;s=<span class="keyword">this</span>._keyStr.indexOf(e.charAt(f++));o=<span class="keyword">this</span>._keyStr.indexOf(e.charAt(f++));u=<span class="keyword">this</span>._keyStr.indexOf(e.charAt(f++));a=<span class="keyword">this</span>._keyStr.indexOf(e.charAt(f++));n=s&lt;&lt;<span class="number">2</span>|o&gt;&gt;<span class="number">4</span>;r=(o&amp;<span class="number">15</span>)&lt;&lt;<span class="number">4</span>|u&gt;&gt;<span class="number">2</span>;i=(u&amp;<span class="number">3</span>)&lt;&lt;<span class="number">6</span>|a;t=t+<span class="built_in">String</span>.fromCharCode(n);<span class="keyword">if</span>(u!=<span class="number">64</span>)&#123;t=t+<span class="built_in">String</span>.fromCharCode(r)&#125;<span class="keyword">if</span>(a!=<span class="number">64</span>)&#123;t=t+<span class="built_in">String</span>.fromCharCode(i)&#125;&#125;t=Base64._utf8_decode(t);<span class="keyword">return</span> t&#125;,<span class="attr">_utf8_encode</span>:<span class="function"><span class="keyword">function</span>(<span class="params">e</span>)</span>&#123;e=e.replace(<span class="regexp">/rn/g</span>,<span class="string">"n"</span>);<span class="keyword">var</span> t=<span class="string">""</span>;<span class="keyword">for</span>(<span class="keyword">var</span> n=<span class="number">0</span>;n&lt;e.length;n++)&#123;<span class="keyword">var</span> r=e.charCodeAt(n);<span class="keyword">if</span>(r&lt;<span class="number">128</span>)&#123;t+=<span class="built_in">String</span>.fromCharCode(r)&#125;<span class="keyword">else</span> <span class="keyword">if</span>(r&gt;<span class="number">127</span>&amp;&amp;r&lt;<span class="number">2048</span>)&#123;t+=<span class="built_in">String</span>.fromCharCode(r&gt;&gt;<span class="number">6</span>|<span class="number">192</span>);t+=<span class="built_in">String</span>.fromCharCode(r&amp;<span class="number">63</span>|<span class="number">128</span>)&#125;<span class="keyword">else</span>&#123;t+=<span class="built_in">String</span>.fromCharCode(r&gt;&gt;<span class="number">12</span>|<span class="number">224</span>);t+=<span class="built_in">String</span>.fromCharCode(r&gt;&gt;<span class="number">6</span>&amp;<span class="number">63</span>|<span class="number">128</span>);t+=<span class="built_in">String</span>.fromCharCode(r&amp;<span class="number">63</span>|<span class="number">128</span>)&#125;&#125;<span class="keyword">return</span> t&#125;,<span class="attr">_utf8_decode</span>:<span class="function"><span class="keyword">function</span>(<span class="params">e</span>)</span>&#123;<span class="keyword">var</span> t=<span class="string">""</span>;<span class="keyword">var</span> n=<span class="number">0</span>;<span class="keyword">var</span> r=c1=c2=<span class="number">0</span>;<span class="keyword">while</span>(n&lt;e.length)&#123;r=e.charCodeAt(n);<span class="keyword">if</span>(r&lt;<span class="number">128</span>)&#123;t+=<span class="built_in">String</span>.fromCharCode(r);n++&#125;<span class="keyword">else</span> <span class="keyword">if</span>(r&gt;<span class="number">191</span>&amp;&amp;r&lt;<span class="number">224</span>)&#123;c2=e.charCodeAt(n+<span class="number">1</span>);t+=<span class="built_in">String</span>.fromCharCode((r&amp;<span class="number">31</span>)&lt;&lt;<span class="number">6</span>|c2&amp;<span class="number">63</span>);n+=<span class="number">2</span>&#125;<span class="keyword">else</span>&#123;c2=e.charCodeAt(n+<span class="number">1</span>);c3=e.charCodeAt(n+<span class="number">2</span>);t+=<span class="built_in">String</span>.fromCharCode((r&amp;<span class="number">15</span>)&lt;&lt;<span class="number">12</span>|(c2&amp;<span class="number">63</span>)&lt;&lt;<span class="number">6</span>|c3&amp;<span class="number">63</span>);n+=<span class="number">3</span>&#125;&#125;<span class="keyword">return</span> t&#125;&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Define the string</span></span><br><span class="line"><span class="keyword">var</span> string = <span class="string">'Hello World!'</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Encode the String</span></span><br><span class="line"><span class="keyword">var</span> encodedString = Base64.encode(string);</span><br><span class="line"><span class="built_in">console</span>.log(encodedString); <span class="comment">// Outputs: "SGVsbG8gV29ybGQh"</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Decode the String</span></span><br><span class="line"><span class="keyword">var</span> decodedString = Base64.decode(encodedString);</span><br><span class="line"><span class="built_in">console</span>.log(decodedString); <span class="comment">// Outputs: "Hello World!"</span></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/js-base64/" data-id="cjhq778nw00b6izq3u9uxbwgb" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-js-random-id" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/js-random-id/" class="article-date">
+  <time datetime="2018-01-16T10:42:13.000Z" itemprop="datePublished">2018-01-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/js-random-id/">js 随机字符串</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>使用 crypto 生成随机字符串：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> crypto = <span class="built_in">require</span>(<span class="string">"crypto"</span>)</span><br><span class="line">crypto.randomBytes(<span class="number">16</span>).toString(<span class="string">"hex"</span>) <span class="comment">// f9b327e70bbcf42494ccb28b2d98e00e</span></span><br><span class="line"><span class="comment">// 或者</span></span><br><span class="line">crypto.randomBytes(<span class="number">12</span>).toString(<span class="string">'base64'</span>) <span class="comment">// 9uzHqCOWI9Kq2Jdw</span></span><br></pre></td></tr></table></figure>
+<p>或者最简单，无依赖的方法：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Math</span>.random().toString(<span class="number">26</span>).slice(<span class="number">2</span>) <span class="comment">// p7lc0519gdmh</span></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/js-random-id/" data-id="cjhq778oa00biizq3lxi8xjd0" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-enable-https" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/enable-https/" class="article-date">
+  <time datetime="2018-01-16T01:46:23.000Z" itemprop="datePublished">2018-01-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/enable-https/">搭建HTTPS网站</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>安装EPEL软件源：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install epel-release</span><br></pre></td></tr></table></figure>
+<p>安装Certbot</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install certbot-nginx</span><br></pre></td></tr></table></figure>
+<p>如果不行，可以试试：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">wget https://dl.eff.org/certbot-auto</span><br><span class="line">chmod a+x certbot-auto</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/enable-https/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/enable-https/" data-id="cjhq778jz006bizq3xbn5i6o7" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-replace-angular-favicon" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/replace-angular-favicon/" class="article-date">
+  <time datetime="2018-01-15T03:20:12.000Z" itemprop="datePublished">2018-01-15</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/replace-angular-favicon/">更改 angular 项目默认 favicon</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>例如换成 <code>favicon.png</code> 了，在 index.html 中代码改为：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">"icon"</span> <span class="attr">type</span>=<span class="string">"image/x-icon"</span> <span class="attr">href</span>=<span class="string">"favicon.png"</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+<p>还需要配置一下 angular-cli.json:</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">"assets"</span>: [</span><br><span class="line">    <span class="string">"assets"</span>,</span><br><span class="line">    <span class="string">"favicon.png"</span> </span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+<p>记得清一下缓存。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/replace-angular-favicon/" data-id="cjhq778sb00gmizq3sn0vv5gk" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-typescript-partial" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/typescript-partial/" class="article-date">
@@ -349,193 +532,10 @@
 
 
   
-    <article id="post-chrome-full-screenshot" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/chrome-full-screenshot/" class="article-date">
-  <time datetime="2018-01-11T03:53:05.000Z" itemprop="datePublished">2018-01-11</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/chrome-full-screenshot/">chrome 截取全部网页</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>按 F12 或快捷键：</p>
-<ul>
-<li>Mac：<code>Cmd + Opt + I</code> </li>
-<li>Win：<code>Ctrl + Shift + I</code></li>
-</ul>
-<p>打开开发者工具之后按：</p>
-<ul>
-<li>Mac：<code>Cmd + Shift + P</code></li>
-<li>Win：<code>Ctrl + Shift + P</code></li>
-</ul>
-<p>在弹出的输入框里搜索 full size screenshot，会自动补全，按回车即可。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/chrome-full-screenshot/" data-id="cjkajvcqk00064eq34htc63cu" class="article-share-link">Share</a>
-     
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-pm2-log-with-timestamp" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/pm2-log-with-timestamp/" class="article-date">
-  <time datetime="2018-01-11T02:15:07.000Z" itemprop="datePublished">2018-01-11</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/pm2-log-with-timestamp/">pm2 日志加时间戳</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>默认没有时间戳，可以在启动的时候指定：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ pm2 start app.js --<span class="built_in">log</span>-date-format <span class="string">'DD-MM HH:mm:ss.SSS'</span></span><br></pre></td></tr></table></figure>
-<p>其中 <code>DD-MM HH:mm:ss.SSS</code> 是任意 <code>momentjs</code> 有效时间格式.</p>
-<p>或者修改 app.json 文件：</p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"apps"</span> : [</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">"name"</span>        : <span class="string">"app"</span>,</span><br><span class="line">      <span class="attr">"script"</span>      : <span class="string">"bin/www"</span>,</span><br><span class="line">      <span class="attr">"log_date_format"</span> : <span class="string">"YYYY-MM-DD HH:mm Z"</span></span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/pm2-log-with-timestamp/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/pm2-log-with-timestamp/" data-id="cjhq778ra00fgizq3vk5eigck" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-webpack-set-env" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/webpack-set-env/" class="article-date">
-  <time datetime="2018-01-10T02:38:07.000Z" itemprop="datePublished">2018-01-10</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/webpack-set-env/">webpack 设置环境变量</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>webpack 打包的时候可以设置环境变量：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> webpack.DefinePlugin(&#123;</span><br><span class="line">  <span class="string">'process.env'</span>: &#123;</span><br><span class="line">  	<span class="string">'NODE_ENV'</span>: <span class="built_in">JSON</span>.stringify(process.env.NODE_ENV)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;),</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/webpack-set-env/" data-id="cjhq778vd00jmizq3y61pa8pn" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-koa-timeout" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/koa-timeout/" class="article-date">
-  <time datetime="2018-01-10T01:06:07.000Z" itemprop="datePublished">2018-01-10</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/koa-timeout/">koa 设置 http 请求超时时间</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">app.listen(<span class="number">8080</span>).setTimeout(<span class="number">1000</span> * <span class="number">60</span> * <span class="number">10</span>)</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/koa-timeout/" data-id="cjhq778om00bwizq36mo3u8ee" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
 
 
   <nav id="page-nav">
-    <a class="extend prev" rel="prev" href="/page/6/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/">8</a><a class="page-number" href="/page/9/">9</a><span class="space">&hellip;</span><a class="page-number" href="/page/38/">38</a><a class="extend next" rel="next" href="/page/8/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/6/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/">8</a><a class="page-number" href="/page/9/">9</a><span class="space">&hellip;</span><a class="page-number" href="/page/39/">39</a><a class="extend next" rel="next" href="/page/8/">Next &raquo;</a>
   </nav>
 </section>
 

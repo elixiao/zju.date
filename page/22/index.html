@@ -54,6 +54,199 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-mongodb-advance-query" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/mongodb-advance-query/" class="article-date">
+  <time datetime="2017-03-24T01:06:07.000Z" itemprop="datePublished">2017-03-24</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/mongodb-advance-query/">mongodb 高级查询</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>如果 mongodb 提供的查询语句无法满足业务需求，最后可以用杀手锏： <code>$where</code> 高级查询。</p>
+<blockquote>
+<p><code>$where</code> 操作符功能强大且灵活，它可以将 JavaScript 表达式的字符串或函数作为查询语句的一部分。在 JavaScript 表达式和函数中，可以使用this或obj来引用当前操作的文档，当表达式或函数返回值为true时，会返回当前的文档。</p>
+</blockquote>
+<p>例如文档格式是：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"username"</span>: <span class="string">"brian"</span>,</span><br><span class="line">  <span class="attr">"addresses': [</span></span><br><span class="line"><span class="attr">    &#123;</span></span><br><span class="line">       "address": "500 Grant Street",</span><br><span class="line">       "city": "Pittsburgh",</span><br><span class="line">       "state": "PA",</span><br><span class="line">       "zip": "15219",</span><br><span class="line">       "country": "US"</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">"address"</span>: <span class="string">"405 Spray Ave"</span>,</span><br><span class="line">      <span class="attr">"city"</span>: <span class="string">"Banff"</span>,</span><br><span class="line">      <span class="attr">"state"</span>: <span class="string">"AB"</span>,</span><br><span class="line">      <span class="attr">"zip"</span>: <span class="string">"T1L1J4"</span>,</span><br><span class="line">      <span class="attr">"country"</span>: <span class="string">"CA"</span></span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol>
+<li><p>查询用户名长度少于4个字符的文档：</p>
+ <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">db.users.find(&#123; <span class="attr">$where</span>: <span class="string">'this.username.length &lt; 4'</span> &#125;)</span><br></pre></td></tr></table></figure>
+<p> 这里的 this 就代表文档。</p>
+</li>
+<li><p>查询子文档address里面state字段长度超过2的文档：</p>
+ <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">db.users.find(&#123;  </span><br><span class="line">  $where: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="keyword">this</span>.addresses.length; i++) &#123;</span><br><span class="line">      <span class="keyword">var</span> address = <span class="keyword">this</span>.addresses[i];</span><br><span class="line">      <span class="keyword">if</span>(address.state.length &gt; <span class="number">2</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/mongodb-advance-query/" data-id="cjhq778pq00dcizq375dl4k3f" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-git-add-remote-repo" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/git-add-remote-repo/" class="article-date">
+  <time datetime="2017-03-23T15:07:07.000Z" itemprop="datePublished">2017-03-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/git-add-remote-repo/">git push 到两个远程仓库</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>首先添加多个远程仓库</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git remote add &lt;name&gt; &lt;url&gt;</span><br></pre></td></tr></table></figure>
+<p>其中，name 表示你要给这个远程库起的名字，url 表示这个库的地址，然后提交到这个远程仓库：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git push &lt;name&gt; &lt;branch&gt;</span><br></pre></td></tr></table></figure>
+<p>其中，name 表示你在上一步给它起的名字，branch 表示某一个分支。比如为仓库添加 github 和 gitlab 两个远程仓库：</p>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/git-add-remote-repo/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/git-add-remote-repo/" data-id="cjhq778ks007kizq3gzbvb7c8" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/">Git</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-linux-c" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/linux-c/" class="article-date">
+  <time datetime="2017-03-22T14:01:23.000Z" itemprop="datePublished">2017-03-22</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/linux-c/">Linux 安装 c/c++ 运行环境</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>centos：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">yum -y update gcc</span><br><span class="line">yum -y install gcc+ gcc-c++</span><br></pre></td></tr></table></figure>
+<p>ubuntu：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">apt-get update gcc</span><br><span class="line">apt-get install g++</span><br></pre></td></tr></table></figure>
+<p>gcc 可以视为 c 语言编译器，g++ 视为 c++ 语言编译器，都需要安装。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/linux-c/" data-id="cjhq778os00c2izq3mr70yz50" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-promise-all" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/promise-all/" class="article-date">
+  <time datetime="2017-03-22T10:04:07.000Z" itemprop="datePublished">2017-03-22</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/promise-all/">Promise.all</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>等待所有代码的完成或第一个代码的失败。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> p1 = <span class="built_in">Promise</span>.resolve(<span class="number">3</span>)</span><br><span class="line"><span class="keyword">var</span> p2 = <span class="number">1337</span></span><br><span class="line"><span class="keyword">var</span> p3 = <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> &#123;</span><br><span class="line">  setTimeout(resolve, <span class="number">100</span>, <span class="string">"foo"</span>)</span><br><span class="line">&#125;)</span><br><span class="line"><span class="built_in">Promise</span>.all([p1, p2, p3]).then(<span class="function"><span class="params">values</span> =&gt;</span> &#123; </span><br><span class="line">  <span class="built_in">console</span>.log(values); <span class="comment">// [3, 1337, "foo"] </span></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/promise-all/" data-id="cjhq778rf00fmizq3xpyedrd6" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-change-ssh-port" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/change-ssh-port/" class="article-date">
@@ -338,206 +531,10 @@
 
 
   
-    <article id="post-docker-container-hosts-mapping" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/docker-container-hosts-mapping/" class="article-date">
-  <time datetime="2017-02-16T01:45:07.000Z" itemprop="datePublished">2017-02-16</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/docker-container-hosts-mapping/">修改 docker 容器内 host 映射</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>在开发过程中，有这样的场景：宿主机（或者宿主机所在局域网内的另一台机器）跑着一个 DB（可能是MySQL或MongoDB），docker里运行的应用程序要连宿主机的 DB 时，如何把这个 IP 映射到host文件呢？（这样应用程序里面可以使用访问 db 来访问数据库了）</p>
-<p>假如宿主机的IP是 192.168.23.5，解决方案：</p>
-<ol>
-<li><p>docker</p>
-<p> 使用 <code>--add-host</code> 标签：</p>
- <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker run --add-host=db:192.168.23.5 ...</span><br><span class="line"><span class="comment"># 或者</span></span><br><span class="line"><span class="built_in">alias</span> hostip=<span class="string">"ifconfig en0 | grep inet | grep -v inet6 | awk '&#123;print <span class="variable">$2</span>&#125;'"</span>  &amp;&amp; docker run --add-host=db:$(hostip) ...</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>docker-compose：</p>
- <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">extra_hosts:</span></span><br><span class="line"><span class="bullet"> -</span> <span class="string">"db:192.168.23.5"</span></span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/docker-container-hosts-mapping/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/docker-container-hosts-mapping/" data-id="cjhq778ji005oizq3p1dt38pg" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-ASCII-Unicode-UTF32-UTF16-UTF8-GB2312" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/ASCII-Unicode-UTF32-UTF16-UTF8-GB2312/" class="article-date">
-  <time datetime="2017-02-02T07:46:29.000Z" itemprop="datePublished">2017-02-02</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/ASCII-Unicode-UTF32-UTF16-UTF8-GB2312/">ASCII、Unicode、UTF-32、UTF-16、UTF-8、GB2312</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <h3 id="ASCII码"><a href="#ASCII码" class="headerlink" title="ASCII码"></a>ASCII码</h3><p>每一个二进制位（bit）有0和1两种状态，八个二进制位（一个字节byte）可以组合出256种状态，每一个状态对应一个符号，就是256个符号，从0000000到11111111。</p>
-<p>ASCII码有128个字符的编码，这128个符号（包括32个不能打印出来的控制符号），只占用了一个字节的后7位，第1位统一规定为0。比如空格”SPACE”是32（二进制00100000），大写的字母A是65（二进制01000001）。</p>
-<p>ASCII的最大缺点是只能显示26个基本拉丁字母、阿拉伯数目字和英式标点符号。而汉字就多达10万左右，用ASCII码表示肯定是不够的，因此必须使用多个字节表达一个符号。比如，简体中文常见的编码方式是GB2312，使用两个字节表示一个汉字，所以理论上最多可以表示256x256=65536个符号。</p>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/ASCII-Unicode-UTF32-UTF16-UTF8-GB2312/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/ASCII-Unicode-UTF32-UTF16-UTF8-GB2312/" data-id="cjhq778f90004izq3mtwg0681" class="article-share-link">Share</a>
-     
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-js-define-property" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/js-define-property/" class="article-date">
-  <time datetime="2017-01-20T02:01:07.000Z" itemprop="datePublished">2017-01-20</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/js-define-property/">Object.defineProperty</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>为对象定义属性：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> obj = &#123;&#125;</span><br><span class="line"><span class="comment">// 方法1</span></span><br><span class="line">obj.name = <span class="string">'David'</span></span><br><span class="line"><span class="comment">// 方法2 </span></span><br><span class="line">obj[<span class="string">'name'</span>] = <span class="string">'David'</span></span><br><span class="line"><span class="comment">// 方法3</span></span><br><span class="line"><span class="built_in">Object</span>.defineProperty(obj, <span class="string">'name'</span>, &#123;</span><br><span class="line">    value : <span class="string">'David'</span></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/js-define-property/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/js-define-property/" data-id="cjhq778o500baizq3ncpur1qz" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-es-dynamic-script" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/es-dynamic-script/" class="article-date">
-  <time datetime="2017-01-13T01:49:29.000Z" itemprop="datePublished">2017-01-13</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/es-dynamic-script/">开启elasticsearch动态脚本功能</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>更新也可以通过使用简单的脚本来进行。这个例子使用一个脚本将age加5：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">curl -XPOST <span class="string">'localhost:9200/megacorp/employee/1/_update?pretty'</span> -d <span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "script" : "ctx._source.age += 5"</span></span><br><span class="line"><span class="string">&#125;'</span></span><br></pre></td></tr></table></figure>
-<p>但会报错：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;error&quot; : &#123;</span><br><span class="line">    &quot;root_cause&quot; : [ &#123;</span><br><span class="line">      &quot;type&quot; : &quot;remote_transport_exception&quot;,</span><br><span class="line">      &quot;reason&quot; : &quot;[Professor X][127.0.0.1:9302][indices:data/write/update[s]]&quot;</span><br><span class="line">    &#125; ],</span><br><span class="line">    &quot;type&quot; : &quot;illegal_argument_exception&quot;,</span><br><span class="line">    &quot;reason&quot; : &quot;failed to execute script&quot;,</span><br><span class="line">    &quot;caused_by&quot; : &#123;</span><br><span class="line">      &quot;type&quot; : &quot;script_exception&quot;,</span><br><span class="line">      &quot;reason&quot; : &quot;scripts of type [inline], operation [update] and lang [groovy] are disabled&quot;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  &quot;status&quot; : 400</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>因为新版本的elasticsearch中，基于安全考虑，默认禁用了动态脚本功能，可以通过修改配置文件开启动态脚本功能：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 编辑 config/elasticsearch.yml 文件，添加</span></span><br><span class="line">script.inline: on</span><br><span class="line">script.indexed: on</span><br><span class="line">script.file: on</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/es-dynamic-script/" data-id="cjhq778jx0067izq3a98kr3eu" class="article-share-link">Share</a>
-     
-    </footer>
-  </div>
-  
-</article>
-
-
-  
 
 
   <nav id="page-nav">
-    <a class="extend prev" rel="prev" href="/page/21/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/20/">20</a><a class="page-number" href="/page/21/">21</a><span class="page-number current">22</span><a class="page-number" href="/page/23/">23</a><a class="page-number" href="/page/24/">24</a><span class="space">&hellip;</span><a class="page-number" href="/page/38/">38</a><a class="extend next" rel="next" href="/page/23/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/21/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/20/">20</a><a class="page-number" href="/page/21/">21</a><span class="page-number current">22</span><a class="page-number" href="/page/23/">23</a><a class="page-number" href="/page/24/">24</a><span class="space">&hellip;</span><a class="page-number" href="/page/39/">39</a><a class="extend next" rel="next" href="/page/23/">Next &raquo;</a>
   </nav>
 </section>
 

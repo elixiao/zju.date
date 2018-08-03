@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="有了 $lookup 之后，MongoDB 也能做关联查询了，典型的案例就是商品和订单，订单里面有商品，模型如下： 商品模型：  _id：唯一标识符 name：商品名称 price：商品价格  创建三条商品数据： 123db.products.insert(&amp;#123;name:&apos;矿泉水&apos;, price:1&amp;#125;) // 5b120c565c5d2ea98f402c06db.products">
+<meta name="keywords" content="Database">
+<meta property="og:type" content="article">
+<meta property="og:title" content="mongodb $lookup 运算符">
+<meta property="og:url" content="https://zju.date/mongodb-$lookup/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="有了 $lookup 之后，MongoDB 也能做关联查询了，典型的案例就是商品和订单，订单里面有商品，模型如下： 商品模型：  _id：唯一标识符 name：商品名称 price：商品价格  创建三条商品数据： 123db.products.insert(&amp;#123;name:&apos;矿泉水&apos;, price:1&amp;#125;) // 5b120c565c5d2ea98f402c06db.products">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-06-26T05:00:53.903Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="mongodb $lookup 运算符">
+<meta name="twitter:description" content="有了 $lookup 之后，MongoDB 也能做关联查询了，典型的案例就是商品和订单，订单里面有商品，模型如下： 商品模型：  _id：唯一标识符 name：商品名称 price：商品价格  创建三条商品数据： 123db.products.insert(&amp;#123;name:&apos;矿泉水&apos;, price:1&amp;#125;) // 5b120c565c5d2ea98f402c06db.products">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-mongodb-$lookup" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/mongodb-$lookup/" class="article-date">
+  <time datetime="2018-06-02T03:25:07.000Z" itemprop="datePublished">2018-06-02</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      mongodb $lookup 运算符
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>有了 <code>$lookup</code> 之后，MongoDB 也能做关联查询了，典型的案例就是商品和订单，订单里面有商品，模型如下：</p>
+<p><strong>商品模型</strong>：</p>
+<ul>
+<li><code>_id</code>：唯一标识符</li>
+<li><code>name</code>：商品名称</li>
+<li><code>price</code>：商品价格</li>
+</ul>
+<p>创建三条商品数据：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">db.products.insert(&#123;<span class="attr">name</span>:<span class="string">'矿泉水'</span>, <span class="attr">price</span>:<span class="number">1</span>&#125;) <span class="comment">// 5b120c565c5d2ea98f402c06</span></span><br><span class="line">db.products.insert(&#123;<span class="attr">name</span>:<span class="string">'菜园小饼'</span>, <span class="attr">price</span>:<span class="number">4</span>&#125;) <span class="comment">// 5b120c565c5d2ea98f402c07</span></span><br><span class="line">db.products.insert(&#123;<span class="attr">name</span>:<span class="string">'挂面'</span>, <span class="attr">price</span>:<span class="number">5</span>&#125;) <span class="comment">// 5b120f995c5d2ea98f402c0b</span></span><br></pre></td></tr></table></figure>
+<p><strong>订单模型</strong>：</p>
+<ul>
+<li><code>_id</code>：唯一标识符</li>
+<li><code>user</code>：购买人（这里为了演示方便，就用字符串保存姓名）</li>
+<li><code>product</code>：购买的商品（引用类型，存商品模型的 ObjectId）</li>
+<li><code>createdAt</code>：购买时间</li>
+</ul>
+<a id="more"></a>
+<p>创建四条订单数据：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">db.orders.insert(&#123;<span class="attr">user</span>:<span class="string">'张三'</span>, <span class="attr">product</span>:ObjectId(<span class="string">'5b120c565c5d2ea98f402c06'</span>), <span class="attr">createdAt</span>:<span class="keyword">new</span> <span class="built_in">Date</span>()&#125;)</span><br><span class="line">db.orders.insert(&#123;<span class="attr">user</span>:<span class="string">'张三'</span>, <span class="attr">product</span>:ObjectId(<span class="string">'5b120c565c5d2ea98f402c07'</span>), <span class="attr">createdAt</span>:<span class="keyword">new</span> <span class="built_in">Date</span>()&#125;)</span><br><span class="line">db.orders.insert(&#123;<span class="attr">user</span>:<span class="string">'李四'</span>, <span class="attr">product</span>:ObjectId(<span class="string">'5b120c565c5d2ea98f402c07'</span>), <span class="attr">createdAt</span>:<span class="keyword">new</span> <span class="built_in">Date</span>()&#125;)</span><br><span class="line">db.orders.insert(&#123;<span class="attr">user</span>:<span class="string">'王五'</span>, <span class="attr">product</span>:ObjectId(<span class="string">'5b120f995c5d2ea98f402c0b'</span>), <span class="attr">createdAt</span>:<span class="keyword">new</span> <span class="built_in">Date</span>()&#125;)</span><br></pre></td></tr></table></figure>
+<p>现在的需求是：</p>
+<blockquote>
+<p>查找所有产品价格大于 2 的订单列表。</p>
+</blockquote>
+<p>先口算一下：张三买了水和菜园小饼，李四只买了菜园小饼，王五买了挂面。所以需求所要的订单列表就是上面创建的四条订单中的后三条。接下来就看如何用 MongoDB 的方式来实现这个查询。</p>
+<ol>
+<li><p>第一种思路是分两次查询。</p>
+<p> 首先锁定价格大于2的商品：</p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">db.products.find(&#123;<span class="attr">price</span>:&#123;<span class="attr">$gt</span>:<span class="number">2</span>&#125;&#125;).map(<span class="function"><span class="params">it</span>=&gt;</span>it._id)</span><br><span class="line"><span class="comment">/* 1 */</span></span><br><span class="line">[</span><br><span class="line">    ObjectId(<span class="string">"5b120c565c5d2ea98f402c07"</span>),</span><br><span class="line">    ObjectId(<span class="string">"5b120f995c5d2ea98f402c0b"</span>)</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+<p> 然后再根据这些商品的 _id 过滤订单。</p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">db.orders.find(&#123;</span><br><span class="line">    product: &#123;</span><br><span class="line">        $<span class="keyword">in</span>: [ ObjectId(<span class="string">"5b120c565c5d2ea98f402c07"</span>), ObjectId(<span class="string">"5b120f995c5d2ea98f402c0b"</span>) ]</span><br><span class="line">    &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p> 最后得到结果：</p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* 1 */</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">"_id"</span> : ObjectId(<span class="string">"5b120cf65c5d2ea98f402c09"</span>),</span><br><span class="line">    <span class="string">"user"</span> : <span class="string">"张三"</span>,</span><br><span class="line">    <span class="string">"product"</span> : ObjectId(<span class="string">"5b120c565c5d2ea98f402c07"</span>),</span><br><span class="line">    <span class="string">"createdAt"</span> : ISODate(<span class="string">"2018-06-02T03:20:22.936Z"</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* 2 */</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">"_id"</span> : ObjectId(<span class="string">"5b120cff5c5d2ea98f402c0a"</span>),</span><br><span class="line">    <span class="string">"user"</span> : <span class="string">"李四"</span>,</span><br><span class="line">    <span class="string">"product"</span> : ObjectId(<span class="string">"5b120c565c5d2ea98f402c07"</span>),</span><br><span class="line">    <span class="string">"createdAt"</span> : ISODate(<span class="string">"2018-06-02T03:20:31.571Z"</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* 3 */</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">"_id"</span> : ObjectId(<span class="string">"5b120fe25c5d2ea98f402c0c"</span>),</span><br><span class="line">    <span class="string">"user"</span> : <span class="string">"王五"</span>,</span><br><span class="line">    <span class="string">"product"</span> : ObjectId(<span class="string">"5b120f995c5d2ea98f402c0b"</span>),</span><br><span class="line">    <span class="string">"createdAt"</span> : ISODate(<span class="string">"2018-06-02T03:32:50.920Z"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> 可以看到，查询结果就是订单的后三条数据，与口算结果完全吻合。</p>
+</li>
+<li><p>第二种思路是根据 orders 聚合。</p>
+<p> 用 $lookup 把订单中所有商品给 populate 进去：</p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">db.orders.aggregate([</span><br><span class="line">    &#123;</span><br><span class="line">        $lookup:&#123;</span><br><span class="line">            <span class="keyword">from</span>:<span class="string">'products'</span>,</span><br><span class="line">            localField:<span class="string">"product"</span>,</span><br><span class="line">            foreignField:<span class="string">"_id"</span>,</span><br><span class="line">            <span class="keyword">as</span>:<span class="string">"product"</span></span><br><span class="line">        &#125; </span><br><span class="line">    &#125;</span><br><span class="line">])</span><br></pre></td></tr></table></figure>
+<p> 然后用 $match 找到匹配的订单</p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">db.orders.aggregate([</span><br><span class="line">    &#123;</span><br><span class="line">        $lookup:&#123;</span><br><span class="line">            <span class="keyword">from</span>:<span class="string">'products'</span>,</span><br><span class="line">            localField:<span class="string">"product"</span>,</span><br><span class="line">            foreignField:<span class="string">"_id"</span>,</span><br><span class="line">            <span class="keyword">as</span>:<span class="string">"product"</span></span><br><span class="line">        &#125; </span><br><span class="line">    &#125;,</span><br><span class="line">    &#123; </span><br><span class="line">        $match: &#123; </span><br><span class="line">            <span class="string">'product.price'</span> : &#123;<span class="attr">$gt</span>: <span class="number">2</span>&#125; </span><br><span class="line">        &#125; </span><br><span class="line">    &#125;</span><br><span class="line">])</span><br></pre></td></tr></table></figure>
+<p> 最后得到结果：</p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* 1 */</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">"_id"</span> : ObjectId(<span class="string">"5b120cf65c5d2ea98f402c09"</span>),</span><br><span class="line">    <span class="string">"user"</span> : <span class="string">"张三"</span>,</span><br><span class="line">    <span class="string">"product"</span> : [ </span><br><span class="line">        &#123;</span><br><span class="line">            <span class="string">"_id"</span> : ObjectId(<span class="string">"5b120c565c5d2ea98f402c07"</span>),</span><br><span class="line">            <span class="string">"name"</span> : <span class="string">"菜园小饼"</span>,</span><br><span class="line">            <span class="string">"price"</span> : <span class="number">4.0</span></span><br><span class="line">        &#125;</span><br><span class="line">    ],</span><br><span class="line">    <span class="string">"createdAt"</span> : ISODate(<span class="string">"2018-06-02T03:20:22.936Z"</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* 2 */</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">"_id"</span> : ObjectId(<span class="string">"5b120cff5c5d2ea98f402c0a"</span>),</span><br><span class="line">    <span class="string">"user"</span> : <span class="string">"李四"</span>,</span><br><span class="line">    <span class="string">"product"</span> : [ </span><br><span class="line">        &#123;</span><br><span class="line">            <span class="string">"_id"</span> : ObjectId(<span class="string">"5b120c565c5d2ea98f402c07"</span>),</span><br><span class="line">            <span class="string">"name"</span> : <span class="string">"菜园小饼"</span>,</span><br><span class="line">            <span class="string">"price"</span> : <span class="number">4.0</span></span><br><span class="line">        &#125;</span><br><span class="line">    ],</span><br><span class="line">    <span class="string">"createdAt"</span> : ISODate(<span class="string">"2018-06-02T03:20:31.571Z"</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* 3 */</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">"_id"</span> : ObjectId(<span class="string">"5b120fe25c5d2ea98f402c0c"</span>),</span><br><span class="line">    <span class="string">"user"</span> : <span class="string">"王五"</span>,</span><br><span class="line">    <span class="string">"product"</span> : [ </span><br><span class="line">        &#123;</span><br><span class="line">            <span class="string">"_id"</span> : ObjectId(<span class="string">"5b120f995c5d2ea98f402c0b"</span>),</span><br><span class="line">            <span class="string">"name"</span> : <span class="string">"挂面"</span>,</span><br><span class="line">            <span class="string">"price"</span> : <span class="number">5.0</span></span><br><span class="line">        &#125;</span><br><span class="line">    ],</span><br><span class="line">    <span class="string">"createdAt"</span> : ISODate(<span class="string">"2018-06-02T03:32:50.920Z"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> 可以看到不仅所要的订单列表被查出来了，每一条订单购买的商品详情也被注入到列表中。</p>
+</li>
+<li><p>第三种思路是根据 products 进行聚合。</p>
+<p> 首先筛选价格大于 2 的所有商品。</p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">db.products.aggregate([</span><br><span class="line">    &#123; </span><br><span class="line">        $match: &#123; </span><br><span class="line">            price : &#123;<span class="attr">$gt</span>: <span class="number">2</span>&#125; </span><br><span class="line">        &#125; </span><br><span class="line">    &#125;</span><br><span class="line">])</span><br></pre></td></tr></table></figure>
+<p> 然后把商品对应的所有订单通过 $lookup 查出来，赋值给商品的 orders 字段：</p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">db.products.aggregate([</span><br><span class="line">    &#123; </span><br><span class="line">        $match: &#123; </span><br><span class="line">            price : &#123;<span class="attr">$gt</span>: <span class="number">2</span>&#125; </span><br><span class="line">        &#125; </span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">        $lookup:&#123;</span><br><span class="line">            <span class="keyword">from</span>:<span class="string">'orders'</span>,</span><br><span class="line">            localField:<span class="string">"_id"</span>,</span><br><span class="line">            foreignField:<span class="string">"product"</span>,</span><br><span class="line">            <span class="keyword">as</span>:<span class="string">"orders"</span></span><br><span class="line">        &#125; </span><br><span class="line">    &#125;</span><br><span class="line">])</span><br></pre></td></tr></table></figure>
+<p> 这个得到的是商品列表，而我们需要的是订单列表，要通过<code>$project</code> 保留 orders 字段，然后用 <code>$unwind</code> 展开数组，最后再用 <code>$replaceRoot</code> 去掉 orders 键，保留订单： </p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">db.products.aggregate([</span><br><span class="line">    &#123; </span><br><span class="line">        $match: &#123; </span><br><span class="line">            price : &#123;<span class="attr">$gt</span>: <span class="number">2</span>&#125; </span><br><span class="line">        &#125; </span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">        $lookup:&#123;</span><br><span class="line">            <span class="keyword">from</span>:<span class="string">'orders'</span>,</span><br><span class="line">            localField:<span class="string">"_id"</span>,</span><br><span class="line">            foreignField:<span class="string">"product"</span>,</span><br><span class="line">            <span class="keyword">as</span>:<span class="string">"orders"</span></span><br><span class="line">        &#125; </span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">        $project: &#123;</span><br><span class="line">            orders: <span class="number">1</span>, </span><br><span class="line">            _id: <span class="number">0</span></span><br><span class="line">        &#125;  </span><br><span class="line">    &#125;,</span><br><span class="line">    &#123; </span><br><span class="line">        $unwind : <span class="string">"$orders"</span> </span><br><span class="line">    &#125;</span><br><span class="line">    &#123; <span class="attr">$replaceRoot</span>: &#123; <span class="attr">newRoot</span>: <span class="string">"$orders"</span> &#125;&#125;</span><br><span class="line">])</span><br></pre></td></tr></table></figure>
+<p> 不过需要注意的是：<code>$replaceRoot</code> 只在 3.4 版本以上才被支持，之前的版本只能用 js 的 map 来达到类似的效果：</p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">db.products.aggregate([</span><br><span class="line">    &#123; </span><br><span class="line">        $match: &#123; </span><br><span class="line">            price : &#123;<span class="attr">$gt</span>: <span class="number">2</span>&#125; </span><br><span class="line">        &#125; </span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">        $lookup:&#123;</span><br><span class="line">            <span class="keyword">from</span>:<span class="string">'orders'</span>,</span><br><span class="line">            localField:<span class="string">"_id"</span>,</span><br><span class="line">            foreignField:<span class="string">"product"</span>,</span><br><span class="line">            <span class="keyword">as</span>:<span class="string">"orders"</span></span><br><span class="line">        &#125; </span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">        $project: &#123;</span><br><span class="line">            orders:<span class="number">1</span>, </span><br><span class="line">            _id:<span class="number">0</span></span><br><span class="line">        &#125;  </span><br><span class="line">    &#125;,</span><br><span class="line">    &#123; </span><br><span class="line">        $unwind : <span class="string">"$orders"</span> </span><br><span class="line">    &#125;</span><br><span class="line">]).map(<span class="function"><span class="params">it</span>=&gt;</span>it.orders)</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>上面 3 中方法效率如何呢？没有测试过，但我估计第二种效率会低一些，因为它是先 <code>$lookup</code> 拼接新表之后，再进行过滤的。第一种和第三种不知道谁效率更高，前者更直观但需要查两次，后者一步到位但语法更晦涩。在使用 <code>$lookup</code> 的时候，推荐按照下面的步骤：</p>
+<ol>
+<li><code>$match</code> 先根据条件过滤</li>
+<li><code>$project</code> 保留想要的字段</li>
+<li><code>$unwind</code> 展开数组</li>
+<li><code>$lookup</code> 关联数据</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/mongodb-$lookup/" data-id="cjkdl4un800074hq3lv279s51" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/mongodb-$group/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          mongodb $group 运算符
+        
+      </div>
+    </a>
+  
+  
+    <a href="/js-date-in-safari/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">注意 Safari 浏览器中的 new Date</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mongodb/">mongodb</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

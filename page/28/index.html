@@ -54,6 +54,185 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-mongodb-notes" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/mongodb-notes/" class="article-date">
+  <time datetime="2016-05-13T07:10:45.000Z" itemprop="datePublished">2016-05-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/mongodb-notes/">mongodb学习笔记</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <h2 id="创建数据"><a href="#创建数据" class="headerlink" title="创建数据"></a>创建数据</h2><p>插入第一条数据：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt; db.user.insert(&#123;name:<span class="string">'lixiao'</span>&#125;)</span><br><span class="line">WriteResult(&#123; <span class="string">"nInserted"</span> : 1 &#125;)</span><br></pre></td></tr></table></figure>
+<p>这个时候数据库被创建了：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt; show dbs;</span><br><span class="line"><span class="built_in">local</span>  0.000GB</span><br><span class="line"><span class="built_in">test</span>   0.000GB</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/mongodb-notes/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/mongodb-notes/" data-id="cjhq778pz00doizq3iyh7diew" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-git-notes" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/git-notes/" class="article-date">
+  <time datetime="2016-05-13T02:22:23.000Z" itemprop="datePublished">2016-05-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/git-notes/">Git干货集锦</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h2><h3 id="fetch"><a href="#fetch" class="headerlink" title="fetch"></a>fetch</h3><p>git fetch从远程分支获取最新版本到本地，语法是：<code>git fetch origin remote_branch:local_branch</code>，不会自动merge，可以先观察区别之后再决定是否merge：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git fetch origin master</span><br><span class="line">git <span class="built_in">log</span> -p master..origin/master</span><br><span class="line">git merge origin/master</span><br></pre></td></tr></table></figure>
+<p>其实逻辑和下面的把远程分支下载到本地的一个临时分支上，查看区别，然后合并：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git fetch origin master:tmp</span><br><span class="line">git diff tmp</span><br><span class="line">git merge tmp</span><br></pre></td></tr></table></figure>
+<h3 id="pull"><a href="#pull" class="headerlink" title="pull"></a>pull</h3><p>如果你运行git pull，那么git会帮你做两件事情，首先拿到远程最新的代码，然后运行 git merge。即git pull 是从远程获取最新版然后就直接merge到本地相同分支了。这么看来，fetch要安全一些，因为在merge前可以查看更新情况，然后再决定是否合并。</p>
+<h3 id="cherry-pick"><a href="#cherry-pick" class="headerlink" title="cherry-pick"></a>cherry-pick</h3><p>例如，假设我们有两个分支A和B，这两个分支不能合并，否则这样会导致版本混乱，但是又想增加A分支中的一个功能到B分支中，可以使用cherry-pick了。</p>
+<p>cherry-pick 就是对已经存在的commit 进行 再次提交；</p>
+<p>语法如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git cherry-pick &lt;commit id&gt;</span><br></pre></td></tr></table></figure>
+<p>当执行完 cherry-pick 以后，将会 生成一个新的提交；这个新的提交的哈希值和原来的不同，但标识名一样；</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ git checkout B</span><br><span class="line">$ git cherry-pick 6aa94d53d702876a7f7a61da2e72c43016618ecc</span><br></pre></td></tr></table></figure>
+<h3 id="rebase"><a href="#rebase" class="headerlink" title="rebase"></a>rebase</h3><p>git rebase是把某个分支上的一部分commit嫁接到另一个commit后面，而在这个过程中这些commit的base（基）变了，所以这个操作叫做rebase。</p>
+<p>语法如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git rebase &lt;upstream&gt; &lt;branch&gt;</span><br></pre></td></tr></table></figure>
+<p>比如我们有如下的提交历史，当前的分支是topic：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">     A---B---C topic(HEAD)</span><br><span class="line">    /</span><br><span class="line">D---E---F---G master</span><br></pre></td></tr></table></figure>
+<p>我们执行了如下任何一个命令（区别是后者会首先checkout到topic分支，然后再执行rebase的操作。）之后：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ git rebase master</span><br><span class="line">$ git rebase master topic</span><br></pre></td></tr></table></figure>
+<p>提交历史将会变成如下这样：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">              A&apos;--B&apos;--C&apos; topic(HEAD)</span><br><span class="line">             /</span><br><span class="line">D---E---F---G master</span><br></pre></td></tr></table></figure>
+<p>git把A—B—C这段commit嫁接到了G之后，不过虽然这些新commit的内容是一样的，但是hash值是不同的（A’–B’–C’），因为在这个过程中，git做了三件事情：</p>
+<ol>
+<li>首先对topic分支和<upstream>做一个差集，把不同的commit找出来，对于以上例子来说结果就是A—B—C，然后把这些commit存在一个临时的地方。</upstream></li>
+<li>其次，git会把当前分支reset到<upstream>上，类似于执行git reset –hard <upstream>命令。对于以上例子来说就是reset到master。</upstream></upstream></li>
+<li>最后，git把第一步中暂存的commit，按照顺序一个一个地应用到分支上，相当于一个一个重复提交，这就是为什么rebase之后commit的hash值变了。</li>
+</ol>
+<p>如果中的一个commit进行了某项修改，而当前分支中也存在一个commit，这两个commit的修改的内容一样，那么当前分支中的commit将会被忽略。比如以下的<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure></p>
+<pre><code> A---B---C topic
+/
+</code></pre><p>D—E—A’—F master<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">执行完git rebase master之后，结果如下：</span><br></pre></td></tr></table></figure></p>
+<pre><code> B&apos;---C&apos; topic
+/
+</code></pre><p>D—E—A’—F master<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">rebase往往和pull一起使用，git pull --rebase的意思是git fetch去服务器拿到最新代码，然后运行git rebase，注意不是git merge，如果没有--rebase，那么就会执行git merge，但是有--rebase就执行git rebase。和git pull的区别简单来说都是将不同分支的代码融合在一起，但生成的代码树不同，git pull --rebase不会生成大量的merge节点。</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">## 常见问题</span><br><span class="line"></span><br><span class="line">### 创建分支失败</span><br><span class="line"></span><br><span class="line">```bash</span><br><span class="line">$ git branch frontend</span><br><span class="line">fatal: Not a valid object name: &apos;master&apos;.</span><br></pre></td></tr></table></figure></p>
+<p>问题描述-一个非法的master,原因：本地还没有创建master，你可以执行以下git branch，会发现没有看到本地分支列表。</p>
+<p>解决方案就是先提交，创建master分支之后再创建其他分支。</p>
+<h3 id="push失败"><a href="#push失败" class="headerlink" title="push失败"></a>push失败</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">error: failed to push some refs to <span class="string">'git@github.com:your/name.git'</span></span><br><span class="line">hint: Updates were rejected because the remote contains work that you <span class="keyword">do</span></span><br><span class="line">hint: not have locally. This is usually caused by another repository pushing</span><br><span class="line">hint: to the same ref. You may want to first integrate the remote changes</span><br><span class="line">hint: (e.g., <span class="string">'git pull ...'</span>) before pushing again.</span><br><span class="line">hint: See the <span class="string">'Note about fast-forwards'</span> <span class="keyword">in</span> <span class="string">'git push --help'</span> <span class="keyword">for</span> details.</span><br></pre></td></tr></table></figure>
+<p>还没pull就push了，而远程有本地没有的文件，就提示这个错误，解决方案就是先pull然后再push即可。</p>
+<h3 id="下载远程指定分支"><a href="#下载远程指定分支" class="headerlink" title="下载远程指定分支"></a>下载远程指定分支</h3><p>git下载远程指定分支：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> -b &lt;branch&gt; &lt;remote_repo&gt;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/git-notes/" data-id="cjhq778l0007uizq36k1kv72w" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/">Git</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-elasticsearch-notes" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/elasticsearch-notes/" class="article-date">
+  <time datetime="2016-05-12T05:32:36.000Z" itemprop="datePublished">2016-05-12</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/elasticsearch-notes/">ElasticSearch学习笔记</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <h2 id="ElasticSearch概述"><a href="#ElasticSearch概述" class="headerlink" title="ElasticSearch概述"></a>ElasticSearch概述</h2><p>与传统数据库对比：</p>
+<pre><code>关系数据库      ⇒ 数据库(database) ⇒ 表(table)    ⇒ 行(row)         ⇒ 列(column)
+Elasticsearch  ⇒ 索引(index)      ⇒ 类型(type)   ⇒ 文档(document)  ⇒ 字段(field)
+</code></pre><p>一个 Elasticsearch 集群可以包含多个索引（数据库），每个索引可以包含1个或多个（2.x版本）类型（表），这些类型中包含了多个文档（行），然后每个文档中又包含了很多的字段（列）。</p>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/elasticsearch-notes/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/elasticsearch-notes/" data-id="cjhq778jy0069izq3lh6rkj9m" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-css-notes" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/css-notes/" class="article-date">
@@ -101,6 +280,58 @@
      <a data-url="https://zju.date/css-notes/" data-id="cjhq778j10055izq3w9v6x6vh" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CSS/">CSS</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-webpack-notes" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/webpack-notes/" class="article-date">
+  <time datetime="2016-05-10T14:34:08.000Z" itemprop="datePublished">2016-05-10</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/webpack-notes/">webpack学习笔记</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>将一个入口文件<code>profile.js</code>及其依赖打包成<code>bundle.js</code>：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">webpack js/profile.js dist/bundle.js</span><br></pre></td></tr></table></figure>
+<p>自动检测文件的变化，变化后马上重新打包：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">webpack -w js/profile.js dist/bundle.js</span><br></pre></td></tr></table></figure>
+<p>打包之后的代码和源代码之间的sourcemap映射：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">webpack -w --devtool source-map js/profile.js dist/bundle.js</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/webpack-notes/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/webpack-notes/" data-id="cjhq778va00jiizq355w0owax" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
     </footer>
   </div>
@@ -358,207 +589,10 @@
 
 
   
-    <article id="post-classify-html-elements" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/classify-html-elements/" class="article-date">
-  <time datetime="2016-04-21T13:22:37.000Z" itemprop="datePublished">2016-04-21</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/classify-html-elements/">CSS中HTML元素分类</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>对任一html标签添加css样式的时候首先要知道其元素类型，这个标签必然属于下面3种元素之一：</p>
-<h2 id="block块级元素"><a href="#block块级元素" class="headerlink" title="block块级元素"></a>block块级元素</h2><p>特点：</p>
-<ol>
-<li>每个块级元素都从新的一行开始，并且其后的元素也另起一行。</li>
-<li>元素的高度、宽度、行高以及顶和底边距都可设置。 </li>
-<li>元素宽度在不设置的情况下，和父元素的宽度一致。</li>
-</ol>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/classify-html-elements/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/classify-html-elements/" data-id="cjhq778il004iizq3mqnw5yo1" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/HTML/">HTML</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-javascript-static-variable-and-function" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/javascript-static-variable-and-function/" class="article-date">
-  <time datetime="2016-04-21T13:22:37.000Z" itemprop="datePublished">2016-04-21</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/javascript-static-variable-and-function/">JavaScript中的静态变量和静态函数</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>JavaScript没有静态变量和静态函数，可以通过下面的方式达到类似的效果：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">f</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    f.count = ++f.count || <span class="number">1</span>;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">"f.count = "</span> + f.count)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">f();</span><br><span class="line">f();</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/javascript-static-variable-and-function/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/javascript-static-variable-and-function/" data-id="cjhq778ni00aoizq3akyd3e3p" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-css-box-sizing" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/css-box-sizing/" class="article-date">
-  <time datetime="2016-04-17T13:22:37.000Z" itemprop="datePublished">2016-04-17</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/css-box-sizing/">CSS中的box-sizing</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>默认的盒模型计算公式：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">盒子宽度 = width + padding + border</span><br><span class="line">盒子高度 = height + padding + border</span><br></pre></td></tr></table></figure>
-<p>这就会导致一个问题：设置width:100%的时候，元素会超出父容器。特别是textarea和input标签等。用了：</p>
-<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">box-sizing</span>: <span class="selector-tag">border-box</span></span><br></pre></td></tr></table></figure>
-<p>之后，width和height就是把padding和border计算在内的的值了，非常方便。</p>
-<p>参考文章：<a href="https://css-tricks.com/box-sizing/" target="_blank" rel="noopener">https://css-tricks.com/box-sizing/</a></p>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/css-box-sizing/" data-id="cjhq778iy0050izq3vlm5vnj1" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CSS/">CSS</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-using-lsof-instead-of-netstat-on-mac" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/using-lsof-instead-of-netstat-on-mac/" class="article-date">
-  <time datetime="2016-04-14T06:42:32.000Z" itemprop="datePublished">2016-04-14</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/using-lsof-instead-of-netstat-on-mac/">Mac上用lsof代替netstat</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>在Linux下面使用<code>netstat</code>可以查看所有<code>node</code>程序打开的进程：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">netstat -anp | grep node</span><br></pre></td></tr></table></figure>
-<p>但是在Mac上面并不管用，因为<code>p</code>参数被当做协议（protocol），这个时候只能用：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lsof -i -P | grep node</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/using-lsof-instead-of-netstat-on-mac/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/using-lsof-instead-of-netstat-on-mac/" data-id="cjhq778uz00j2izq3hean97bf" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
 
 
   <nav id="page-nav">
-    <a class="extend prev" rel="prev" href="/page/27/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/26/">26</a><a class="page-number" href="/page/27/">27</a><span class="page-number current">28</span><a class="page-number" href="/page/29/">29</a><a class="page-number" href="/page/30/">30</a><span class="space">&hellip;</span><a class="page-number" href="/page/38/">38</a><a class="extend next" rel="next" href="/page/29/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/27/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/26/">26</a><a class="page-number" href="/page/27/">27</a><span class="page-number current">28</span><a class="page-number" href="/page/29/">29</a><a class="page-number" href="/page/30/">30</a><span class="space">&hellip;</span><a class="page-number" href="/page/39/">39</a><a class="extend next" rel="next" href="/page/29/">Next &raquo;</a>
   </nav>
 </section>
 
