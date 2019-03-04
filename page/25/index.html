@@ -54,10 +54,10 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-switch-between-shells" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-use-zone-in-angular" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/switch-between-shells/" class="article-date">
-  <time datetime="2016-10-07T12:07:07.000Z" itemprop="datePublished">2016-10-07</time>
+    <a href="/use-zone-in-angular/" class="article-date">
+  <time datetime="2017-07-25T09:09:47.000Z" itemprop="datePublished">2017-07-25</time>
 </a>
     
   </div>
@@ -68,7 +68,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/switch-between-shells/">Linux查看和切换shell</a>
+      <a class="article-title" href="/use-zone-in-angular/">angular手动触发视图更新</a>
     </h1>
   
 
@@ -79,17 +79,107 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <p>查看系统支持的shell：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$ cat /etc/shells</span><br><span class="line"><span class="comment"># List of acceptable shells for chpass(1).</span></span><br><span class="line"><span class="comment"># Ftpd will not allow users to connect who are not using</span></span><br><span class="line"><span class="comment"># one of these shells.</span></span><br><span class="line"></span><br><span class="line">/bin/bash</span><br><span class="line">/bin/csh</span><br><span class="line">/bin/ksh</span><br><span class="line">/bin/sh</span><br><span class="line">/bin/tcsh</span><br><span class="line">/bin/zsh</span><br></pre></td></tr></table></figure>
-<p>查看当前shell：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="variable">$0</span></span><br></pre></td></tr></table></figure>
-<p>切换不同的shell：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ chsh -s /bin/zsh</span><br></pre></td></tr></table></figure>
+        <p>在Angular项目中引用了第三方库，在其他组件里面的回调中改变angular组件的状态并不会触发视图更新。为了解决这个问题，可以注入zone对象，把需要改变的变量放在一个函数里面，作为<code>this.zone.run()</code>的参数即可。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">private zone:NgZone</span><br><span class="line"><span class="keyword">this</span>.zone.run(<span class="function"><span class="params">()</span> =&gt;</span> <span class="keyword">this</span>.successMessage = result);</span><br></pre></td></tr></table></figure>
+<p>参考文档：<a href="https://www.joshmorony.com/understanding-zones-and-change-detection-in-ionic-2-angular-2/" target="_blank" rel="noopener">文档1</a>、<a href="https://medium.com/@MertzAlertz/what-the-hell-is-zone-js-and-why-is-it-in-my-angular-2-6ff28bcf943e" target="_blank" rel="noopener">文档2</a></p>
 
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/switch-between-shells/" data-id="cjhq778t900hqizq3d3mvlvr6" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/use-zone-in-angular/" data-id="cjhq778uw00iyizq3dfnlu506" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-install-global-packages-using-yarn" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/install-global-packages-using-yarn/" class="article-date">
+  <time datetime="2017-07-24T01:36:32.000Z" itemprop="datePublished">2017-07-24</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/install-global-packages-using-yarn/">使用yarn安装全局包</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>使用nvm对node版本进行管理，有个问题就是每次升级新版本的node，原来在全局安装的包都要重新安装一次，非常麻烦。例如安装了8.2.1版本的node，原来的全局包都是放在下面的目录中的：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/Users/lixiao/.nvm/versions/node/v8.2.1/lib/node_modules</span><br></pre></td></tr></table></figure>
+<p>如果查看全局安装了哪些依赖，可以使用下面的命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">npm ls -g --depth=0   </span><br><span class="line">/Users/lixiao/.nvm/versions/node/v8.2.1/lib</span><br><span class="line">├── gulp@3.9.1</span><br><span class="line">├── json-server@0.11.2</span><br><span class="line">└── npm@5.3.0</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/install-global-packages-using-yarn/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/install-global-packages-using-yarn/" data-id="cjhq778mx009sizq32cxevv0o" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-nginx-redirect" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/nginx-redirect/" class="article-date">
+  <time datetime="2017-07-21T01:06:07.000Z" itemprop="datePublished">2017-07-21</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/nginx-redirect/">ngxin 重定向</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">  location / &#123;</span><br><span class="line">    try_files <span class="variable">$uri</span> /index.html;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>注意 <code>index.html</code> 不能省略为 <code>/</code>，特别是对于 <code>angular</code> 单页面应用。当你执行 <code>nginx -t</code> 的时候，nginx 会去测试你得配置文件得语法，并告诉你配置文件是否写得正确，同时也告诉了你配置文件的路径：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">nginx -t</span><br><span class="line"></span><br><span class="line">nginx: the configuration file /usr/<span class="built_in">local</span>/etc/nginx/nginx.conf syntax is ok</span><br><span class="line">nginx: configuration file /usr/<span class="built_in">local</span>/etc/nginx/nginx.conf <span class="built_in">test</span> is successful</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/nginx-redirect/" data-id="cjhq778qq00eqizq3h67nlbij" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
 
@@ -100,10 +190,10 @@
 
 
   
-    <article id="post-node-mailer" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-nodejs-command-line-arguments" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/node-mailer/" class="article-date">
-  <time datetime="2016-10-05T12:32:56.000Z" itemprop="datePublished">2016-10-05</time>
+    <a href="/nodejs-command-line-arguments/" class="article-date">
+  <time datetime="2017-07-21T01:06:07.000Z" itemprop="datePublished">2017-07-21</time>
 </a>
     
   </div>
@@ -114,7 +204,51 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/node-mailer/">nodejs发送邮件</a>
+      <a class="article-title" href="/nodejs-command-line-arguments/">nodejs 获取命令行参数</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><code>process.argv</code> 是一个数组，包含命令行所有参数，第一个是 <code>node</code>，第二个是文件名，剩下的是额外的参数了。测试一下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// print process.argv</span></span><br><span class="line">process.argv.forEach(<span class="function"><span class="keyword">function</span> (<span class="params">val, index, array</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(index + <span class="string">': '</span> + val);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>会得到:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ node process-2.js one two=three four</span><br><span class="line">0: node</span><br><span class="line">1: /Users/mjr/work/node/process-2.js</span><br><span class="line">2: one</span><br><span class="line">3: two=three</span><br><span class="line">4: four</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/nodejs-command-line-arguments/" data-id="cjhq778r000f2izq3wdqepxdp" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-angular-radio-click-event" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/angular-radio-click-event/" class="article-date">
+  <time datetime="2017-07-21T01:06:07.000Z" itemprop="datePublished">2017-07-21</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/angular-radio-click-event/">angular radio 点击事件</a>
     </h1>
   
 
@@ -126,18 +260,20 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <p>使用<code>nodemailer</code>开源库：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> nodemailer = <span class="built_in">require</span>(<span class="string">'nodemailer'</span>);</span><br><span class="line"><span class="keyword">const</span> myMailTransport=&#123;<span class="attr">service</span>: <span class="string">'163'</span>, <span class="attr">auth</span>: &#123;<span class="attr">user</span>: <span class="string">"username@163.com"</span>, <span class="attr">pass</span>: <span class="string">"password"</span>&#125;&#125;</span><br><span class="line"><span class="keyword">const</span> transporter = nodemailer.createTransport(myMailTransport);</span><br><span class="line"><span class="keyword">const</span> mailOptions = &#123;</span><br><span class="line">	<span class="keyword">from</span>: myMailTransport.auth.user,</span><br><span class="line">	to: <span class="string">'a@qq.com'</span>,</span><br><span class="line">	subject: <span class="string">'邮件标题'</span>,</span><br><span class="line">	text: <span class="string">'文本格式'</span>,</span><br><span class="line">	html: <span class="string">'网页格式'</span></span><br><span class="line">&#125;;</span><br><span class="line">transporter.sendMail(mailOptions, <span class="function"><span class="keyword">function</span> (<span class="params">error, response</span>) </span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (error) <span class="built_in">console</span>.log(<span class="string">'邮件发送失败！'</span>, error);</span><br><span class="line">	<span class="keyword">else</span> <span class="built_in">console</span>.log(<span class="string">'邮件发送成功！'</span>);</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+            <p>Angular中的radio能否响应“选中”和“未选中”两个事件呢？即有没有类似下面的写法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;input type=&quot;radio&quot; (select)=&quot;selected()&quot; (unselect)=&quot;unselected()&quot; /&gt;</span><br></pre></td></tr></table></figure>
+<p>其实可以用<code>change</code>来达到此目的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;input type=&quot;radio&quot; (change)=&quot;handleChange($event)&quot; /&gt;</span><br></pre></td></tr></table></figure>
         </div>
         
           <p class="article-more-link">
-            <a href="/node-mailer/#more">Read More</a>
+            <a href="/angular-radio-click-event/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/node-mailer/" data-id="cjhq778qt00euizq3g4ih661i" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/angular-radio-click-event/" data-id="cjhq778hg0031izq3039nuiry" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
@@ -148,10 +284,10 @@
 
 
   
-    <article id="post-count-files-in-folder" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-js-regex-group-match" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/count-files-in-folder/" class="article-date">
-  <time datetime="2016-09-24T02:45:07.000Z" itemprop="datePublished">2016-09-24</time>
+    <a href="/js-regex-group-match/" class="article-date">
+  <time datetime="2017-07-21T01:06:07.000Z" itemprop="datePublished">2017-07-21</time>
 </a>
     
   </div>
@@ -162,7 +298,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/count-files-in-folder/">查看文件夹内文件的数量</a>
+      <a class="article-title" href="/js-regex-group-match/">js正则组匹配</a>
     </h1>
   
 
@@ -173,120 +309,17 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <p>查看文件夹内文件的数量：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls -1 | wc -l</span><br></pre></td></tr></table></figure>
-<p><code>-1</code>: 代表一行显示一个文件，如果需要包含隐藏文件，可用<code>-1a</code></p>
-<p>只看文件数量，忽略文件夹：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls -l . | egrep -c <span class="string">'^-'</span></span><br></pre></td></tr></table></figure>
-<p>只看文件夹数量：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls -l . | egrep -c <span class="string">'^d'</span></span><br></pre></td></tr></table></figure>
+        <ul>
+<li><code>(?:pattern)</code> 是非捕获型括号，匹配 pattern，但不捕获匹配结果。</li>
+<li><code>(pattern)</code> 是捕获型括号，匹配 pattern 并捕获结果，自动获取组号</li>
+<li><code>(?&lt;name&gt;pattern)</code> 命名捕获组，匹配 pattern 并捕获结果，设置name为组名 </li>
+</ul>
+<p>使用小括号指定一个子表达式后，匹配这个子表达式的文本(也就是此分组捕获的内容)可以在表达式或其它程序中作进一步的处理。默认情况下，每个捕获组会自动拥有一个组号，规则是：从左向右，以分组的左括号为标志，第一个出现的分组的组号为1，第二个为2，以此类推。如果正则表达式中同时存在普通捕获组和命名捕获组，那么捕获组的编号就要特别注意，编号的规则是先对普通捕获组进行编号，再对命名捕获组进行编号。为了避免括号太多使编号混乱，也为了避免无用的捕获提高效率，在不需要捕获只需要指定分组的地方就可以使用非捕获型括号。</p>
 
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/count-files-in-folder/" data-id="cjhq778iq004rizq3k3vq9zsu" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-angularjs-ui-router" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/angularjs-ui-router/" class="article-date">
-  <time datetime="2016-09-21T07:22:37.000Z" itemprop="datePublished">2016-09-21</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/angularjs-ui-router/">angularjs ui-router 学习笔记</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="从helloworld说起"><a href="#从helloworld说起" class="headerlink" title="从helloworld说起"></a>从helloworld说起</h2><p>首先为项目创建<code>myApp</code>模块，并依赖第三方路由插件<code>ui.router</code></p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">angular.module(<span class="string">'myApp'</span>, [<span class="string">'ui.router'</span>]);</span><br></pre></td></tr></table></figure>
-<p>接下来要对<code>ui.router</code>进行配置，</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">.config(<span class="function"><span class="keyword">function</span>(<span class="params">$stateProvider</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> myState = &#123;&#125;;</span><br><span class="line">  $stateProvider.state(myState);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-<p>注意这个<code>config</code>的语法使用方式，需要传入一个function。还记得controller、factory、service、filter和directive是怎么用的吗？让我们来回忆一下：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">.controller(<span class="string">'myController'</span>,<span class="function"><span class="keyword">function</span> (<span class="params">$scope</span>) </span>&#123;</span><br><span class="line">	scope.name = <span class="string">'秦小静'</span>;</span><br><span class="line">&#125;)</span><br><span class="line">.controller(<span class="string">'myFactory'</span>,<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">	<span class="keyword">return</span> &#123;</span><br><span class="line">		name: <span class="string">'秦小静'</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;)</span><br><span class="line">.controller(<span class="string">'myService'</span>,<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">	<span class="keyword">this</span>.name = <span class="string">'秦小静'</span>;</span><br><span class="line">&#125;)</span><br><span class="line">.controller(<span class="string">'myDirective'</span>,<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">	<span class="keyword">return</span> &#123;&#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
-<p>这里面语法都是一样的，两个参数，第一个是名字，第二个是函数。其中directive最复杂，因为返回的对象里面的key是设定好的，需要使用者自己配置，这个和myState对象很相似，接下来我们仔细看看这个路由对象如何配置吧！</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> myState = &#123;</span><br><span class="line">  name: <span class="string">'qinxiaojing'</span>,</span><br><span class="line">  url: <span class="string">'/qxj'</span>,</span><br><span class="line">  template: <span class="string">'&lt;h3&gt;你好呀，秦小静!&lt;/h3&gt;'</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这样我们就定义了一个叫做<code>qinxiaojing</code>的路由，这个名字是区分路由的唯一标识，是必填项。template是html模板，和directive里面那个一样的，url用于在浏览器地址栏显示路由路径？我们来看具体的使用方法。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;body ng-app=<span class="string">"myApp"</span>&gt;</span><br><span class="line">	&lt;a ui-sref=<span class="string">"qinxiaojing"</span>&gt;Hello&lt;<span class="regexp">/a&gt;</span></span><br><span class="line"><span class="regexp">	&lt;div ui-view&gt;&lt;/</span>div&gt;</span><br><span class="line">&lt;<span class="regexp">/body&gt;</span></span><br></pre></td></tr></table></figure>
-<p>上面的代码里面有<code>ui-sref</code>和<code>ui-view</code>两个标签。<code>ui-view</code>的作用就是一个容器，可以存放不同<code>state</code>里面的<code>template</code>，而<code>ui-sref</code>就是用于控制<code>ui-view</code>里面显示哪个<code>template</code>的。</p>
-<p>当点击<code>hello</code>这个链接的时候，就把名叫<code>qinxiaojing</code>的<code>state</code>里面的<code>template</code>插入在<code>ui-view</code>里面了，然后浏览器后面多了个<code>#qxj</code>，恰好是url里面配置的。</p>
-<p>那对路由的配置除了上面的<code>name</code>、<code>url</code>和<code>template</code>还有其他的吗？当然了，聪明的你肯定会想到<code>templateUrl</code>和<code>controller</code>，<code>templateUrl</code>和<code>template</code>一样，是单独的一个HTML文件，而<code>controller</code>就用于接管这个html文件，<code>controller</code>里面的变量例如<code>$scope.name</code>就可以在HTML里面用<code></code>来访问啦！</p>
-<p>我们再丰富一下页面，然后运行看看效果吧：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">angular.module(<span class="string">'myApp'</span>, [<span class="string">'ui.router'</span>])</span><br><span class="line">        .config(<span class="function"><span class="keyword">function</span> (<span class="params">$stateProvider</span>) </span>&#123;</span><br><span class="line">            <span class="keyword">var</span> myState = &#123;</span><br><span class="line">                name: <span class="string">'qinxiaojing'</span>,</span><br><span class="line">                url: <span class="string">'/qxj'</span>,</span><br><span class="line">                template: <span class="string">'&lt;h3&gt;你好呀，秦小静!&lt;/h3&gt;'</span></span><br><span class="line">            &#125;</span><br><span class="line">            $stateProvider.state(myState);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">var</span> yourState = &#123;</span><br><span class="line">                name: <span class="string">'lixiao'</span>,</span><br><span class="line">                url: <span class="string">'/lx'</span>,</span><br><span class="line">                template: <span class="string">'&lt;h3&gt;在吗，潇？&lt;/h3&gt;'</span></span><br><span class="line">            &#125;</span><br><span class="line">            $stateProvider.state(yourState);</span><br><span class="line">        &#125;);</span><br></pre></td></tr></table></figure>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;body ng-app=<span class="string">"myApp"</span>&gt;</span><br><span class="line">	&lt;a ui-sref=<span class="string">"qinxiaojing"</span>&gt;秦小静&lt;<span class="regexp">/a&gt;</span></span><br><span class="line"><span class="regexp">	&lt;a ui-sref="lixiao"&gt;李潇&lt;/</span>a&gt;</span><br><span class="line">	&lt;div ui-view&gt;<span class="xml"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">&lt;<span class="regexp">/body&gt;</span></span><br></pre></td></tr></table></figure>
-<p>到这里如果运行成功了，可以稍稍歇歇，<code>ui-router</code>算是入门了，但仅仅是幼儿园毕业，后面还要上小学、中学，参加高考等…… 好了，休息完了吗？让我们来继续看看<code>ui-router</code>的进阶内容：</p>
-<h2 id="视图（view）"><a href="#视图（view）" class="headerlink" title="视图（view）"></a>视图（view）</h2><p>视图是嵌入到对应状态的<code>ui-view</code>里面的，<code>ng-app</code>下会有一个或多个<code>ui-view</code>，如果有多个的话，需要命名以示区分，例如：<code>ui-view=&quot;view1&quot;</code>，<code>ui-view=&quot;view2&quot;</code>，如果没起名字<code>ui-view=&quot;&quot;</code>，那么这个<code>ui-view</code>就是默认的<code>ui-view</code>。</p>
-<p>假如<a href="http://abc.com/index.html" target="_blank" rel="noopener">http://abc.com/index.html</a> 文件下注册了<code>ng-app</code>，并有一个<code>ui-view</code>标签，如果定义了一个名叫app的<code>state</code>，即：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$stateProvider.state(<span class="string">'app'</span>, &#123;</span><br><span class="line">	url: <span class="string">'/'</span>,</span><br><span class="line">	templateUrl:<span class="string">'layout.html'</span>,</span><br><span class="line">	controller: <span class="string">'MyController'</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>那么就会把<code>layout.html</code>插入到注册了<code>ng-app</code>页面，即<code>index.html</code>里默认的<code>ui-view</code>下面。访问<a href="http://abc.com/index.html" target="_blank" rel="noopener">http://abc.com/index.html</a> 的时候就能看到<code>ui-view</code>里面被换成了<code>layout.html</code>的内容。你会看到URL变成了：<a href="http://abc.com/index.html#/" target="_blank" rel="noopener">http://abc.com/index.html#/</a> ，这就是angular路由的标识，如果你觉得应该在URL里面增加<code>layout</code>以示目的，可以这么写：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$stateProvider.state(<span class="string">'app'</span>, &#123;</span><br><span class="line">	url: <span class="string">'/layout'</span>,</span><br><span class="line">	templateUrl:<span class="string">'layout.html'</span>,</span><br><span class="line">	controller: <span class="string">'MyController'</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>那么访问<a href="http://abc.com/index.html" target="_blank" rel="noopener">http://abc.com/index.html</a> 的时候就变成了：<a href="http://abc.com/index.html#/layout。" target="_blank" rel="noopener">http://abc.com/index.html#/layout。</a></p>
-<p>如果，有两个<code>ui-view</code>，想把<code>layout</code>放在<code>ui-view=&quot;view1&quot;</code>里面需要这么写：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$stateProvider.state(<span class="string">'app'</span>, &#123;</span><br><span class="line">	url: <span class="string">'/'</span>,</span><br><span class="line">	views: &#123;</span><br><span class="line">        <span class="string">"view1@"</span>: &#123;</span><br><span class="line">            templateUrl: <span class="string">'layout.html'</span>,</span><br><span class="line">            controller: <span class="string">'MyController'</span></span><br><span class="line">        &#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>还可以定义一个<code>app</code>的子状态<code>app.ios</code>，即：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$stateProvider.state(<span class="string">'app.ios'</span>, &#123;</span><br><span class="line">	url: <span class="string">'/ios'</span>,</span><br><span class="line">	templateUrl:<span class="string">'ios.html'</span>,</span><br><span class="line">	controller: <span class="string">'IOSController'</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>那么这个<code>ios</code>就会被插入到<code>layout.html</code>里面默认的<code>ui-view</code>里面，当然同样可以指定<code>ui-view</code>，例如<code>layout.html</code>有两个<code>ui-view</code>分别用于展示<code>ios</code>和<code>android</code>，就可以这么写：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">$stateProvider.state(<span class="string">'app.ios'</span>, &#123;</span><br><span class="line">	url: <span class="string">'/phone'</span>,</span><br><span class="line">	views: &#123;</span><br><span class="line">        <span class="string">"ios@"</span>: &#123;</span><br><span class="line">            templateUrl: <span class="string">'ios.html'</span>,</span><br><span class="line">            controller: <span class="string">'IOSController'</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$stateProvider.state(<span class="string">'app.android'</span>, &#123;</span><br><span class="line">	url: <span class="string">'/phone'</span>,</span><br><span class="line">	views: &#123;</span><br><span class="line">        <span class="string">"android@"</span>: &#123;</span><br><span class="line">            templateUrl: <span class="string">'android.html'</span>,</span><br><span class="line">            controller: <span class="string">'AndroidController'</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>那么URL就变成了：<a href="http://abc.com/index.html#/layout/phone。" target="_blank" rel="noopener">http://abc.com/index.html#/layout/phone。</a></p>
-<p>如果<code>ios.html</code>还有一个<code>ui-view</code>，可以定义<code>app.ios</code>的子视图，不妨叫做：<code>app.ios.iphone6</code>，如果我们这样写：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$stateProvider.state(<span class="string">'app.ios.iphone6'</span>, &#123;</span><br><span class="line">	url: <span class="string">'/iphone6'</span>,</span><br><span class="line">	templateUrl:<span class="string">'iphone6.html'</span>,</span><br><span class="line">	controller: <span class="string">'Iphone6Controller'</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>那么默认情况下<code>ios.html</code>会被插入到<code>app.ios</code>状态对应的<code>templateUrl</code>，也就是<code>ios.html</code>里面的<code>ui-view</code>下面，但是你会不会觉得这不是在一层一层缩小吗？我要覆盖祖先的页面，但不影响祖先的关系可以吗？可以的：</p>
-<p>在views里面可以通过”视图名@状态名”定义嵌入的HTML模板。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">views: &#123;</span><br><span class="line">   <span class="string">"视图名@状态名"</span>: &#123;</span><br><span class="line">       templateUrl: <span class="string">'路径/文件名.html'</span>,</span><br><span class="line">       controller: <span class="string">'控制器名称'</span></span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>例如：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$stateProvider.state(<span class="string">'app.phone.iphone6'</span>, &#123;</span><br><span class="line">	url: <span class="string">'/iphone6'</span>,</span><br><span class="line">	views: &#123;</span><br><span class="line">        <span class="string">"@app.ios"</span>: &#123;</span><br><span class="line">            templateUrl: <span class="string">'iphone6.html'</span>,</span><br><span class="line">            controller: <span class="string">'Iphone6Controller'</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>那么这个<code>iphone6.html</code>就会嵌入到<code>layout.html</code>里面名叫<code>ios</code>的<code>ui-view</code>里面，取代<code>ios.html</code>的位置，当然你还可以这样：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$stateProvider.state(<span class="string">'app.phone.iphone6'</span>, &#123;</span><br><span class="line">	url: <span class="string">'/iphone6'</span>,</span><br><span class="line">	views: &#123;</span><br><span class="line">        <span class="string">"@app"</span>: &#123;</span><br><span class="line">            templateUrl: <span class="string">'iphone6.html'</span>,</span><br><span class="line">            controller: <span class="string">'Iphone6Controller'</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这会就被嵌入到<code>index.html</code>的<code>ui-view</code>里面了，就取代了原先的<code>layout.html</code>的位置。</p>
-<p>“视图名@状态名”的设置非常关键：</p>
-<ol>
-<li>如果状态名为空表示插入到父状态的视图里面，否则插入到指定状态的视图里面。（祖先的视图里面）</li>
-<li>如果视图名为空表示插入到ui-view=””的入口里面，否则插入到指定名称的ui-view里面。</li>
-</ol>
-<p>被嵌入的HTML模板里面可以再次设置ui-view=”视图名”，那么其他state就可以把模板嵌入到当前state里面了，如果没有ui-view就意味着这是一个叶子节点。views属性会覆盖template属性，如果给状态定义了views属性，那么状态的template、templateUrl、templateProvider将被无视掉。</p>
-<p>为了更好的理解，不妨考虑这种场景：一个父视图模板里面包含多个不同的视图，在这种情况下可以定义一个抽象状态来充当父状态，然后在子状态里定义views属性。</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">"report"</span>&gt;</span>查看视图<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">div</span> <span class="attr">ui-view</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">div</span> <span class="attr">ui-view</span>=<span class="string">"filters"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">div</span> <span class="attr">ui-view</span>=<span class="string">"tabledata"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">div</span> <span class="attr">ui-view</span>=<span class="string">"graph"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>当进入<code>rootRouter</code>状态，会用<code>rootRouter.html</code>填充<code>ui-view</code>元素；进入<code>rootRouter</code>状态的子状态<code>rootRouter.firstRouter</code>，<br><code>@rootRouter</code>在<code>rootRouter</code>状态寻找<code>ui-view</code>元素，使用</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">views:&#123;</span><br><span class="line">   <span class="string">'aaa'</span>:&#123; <span class="comment">//绝对名字:在父状态页面寻找名为'aaa'的ui-view元素</span></span><br><span class="line">       templateUrl:<span class="string">'aaa.html'</span></span><br><span class="line">   &#125;,</span><br><span class="line">   <span class="string">''</span>:&#123; <span class="comment">//绝对名字:在父状态页面寻找没有名字的ui-view元素</span></span><br><span class="line">       templateUrl:<span class="string">'report.detail.html'</span></span><br><span class="line">   &#125;,  </span><br><span class="line">   <span class="string">'aaa@report'</span>:&#123; <span class="comment">//相对名字，在report里寻找名为aaa的ui-view元素</span></span><br><span class="line">       templateUrl:<span class="string">'aaa.html'</span></span><br><span class="line">   &#125;,</span><br><span class="line">   <span class="string">'@report'</span>:&#123; <span class="comment">//相对名字，在report状态里寻找没有名字的ui-view元素</span></span><br><span class="line">       templateUrl:<span class="string">'report.detail.html'</span></span><br><span class="line">   &#125;,</span><br><span class="line">   <span class="string">'bbb@report.detail'</span>:&#123; <span class="comment">//相对名字:在report.detail状态里寻找对应名字为'bbb'的ui-view元素</span></span><br><span class="line">       templateUrl:<span class="string">'bbb.html'</span></span><br><span class="line">   &#125;,</span><br><span class="line">   <span class="comment">//相对名字:在report.detail状态里寻找对应没有名字的ui-view元素</span></span><br><span class="line">   <span class="string">'@report.detail'</span>:&#123;</span><br><span class="line">       templateUrl:<span class="string">'no-name.html'</span></span><br><span class="line">   &#125;,</span><br><span class="line">   <span class="string">'bbb@report'</span>:&#123; <span class="comment">//相对名字:在report状态里寻找对应名字为'bbb'的ui-view元素</span></span><br><span class="line">       templateUrl:<span class="string">'bbb2.html'</span></span><br><span class="line">   &#125;,</span><br><span class="line">   <span class="string">'aaa@'</span>:&#123; <span class="comment">//相对名字:在根状态里寻找名为'aaa'的ui-view元素</span></span><br><span class="line">       templateUrl:<span class="string">'aaa2.html'</span></span><br><span class="line">   &#125;,              </span><br><span class="line">   <span class="string">'@'</span>:&#123; <span class="comment">//相对名字:在根状态里寻找没有名字的ui-view元素.</span></span><br><span class="line">       templateUrl:<span class="string">'report.html'</span></span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>需要特别注意:这里等于是在子状态里定义了父状态的里<code>ui-view</code>,要这样写的话,最开始的两段绝对名字<code>&#39;aaa&#39;</code>和<code>&#39;&#39;</code>,就必须改成相对名字<code>&#39;aaa@report&#39;</code>和<code>&#39;bbb@report&#39;</code>。否则会造成错误，可以发现都符合：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">viewname@statename</span><br></pre></td></tr></table></figure>
-<p>这种格式，<code>viewname</code>是<code>ui-view</code>的属性值，<code>statename</code>是状态名。即在<code>statename</code>状态下寻找属性值为<code>viewname</code>的<code>ui-view</code>元素。</p>
-<p>我们会发现views对象里面的key变化了，最明显的是出现了一个@符号，其实这样的key值是<code>ui.router</code>的一个设计，它的原型是：<code>viewName + &#39;@&#39; + stateName</code>，解释下：</p>
-<ol>
-<li><p>viewName</p>
-<p> 指的是<code>ui-view=&quot;status&quot;</code>中的<code>status</code>也可以是<code>&quot;&quot;(空字符串)</code>，因为会有匿名的<code>ui-view</code>或者<code>ui-view=&quot;&quot;</code></p>
-</li>
-<li><p>stateName</p>
-<p> 默认情况下是父路由的<code>state.name</code>，因为子路由模板一般都安插在父路由的<code>ui-view</code>中，也可以是<code>&quot;&quot;(空字符串)&quot;</code>，表示最顶层<code>rootState</code>还可以是任意的祖先<code>state.name</code>。</p>
-</li>
-</ol>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/angularjs-ui-router/" data-id="cjhq778ht003jizq3ek60ky5l" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/js-regex-group-match/" data-id="cjhq778od00bmizq31ylosilh" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
@@ -297,10 +330,10 @@
 
 
   
-    <article id="post-angular-ng-content" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-Must supply a value for form control with name" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/angular-ng-content/" class="article-date">
-  <time datetime="2016-09-10T12:33:25.000Z" itemprop="datePublished">2016-09-10</time>
+    <a href="/Must supply a value for form control with name/" class="article-date">
+  <time datetime="2017-07-21T01:05:47.000Z" itemprop="datePublished">2017-07-21</time>
 </a>
     
   </div>
@@ -311,7 +344,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/angular-ng-content/">Angular 内容投影 ng-content</a>
+      <a class="article-title" href="/Must supply a value for form control with name/">Must supply a value for form control with name</a>
     </h1>
   
 
@@ -323,20 +356,20 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <p>定义了一个组件：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">@Component(&#123;</span><br><span class="line">	selector:&apos;my-button&apos;,</span><br><span class="line">	template:&apos;&lt;button&gt;我的按钮&lt;/button&gt;&apos;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
-<p>然后就可以用<code>&lt;my-button&gt;&lt;/my-buttton&gt;</code>来使用这个组件了，但是这个做法不够灵活，如果我们想自定义按钮里面的文字及其样式的话需要重写这个组件，那能不能动态的修改呢？请看：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">@Component(&#123;</span><br><span class="line">	selector:&apos;my-button&apos;,</span><br><span class="line">	template:&apos;&lt;button&gt;&lt;ng-content&gt;&lt;/ng-content&gt;&lt;/button&gt;&apos;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+            <p>在angular里面使用响应式表单，构建了一个form group：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> <span class="keyword">this</span>.fb.group(&#123;</span><br><span class="line">        CreateDate:[<span class="string">''</span>],</span><br><span class="line">        UpdateDate:[<span class="string">''</span>]</span><br><span class="line"> &#125;);</span><br></pre></td></tr></table></figure>
+<p>运行之后报错：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">core.umd.js:3010 Error: Must supply a value for form control with name: &apos;CreateDate&apos;</span><br></pre></td></tr></table></figure>
         </div>
         
           <p class="article-more-link">
-            <a href="/angular-ng-content/#more">Read More</a>
+            <a href="/Must supply a value for form control with name/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/angular-ng-content/" data-id="cjhq778hf002zizq3sjmwk8jo" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/Must supply a value for form control with name/" data-id="cjhq778gk001oizq39vdcmsh6" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
@@ -347,10 +380,10 @@
 
 
   
-    <article id="post-javascript-get-deep-object-value" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-git-stash" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/javascript-get-deep-object-value/" class="article-date">
-  <time datetime="2016-09-10T06:25:32.000Z" itemprop="datePublished">2016-09-10</time>
+    <a href="/git-stash/" class="article-date">
+  <time datetime="2017-07-20T02:09:47.000Z" itemprop="datePublished">2017-07-20</time>
 </a>
     
   </div>
@@ -361,7 +394,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/javascript-get-deep-object-value/">JavaScript中获取对象的深层属性值</a>
+      <a class="article-title" href="/git-stash/">git stash 的用法</a>
     </h1>
   
 
@@ -373,22 +406,20 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <p>在开发中肯定见过下面的错误：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Uncaught TypeError: Cannot <span class="built_in">read</span> property ‘foo’ of undefined</span><br></pre></td></tr></table></figure>
-<p>案例：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> DarthVader = &#123;</span><br><span class="line">  name : <span class="string">'Anakin'</span>,</span><br><span class="line">  mother : &#123;</span><br><span class="line">    name : <span class="string">'Shmi'</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getFatherName</span>(<span class="params">person</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> person.father.name</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Throws the error: Uncaught TypeError: Cannot read property ‘name’ of undefined</span></span><br><span class="line"><span class="keyword">let</span> darthVadersFather = getFatherName(DarthVader)</span><br></pre></td></tr></table></figure>
+            <p><code>git stash</code>是非常实用的命令，在此记录一下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">git stash        <span class="comment"># 存储工作区的变更</span></span><br><span class="line">git stash list   <span class="comment"># 列出暂存区中已经保存的变更</span></span><br><span class="line">git stash apply  <span class="comment"># 应用某个暂存的变更到工作区，也就是取出指定的某一次暂存内容应用到当前工作区</span></span><br><span class="line">git stash pop    <span class="comment"># 应用某个暂存的变更到工作区，并从堆栈中将这次暂存记录移走</span></span><br><span class="line">git stash drop   <span class="comment"># 删除指定的某个暂存记录</span></span><br><span class="line">git stash clear  <span class="comment"># 清空所有的暂存记录</span></span><br></pre></td></tr></table></figure>
         </div>
         
           <p class="article-more-link">
-            <a href="/javascript-get-deep-object-value/#more">Read More</a>
+            <a href="/git-stash/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/javascript-get-deep-object-value/" data-id="cjhq778n900acizq3941ouuog" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/git-stash/" data-id="cjhq778l30080izq32hxgahab" class="article-share-link">Share</a>
      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/">Git</a></li></ul>
 
     </footer>
   </div>
@@ -397,10 +428,10 @@
 
 
   
-    <article id="post-javascript-object" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-firebase-notes" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/javascript-object/" class="article-date">
-  <time datetime="2016-09-10T06:25:32.000Z" itemprop="datePublished">2016-09-10</time>
+    <a href="/firebase-notes/" class="article-date">
+  <time datetime="2017-07-15T02:01:07.000Z" itemprop="datePublished">2017-07-15</time>
 </a>
     
   </div>
@@ -411,120 +442,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/javascript-object/">JavaScript中的对象</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>JavaScript中的对象就是键值对，例如用一个对象保存一些城市的人口，可以这么写：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> population = &#123;</span><br><span class="line">  tokyo: <span class="number">37833000</span>,</span><br><span class="line">  delhi: <span class="number">24953000</span>,</span><br><span class="line">  shanghai: <span class="number">22991000</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>左边是键（城市名），右边是值（人口数量），非常清晰明了。有了这个对象之后，紧接着就会有下面的各种需求：</p>
-<ol>
-<li><p>这个对象包含哪些键（城市）？</p>
- <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Object</span>.keys(population);</span><br><span class="line"><span class="comment">// ['tokyo', 'delhi', 'shanghai']</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>这个对象包含哪些值（人口数量）？</p>
- <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Object</span>.values(population);</span><br><span class="line"><span class="comment">// [37833000, 24953000, 22991000]</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>这个对象包含了哪些键（城市）和值（人口数量）</p>
- <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Object</span>.entries(population);</span><br><span class="line"><span class="comment">// [['tokyo', 37833000],['delhi', 24953000],['shanghai', 22991000]]</span></span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<p>其实，数组（Array）也是一种特殊对象，它的键是数组的索引，值是数组的内容，上面的方法一样可以用于数组。不过数组自己也有一套方法，请看：</p>
-<ol>
-<li><p><code>arr.keys</code></p>
-<p> 返回一个迭代器对象：</p>
- <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> arr = [<span class="string">'a'</span>, <span class="string">'b'</span>, <span class="string">'c'</span>];</span><br><span class="line"><span class="keyword">let</span> iterator = arr.keys();</span><br><span class="line">iterator.next(); <span class="comment">// &#123;value: 0, done: false&#125;</span></span><br><span class="line">iterator.next(); <span class="comment">// &#123;value: 1, done: false&#125;</span></span><br><span class="line">iterator.next(); <span class="comment">// &#123;value: 2, done: false&#125;</span></span><br><span class="line">iterator.next(); <span class="comment">// &#123;value: undefined, done: true&#125;</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p><code>arr.values</code></p>
- <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> arr = [<span class="string">'a'</span>, <span class="string">'b'</span>, <span class="string">'c'</span>];</span><br><span class="line"><span class="keyword">let</span> iterator = arr.values();</span><br><span class="line">iterator.next().value(); <span class="comment">// a</span></span><br><span class="line">iterator.next().value(); <span class="comment">// b</span></span><br><span class="line">iterator.next().value(); <span class="comment">// c</span></span><br><span class="line">iterator.next().value(); <span class="comment">// undefined</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p><code>arr.entries</code></p>
- <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> arr = [<span class="string">'a'</span>, <span class="string">'b'</span>, <span class="string">'c'</span>];</span><br><span class="line"><span class="keyword">let</span> iterator = arr.entries();</span><br><span class="line">iterator.next().value(); <span class="comment">// [0, 'a']</span></span><br><span class="line">iterator.next().value(); <span class="comment">// [1, 'b']</span></span><br><span class="line">iterator.next().value(); <span class="comment">// [2, 'c']</span></span><br><span class="line">iterator.next().value(); <span class="comment">// undefined</span></span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/javascript-object/" data-id="cjhq778nd00aiizq3tssi9d73" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-angular-module-id" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/angular-module-id/" class="article-date">
-  <time datetime="2016-08-21T12:31:45.000Z" itemprop="datePublished">2016-08-21</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/angular-module-id/">Angular中的module.id与资源相对路径</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">@Component(&#123;</span><br><span class="line">      moduleId: <span class="built_in">module</span>.id,</span><br><span class="line">      selector: <span class="string">'ng-app'</span>,</span><br><span class="line">      templateUrl: <span class="string">'app.component.html'</span>,</span><br><span class="line">      styleUrls: [<span class="string">'app.component.css'</span>],</span><br><span class="line">      directives: [AppComponent]</span><br><span class="line">    &#125;);</span><br></pre></td></tr></table></figure>
-<p>module.id的作用是用于支持组件的相对资源路径，如果没有module.id那么就会去项目根目录下去寻找指定的资源，例如<code>app.component.html</code>和<code>app.component.css</code>。</p>
-<p>但是在webstorm中会提示module不存在，并给出错误的红色标记，看着不舒服。为了解决这个问题，只需为项目安装如下依赖：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install @types/node --save</span><br></pre></td></tr></table></figure>
-<p>这个时候错误提示就消失了，因为webstorm在node_modules/@types/node/index.d.ts文件中找到了module变量的定义如下：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">interface NodeModule &#123;</span><br><span class="line">    exports: any;</span><br><span class="line">    <span class="built_in">require</span>: NodeRequireFunction;</span><br><span class="line">    id: string;</span><br><span class="line">    filename: string;</span><br><span class="line">    loaded: boolean;</span><br><span class="line">    parent: any;</span><br><span class="line">    children: any[];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">declare <span class="keyword">var</span> <span class="built_in">module</span>: NodeModule;</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/angular-module-id/" data-id="cjhq778hc002tizq3zsaq9bab" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-css-remove-gap-under-textarea" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/css-remove-gap-under-textarea/" class="article-date">
-  <time datetime="2016-08-16T03:11:08.000Z" itemprop="datePublished">2016-08-16</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/css-remove-gap-under-textarea/">去除textarea底下的缝隙</a>
+      <a class="article-title" href="/firebase-notes/">firebase 搭建静态网站</a>
     </h1>
   
 
@@ -536,21 +454,34 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <p>今天改样式的时候发现一个奇怪的现象，有个textarea下面存在类似于marginBottom的缝隙，怎么去都去不掉，请看代码：</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE html&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">"en"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">"UTF-8"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>去除textarea底下的缝隙<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">style</span>&gt;</span><span class="undefined"></span></span><br><span class="line"><span class="css">        <span class="selector-class">.outer-div</span> &#123;</span></span><br><span class="line"><span class="undefined">            background: red;</span></span><br><span class="line"><span class="undefined">        &#125;</span></span><br><span class="line"><span class="undefined">        textarea &#123;</span></span><br><span class="line"><span class="undefined">            font-size: 14px;</span></span><br><span class="line"><span class="undefined">            color: grey;</span></span><br><span class="line"><span class="undefined">            height: 200px;</span></span><br><span class="line"><span class="undefined">            width: 500px;</span></span><br><span class="line"><span class="undefined">            margin: 0;</span></span><br><span class="line"><span class="css">            <span class="comment">/*display: block;*/</span></span></span><br><span class="line"><span class="undefined">        &#125;</span></span><br><span class="line"><span class="css">        <span class="selector-class">.inner-div</span> &#123;</span></span><br><span class="line"><span class="css">            <span class="selector-tag">border</span><span class="selector-pseudo">:1px</span> <span class="selector-tag">solid</span> <span class="selector-tag">green</span>;</span></span><br><span class="line"><span class="undefined">            background-color: green;</span></span><br><span class="line"><span class="undefined">            color: yellow;</span></span><br><span class="line"><span class="undefined">        &#125;</span></span><br><span class="line"><span class="undefined"></span></span><br><span class="line"><span class="undefined">    </span><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"outer-div"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">textarea</span> <span class="attr">placeholder</span>=<span class="string">"请输入文字"</span>&gt;</span><span class="tag">&lt;/<span class="name">textarea</span>&gt;</span></span><br><span class="line">        我在outer-div里面</span><br><span class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"inner-div"</span>&gt;</span>你好呀，我在inner-div里面。<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+            <h1 id="firebase"><a href="#firebase" class="headerlink" title="firebase"></a>firebase</h1><ul>
+<li><p>Firebase Realtime Database </p>
+<blockquote>
+<p>可以存储 JSON 应用数据（例如游戏状态或聊天消息），并立即在所有已连接设备间同步更改。</p>
+</blockquote>
+</li>
+<li><p>Firebase Remote Config </p>
+<blockquote>
+<p>可以在不要求用户下载更新的情况下存储开发者指定的键值对来更改您的应用的行为和外观。</p>
+</blockquote>
+</li>
+<li><p>Firebase Hosting</p>
+<blockquote>
+<p>可以托管您的网站的 HTML、CSS 和 JavaScript，以及开发者提供的其他资产，例如图形、字体和图标。</p>
+</blockquote>
+</li>
+</ul>
         </div>
         
           <p class="article-more-link">
-            <a href="/css-remove-gap-under-textarea/#more">Read More</a>
+            <a href="/firebase-notes/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/css-remove-gap-under-textarea/" data-id="cjhq778jd005fizq30hnal3pu" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/firebase-notes/" data-id="cjssqvcsi001j8uq47e87ob6a" class="article-share-link">Share</a>
      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CSS/">CSS</a></li></ul>
-
     </footer>
   </div>
   
@@ -558,10 +489,10 @@
 
 
   
-    <article id="post-unpredictable-css-margins" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-why-return-killed" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/unpredictable-css-margins/" class="article-date">
-  <time datetime="2016-08-13T12:31:25.000Z" itemprop="datePublished">2016-08-13</time>
+    <a href="/why-return-killed/" class="article-date">
+  <time datetime="2017-07-14T02:31:47.000Z" itemprop="datePublished">2017-07-14</time>
 </a>
     
   </div>
@@ -572,7 +503,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/unpredictable-css-margins/">令人琢磨不透的上下外边距</a>
+      <a class="article-title" href="/why-return-killed/">服务器返回killed</a>
     </h1>
   
 
@@ -583,23 +514,35 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <div class="article-preview">
-            <p>垂直方向上的外边距会叠加（collapsed），这是必须知道的<strong>非常重要</strong>的事！什么意思呢？请看：</p>
-<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">* &#123;</span><br><span class="line">  <span class="attribute">margin</span>: <span class="number">0</span>;</span><br><span class="line">  <span class="attribute">padding</span>: <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-tag">div</span> &#123;</span><br><span class="line">  <span class="attribute">margin</span>: <span class="number">20px</span>;</span><br><span class="line">  <span class="attribute">width</span>: <span class="number">100px</span>;</span><br><span class="line">  <span class="attribute">height</span>: <span class="number">100px</span>;</span><br><span class="line">  <span class="attribute">background</span>:red;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>可以得到下面的效果：</p>
-<div style="clear:both;border:1px solid gray;display:inline-block;"><div style="margin:20px;width:100px;height:100px;background:red;"></div><div style="margin:20px;width:100px;height:100px;background:red;"></div></div>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/unpredictable-css-margins/#more">Read More</a>
-          </p>
-        
+        <p>在服务器上运行命令时突然中断，返回一个消息：<code>killed</code>，莫名其妙，网上查了下发现是服务器内存不足导致的，例如你的服务器只有512M的RAM，但是webpack的uglify插件需要2G的内存空间，超出限制，就会报上述错误。</p>
+<p>有时候 <code>npm install</code> 的时候也是，服务器只有500M的内存。而且该项目会用到一些底层的npm包，会编译一些代码。这就导致了内存不够用。可以查一下相应的系统log，在路径 /var/log之下，确认自己的问题。如/var/log/syslog 和 /var/log/messages等。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[root@vultr]<span class="comment"># tail /var/log/messages</span></span><br><span class="line">Jan  7 00:20:41 guest kernel: [11139]     0 11139   317738    20745     200        0             0 node</span><br><span class="line">Jan  7 00:20:41 guest kernel: [11146]     0 11146   319231    22503     211        0             0 node</span><br><span class="line">Jan  7 00:20:41 guest kernel: [11151]     0 11151   318210    21638     207        0             0 node</span><br><span class="line">Jan  7 00:20:41 guest kernel: [11158]     0 11158   301921    21184     203        0             0 node</span><br><span class="line">Jan  7 00:20:41 guest kernel: [23397]    89 23397    22286      259      42        0             0 pickup</span><br><span class="line">Jan  7 00:20:41 guest kernel: [23753]     0 23753    36948      335      75        0             0 sshd</span><br><span class="line">Jan  7 00:20:41 guest kernel: [23756]     0 23756    28868      103      15        0             0 bash</span><br><span class="line">Jan  7 00:20:41 guest kernel: [23967]     0 23967   323412    32707     256        0             0 npm</span><br><span class="line">Jan  7 00:20:41 guest kernel: Out of memory: Kill process 23967 (npm) score 67 or sacrifice child</span><br><span class="line">Jan  7 00:20:41 guest kernel: Killed process 23967 (npm) total-vm:1293648kB, anon-rss:130828kB, file-rss:0kB, shmem-rss:0kB</span><br></pre></td></tr></table></figure>
+<p>那如何解决呢？使用swap file实现虚拟内存。首先查看系统是否配置了交换区域：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo swapon -s</span><br></pre></td></tr></table></figure>
+<p>没有的话， 便直接开始创建swap file，创建一个2G的文件。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo fallocate -l 2G /swapfile</span><br></pre></td></tr></table></figure>
+<p>然后使用</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls -lh /swapfile</span><br></pre></td></tr></table></figure>
+<p>确认是否是自己所需要的文件大小。然后调整文件的权限，若该文件能被其他用户随意的读写，则会产生很大的安全隐患。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo chmod 600 /swapfile</span><br></pre></td></tr></table></figure>
+<p>现在安全多了，可以让系统开始设置交换区域了。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo mkswap /swapfile</span><br></pre></td></tr></table></figure>
+<p>启用该文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo swapon /swapfile</span><br></pre></td></tr></table></figure>
+<p>可以使用最初的命令验证swap file是否正确使用。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo swapon -s</span><br><span class="line"></span><br><span class="line">Filename                    Type          Size     Used     Priority</span><br><span class="line">/swapfile                               file          1048572     0     -1</span><br></pre></td></tr></table></figure>
+<p>交换分区已经成功设置，系统会在必要的时候使用它。现在已经启用了swap文件，但当我们重启的时候，系统不会自动地启用该swap文件。可以通过修改<code>fstab</code>文件实现开机使用swap文件。用root权限编辑</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vim /etc/fstab</span><br></pre></td></tr></table></figure>
+<p>在文件的最后，需要添加一行告诉操作系统自动使用swap文件。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/swapfile   none    swap    sw    0   0</span><br></pre></td></tr></table></figure>
+<p>如此再<code>npm install</code> 的时候，便解决了所有的问题了。</p>
+
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/unpredictable-css-margins/" data-id="cjhq778um00imizq3wub7blib" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/why-return-killed/" data-id="cjhq778vn00jyizq3wy3cs2a0" class="article-share-link">Share</a>
      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CSS/">CSS</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
     </footer>
   </div>
@@ -611,7 +554,7 @@
 
 
   <nav id="page-nav">
-    <a class="extend prev" rel="prev" href="/page/24/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/23/">23</a><a class="page-number" href="/page/24/">24</a><span class="page-number current">25</span><a class="page-number" href="/page/26/">26</a><a class="page-number" href="/page/27/">27</a><span class="space">&hellip;</span><a class="page-number" href="/page/39/">39</a><a class="extend next" rel="next" href="/page/26/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/24/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/23/">23</a><a class="page-number" href="/page/24/">24</a><span class="page-number current">25</span><a class="page-number" href="/page/26/">26</a><a class="page-number" href="/page/27/">27</a><span class="space">&hellip;</span><a class="page-number" href="/page/47/">47</a><a class="extend next" rel="next" href="/page/26/">Next &raquo;</a>
   </nav>
 </section>
 
@@ -626,7 +569,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mongodb/">mongodb</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
     </div>
   </div>
 
@@ -636,7 +579,7 @@
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2018 zju.date
+      &copy; 2019 zju.date
       &nbsp;&nbsp;&nbsp;
       contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
     </div>

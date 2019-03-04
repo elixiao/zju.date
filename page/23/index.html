@@ -54,10 +54,10 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-docker-container-hosts-mapping" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-nodejs-gzip" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/docker-container-hosts-mapping/" class="article-date">
-  <time datetime="2017-02-16T01:45:07.000Z" itemprop="datePublished">2017-02-16</time>
+    <a href="/nodejs-gzip/" class="article-date">
+  <time datetime="2017-08-07T10:12:48.000Z" itemprop="datePublished">2017-08-07</time>
 </a>
     
   </div>
@@ -68,7 +68,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/docker-container-hosts-mapping/">修改 docker 容器内 host 映射</a>
+      <a class="article-title" href="/nodejs-gzip/">Nodejs关于gzip/deflate压缩详解</a>
     </h1>
   
 
@@ -79,28 +79,14 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <div class="article-preview">
-            <p>在开发过程中，有这样的场景：宿主机（或者宿主机所在局域网内的另一台机器）跑着一个 DB（可能是MySQL或MongoDB），docker里运行的应用程序要连宿主机的 DB 时，如何把这个 IP 映射到host文件呢？（这样应用程序里面可以使用访问 db 来访问数据库了）</p>
-<p>假如宿主机的IP是 192.168.23.5，解决方案：</p>
-<ol>
-<li><p>docker</p>
-<p> 使用 <code>--add-host</code> 标签：</p>
- <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker run --add-host=db:192.168.23.5 ...</span><br><span class="line"><span class="comment"># 或者</span></span><br><span class="line"><span class="built_in">alias</span> hostip=<span class="string">"ifconfig en0 | grep inet | grep -v inet6 | awk '&#123;print <span class="variable">$2</span>&#125;'"</span>  &amp;&amp; docker run --add-host=db:$(hostip) ...</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>docker-compose：</p>
- <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">extra_hosts:</span></span><br><span class="line"><span class="bullet"> -</span> <span class="string">"db:192.168.23.5"</span></span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/docker-container-hosts-mapping/#more">Read More</a>
-          </p>
-        
+        <p>写 http 时候，在接收 http 请求时候，出现乱码，后来发现是gzip没有解压。关于 gzip/deflate 压缩，有放入管道压缩，和非管道压缩方法。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> zlib = <span class="built_in">require</span>(<span class="string">'zlib'</span>);</span><br><span class="line"><span class="keyword">var</span> http = <span class="built_in">require</span>(<span class="string">'http'</span>);</span><br><span class="line"><span class="keyword">var</span> fs = <span class="built_in">require</span>(<span class="string">'fs'</span>);</span><br><span class="line"><span class="keyword">var</span> request = http.get(&#123; <span class="attr">host</span>: <span class="string">'homeway.me'</span>,</span><br><span class="line">                     path: <span class="string">'/'</span>,</span><br><span class="line">                     port: <span class="number">80</span>,</span><br><span class="line">                     headers: &#123; <span class="string">'accept-encoding'</span>: <span class="string">'gzip,deflate'</span> &#125; &#125;);</span><br><span class="line">request.on(<span class="string">'response'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">response</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> output = fs.createWriteStream(<span class="string">'izs.me_index.html'</span>);</span><br><span class="line">    <span class="keyword">switch</span> (response.headers[<span class="string">'content-encoding'</span>]) &#123;</span><br><span class="line">        <span class="comment">// or, just use zlib.createUnzip() to handle both cases</span></span><br><span class="line">        <span class="keyword">case</span> <span class="string">'gzip'</span>:</span><br><span class="line">            response.pipe(zlib.createGunzip()).pipe(output);</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> <span class="string">'deflate'</span>:</span><br><span class="line">            response.pipe(zlib.createInflate()).pipe(output);</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">default</span>:</span><br><span class="line">            response.pipe(output);</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#! /usr/local/bin/node</span></span><br><span class="line"><span class="keyword">var</span> http = <span class="built_in">require</span>(<span class="string">'http'</span>),</span><br><span class="line">    querystring = <span class="built_in">require</span>(<span class="string">'querystring'</span>),</span><br><span class="line">    zlib = <span class="built_in">require</span>(<span class="string">'zlib'</span>);</span><br><span class="line"><span class="keyword">var</span> args = &#123;</span><br><span class="line">    <span class="comment">//参数以及备用数据</span></span><br><span class="line">    contents : querystring.stringify(&#123;  </span><br><span class="line">        <span class="comment">//发包的信息</span></span><br><span class="line">        name:<span class="string">'homeway.me'</span>,</span><br><span class="line">    &#125;), </span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">var</span> options = &#123;</span><br><span class="line">    hostname: <span class="string">'homeway.me'</span>,</span><br><span class="line">    port: <span class="number">80</span>,</span><br><span class="line">    path: <span class="string">'/'</span>,</span><br><span class="line">    method: <span class="string">'GET'</span>,</span><br><span class="line">    headers: &#123;</span><br><span class="line">        <span class="string">'Accept'</span>:<span class="string">'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'</span>,</span><br><span class="line">        <span class="string">'Content-Length'</span>: args.contents.length,</span><br><span class="line">        <span class="string">'User-Agent'</span>:<span class="string">'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.11 Safari/537.36'</span>,</span><br><span class="line">        <span class="string">'Accept-Encoding'</span>:<span class="string">'gzip, deflate'</span>,</span><br><span class="line">   &#125;,</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">var</span> get = <span class="function"><span class="keyword">function</span> (<span class="params"> options, args, callback </span>)</span>&#123;</span><br><span class="line">    <span class="keyword">var</span> req = http.request(options, <span class="function"><span class="keyword">function</span> (<span class="params">res</span>) </span>&#123;</span><br><span class="line">        <span class="keyword">var</span> chunks =[], data, encoding = res.headers[<span class="string">'content-encoding'</span>];</span><br><span class="line">        <span class="comment">// 非gzip/deflate要转成utf-8格式</span></span><br><span class="line">        <span class="keyword">if</span>( encoding === <span class="string">'undefined'</span>)&#123;</span><br><span class="line">            res.setEncoding(<span class="string">'utf-8'</span>); </span><br><span class="line">        &#125;</span><br><span class="line">        res.on(<span class="string">'data'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">chunk</span>)</span>&#123;</span><br><span class="line">            chunks.push(chunk);</span><br><span class="line">        &#125;); </span><br><span class="line">        res.on(<span class="string">'end'</span>, <span class="function"><span class="keyword">function</span> (<span class="params"></span>)</span>&#123;</span><br><span class="line">            <span class="keyword">var</span> buffer = Buffer.concat(chunks);</span><br><span class="line">            <span class="keyword">if</span> (encoding == <span class="string">'gzip'</span>) &#123;</span><br><span class="line">                zlib.gunzip(buffer, <span class="function"><span class="keyword">function</span> (<span class="params">err, decoded</span>) </span>&#123;</span><br><span class="line">                    data = decoded.toString();</span><br><span class="line">                    callback( err, args, res.headers, data); </span><br><span class="line">                &#125;);</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (encoding == <span class="string">'deflate'</span>) &#123;</span><br><span class="line">                zlib.inflate(buffer, <span class="function"><span class="keyword">function</span> (<span class="params">err, decoded</span>) </span>&#123;</span><br><span class="line">                    data = decoded.toString();</span><br><span class="line">                    callback( err, args, res.headers, data); </span><br><span class="line">                &#125;);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                data = buffer.toString();</span><br><span class="line">                callback( <span class="literal">null</span>, args, res.headers, data);</span><br><span class="line">            &#125; </span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;);</span><br><span class="line">    req.write( args.contents ); </span><br><span class="line">    req.end();</span><br><span class="line">&#125;;</span><br><span class="line">get( options, args, <span class="function"><span class="keyword">function</span> (<span class="params">err, args, headers, data</span>)</span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'==&gt;header \n'</span>, headers);</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'==data \n'</span>, data);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/docker-container-hosts-mapping/" data-id="cjhq778ji005oizq3p1dt38pg" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/nodejs-gzip/" data-id="cjhq778r200f4izq386352xvv" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
@@ -111,10 +97,10 @@
 
 
   
-    <article id="post-ASCII-Unicode-UTF32-UTF16-UTF8-GB2312" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-feathersjs-global-hook" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/ASCII-Unicode-UTF32-UTF16-UTF8-GB2312/" class="article-date">
-  <time datetime="2017-02-02T07:46:29.000Z" itemprop="datePublished">2017-02-02</time>
+    <a href="/feathersjs-global-hook/" class="article-date">
+  <time datetime="2017-08-07T09:02:17.000Z" itemprop="datePublished">2017-08-07</time>
 </a>
     
   </div>
@@ -125,7 +111,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/ASCII-Unicode-UTF32-UTF16-UTF8-GB2312/">ASCII、Unicode、UTF-32、UTF-16、UTF-8、GB2312</a>
+      <a class="article-title" href="/feathersjs-global-hook/">feathersjs 全局 hook</a>
     </h1>
   
 
@@ -136,66 +122,12 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <div class="article-preview">
-            <h3 id="ASCII码"><a href="#ASCII码" class="headerlink" title="ASCII码"></a>ASCII码</h3><p>每一个二进制位（bit）有0和1两种状态，八个二进制位（一个字节byte）可以组合出256种状态，每一个状态对应一个符号，就是256个符号，从0000000到11111111。</p>
-<p>ASCII码有128个字符的编码，这128个符号（包括32个不能打印出来的控制符号），只占用了一个字节的后7位，第1位统一规定为0。比如空格”SPACE”是32（二进制00100000），大写的字母A是65（二进制01000001）。</p>
-<p>ASCII的最大缺点是只能显示26个基本拉丁字母、阿拉伯数目字和英式标点符号。而汉字就多达10万左右，用ASCII码表示肯定是不够的，因此必须使用多个字节表达一个符号。比如，简体中文常见的编码方式是GB2312，使用两个字节表示一个汉字，所以理论上最多可以表示256x256=65536个符号。</p>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/ASCII-Unicode-UTF32-UTF16-UTF8-GB2312/#more">Read More</a>
-          </p>
-        
+        <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> feathers = <span class="built_in">require</span>(<span class="string">'feathers'</span>)</span><br><span class="line"><span class="keyword">const</span> hooks = <span class="built_in">require</span>(<span class="string">'feathers-hooks'</span>)</span><br><span class="line"><span class="keyword">const</span> memory = <span class="built_in">require</span>(<span class="string">'feathers-memory'</span>)</span><br><span class="line"><span class="keyword">const</span> app = feathers()</span><br><span class="line">  .configure(hooks())</span><br><span class="line">  .use(<span class="string">'/todos'</span>, memory());</span><br><span class="line"></span><br><span class="line"><span class="comment">// 注册全局 hook</span></span><br><span class="line">app.hooks(&#123;</span><br><span class="line">  before(hook) &#123;</span><br><span class="line">    <span class="comment">// 设置进入时间</span></span><br><span class="line">    hook.start = <span class="keyword">new</span> <span class="built_in">Date</span>().getTime()</span><br><span class="line">  &#125;,</span><br><span class="line">  </span><br><span class="line">  after(hook) &#123;</span><br><span class="line">    <span class="keyword">const</span> services = hook.app.services</span><br><span class="line">    <span class="comment">// 查找当前服务的路径 Get the path for this service</span></span><br><span class="line">    <span class="keyword">const</span> path = <span class="built_in">Object</span>.keys(services).find(<span class="function"><span class="params">key</span> =&gt;</span> services[key] === <span class="keyword">this</span>)</span><br><span class="line">    <span class="comment">// 计算时长</span></span><br><span class="line">    <span class="keyword">const</span> duration = <span class="keyword">new</span> <span class="built_in">Date</span>().getTime() - hook.start</span><br><span class="line">    <span class="comment">// 打印耗时</span></span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">`<span class="subst">$&#123;path&#125;</span>::<span class="subst">$&#123;hook.method&#125;</span> took <span class="subst">$&#123;duration&#125;</span>ms`</span>)</span><br><span class="line">  &#125;,</span><br><span class="line">  </span><br><span class="line">  error(hook) &#123;</span><br><span class="line">    <span class="comment">// 打印错误</span></span><br><span class="line">    <span class="built_in">console</span>.error(hook.error)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">app.service(<span class="string">'todos'</span>).create(&#123;</span><br><span class="line">  text: <span class="string">`You have to do dishes`</span></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/ASCII-Unicode-UTF32-UTF16-UTF8-GB2312/" data-id="cjhq778f90004izq3mtwg0681" class="article-share-link">Share</a>
-     
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-js-define-property" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/js-define-property/" class="article-date">
-  <time datetime="2017-01-20T02:01:07.000Z" itemprop="datePublished">2017-01-20</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/js-define-property/">Object.defineProperty</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>为对象定义属性：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> obj = &#123;&#125;</span><br><span class="line"><span class="comment">// 方法1</span></span><br><span class="line">obj.name = <span class="string">'David'</span></span><br><span class="line"><span class="comment">// 方法2 </span></span><br><span class="line">obj[<span class="string">'name'</span>] = <span class="string">'David'</span></span><br><span class="line"><span class="comment">// 方法3</span></span><br><span class="line"><span class="built_in">Object</span>.defineProperty(obj, <span class="string">'name'</span>, &#123;</span><br><span class="line">    value : <span class="string">'David'</span></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/js-define-property/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/js-define-property/" data-id="cjhq778o500baizq3ncpur1qz" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/feathersjs-global-hook/" data-id="cjhq778k9006sizq3p4deg875" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
@@ -206,10 +138,10 @@
 
 
   
-    <article id="post-es-dynamic-script" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-angular-environment" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/es-dynamic-script/" class="article-date">
-  <time datetime="2017-01-13T01:49:29.000Z" itemprop="datePublished">2017-01-13</time>
+    <a href="/angular-environment/" class="article-date">
+  <time datetime="2017-08-07T09:02:17.000Z" itemprop="datePublished">2017-08-07</time>
 </a>
     
   </div>
@@ -220,7 +152,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/es-dynamic-script/">开启elasticsearch动态脚本功能</a>
+      <a class="article-title" href="/angular-environment/">Angular 环境配置</a>
     </h1>
   
 
@@ -231,18 +163,24 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <p>更新也可以通过使用简单的脚本来进行。这个例子使用一个脚本将age加5：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">curl -XPOST <span class="string">'localhost:9200/megacorp/employee/1/_update?pretty'</span> -d <span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "script" : "ctx._source.age += 5"</span></span><br><span class="line"><span class="string">&#125;'</span></span><br></pre></td></tr></table></figure>
-<p>但会报错：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;error&quot; : &#123;</span><br><span class="line">    &quot;root_cause&quot; : [ &#123;</span><br><span class="line">      &quot;type&quot; : &quot;remote_transport_exception&quot;,</span><br><span class="line">      &quot;reason&quot; : &quot;[Professor X][127.0.0.1:9302][indices:data/write/update[s]]&quot;</span><br><span class="line">    &#125; ],</span><br><span class="line">    &quot;type&quot; : &quot;illegal_argument_exception&quot;,</span><br><span class="line">    &quot;reason&quot; : &quot;failed to execute script&quot;,</span><br><span class="line">    &quot;caused_by&quot; : &#123;</span><br><span class="line">      &quot;type&quot; : &quot;script_exception&quot;,</span><br><span class="line">      &quot;reason&quot; : &quot;scripts of type [inline], operation [update] and lang [groovy] are disabled&quot;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  &quot;status&quot; : 400</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>因为新版本的elasticsearch中，基于安全考虑，默认禁用了动态脚本功能，可以通过修改配置文件开启动态脚本功能：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 编辑 config/elasticsearch.yml 文件，添加</span></span><br><span class="line">script.inline: on</span><br><span class="line">script.indexed: on</span><br><span class="line">script.file: on</span><br></pre></td></tr></table></figure>
+        <p>用angular-cli创建项目之后在 <code>/src/app</code> 有个 environment 文件夹，里面有两个默认环境配置文件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">├── environment.ts</span><br><span class="line">├── environment.prod.ts</span><br></pre></td></tr></table></figure>
+<p>使用方法：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 开发环境</span></span><br><span class="line">$ ng serve --environment=production <span class="comment"># ng s -prod</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 生产环境</span></span><br><span class="line">$ ng build --environment=production <span class="comment"># ng b -prod</span></span><br></pre></td></tr></table></figure>
+<p>还可以自定义环境，例如增加一个 <code>environment.hello.ts</code>，内容为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">export const environment = &#123;  </span><br><span class="line">  production: false,</span><br><span class="line">  envName: &apos;hello&apos;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>语法 <code>ng s -prod</code> 不适用于自定义环境，不过可以用 <code>ng s -e hello</code> 或者 <code>ng build --env=hello</code>，不过会报错：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ng s -e hello</span><br><span class="line">Environment <span class="string">"hello"</span> does not exist.</span><br></pre></td></tr></table></figure>
+<p>因为还需要在 <code>.angular.cli.json</code> 配置文件中注册一下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&quot;environments&quot;: &#123;</span><br><span class="line">	&quot;dev&quot;: &quot;environments/environment.ts&quot;,</span><br><span class="line">	&quot;prod&quot;: &quot;environments/environment.prod.ts&quot;,</span><br><span class="line">	&quot;hello&quot;: &quot;environments/environment.hello.ts&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/es-dynamic-script/" data-id="cjhq778jx0067izq3a98kr3eu" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/angular-environment/" data-id="cjhq778he002xizq3gimtderb" class="article-share-link">Share</a>
      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
     </footer>
   </div>
   
@@ -250,10 +188,10 @@
 
 
   
-    <article id="post-ajax-request-in-chrome-console" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-write-package-run-both-in-browser-and-nodejs" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/ajax-request-in-chrome-console/" class="article-date">
-  <time datetime="2017-01-11T07:36:36.000Z" itemprop="datePublished">2017-01-11</time>
+    <a href="/write-package-run-both-in-browser-and-nodejs/" class="article-date">
+  <time datetime="2017-08-07T08:59:32.000Z" itemprop="datePublished">2017-08-07</time>
 </a>
     
   </div>
@@ -264,7 +202,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/ajax-request-in-chrome-console/">在控制台发送 ajax 请求</a>
+      <a class="article-title" href="/write-package-run-both-in-browser-and-nodejs/">写一个在浏览器和node.js中都能用的包</a>
     </h1>
   
 
@@ -276,20 +214,23 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <p>浏览器控制台是个非常强大的工具，有一次浏览某网站的时候，想把部分数据保存在本地，但浏览器并未提供读写本地文件的接口，于是想到自己搭建一个 server，然后通过 ajax 请求发送给服务器保存。</p>
-<p>假如我们想要保存的数据在 id 为 info 的 div 中，可以用下面的命令获取全部文本数据：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">document</span>.querySelector(<span class="string">'#info'</span>).textContent</span><br></pre></td></tr></table></figure>
-<p>然后用 express 搭建了一个server，读取 POST 请求的 body，然后保存到本地。</p>
+            <p>浏览器并不能识别node中的模块机制，module和exports都是未定义的，所以直接在浏览器中引用node中的包就会报错：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Uncaught ReferenceError: module/exports is not defined</span><br></pre></td></tr></table></figure>
+<p>假如我们写一个非常简单的node包：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//student.js</span></span><br><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">    name: <span class="string">'David'</span>,</span><br><span class="line">    age: <span class="number">20</span>,</span><br><span class="line">    say: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="keyword">this</span>.name)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在node中这么用：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> student = <span class="built_in">require</span>(<span class="string">'./student'</span>);</span><br><span class="line">student.say();</span><br></pre></td></tr></table></figure>
+<p>如果要让这个模块在node和浏览器中都能直接使用，可以这么写：</p>
         </div>
         
           <p class="article-more-link">
-            <a href="/ajax-request-in-chrome-console/#more">Read More</a>
+            <a href="/write-package-run-both-in-browser-and-nodejs/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/ajax-request-in-chrome-console/" data-id="cjhq778h0002bizq37z16dfmn" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/write-package-run-both-in-browser-and-nodejs/" data-id="cjhq778vp00k2izq3pd96i0nw" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
@@ -300,10 +241,10 @@
 
 
   
-    <article id="post-solve-math-puzzle-using-javascript" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-webstorm-regex-replace" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/solve-math-puzzle-using-javascript/" class="article-date">
-  <time datetime="2017-01-08T07:15:20.000Z" itemprop="datePublished">2017-01-08</time>
+    <a href="/webstorm-regex-replace/" class="article-date">
+  <time datetime="2017-08-07T08:32:07.000Z" itemprop="datePublished">2017-08-07</time>
 </a>
     
   </div>
@@ -314,218 +255,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/solve-math-puzzle-using-javascript/">用JavaScript求解趣味题目</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>今天看到一道有意思的题目：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">在数字1 2 3 4 5 6 7 8 9之间填加减号（也可以不填，这个时候就任务相邻的数字拼成了多位数），使得运算结果等于100。例如：</span><br><span class="line"></span><br><span class="line">12 + 3 - 4 + 5 + 67 + 8 + 9 = 100</span><br><span class="line">1 + 2 + 3 - 4 + 5 + 6 + 78 + 9 = 100</span><br><span class="line">1 + 23 - 4 + 56 + 7 + 8 + 9 = 100</span><br><span class="line"></span><br><span class="line">你能找出多少个这样的等式？</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/solve-math-puzzle-using-javascript/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/solve-math-puzzle-using-javascript/" data-id="cjhq778sr00h4izq3w2p9i0af" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-rename-files-using-nodejs" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/rename-files-using-nodejs/" class="article-date">
-  <time datetime="2017-01-03T07:53:55.000Z" itemprop="datePublished">2017-01-03</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/rename-files-using-nodejs/">nodejs给文件重命名</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>进行文件操作之前需要引入两个包：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> fs = <span class="built_in">require</span>(<span class="string">"fs"</span>);</span><br><span class="line"><span class="keyword">const</span> path = <span class="built_in">require</span>(<span class="string">'path'</span>);</span><br></pre></td></tr></table></figure>
-<p>定义一个函数，把指定文件夹下面所有文件或文件夹都加上<code>rename_</code>前缀</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">rename</span>(<span class="params">dir</span>) </span>&#123;</span><br><span class="line">    fs.readdir(dir, <span class="function"><span class="keyword">function</span> (<span class="params">err, files</span>) </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; files.length; i++) &#123;</span><br><span class="line">            <span class="keyword">let</span> f = files[i]</span><br><span class="line">            <span class="keyword">let</span> prefix = <span class="string">'rename_'</span></span><br><span class="line">            fs.rename(dir + <span class="string">'/'</span> + f, dir + <span class="string">'/'</span> + prefix + f, <span class="function"><span class="keyword">function</span> (<span class="params">err</span>) </span>&#123;</span><br><span class="line">                <span class="keyword">if</span> (err) <span class="keyword">throw</span> err;</span><br><span class="line">                <span class="built_in">console</span>.log(f + <span class="string">' --&gt; '</span> + prefix + f);</span><br><span class="line">            &#125;)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/rename-files-using-nodejs/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/rename-files-using-nodejs/" data-id="cjhq778s500geizq3zj9h4ylm" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-generate-DOM-using-LaTeX" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/generate-DOM-using-LaTeX/" class="article-date">
-  <time datetime="2017-01-03T07:53:55.000Z" itemprop="datePublished">2017-01-03</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/generate-DOM-using-LaTeX/">利用LaTeX生成DOM树</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>如何直观的看DOM结构呢？例如：</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"root"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">H2</span>&gt;</span>Welcome<span class="tag">&lt;/<span class="name">H2</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">ul</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">li</span>&gt;</span>name: Davlid<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">li</span>&gt;</span>age: 20<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">ul</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span>&gt;</span>Congratulations!<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<ol>
-<li><p>忽略空节点，保留文本节点的DOM树：</p>
-<p> <img src="http://7xsy2w.com1.z0.glb.clouddn.com/blog/latexTreeIngoreEmptyTextNode.png" alt="latexTreeIngoreEmptyTextNode"></p>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/generate-DOM-using-LaTeX/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/generate-DOM-using-LaTeX/" data-id="cjhq778kr007iizq3ma0py5cx" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-mac-proxychains" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/mac-proxychains/" class="article-date">
-  <time datetime="2016-12-10T02:03:07.000Z" itemprop="datePublished">2016-12-10</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/mac-proxychains/">使用 proxychains 作为 Mac 的终端代理</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>安装 proxychains4</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install proxychains-ng</span><br></pre></td></tr></table></figure>
-<p>找到 proxychains4 配置文件所在的位置：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">~/.proxychains/proxychains.conf</span><br><span class="line"><span class="comment"># 或者</span></span><br><span class="line">/usr/<span class="built_in">local</span>/etc/proxychains.conf</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>可用 <code>proxychains4 printenv | grep PROXYCHAINS_CONF_FILE</code> 命令找到。</p>
-</blockquote>
-<p>在配置文件中 <code>[ProxyList]</code> 区域下添加一行：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">socks5  127.0.0.1 1086</span><br></pre></td></tr></table></figure>
-<p>以后使用代理的时候加上 <code>proxychains4</code> 就行了，例如：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">proxychains4 npm install </span><br><span class="line">proxychains4 curl ip.cn</span><br></pre></td></tr></table></figure>
-<p>【更新】macOS 10.11 后下由于开启了 SIP（System Integrity Protection） 会导致命令行下 proxychains-ng 代理的模式失效，如果要使用 proxychains-ng 这种简单的方法，就需要先关闭 SIP。关闭方法如下：</p>
-<ul>
-<li>部分关闭 SIP</li>
-</ul>
-<blockquote>
-<p>重启Mac，按住Option键进入启动盘选择模式，再按⌘ + R进入Recovery模式。<br>实用工具（Utilities）-&gt; 终端（Terminal）。<br>输入命令<code>csrutil enable --without debug</code>运行。<br>重启进入系统后，终端里输入 csrutil status，结果中如果有 Debugging Restrictions: disabled 则说明关闭成功。</p>
-</blockquote>
-<ul>
-<li>完全关闭 SIP</li>
-</ul>
-<blockquote>
-<p>重启Mac，按住Option键进入启动盘选择模式，再按⌘ + R进入Recovery模式。<br>实用工具（Utilities）-&gt; 终端（Terminal）。<br>输入命令<code>csrutil disable</code>运行。<br>重启进入系统后，终端里输入 csrutil status，结果中如果有 System Integrity Protection status:disabled. 则说明关闭成功。</p>
-</blockquote>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/mac-proxychains/" data-id="cjhq778pe00cwizq3ytnmxz65" class="article-share-link">Share</a>
-     
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-angular-common-errors" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/angular-common-errors/" class="article-date">
-  <time datetime="2016-11-10T07:04:34.000Z" itemprop="datePublished">2016-11-10</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/angular-common-errors/">Angular2常见错误</a>
+      <a class="article-title" href="/webstorm-regex-replace/">WebStorm正则替换</a>
     </h1>
   
 
@@ -538,19 +268,286 @@
       
         <div class="article-preview">
             <ol>
-<li><p>不是已知元素</p>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Unhandled Promise rejection: Template parse errors:</span><br><span class="line">&apos;hello&apos; is not a known element:</span><br><span class="line">1. If &apos;hello&apos; is an Angular component, then verify that it is part of this module.</span><br><span class="line">2. If &apos;hello&apos; is a Web Component then add &quot;CUSTOM_ELEMENTS_SCHEMA&quot; to the &apos;@NgModule.schemas&apos; of this component to suppress this message. (&quot;&lt;h1&gt;My First Angular App&lt;/h1&gt;</span><br></pre></td></tr></table></figure>
-<p> 组件没有注册。</p>
+<li><p>驼峰转下划线<code>\l</code></p>
+<p> 查找: <code>([A-Z])</code><br> 替换: <code>_\l$1</code></p>
+<p> <code>someThing -&gt; some_thing</code></p>
+</li>
+<li><p>大写转小写<code>\L</code></p>
+<p> 查找: <code>(\w*)</code><br> 替换: <code>\L$1</code></p>
+<p> <code>SOMETHING -&gt; something</code></p>
+</li>
+<li><p>小写转大写<code>\U</code></p>
+<p> 查找: <code>(\w*)</code><br> 替换: <code>\U$1</code></p>
+<p> <code>something -&gt; SOMETHING</code></p>
+</li>
+</ol>
         </div>
         
           <p class="article-more-link">
-            <a href="/angular-common-errors/#more">Read More</a>
+            <a href="/webstorm-regex-replace/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/angular-common-errors/" data-id="cjhq778h6002lizq3qc6qypdk" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/webstorm-regex-replace/" data-id="cjhq778vc00jkizq31w5rkmdf" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-eslint-switch" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/eslint-switch/" class="article-date">
+  <time datetime="2017-08-07T08:32:07.000Z" itemprop="datePublished">2017-08-07</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/eslint-switch/">ESLint switch 缩进错误</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>ESLint 提示 switch-case 语句的缩进错误: </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Expected indentation of 8 space characters but found 12.</span><br></pre></td></tr></table></figure>
+<p>只有把switch内的case缩进全都和switch对齐才能消除这个错误。ESLint 的 indent 参数有个控制 switch-case 缩进大小的属性，叫 SwitchCase，默认是0，代表没有任何缩进（文档参考），把他改成1（代表进行1个单位的缩进）代码就通过验证了，配置类似这样：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"rules"</span>: &#123;</span><br><span class="line">        <span class="attr">"indent"</span>: [<span class="number">2</span>, <span class="number">4</span>, &#123;<span class="attr">"SwitchCase"</span>: <span class="number">1</span>&#125;]</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/eslint-switch/" data-id="cjhq778k3006iizq3qmpq01u5" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-linux-alias" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/linux-alias/" class="article-date">
+  <time datetime="2017-08-07T08:32:07.000Z" itemprop="datePublished">2017-08-07</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/linux-alias/">取消别名</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>有些系统中 <code>cp</code> 命令被映射到 <code>cp -i</code>，下面的命令可以查看所有别名：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">alias</span></span><br><span class="line"><span class="built_in">alias</span> cp=<span class="string">'cp -i'</span></span><br><span class="line"><span class="built_in">alias</span> diff=<span class="string">'diff -u'</span></span><br><span class="line">....</span><br></pre></td></tr></table></figure>
+<p>可以临时取消别名使用原先的命令，例如使用 zsh，gm 是 <code>git merge</code> 的别名。但按照了 graphic magic 之后呢，gm 代表图片剪裁命令，此时使用 <code>\gm</code> 就能取消别名，使用本身：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">$ alias gm</span><br><span class="line">gm=&apos;git merge&apos;</span><br><span class="line">$ gm</span><br><span class="line">fatal: Not a git repository (or any of the parent directories): .git</span><br><span class="line">$ \gm</span><br><span class="line">GraphicsMagick 1.3.23 2015-11-07 Q8 http://www.GraphicsMagick.org/</span><br><span class="line">Copyright (C) 2002-2015 GraphicsMagick Group.</span><br><span class="line">Additional copyrights and licenses apply to this software.</span><br><span class="line">See http://www.GraphicsMagick.org/www/Copyright.html for details.</span><br><span class="line">Usage: gm command [options ...]</span><br><span class="line"></span><br><span class="line">Where commands include: </span><br><span class="line">      batch - issue multiple commands in interactive or batch mode</span><br><span class="line">  benchmark - benchmark one of the other commands</span><br><span class="line">    compare - compare two images</span><br><span class="line">  composite - composite images together</span><br><span class="line">    conjure - execute a Magick Scripting Language (MSL) XML script</span><br><span class="line">    convert - convert an image or sequence of images</span><br><span class="line">       help - obtain usage message for named command</span><br><span class="line">   identify - describe an image or image sequence</span><br><span class="line">    mogrify - transform an image or sequence of images</span><br><span class="line">    montage - create a composite image (in a grid) from separate images</span><br><span class="line">       time - time one of the other commands</span><br><span class="line">    version - obtain release version</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/linux-alias/" data-id="cjhq778oo00byizq3mq3kogth" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-quick-install-node-sass" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/quick-install-node-sass/" class="article-date">
+  <time datetime="2017-08-07T08:29:07.000Z" itemprop="datePublished">2017-08-07</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/quick-install-node-sass/">快速安装 node-sass</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>国内安装 <a href="https://github.com/sass/node-sass" target="_blank" rel="noopener">node-sass</a> 的时候总是失败，因为安装 <code>node-sass</code> 时在 <code>node scripts/install</code> 阶段会从 github.com 上下载一个 <code>.node</code> 文件，而 GitHub Releases 里的文件都是托管在 <code>s3.amazonaws.com</code> 上面的，这个网址在国内很慢，下面两种方法可以解决这个问题：</p>
+<ol>
+<li><p>使用淘宝镜像</p>
+<p> macOS 运行下面的命令即可：</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SASS_BINARY_SITE=https://npm.taobao.org/mirrors/node-sass/ npm install node-sass</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<pre><code>windows 需要拆分成两个命令：
+
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">set</span> SASS_BINARY_SITE=https://npm.taobao.org/mirrors/node-sass/</span><br><span class="line">npm install node-sass</span><br></pre></td></tr></table></figure>
+
+
+&gt; 注意：set 设置的环境变量只在当前控制台生效，只是临时的，要永久设置需要用 setx 命令。
+
+更好的做法是在项目内添加一个 `.npmrc` 文件：
+
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sass_binary_site=https://npm.taobao.org/mirrors/node-sass/</span><br><span class="line">phantomjs_cdnurl=https://npm.taobao.org/mirrors/phantomjs/</span><br><span class="line">electron_mirror=https://npm.taobao.org/mirrors/electron/</span><br><span class="line">registry=https://registry.npm.taobao.org</span><br></pre></td></tr></table></figure>
+
+
+这样就能跨平台直接使用 `npm install` 安装所有依赖，且 `node-sass`、`electron` 和 `phantomjs` 都能自动从淘宝源上下载，不过要注意的是在使用 `npm publish` 的时候要把 `registry` 这一行给注释掉，否则就会发布到淘宝源上去了。
+</code></pre><ol>
+<li><p>使用梯子</p>
+<p> 假设你的梯子在你本地机器上开启了一个第三方服务器 <code>127.0.0.1:1080</code>，那么只需按照下面的方法配置一下就能正常安装 <code>node-sass</code> 了（如果你开启的是 PAC 模式而不是全局模式，那还需要将 <code>s3.amazonaws.com</code> 加入 PAC 列表）：</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">npm config <span class="built_in">set</span> proxy http://127.0.0.1:1080</span><br><span class="line">npm i node-sass</span><br><span class="line"></span><br><span class="line"><span class="comment"># 下载完成后删除 http 代理</span></span><br><span class="line">npm config delete proxy</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<pre><code>或者在 shell 下开启代理：
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">function proxy_off()&#123;</span><br><span class="line">    unset http_proxy</span><br><span class="line">    unset https_proxy</span><br><span class="line">    echo -e &quot;已关闭代理&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">function proxy_on() &#123;</span><br><span class="line">    export no_proxy=&quot;localhost,127.0.0.1,localaddress,.localdomain.com&quot;</span><br><span class="line">    export http_proxy=&quot;http://127.0.0.1:1080&quot;</span><br><span class="line">    export https_proxy=$http_proxy</span><br><span class="line">    echo -e &quot;已开启代理&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+每次 `npm install` 前用 `proxy_on` 开启代理即可。 
+</code></pre>
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/quick-install-node-sass/" data-id="cjhq778rp00fwizq3xa955i1f" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-mongodb-shell-pretty" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/mongodb-shell-pretty/" class="article-date">
+  <time datetime="2017-08-07T08:28:09.000Z" itemprop="datePublished">2017-08-07</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/mongodb-shell-pretty/">mongodb shell 开启 pretty 模式</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>mongodb shell 默认开启 pretty 模式</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">db.collection.find().pretty()</span><br></pre></td></tr></table></figure>
+<p>还可以在 <code>$HOME/.mongorc.js</code> 中加下面的命令全局启用漂亮打印：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DBQuery.prototype._prettyShell = <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+<p>或者在命令行执行下面的操作：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> DBQuery.prototype._prettyShell = <span class="literal">true</span> &gt;&gt; ~/.mongorc.js</span><br></pre></td></tr></table></figure>
+<p>它总是会输出很好的结果。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/mongodb-shell-pretty/" data-id="cjhq778q000dqizq3k2m6c9yl" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-print-object-in-javascript" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/print-object-in-javascript/" class="article-date">
+  <time datetime="2017-08-07T05:47:47.000Z" itemprop="datePublished">2017-08-07</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/print-object-in-javascript/">console.log打印完整对象</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>想在控制台输出下面的对象：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> obj = &#123;</span><br><span class="line">   <span class="string">"a"</span>:<span class="string">"a"</span>,</span><br><span class="line">   <span class="string">"b"</span>:&#123;</span><br><span class="line">      <span class="string">"c"</span>:<span class="string">"c"</span>,</span><br><span class="line">      <span class="string">"d"</span>:&#123;</span><br><span class="line">         <span class="string">"e"</span>:<span class="string">"e"</span>,</span><br><span class="line">         <span class="string">"f"</span>:&#123;</span><br><span class="line">            <span class="string">"g"</span>:<span class="string">"g"</span>,</span><br><span class="line">            <span class="string">"h"</span>:&#123;</span><br><span class="line">               <span class="string">"i"</span>:<span class="string">"i"</span></span><br><span class="line">            &#125;</span><br><span class="line">         &#125;</span><br><span class="line">      &#125;</span><br><span class="line">   &#125;</span><br><span class="line">&#125;;    </span><br><span class="line"><span class="built_in">console</span>.log(obj);</span><br></pre></td></tr></table></figure>
+<p>输出结果是：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123; a: &apos;a&apos;, b: &#123; c: &apos;c&apos;, d: &#123; e: &apos;e&apos;, f: [Object] &#125; &#125; &#125;</span><br></pre></td></tr></table></figure>
+<p>如何让一个对象完整的输出呢？可以用下面的办法：</p>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/print-object-in-javascript/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/print-object-in-javascript/" data-id="cjhq778rd00fkizq3gphdspmo" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
@@ -564,7 +561,7 @@
 
 
   <nav id="page-nav">
-    <a class="extend prev" rel="prev" href="/page/22/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/21/">21</a><a class="page-number" href="/page/22/">22</a><span class="page-number current">23</span><a class="page-number" href="/page/24/">24</a><a class="page-number" href="/page/25/">25</a><span class="space">&hellip;</span><a class="page-number" href="/page/39/">39</a><a class="extend next" rel="next" href="/page/24/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/22/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/21/">21</a><a class="page-number" href="/page/22/">22</a><span class="page-number current">23</span><a class="page-number" href="/page/24/">24</a><a class="page-number" href="/page/25/">25</a><span class="space">&hellip;</span><a class="page-number" href="/page/47/">47</a><a class="extend next" rel="next" href="/page/24/">Next &raquo;</a>
   </nav>
 </section>
 
@@ -579,7 +576,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mongodb/">mongodb</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
     </div>
   </div>
 
@@ -589,7 +586,7 @@
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2018 zju.date
+      &copy; 2019 zju.date
       &nbsp;&nbsp;&nbsp;
       contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
     </div>

@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="docker 默认的日志驱动是 json-file，即保存在文件中，路径可以通过下面的命令查看： 1docker inspect --format=&apos;&amp;#123;&amp;#123;.LogPath&amp;#125;&amp;#125;&apos; NAME|ID 例如： 12$ docker inspect --format=&apos;&amp;#123;&amp;#123;.LogPath&amp;#125;&amp;#125;&apos; mysql/var/lib/do">
+<meta name="keywords" content="Docker">
+<meta property="og:type" content="article">
+<meta property="og:title" content="docker 日志收集">
+<meta property="og:url" content="https://zju.date/docker-log-driver/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="docker 默认的日志驱动是 json-file，即保存在文件中，路径可以通过下面的命令查看： 1docker inspect --format=&apos;&amp;#123;&amp;#123;.LogPath&amp;#125;&amp;#125;&apos; NAME|ID 例如： 12$ docker inspect --format=&apos;&amp;#123;&amp;#123;.LogPath&amp;#125;&amp;#125;&apos; mysql/var/lib/do">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-01-07T02:58:09.415Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="docker 日志收集">
+<meta name="twitter:description" content="docker 默认的日志驱动是 json-file，即保存在文件中，路径可以通过下面的命令查看： 1docker inspect --format=&apos;&amp;#123;&amp;#123;.LogPath&amp;#125;&amp;#125;&apos; NAME|ID 例如： 12$ docker inspect --format=&apos;&amp;#123;&amp;#123;.LogPath&amp;#125;&amp;#125;&apos; mysql/var/lib/do">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-docker-log-driver" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/docker-log-driver/" class="article-date">
+  <time datetime="2018-10-01T23:58:23.000Z" itemprop="datePublished">2018-10-02</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      docker 日志收集
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>docker 默认的日志驱动是 json-file，即保存在文件中，路径可以通过下面的命令查看：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker inspect --format=<span class="string">'&#123;&#123;.LogPath&#125;&#125;'</span> NAME|ID</span><br></pre></td></tr></table></figure>
+<p>例如：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ docker inspect --format=<span class="string">'&#123;&#123;.LogPath&#125;&#125;'</span> mysql</span><br><span class="line">/var/lib/docker/containers/54571b675a6b52f70aea806977359d8bcd74543cb09e1aa139853113f835d1c4/54571b675a6b52f70aea806977359d8bcd74543cb09e1aa139853113f835d1c4-json.log</span><br></pre></td></tr></table></figure>
+<p>json-file 驱动会在启动某个容器时自动创建一个 json 文件，用于存储容器 stdout 与 stderr 输出的内容 ，当在宿主机中运行 <code>docker logs -f 容器名</code> 时，就会读取该文件的内容并显示在终端上。</p>
+<a id="more"></a>
+<p>如果日志文件特别大可以通过下面的命令清空：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">truncate -s 0 &lt;logfile&gt;</span><br></pre></td></tr></table></figure>
+<p>在 <code>/etc/docker/daemon.json</code> 中可以设置日志文件的大小和数量的全局默认值：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"log-driver"</span>: <span class="string">"json-file"</span>,</span><br><span class="line">  <span class="attr">"log-opts"</span>: &#123;</span><br><span class="line">    <span class="attr">"max-size"</span>: <span class="string">"10m"</span>,</span><br><span class="line">    <span class="attr">"max-file"</span>: <span class="string">"10"</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>也可以在启动容器时指定配置，此时会覆盖全局默认值：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">docker run \</span><br><span class="line">    --<span class="built_in">log</span>-driver json-file \</span><br><span class="line">    --<span class="built_in">log</span>-opt max-size=10m \</span><br><span class="line">    --<span class="built_in">log</span>-opt max-file=10 \</span><br><span class="line">    alpine <span class="built_in">echo</span> hello world</span><br></pre></td></tr></table></figure>
+<p>在 docker-compose 文件中的写法是：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">'3.2'</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line"><span class="attr">  nginx:</span></span><br><span class="line"><span class="attr">    image:</span> <span class="string">'nginx:latest'</span></span><br><span class="line"><span class="attr">    ports:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">'80:80'</span></span><br><span class="line"><span class="attr">    logging:</span></span><br><span class="line"><span class="attr">      driver:</span> <span class="string">"json-file"</span></span><br><span class="line"><span class="attr">      options:</span></span><br><span class="line"><span class="attr">        max-size:</span> <span class="string">"1k"</span></span><br><span class="line"><span class="attr">        max-file:</span> <span class="string">"3"</span></span><br></pre></td></tr></table></figure>
+<p>以上方式并不能满足大规模 docker 集群的日志管理要求，需要有一个集中的日志收集平台，logspout 就是这样的一个开源项目，它可以将其所在主机上的其它 docker 容器的日志路由到所配置的任何地方，即能够捕获其它容器中的程序发送到 stdout 和 stderr 的日志，然后转发所有 docker 容器的日志到远程服务器。例如我们通过下面的命令启动了 syslog 中央服务器：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用默认配置</span></span><br><span class="line">docker run --name syslog -p 514:514 -d rsyslog/syslog_appliance_alpine</span><br><span class="line"><span class="comment"># 自定义配置</span></span><br><span class="line">docker run --name syslog \</span><br><span class="line">-p 514:514 -d \</span><br><span class="line">-v /devops/syslog/rsyslog.conf:/etc/rsyslog.conf \</span><br><span class="line">-v /devops/syslog/api.conf:/etc/rsyslog.conf.d/api.conf \</span><br><span class="line">rsyslog/syslog_appliance_alpine</span><br></pre></td></tr></table></figure>
+<p>进入这个容器：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it syslog sh</span><br></pre></td></tr></table></figure>
+<p>找到日志目录 <code>/logs</code>，下面有个 <code>debug</code> 文件，持续观察该文件的输出：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tail -f debug</span><br></pre></td></tr></table></figure>
+<p>注意：logspout 是一个无状态的容器化程序，并不是用来管理日志文件或查看日志的，它主要是用于将主机上容器的日志发送到其它地方，例如上面的 syslog 服务器。我们启动 logspout 容器：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">docker run --name=<span class="string">"logspout"</span> \</span><br><span class="line">--volume=/var/run/docker.sock:/var/run/docker.sock \</span><br><span class="line">gliderlabs/logspout \</span><br><span class="line">syslog+tls://syslog:514</span><br></pre></td></tr></table></figure>
+<p>logspout 会将日志发送给位于 <code>syslog:514</code> 的 syslog 程序，并且使用了 tls 加密传输选项。为了方便测试，可以用临时搭建一个中央 syslog 服务器：如果要指定多个日志目标终端，只需使用逗号将多个 URI 分隔开。这样就可以使用 logstash 从日志服务器读取 swarm 集群中所有容器的数据，并输出到 elasticsearch 中了，</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">input &#123;</span><br><span class="line">    syslog&#123;</span><br><span class="line">    	port =&gt; <span class="string">"5555"</span></span><br><span class="line">    	type =&gt; <span class="string">"swarm"</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">output &#123;</span><br><span class="line">    <span class="keyword">if</span> [type] == <span class="string">"swarm"</span> &#123;</span><br><span class="line">        elasticsearch &#123;</span><br><span class="line">            hosts =&gt; [<span class="string">"10.10.39.116:9200"</span>,<span class="string">"10.10.39.117:9200"</span>]</span><br><span class="line">            index =&gt; <span class="string">"syslog-%&#123;+YYYY.MM.dd&#125;"</span></span><br><span class="line">            workers =&gt; <span class="number">1</span></span><br><span class="line">            flush_size =&gt; <span class="number">1</span></span><br><span class="line">            idle_flush_time =&gt; <span class="number">1</span></span><br><span class="line">            template_overwrite =&gt; <span class="literal">true</span></span><br><span class="line">        &#125;</span><br><span class="line">    	stdout&#123;codec =&gt; rubydebug&#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>logstash 的配置文件：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">"3"</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line"><span class="attr">    api:</span></span><br><span class="line"><span class="attr">        image:</span> <span class="string">xxx</span></span><br><span class="line"><span class="attr">        command:</span> <span class="string">xxx</span></span><br><span class="line"><span class="attr">    ports:</span></span><br><span class="line"><span class="bullet">        -</span> <span class="number">10080</span><span class="string">:9900</span></span><br><span class="line"><span class="attr">    logging:</span></span><br><span class="line"><span class="attr">        driver:</span> <span class="string">syslog</span></span><br><span class="line"><span class="attr">        options:</span></span><br><span class="line"><span class="attr">            syslog-address:</span> <span class="string">"tcp://your-syslog-server:5555"</span></span><br><span class="line"><span class="attr">            tag:</span> <span class="string">"<span class="template-variable">&#123;&#123;.ImageName&#125;&#125;</span>/<span class="template-variable">&#123;&#123;.Name&#125;&#125;</span>/<span class="template-variable">&#123;&#123;.ID&#125;&#125;</span>"</span></span><br></pre></td></tr></table></figure>
+<p>也可以直接交给 logstash 预处理，不过需要重新构建 logspout 来增加或减少新的模块。默认的 logspout 包含很多内建模块，如果需要将日志路由到 kafka，logstash 等程序，需要通过编辑 modules.go 文件来添加第三方模块。GitHub 上有已经添加好的库 <a href="https://github.com/Bekt/logspout-logstash" target="_blank" rel="noopener">bekt</a> 可以直接用：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">logspout:</span></span><br><span class="line"><span class="attr">  image:</span> <span class="string">bekt/logspout-logstash</span></span><br><span class="line"><span class="attr">  environment:</span></span><br><span class="line"><span class="attr">    ROUTE_URIS:</span> <span class="string">'logstash://logstash:5000'</span></span><br><span class="line"><span class="attr">  volumes:</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">/var/run/docker.sock:/var/run/docker.sock</span></span><br></pre></td></tr></table></figure>
+<p><code>ROUTE_URIS=logstash://host:port</code> 是 Logstash 服务的地址，默认情况下采用 UDP 协议，也可以使用 TCP：<code>ROUTE_URIS=logstash+tcp://host:port</code></p>
+<p>logstash 的配置：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">logstash:</span></span><br><span class="line"><span class="attr">  image:</span> <span class="string">docker.elastic.co/logstash/logstash:6.4.0</span></span><br><span class="line"><span class="attr">  volumes:</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">./logstash.conf:/usr/share/logstash/pipeline/logstash.conf</span></span><br></pre></td></tr></table></figure>
+<p>logstash.config 文件配置：</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">input &#123;</span><br><span class="line">  udp &#123;</span><br><span class="line">    port  =&gt; <span class="number">5000</span></span><br><span class="line">    codec =&gt; json</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">filter &#123;</span><br><span class="line">  <span class="keyword">if</span> [docker][image] =~ <span class="regexp">/logstash/</span> &#123;</span><br><span class="line">    drop &#123; &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">output &#123;</span><br><span class="line">  elasticsearch &#123; hosts =&gt; [<span class="string">"elasticsearch:9200"</span>] &#125;</span><br><span class="line">  stdout &#123; codec =&gt; rubydebug &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>input：表示 logstash 监听在 udp 的 5000 端口收集数据。</li>
+<li>filter：过滤器，表示过滤掉 image 为 logstash 的容器实例上报上来的数据。</li>
+<li>output：表示如何上报过滤后的数据，这里是通过 9200 端口上报到 elasticsearch 数据库。</li>
+</ul>
+<p>默认情况下，logspout 会将它所在主机上所有满足前面条件容器的日志都进行路由，如果需要它忽略某个容器，可以在启动容器时设置环境变量 <code>-e &#39;LOGSPOUT=ignore&#39;</code>，这样此容器的日志便会被logspout忽略。</p>
+<p>在 swarm 集群下，需要在每个节点收集该节点下所有容器的日志，需要把 logspout 定义为全局服务（global service）：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">docker service create --name logspout \</span><br><span class="line">    --mode global \</span><br><span class="line">    --mount <span class="string">"type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock"</span> \</span><br><span class="line">    gliderlabs/logspout syslog+tcp://<span class="variable">$SYSLOG_HOST</span>:514?filter.name=api*</span><br></pre></td></tr></table></figure>
+<p>可以通过下面的命令查看全局服务：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker service ps logspout</span><br></pre></td></tr></table></figure>
+<p>或者使用 yaml 文件：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">'3'</span></span><br><span class="line"></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line"></span><br><span class="line"><span class="attr">  logspout:</span></span><br><span class="line"><span class="attr">    image:</span> <span class="string">gliderlabs/logspout:latest</span></span><br><span class="line"><span class="attr">    environment:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">SYSLOG_HOST=$SYSLOG_HOST</span></span><br><span class="line"><span class="attr">    volumes:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">/etc/hostname:/etc/host_hostname:ro</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">/var/run/docker.sock:/var/run/docker.sock</span></span><br><span class="line"><span class="attr">    command:</span></span><br><span class="line">      <span class="string">syslog+tcp://$SYSLOG_HOST:514</span></span><br><span class="line"><span class="attr">    ports:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="number">8000</span><span class="string">:80</span></span><br><span class="line"><span class="attr">    deploy:</span></span><br><span class="line"><span class="attr">      mode:</span> <span class="string">global</span></span><br></pre></td></tr></table></figure>
+<p>然后运行：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker stack deploy --compose-file &lt;name of your compose file&gt; STACK</span><br></pre></td></tr></table></figure>
+<p>注意 <code>/etc/host_hostname</code> 用于记录 host name</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/docker-log-driver/" data-id="cjssqvcs900158uq464xl4wsf" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/">Docker</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/send-files-using-stream/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          服务器用流的方式传输文件
+        
+      </div>
+    </a>
+  
+  
+    <a href="/git-rename-and-delete-branch/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">git 删除和重命名分支</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="下面几个包是对 nodejs 原生流的封装，有了这些库之后使用起来会更方便。  through2 用于快速创建转化流 from2 用于快速创建输入流 writable2 用于快速创建输出流  最常用的是 through2，它能够让使用者只关注对流的处理，而不需要每次都要去创建 stream， 例如一个大写化的 stream： 12345678910class ThroughStream exten">
+<meta name="keywords" content="JavaScript">
+<meta property="og:type" content="article">
+<meta property="og:title" content="though2 快速创建转换流">
+<meta property="og:url" content="https://zju.date/though2-notes/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="下面几个包是对 nodejs 原生流的封装，有了这些库之后使用起来会更方便。  through2 用于快速创建转化流 from2 用于快速创建输入流 writable2 用于快速创建输出流  最常用的是 through2，它能够让使用者只关注对流的处理，而不需要每次都要去创建 stream， 例如一个大写化的 stream： 12345678910class ThroughStream exten">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-02-05T07:11:35.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="though2 快速创建转换流">
+<meta name="twitter:description" content="下面几个包是对 nodejs 原生流的封装，有了这些库之后使用起来会更方便。  through2 用于快速创建转化流 from2 用于快速创建输入流 writable2 用于快速创建输出流  最常用的是 through2，它能够让使用者只关注对流的处理，而不需要每次都要去创建 stream， 例如一个大写化的 stream： 12345678910class ThroughStream exten">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-though2-notes" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/though2-notes/" class="article-date">
+  <time datetime="2018-08-14T02:09:03.000Z" itemprop="datePublished">2018-08-14</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      though2 快速创建转换流
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>下面几个包是对 nodejs 原生流的封装，有了这些库之后使用起来会更方便。</p>
+<ul>
+<li>through2 用于快速创建转化流</li>
+<li>from2 用于快速创建输入流</li>
+<li>writable2 用于快速创建输出流</li>
+</ul>
+<p>最常用的是 through2，它能够让使用者只关注对流的处理，而不需要每次都要去创建 stream， 例如一个大写化的 stream：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ThroughStream</span> <span class="keyword">extends</span> <span class="title">stream</span>.<span class="title">Transform</span> </span>&#123;</span><br><span class="line">  <span class="keyword">constructor</span>(options) &#123;</span><br><span class="line">    <span class="keyword">super</span>(options);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  _transform(chunk, enc, cb) &#123;</span><br><span class="line">    <span class="keyword">this</span>.push(chunk.toString().replace(<span class="regexp">/\n/</span>, <span class="string">''</span>).toUpperCase());</span><br><span class="line">    cb();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<p>使用方式：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">process.stdin</span><br><span class="line">.pipe(</span><br><span class="line">  <span class="keyword">new</span> ThroughStream(&#123;</span><br><span class="line">    objectMode: <span class="literal">true</span></span><br><span class="line">  &#125;)</span><br><span class="line">)</span><br><span class="line">.pipe(process.stdout)</span><br></pre></td></tr></table></figure>
+<p>如果用 through2 库，由于它内置帮你创建好对应的 stream 了，所以只需要实现 _transform 就行了，代码会变得更简洁：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">process.stdin</span><br><span class="line">.pipe(through.obj(</span><br><span class="line">  <span class="function"><span class="keyword">function</span>(<span class="params">chunk, enc, cb</span>) </span></span><br><span class="line"><span class="function">    <span class="title">this</span>.<span class="title">push</span>(<span class="params">chunk.toString(</span>).<span class="title">replace</span>(<span class="params"><span class="regexp">/\n/</span>, <span class="string">''</span></span>).<span class="title">toUpperCase</span>(<span class="params"></span>) + '\<span class="title">n</span>')</span></span><br><span class="line"><span class="function">    <span class="title">cb</span>(<span class="params"></span>);</span></span><br><span class="line"><span class="function">  &#125;</span></span><br><span class="line"><span class="function">))</span></span><br><span class="line"><span class="function">.<span class="title">pipe</span>(<span class="params">process.stdout</span>)</span></span><br></pre></td></tr></table></figure>
+<p>其实就是把 transform 函数给了 Stream 的 _transform 属性。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/though2-notes/" data-id="cjssqvcvd004a8uq4ueah73gw" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/mongodb-optimize/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          MongoDB 慢查询和性能优化
+        
+      </div>
+    </a>
+  
+  
+    <a href="/moment-timezone/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">关于 moment-timezone</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

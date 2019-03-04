@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="MongoDB 可以限制只允许某一特定 IP 来访问，有两种方法：  方法一：在启动时加参数：mongod --bind_ip 127.0.0.1,10.0.133.14  方法二：在 /etc/mongodb.conf 文件中添加以下内容：bind_ip = 127.0.0.1,10.0.133.14   默认情况下不会加载任何配置文件，可以通过下面的命令指定： 12--config /path">
+<meta name="keywords" content="Database">
+<meta property="og:type" content="article">
+<meta property="og:title" content="mongodb 指定 IP 访问">
+<meta property="og:url" content="https://zju.date/mongodb-restrict-ip/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="MongoDB 可以限制只允许某一特定 IP 来访问，有两种方法：  方法一：在启动时加参数：mongod --bind_ip 127.0.0.1,10.0.133.14  方法二：在 /etc/mongodb.conf 文件中添加以下内容：bind_ip = 127.0.0.1,10.0.133.14   默认情况下不会加载任何配置文件，可以通过下面的命令指定： 12--config /path">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-12-04T02:01:53.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="mongodb 指定 IP 访问">
+<meta name="twitter:description" content="MongoDB 可以限制只允许某一特定 IP 来访问，有两种方法：  方法一：在启动时加参数：mongod --bind_ip 127.0.0.1,10.0.133.14  方法二：在 /etc/mongodb.conf 文件中添加以下内容：bind_ip = 127.0.0.1,10.0.133.14   默认情况下不会加载任何配置文件，可以通过下面的命令指定： 12--config /path">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-mongodb-restrict-ip" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/mongodb-restrict-ip/" class="article-date">
+  <time datetime="2018-03-26T09:38:07.000Z" itemprop="datePublished">2018-03-26</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      mongodb 指定 IP 访问
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>MongoDB 可以限制只允许某一特定 IP 来访问，有两种方法：</p>
+<ul>
+<li><p>方法一：在启动时加参数：<code>mongod --bind_ip 127.0.0.1,10.0.133.14</code></p>
+</li>
+<li><p>方法二：在 <code>/etc/mongodb.conf</code> 文件中添加以下内容：<code>bind_ip = 127.0.0.1,10.0.133.14</code></p>
+</li>
+</ul>
+<p>默认情况下不会加载任何配置文件，可以通过下面的命令指定：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">--config /path/to/some/file.conf <span class="comment"># 或者</span></span><br><span class="line">-f /path/to/some/file.conf</span><br></pre></td></tr></table></figure>
+<p>但是在 docker mongodb 中，配置文件被重名了：</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">RUN</span><span class="bash"> <span class="built_in">set</span> -x \</span></span><br><span class="line"><span class="bash">	&amp;&amp; apt-get update \</span></span><br><span class="line"><span class="bash">	&amp;&amp; apt-get install -y \</span></span><br><span class="line"><span class="bash">		<span class="variable">$&#123;MONGO_PACKAGE&#125;</span>=<span class="variable">$MONGO_VERSION</span> \</span></span><br><span class="line"><span class="bash">		<span class="variable">$&#123;MONGO_PACKAGE&#125;</span>-server=<span class="variable">$MONGO_VERSION</span> \</span></span><br><span class="line"><span class="bash">		<span class="variable">$&#123;MONGO_PACKAGE&#125;</span>-shell=<span class="variable">$MONGO_VERSION</span> \</span></span><br><span class="line"><span class="bash">		<span class="variable">$&#123;MONGO_PACKAGE&#125;</span>-mongos=<span class="variable">$MONGO_VERSION</span> \</span></span><br><span class="line"><span class="bash">		<span class="variable">$&#123;MONGO_PACKAGE&#125;</span>-tools=<span class="variable">$MONGO_VERSION</span> \</span></span><br><span class="line"><span class="bash">	&amp;&amp; rm -rf /var/lib/apt/lists/* \</span></span><br><span class="line"><span class="bash">	&amp;&amp; rm -rf /var/lib/mongodb \</span></span><br><span class="line"><span class="bash">	&amp;&amp; mv /etc/mongod.conf /etc/mongod.conf.orig</span></span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<p>如果想让 docker 容器内的 mongodb 使用宿主机上的某个配置文件的话，首先要把这个配置给 mount 进去，然后替换默认的 CMD（默认是：<code>CMD [&quot;mongod&quot;]</code>）：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">command</span>: [<span class="string">"mongod"</span>, <span class="string">"-f"</span>, <span class="string">"/etc/mongod.conf"</span>]</span><br></pre></td></tr></table></figure>
+<p>docker-compose 文件配置如下：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">services:</span></span><br><span class="line"><span class="attr">  mongodb:</span></span><br><span class="line"><span class="attr">    image:</span> <span class="attr">mongo:latest</span></span><br><span class="line"><span class="attr">    command:</span> <span class="string">["mongod",</span> <span class="string">"-f"</span><span class="string">,</span> <span class="string">"/etc/mongod.conf"</span><span class="string">]</span></span><br><span class="line"><span class="attr">    volumes:</span></span><br><span class="line"><span class="bullet">     -</span> <span class="string">/etc/mongod.conf:/etc/mongod.conf</span></span><br></pre></td></tr></table></figure>
+<p>然后宿主机上的 <code>/etc/mongod.conf</code>：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># mongod.conf</span></span><br><span class="line">net:</span><br><span class="line">  port: 27017</span><br><span class="line">  bindIp: 0.0.0.0</span><br><span class="line"></span><br><span class="line">security:</span><br><span class="line">  authorization: enabled</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/mongodb-restrict-ip/" data-id="cjssqvcuf00378uq4dc0ftgvz" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/vscode-prettier/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          vscode prettier
+        
+      </div>
+    </a>
+  
+  
+    <a href="/quickly-setup-node-env/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">快速搭建 node 环境</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

@@ -54,10 +54,10 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-grials-tags" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-es-dynamic-script" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/grials-tags/" class="article-date">
-  <time datetime="2016-02-29T01:50:43.000Z" itemprop="datePublished">2016-02-29</time>
+    <a href="/es-dynamic-script/" class="article-date">
+  <time datetime="2017-01-13T01:49:29.000Z" itemprop="datePublished">2017-01-13</time>
 </a>
     
   </div>
@@ -68,7 +68,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/grials-tags/">grails标签</a>
+      <a class="article-title" href="/es-dynamic-script/">开启elasticsearch动态脚本功能</a>
     </h1>
   
 
@@ -79,123 +79,17 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <div class="article-preview">
-            <h2 id="while"><a href="#while" class="headerlink" title="while"></a>while</h2><pre><code>&lt;g:while&gt;
-</code></pre><p>案例：</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">g:set</span> <span class="attr">var</span>=<span class="string">"counter"</span> <span class="attr">value</span>=<span class="string">"$&#123;0&#125;"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">g:while</span> <span class="attr">test</span>=<span class="string">"$&#123;counter &lt; 5&#125;"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">g:set</span> <span class="attr">var</span>=<span class="string">"counter"</span> <span class="attr">value</span>=<span class="string">"$&#123;counter+1&#125;"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">p</span>&gt;</span>The value is $&#123;counter&#125;<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">g:while</span>&gt;</span></span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/grials-tags/#more">Read More</a>
-          </p>
-        
+        <p>更新也可以通过使用简单的脚本来进行。这个例子使用一个脚本将age加5：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">curl -XPOST <span class="string">'localhost:9200/megacorp/employee/1/_update?pretty'</span> -d <span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "script" : "ctx._source.age += 5"</span></span><br><span class="line"><span class="string">&#125;'</span></span><br></pre></td></tr></table></figure>
+<p>但会报错：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;error&quot; : &#123;</span><br><span class="line">    &quot;root_cause&quot; : [ &#123;</span><br><span class="line">      &quot;type&quot; : &quot;remote_transport_exception&quot;,</span><br><span class="line">      &quot;reason&quot; : &quot;[Professor X][127.0.0.1:9302][indices:data/write/update[s]]&quot;</span><br><span class="line">    &#125; ],</span><br><span class="line">    &quot;type&quot; : &quot;illegal_argument_exception&quot;,</span><br><span class="line">    &quot;reason&quot; : &quot;failed to execute script&quot;,</span><br><span class="line">    &quot;caused_by&quot; : &#123;</span><br><span class="line">      &quot;type&quot; : &quot;script_exception&quot;,</span><br><span class="line">      &quot;reason&quot; : &quot;scripts of type [inline], operation [update] and lang [groovy] are disabled&quot;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  &quot;status&quot; : 400</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>因为新版本的elasticsearch中，基于安全考虑，默认禁用了动态脚本功能，可以通过修改配置文件开启动态脚本功能：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 编辑 config/elasticsearch.yml 文件，添加</span></span><br><span class="line">script.inline: on</span><br><span class="line">script.indexed: on</span><br><span class="line">script.file: on</span><br></pre></td></tr></table></figure>
+
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/grials-tags/" data-id="cjhq778lp008sizq3isnqjhmo" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JAVA/">JAVA</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-grails-in-docker" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/grails-in-docker/" class="article-date">
-  <time datetime="2016-02-28T07:51:42.000Z" itemprop="datePublished">2016-02-28</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/grails-in-docker/">在docker中搭建grails运行环境</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>1、下载centos镜像：<code>docker pull centos</code></p>
-<p>2、基于centos启动一个容器：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run —name grails -it centos /bin/bash</span><br></pre></td></tr></table></figure>
-<p>3、创建目录：<code>mkdir app</code></p>
-<p>4、宿主机和容器之间拷贝文件：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker cp /Users/lx/docker/jdk-8u71-linux-x64.gz grails:/app/</span><br><span class="line">docker cp /Users/lx/docker/grails-2.5.4.zip grails:/app/ </span><br><span class="line">docker cp /Users/lx/docker/apache-tomcat-9.0.0.M1.tar.gz grails:/app/</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/grails-in-docker/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/grails-in-docker/" data-id="cjhq778le008gizq3leqt84ch" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JAVA/">JAVA</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-groovy-http" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/groovy-http/" class="article-date">
-  <time datetime="2016-02-17T02:45:07.000Z" itemprop="datePublished">2016-02-17</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/groovy-http/">groovy http</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>groovy script 程序中，撰写 http 网络程序例如网络爬虫、网页内容分析器等比较容易。介绍 groovy 的 URL 类别，http builder dsl 语法。</p>
-<p>从URL读取资料：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">new URL(&quot;http://news.google.com&quot;).text</span><br></pre></td></tr></table></figure>
-<p>使用eachLine方法找出HTML代码中的 <code>&lt;h2&gt;</code> 标签文字</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> URL(<span class="string">"http://www.codedata.com"</span>).eachLine &#123;line -&gt;</span><br><span class="line">	<span class="keyword">if</span>(line.trim().startsWith(<span class="string">"&lt;h2&gt;"</span>)) &#123;</span><br><span class="line">		println line.trim()</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/groovy-http/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/groovy-http/" data-id="cjhq778ls008uizq3tfq68ue1" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/es-dynamic-script/" data-id="cjhq778jx0067izq3a98kr3eu" class="article-share-link">Share</a>
      
     </footer>
   </div>
@@ -204,10 +98,10 @@
 
 
   
-    <article id="post-shuangpin-notes" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-ajax-request-in-chrome-console" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/shuangpin-notes/" class="article-date">
-  <time datetime="2016-02-15T02:14:25.000Z" itemprop="datePublished">2016-02-15</time>
+    <a href="/ajax-request-in-chrome-console/" class="article-date">
+  <time datetime="2017-01-11T07:36:36.000Z" itemprop="datePublished">2017-01-11</time>
 </a>
     
   </div>
@@ -218,7 +112,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/shuangpin-notes/">智能ABC双拼映射表</a>
+      <a class="article-title" href="/ajax-request-in-chrome-console/">在控制台发送 ajax 请求</a>
     </h1>
   
 
@@ -230,169 +124,20 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <p><img src="/image/sp.png" alt="sp"></p>
+            <p>浏览器控制台是个非常强大的工具，有一次浏览某网站的时候，想把部分数据保存在本地，但浏览器并未提供读写本地文件的接口，于是想到自己搭建一个 server，然后通过 ajax 请求发送给服务器保存。</p>
+<p>假如我们想要保存的数据在 id 为 info 的 div 中，可以用下面的命令获取全部文本数据：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">document</span>.querySelector(<span class="string">'#info'</span>).textContent</span><br></pre></td></tr></table></figure>
+<p>然后用 express 搭建了一个server，读取 POST 请求的 body，然后保存到本地。</p>
         </div>
         
           <p class="article-more-link">
-            <a href="/shuangpin-notes/#more">Read More</a>
+            <a href="/ajax-request-in-chrome-console/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/shuangpin-notes/" data-id="cjhq778sp00h2izq3x6mit9xy" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/学习笔记/">学习笔记</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-unable-to-write-chinese-punctuation-in-intellj-webstorm" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/unable-to-write-chinese-punctuation-in-intellj-webstorm/" class="article-date">
-  <time datetime="2016-02-13T07:01:22.000Z" itemprop="datePublished">2016-02-13</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/unable-to-write-chinese-punctuation-in-intellj-webstorm/">intellij和webstorm无法输入中文标点</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <h3 id="问题："><a href="#问题：" class="headerlink" title="问题："></a>问题：</h3><p>intellij和webstorm中文输入法下输入的标点符号始终是英文标点。</p>
-<h3 id="解决方法："><a href="#解决方法：" class="headerlink" title="解决方法："></a>解决方法：</h3><ol>
-<li><p>安装 JDK 8u45。下载地址：</p>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/unable-to-write-chinese-punctuation-in-intellj-webstorm/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/unable-to-write-chinese-punctuation-in-intellj-webstorm/" data-id="cjhq778uk00ikizq36j5kjfuf" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-http-notes" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/http-notes/" class="article-date">
-  <time datetime="2016-02-13T05:56:29.000Z" itemprop="datePublished">2016-02-13</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/http-notes/">HTTP协议</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>HTTP是一种基于文档的通信协议，可以形象的比喻为书信来往。</p>
-<p>寄信——客户端把文档放在信封里，然后发给服务器；<br>回信——服务器收到之后再把响应文档放在信封里，然后发给客户端。<br>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/http-notes/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/http-notes/" data-id="cjhq778ma0098izq3s4xn6vg8" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/HTTP/">HTTP</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-ejs-notes" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/ejs-notes/" class="article-date">
-  <time datetime="2016-02-12T04:44:23.000Z" itemprop="datePublished">2016-02-12</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/ejs-notes/">EJS学习笔记</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>有些后台输出html时，用下面的语法：</p>
-<pre><code>var html = &quot;&lt;h1&gt;&quot;+data.title+&quot;&lt;/h1&gt;&quot;
-html += &quot;&lt;ul&gt;&quot;
-for(var i=0; i&lt;data.supplies.length; i++) {
-    html += &quot;&lt;li&gt;&lt;a href=&apos;supplies/&quot;+data.supplies[i]+&quot;&apos;&gt;&quot;
-    html += data.supplies[i]+&quot;&lt;/a&gt;&lt;/li&gt;&quot;
-}
-html += &quot;&lt;/ul&gt;&quot;
-</code></pre>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/ejs-notes/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/ejs-notes/" data-id="cjhq778ju0063izq3fmj19abc" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/ajax-request-in-chrome-console/" data-id="cjhq778h0002bizq37z16dfmn" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
@@ -403,10 +148,10 @@ html += &quot;&lt;/ul&gt;&quot;
 
 
   
-    <article id="post-yaml-reference-card" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-solve-math-puzzle-using-javascript" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/yaml-reference-card/" class="article-date">
-  <time datetime="2016-02-12T04:42:23.000Z" itemprop="datePublished">2016-02-12</time>
+    <a href="/solve-math-puzzle-using-javascript/" class="article-date">
+  <time datetime="2017-01-08T07:15:20.000Z" itemprop="datePublished">2017-01-08</time>
 </a>
     
   </div>
@@ -417,7 +162,7 @@ html += &quot;&lt;/ul&gt;&quot;
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/yaml-reference-card/">YAML参考卡片</a>
+      <a class="article-title" href="/solve-math-puzzle-using-javascript/">用JavaScript求解趣味题目</a>
     </h1>
   
 
@@ -429,19 +174,20 @@ html += &quot;&lt;/ul&gt;&quot;
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <h3 id="表示集合的符号（Collection-indicators）"><a href="#表示集合的符号（Collection-indicators）" class="headerlink" title="表示集合的符号（Collection indicators）"></a>表示集合的符号（Collection indicators）</h3><p><code>?</code> ： Key indicator.<br><code>：</code> ： Value indicator.<br><code>-</code> ： Nested series entry indicator.<br><code>,</code> ： Separate in-line branch entries.<br><code>[]</code> ： Surround in-line series branch.<br><code>{}</code> ： Surround in-line keyed branch.<br>
+            <p>今天看到一道有意思的题目：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">在数字1 2 3 4 5 6 7 8 9之间填加减号（也可以不填，这个时候就任务相邻的数字拼成了多位数），使得运算结果等于100。例如：</span><br><span class="line"></span><br><span class="line">12 + 3 - 4 + 5 + 67 + 8 + 9 = 100</span><br><span class="line">1 + 2 + 3 - 4 + 5 + 6 + 78 + 9 = 100</span><br><span class="line">1 + 23 - 4 + 56 + 7 + 8 + 9 = 100</span><br><span class="line"></span><br><span class="line">你能找出多少个这样的等式？</span><br></pre></td></tr></table></figure>
         </div>
         
           <p class="article-more-link">
-            <a href="/yaml-reference-card/#more">Read More</a>
+            <a href="/solve-math-puzzle-using-javascript/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/yaml-reference-card/" data-id="cjhq778vs00k6izq3l7wt43km" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/solve-math-puzzle-using-javascript/" data-id="cjhq778sr00h4izq3w2p9i0af" class="article-share-link">Share</a>
      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/学习笔记/">学习笔记</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
     </footer>
   </div>
@@ -450,10 +196,10 @@ html += &quot;&lt;/ul&gt;&quot;
 
 
   
-    <article id="post-yaml-notes" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-generate-DOM-using-LaTeX" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/yaml-notes/" class="article-date">
-  <time datetime="2016-02-11T00:19:43.000Z" itemprop="datePublished">2016-02-11</time>
+    <a href="/generate-DOM-using-LaTeX/" class="article-date">
+  <time datetime="2017-01-03T07:53:55.000Z" itemprop="datePublished">2017-01-03</time>
 </a>
     
   </div>
@@ -464,7 +210,7 @@ html += &quot;&lt;/ul&gt;&quot;
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/yaml-notes/">YAML学习笔记</a>
+      <a class="article-title" href="/generate-DOM-using-LaTeX/">利用LaTeX生成DOM树</a>
     </h1>
   
 
@@ -476,28 +222,136 @@ html += &quot;&lt;/ul&gt;&quot;
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <h2 id="列表"><a href="#列表" class="headerlink" title="列表"></a>列表</h2><p>YAML格式：</p>
-<pre><code>- Mark McGwire
-- Sammy Sosa
-- Ken Griffey
-</code></pre><p>JSON格式：</p>
-<pre><code>[&quot;Mark McGwire&quot;, &quot;Sammy Sosa&quot;, &quot;Ken Griffey&quot;]
-</code></pre><blockquote>
-<p>总结：列表就是数组。</p>
+            <p>如何直观的看DOM结构呢？例如：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"root"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">H2</span>&gt;</span>Welcome<span class="tag">&lt;/<span class="name">H2</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">ul</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">li</span>&gt;</span>name: Davlid<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">li</span>&gt;</span>age: 20<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">ul</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span>&gt;</span>Congratulations!<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<ol>
+<li><p>忽略空节点，保留文本节点的DOM树：</p>
+<p> <img src="http://7xsy2w.com1.z0.glb.clouddn.com/blog/latexTreeIngoreEmptyTextNode.png" alt="latexTreeIngoreEmptyTextNode"></p>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/generate-DOM-using-LaTeX/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/generate-DOM-using-LaTeX/" data-id="cjhq778kr007iizq3ma0py5cx" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-rename-files-using-nodejs" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/rename-files-using-nodejs/" class="article-date">
+  <time datetime="2017-01-03T07:53:55.000Z" itemprop="datePublished">2017-01-03</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/rename-files-using-nodejs/">nodejs给文件重命名</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>进行文件操作之前需要引入两个包：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> fs = <span class="built_in">require</span>(<span class="string">"fs"</span>);</span><br><span class="line"><span class="keyword">const</span> path = <span class="built_in">require</span>(<span class="string">'path'</span>);</span><br></pre></td></tr></table></figure>
+<p>定义一个函数，把指定文件夹下面所有文件或文件夹都加上<code>rename_</code>前缀</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">rename</span>(<span class="params">dir</span>) </span>&#123;</span><br><span class="line">    fs.readdir(dir, <span class="function"><span class="keyword">function</span> (<span class="params">err, files</span>) </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; files.length; i++) &#123;</span><br><span class="line">            <span class="keyword">let</span> f = files[i]</span><br><span class="line">            <span class="keyword">let</span> prefix = <span class="string">'rename_'</span></span><br><span class="line">            fs.rename(dir + <span class="string">'/'</span> + f, dir + <span class="string">'/'</span> + prefix + f, <span class="function"><span class="keyword">function</span> (<span class="params">err</span>) </span>&#123;</span><br><span class="line">                <span class="keyword">if</span> (err) <span class="keyword">throw</span> err;</span><br><span class="line">                <span class="built_in">console</span>.log(f + <span class="string">' --&gt; '</span> + prefix + f);</span><br><span class="line">            &#125;)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/rename-files-using-nodejs/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/rename-files-using-nodejs/" data-id="cjhq778s500geizq3zj9h4ylm" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-mac-proxychains" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/mac-proxychains/" class="article-date">
+  <time datetime="2016-12-10T02:03:07.000Z" itemprop="datePublished">2016-12-10</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/mac-proxychains/">使用 proxychains 作为 Mac 的终端代理</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>安装 proxychains4</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install proxychains-ng</span><br></pre></td></tr></table></figure>
+<p>找到 proxychains4 配置文件所在的位置：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">~/.proxychains/proxychains.conf</span><br><span class="line"><span class="comment"># 或者</span></span><br><span class="line">/usr/<span class="built_in">local</span>/etc/proxychains.conf</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>可用 <code>proxychains4 printenv | grep PROXYCHAINS_CONF_FILE</code> 命令找到。</p>
 </blockquote>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/yaml-notes/#more">Read More</a>
-          </p>
-        
+<p>在配置文件中 <code>[ProxyList]</code> 区域下添加一行：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">socks5  127.0.0.1 1086</span><br></pre></td></tr></table></figure>
+<p>以后使用代理的时候加上 <code>proxychains4</code> 就行了，例如：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">proxychains4 npm install </span><br><span class="line">proxychains4 curl ip.cn</span><br></pre></td></tr></table></figure>
+<p>【更新】macOS 10.11 后下由于开启了 SIP（System Integrity Protection） 会导致命令行下 proxychains-ng 代理的模式失效，如果要使用 proxychains-ng 这种简单的方法，就需要先关闭 SIP。关闭方法如下：</p>
+<ul>
+<li>部分关闭 SIP</li>
+</ul>
+<blockquote>
+<p>重启Mac，按住Option键进入启动盘选择模式，再按⌘ + R进入Recovery模式。<br>实用工具（Utilities）-&gt; 终端（Terminal）。<br>输入命令<code>csrutil enable --without debug</code>运行。<br>重启进入系统后，终端里输入 csrutil status，结果中如果有 Debugging Restrictions: disabled 则说明关闭成功。</p>
+</blockquote>
+<ul>
+<li>完全关闭 SIP</li>
+</ul>
+<blockquote>
+<p>重启Mac，按住Option键进入启动盘选择模式，再按⌘ + R进入Recovery模式。<br>实用工具（Utilities）-&gt; 终端（Terminal）。<br>输入命令<code>csrutil disable</code>运行。<br>重启进入系统后，终端里输入 csrutil status，结果中如果有 System Integrity Protection status:disabled. 则说明关闭成功。</p>
+</blockquote>
+
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/yaml-notes/" data-id="cjhq778vr00k4izq3bpyxhf35" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/mac-proxychains/" data-id="cjhq778pe00cwizq3ytnmxz65" class="article-share-link">Share</a>
      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/学习笔记/">学习笔记</a></li></ul>
-
     </footer>
   </div>
   
@@ -505,10 +359,10 @@ html += &quot;&lt;/ul&gt;&quot;
 
 
   
-    <article id="post-first-child-vs-first-of-type" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-js-calculate-earth-distance" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/first-child-vs-first-of-type/" class="article-date">
-  <time datetime="2016-02-05T01:36:32.000Z" itemprop="datePublished">2016-02-05</time>
+    <a href="/js-calculate-earth-distance/" class="article-date">
+  <time datetime="2016-11-15T02:03:07.000Z" itemprop="datePublished">2016-11-15</time>
 </a>
     
   </div>
@@ -519,7 +373,49 @@ html += &quot;&lt;/ul&gt;&quot;
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/first-child-vs-first-of-type/">first-child和first-of-type伪类</a>
+      <a class="article-title" href="/js-calculate-earth-distance/">js 计算地球两点距离</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>下面的方法可计算地球两点间的距离：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 方法定义 lat,lng</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getDistance</span>(<span class="params">lng1, lat1, lng2, lat2</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> radLat1 = lat1 * <span class="built_in">Math</span>.PI / <span class="number">180.0</span></span><br><span class="line">  <span class="keyword">const</span> radLat2 = lat2 * <span class="built_in">Math</span>.PI / <span class="number">180.0</span></span><br><span class="line">  <span class="keyword">const</span> a = radLat1 - radLat2</span><br><span class="line">  <span class="keyword">const</span> b = lng1 * <span class="built_in">Math</span>.PI / <span class="number">180.0</span> - lng2 * <span class="built_in">Math</span>.PI / <span class="number">180.0</span></span><br><span class="line">  <span class="keyword">let</span> s = <span class="number">2</span> * <span class="built_in">Math</span>.asin(<span class="built_in">Math</span>.sqrt(<span class="built_in">Math</span>.pow(<span class="built_in">Math</span>.sin(a / <span class="number">2</span>), <span class="number">2</span>) +</span><br><span class="line">    <span class="built_in">Math</span>.cos(radLat1) * <span class="built_in">Math</span>.cos(radLat2) * <span class="built_in">Math</span>.pow(<span class="built_in">Math</span>.sin(b / <span class="number">2</span>), <span class="number">2</span>)))</span><br><span class="line">  s = s * <span class="number">6378.137</span><span class="comment">// EARTH_RADIUS;</span></span><br><span class="line">  s = <span class="built_in">Math</span>.round(s * <span class="number">10000</span>) / <span class="number">10000</span></span><br><span class="line">  <span class="keyword">return</span> s</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/js-calculate-earth-distance/" data-id="cjssqvctr00298uq45mipcoan" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-angular-common-errors" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/angular-common-errors/" class="article-date">
+  <time datetime="2016-11-10T07:04:34.000Z" itemprop="datePublished">2016-11-10</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/angular-common-errors/">Angular2常见错误</a>
     </h1>
   
 
@@ -531,22 +427,121 @@ html += &quot;&lt;/ul&gt;&quot;
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <style>.x1:first-child,.x2 :first-child,.x3 p:first-child,.x4>p:first-child,.x5:first-of-type,.x6 :first-of-type,.x7 p:first-of-type,.x8>p:first-of-type{color:red}.x1,.x2,.x3,.x4,.x5,.x6,.x7,.x8{width:100px;margin-left:50px;border:1px solid red;padding:10px 10px 0;font-size:13px;}</style>
-
-
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">span</span>&gt;</span>...其他内容...<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">div</span>&gt;</span></span><br><span class="line">	    <span class="tag">&lt;<span class="name">article</span>&gt;</span>这是<span class="tag">&lt;<span class="name">p</span>&gt;</span>干扰行<span class="tag">&lt;/<span class="name">p</span>&gt;</span><span class="tag">&lt;/<span class="name">article</span>&gt;</span></span><br><span class="line">	    <span class="tag">&lt;<span class="name">p</span>&gt;</span>第1行<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">	    <span class="tag">&lt;<span class="name">p</span>&gt;</span>第2行<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">	    <span class="tag">&lt;<span class="name">span</span>&gt;</span>中间干扰行<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">	    <span class="tag">&lt;<span class="name">p</span>&gt;</span>第3行<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">	    <span class="tag">&lt;<span class="name">p</span>&gt;</span>第4行<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">span</span>&gt;</span>...其他内容...<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br></pre></td></tr></table></figure>
+            <ol>
+<li><p>不是已知元素</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Unhandled Promise rejection: Template parse errors:</span><br><span class="line">&apos;hello&apos; is not a known element:</span><br><span class="line">1. If &apos;hello&apos; is an Angular component, then verify that it is part of this module.</span><br><span class="line">2. If &apos;hello&apos; is a Web Component then add &quot;CUSTOM_ELEMENTS_SCHEMA&quot; to the &apos;@NgModule.schemas&apos; of this component to suppress this message. (&quot;&lt;h1&gt;My First Angular App&lt;/h1&gt;</span><br></pre></td></tr></table></figure>
+<p> 组件没有注册。</p>
         </div>
         
           <p class="article-more-link">
-            <a href="/first-child-vs-first-of-type/#more">Read More</a>
+            <a href="/angular-common-errors/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/first-child-vs-first-of-type/" data-id="cjhq778kd006yizq3b586oiku" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/angular-common-errors/" data-id="cjhq778h6002lizq3qc6qypdk" class="article-share-link">Share</a>
      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CSS/">CSS</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-mongodb-not-null" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/mongodb-not-null/" class="article-date">
+  <time datetime="2016-11-03T12:21:07.000Z" itemprop="datePublished">2016-11-03</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/mongodb-not-null/">mongodb查询非空数据</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>MongoDB中找出所有具有某个KEY的文档:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">db.mycollection.find(&#123;<span class="string">"KEY"</span>:&#123;<span class="attr">$exists</span>:<span class="literal">true</span>&#125;&#125;)</span><br></pre></td></tr></table></figure>
+<p>但仍可能返回“KEY”为NULL的值，以下的方法能找出所有某个KEY不为空（NOT NULL）的文档：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">db.mycollection.find(&#123;<span class="string">"KEY"</span>:&#123;<span class="attr">$ne</span>:<span class="literal">null</span>&#125;&#125;)</span><br></pre></td></tr></table></figure>
+<p>反过来说，如果用下面的命令：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">db.mycollection.find(&#123;<span class="string">"KEY"</span>:<span class="literal">null</span>&#125;)</span><br></pre></td></tr></table></figure>
+<p>会匹配所有不包含这个键以及包含这个键但是值为null的所有文档，如果想找出该键存在并且等于null的话可以用下面的语句：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">db.mycollection.find(&#123;<span class="string">"KEY"</span> : &#123;<span class="string">"$in"</span> : [<span class="literal">null</span>], <span class="string">"$exists"</span> : <span class="literal">true</span>&#125;&#125;)</span><br></pre></td></tr></table></figure>
+<p>请注意 <code>$exists</code> 无法利用到索引，但 <code>$NE</code> 可以用上索引，所以处于性能的考虑尽可能用 <code>$ne:null</code>。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/mongodb-not-null/" data-id="cjhq778px00dmizq3qqff5hb3" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-story-of-guanzhong" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/story-of-guanzhong/" class="article-date">
+  <time datetime="2016-11-03T03:11:08.000Z" itemprop="datePublished">2016-11-03</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/story-of-guanzhong/">管仲的智慧</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <h2 id="楚国购鹿计"><a href="#楚国购鹿计" class="headerlink" title="楚国购鹿计"></a>楚国购鹿计</h2><p>管仲把齐国治理得很好，征服了许多割据一方的诸侯国，辅助齐桓公称霸中原。可楚国不听齐国的号令，齐若不征服楚，华夏就仍不能统一。那么，如何征服楚国呢？</p>
+<p>当时，齐国有好几位大将军纷纷向齐桓公请战，要求率重兵去打楚国，以兵威震慑楚国称臣。但担任相国的管仲连连摇头，说：‘齐楚交战，旗鼓相当，够一阵拼杀的。一则我们得把辛辛苦苦积蓄下来的粮草用光，再有齐楚两国万人的生灵将成为尸骨。’一番话把大将军们说得哑口无言。</p>
+<p>管仲说完，带大将军们看炼铜去了。他们不知道管仲有何妙计征服楚国。</p>
+<p>一天，管仲派100 多名商人到楚国去购鹿。当时的鹿是较稀少的动物，仅楚国才有。但人们只把鹿作为一般的可食动物，二枚铜币就可买一头。管仲派去的商人在楚国到处扬言：‘齐桓公好鹿，不惜重金。’楚国商人见有利可图，纷纷加紧购鹿，起初三枚铜币一头，过了十几天，加价为五枚铜币一头。</p>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/story-of-guanzhong/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/story-of-guanzhong/" data-id="cjhq778t200hkizq392gnono3" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
 
     </footer>
   </div>
@@ -558,7 +553,7 @@ html += &quot;&lt;/ul&gt;&quot;
 
 
   <nav id="page-nav">
-    <a class="extend prev" rel="prev" href="/page/31/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/30/">30</a><a class="page-number" href="/page/31/">31</a><span class="page-number current">32</span><a class="page-number" href="/page/33/">33</a><a class="page-number" href="/page/34/">34</a><span class="space">&hellip;</span><a class="page-number" href="/page/39/">39</a><a class="extend next" rel="next" href="/page/33/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/31/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/30/">30</a><a class="page-number" href="/page/31/">31</a><span class="page-number current">32</span><a class="page-number" href="/page/33/">33</a><a class="page-number" href="/page/34/">34</a><span class="space">&hellip;</span><a class="page-number" href="/page/47/">47</a><a class="extend next" rel="next" href="/page/33/">Next &raquo;</a>
   </nav>
 </section>
 
@@ -573,7 +568,7 @@ html += &quot;&lt;/ul&gt;&quot;
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mongodb/">mongodb</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
     </div>
   </div>
 
@@ -583,7 +578,7 @@ html += &quot;&lt;/ul&gt;&quot;
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2018 zju.date
+      &copy; 2019 zju.date
       &nbsp;&nbsp;&nbsp;
       contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
     </div>

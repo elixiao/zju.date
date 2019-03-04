@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="grok 语法： 1%&amp;#123;SYNTAX:SEMANTIC&amp;#125;  SYNTAX：代表匹配值的类型，例如NUMBER能匹配3.14，IP能匹配127.0.0.1 SEMANTIC：代表存储该值的变量名  例如下面的语法表示匹配NUMBER类型的数据，存到 duration 变量中，匹配IP类型的数据，存到 ip 变量中。 1%&amp;#123;NUMBER:duration&amp;#125; %&amp;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="grok 语法">
+<meta property="og:url" content="https://zju.date/logstash-grok/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="grok 语法： 1%&amp;#123;SYNTAX:SEMANTIC&amp;#125;  SYNTAX：代表匹配值的类型，例如NUMBER能匹配3.14，IP能匹配127.0.0.1 SEMANTIC：代表存储该值的变量名  例如下面的语法表示匹配NUMBER类型的数据，存到 duration 变量中，匹配IP类型的数据，存到 ip 变量中。 1%&amp;#123;NUMBER:duration&amp;#125; %&amp;">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-09-18T05:46:01.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="grok 语法">
+<meta name="twitter:description" content="grok 语法： 1%&amp;#123;SYNTAX:SEMANTIC&amp;#125;  SYNTAX：代表匹配值的类型，例如NUMBER能匹配3.14，IP能匹配127.0.0.1 SEMANTIC：代表存储该值的变量名  例如下面的语法表示匹配NUMBER类型的数据，存到 duration 变量中，匹配IP类型的数据，存到 ip 变量中。 1%&amp;#123;NUMBER:duration&amp;#125; %&amp;">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-logstash-grok" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/logstash-grok/" class="article-date">
+  <time datetime="2018-09-13T06:59:07.000Z" itemprop="datePublished">2018-09-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      grok 语法
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>grok 语法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">%&#123;SYNTAX:SEMANTIC&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>SYNTAX：代表匹配值的类型，例如NUMBER能匹配3.14，IP能匹配127.0.0.1</li>
+<li>SEMANTIC：代表存储该值的变量名</li>
+</ul>
+<p>例如下面的语法表示匹配NUMBER类型的数据，存到 duration 变量中，匹配IP类型的数据，存到 ip 变量中。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">%&#123;NUMBER:duration&#125; %&#123;IP:ip&#125;</span><br></pre></td></tr></table></figure>
+<p>默认情况下，所有语义都保存为字符串，也可以转变数据类型，目前支持的转换只有 int 和 float 两种类型，例如将 duration 从一个字符串转换为一个整数。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">%&#123;NUMBER:duration:int&#125;</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<p>举个例子：假如有下面的日志：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">55.3.244.1 GET /index.html 15824 0.043</span><br></pre></td></tr></table></figure>
+<p>可以用下面模式提取内容：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">%&#123;IP:ip&#125; %&#123;WORD:method&#125; %&#123;URIPATHPARAM:request&#125; %&#123;NUMBER:bytes&#125; %&#123;NUMBER:duration&#125;</span><br></pre></td></tr></table></figure>
+<p>logstash 匹配：</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">filter &#123;</span><br><span class="line">  grok &#123;</span><br><span class="line">    match =&gt; &#123; <span class="string">"message"</span> =&gt; <span class="string">"%&#123;IP:ip&#125; %&#123;WORD:method&#125; %&#123;URIPATHPARAM:request&#125; %&#123;NUMBER:bytes&#125; %&#123;NUMBER:duration&#125;"</span> &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>得到的结果为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">● ip: 55.3.244.1</span><br><span class="line">● method: GET</span><br><span class="line">● request: /index.html</span><br><span class="line">● bytes: 15824</span><br><span class="line">● duration: 0.043</span><br></pre></td></tr></table></figure>
+<p>所以 grok 其实就是正则表达式，有一些内置好的正则可以拿过来直接用，但没办法提供你所需要的匹配类型，此时可以自定义正则，语法是：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(?&lt;field_name&gt;the pattern here)</span><br></pre></td></tr></table></figure>
+<p>例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(?&lt;no&gt;QQ[0-9]&#123;1,5&#125;)</span><br></pre></td></tr></table></figure>
+<p>匹配所有以 QQ 开头的，后面有1-5位数字的工号。还可以把这个正则表达式进行封装，先建一个 patterns 的文件夹，在里面建一个文件，把刚才的内容填进去即可：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">NO QQ[0-9]&#123;1,5&#125;</span><br></pre></td></tr></table></figure>
+<p>然后用：</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">filter &#123;</span><br><span class="line">  grok &#123;</span><br><span class="line">    patterns_dir =&gt; [<span class="string">"./patterns"</span>]</span><br><span class="line">    match =&gt; &#123; <span class="string">"message"</span> =&gt; <span class="string">"%&#123;WORD:name&#125; %&#123;NUMBER:age&#125;: %&#123;NO:no&#125;"</span> &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>过滤配置项：</p>
+<ol>
+<li><p>break_on_match </p>
+<blockquote>
+<p>布尔值，默认是true </p>
+<p>描述：match可以一次设定多组,预设会依照顺序设定处理，如果日志满足设定条件，则会终止向下处理。但有的时候我们会希望让Logstash跑完所有的设定，这时可以将break_on_match设为false。</p>
+</blockquote>
+</li>
+<li><p>keep_empty_captures </p>
+<blockquote>
+<p>布尔值，默认值是 false<br>描述：如果为true，捕获失败的字段将设置为空值</p>
+</blockquote>
+</li>
+<li><p>match </p>
+<blockquote>
+<p>对象，默认值是  {}<br>描述：字段⇒值匹配 </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&gt; filter &#123;</span><br><span class="line">&gt;   grok &#123; match =&gt; &#123; "message" =&gt; "Duration: %&#123;NUMBER:duration&#125;" &#125; &#125;</span><br><span class="line">&gt; &#125;</span><br><span class="line">&gt; <span class="comment"># 如果你需要针对单个字段匹配多个模式，则该值可以是一组,例如：</span></span><br><span class="line">&gt; filter &#123;</span><br><span class="line">&gt;   grok &#123; match =&gt; &#123; "message" =&gt; [ "Duration: %&#123;NUMBER:duration&#125;", "Speed: %&#123;NUMBER:speed&#125;" ] &#125; &#125;</span><br><span class="line">&gt; &#125;</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+</blockquote>
+</li>
+<li><p>named_captures_only </p>
+<blockquote>
+<p>布尔值，默认值是 true<br>描述：如果为真，只存 grok 正则表达式储命名捕获的结果</p>
+</blockquote>
+</li>
+<li><p>overwrite </p>
+<blockquote>
+<p>数组，默认是[]<br>描述：覆盖字段内容 </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&gt; filter &#123;</span><br><span class="line">&gt;   grok &#123;</span><br><span class="line">&gt;     match =&gt; &#123; "message" =&gt; "%&#123;SYSLOGBASE&#125; %&#123;DATA:message&#125;" &#125;</span><br><span class="line">&gt;     overwrite =&gt; [ "message" ]</span><br><span class="line">&gt;   &#125;</span><br><span class="line">&gt; &#125;</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+</blockquote>
+</li>
+<li><p>pattern_definitions </p>
+<blockquote>
+<p>值类型是 数组，默认值是 {}<br>描述：模式名称和模式正则表达式，也是用于定义当前过滤器要使用的自定义模式。匹配现有名称的模式将覆盖预先存在的定义。可以将此视为仅适用于grok定义的内联模式，patterns_dir是将模式写在外部。 </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&gt; filter &#123;</span><br><span class="line">&gt;     grok &#123;</span><br><span class="line">&gt;         pattern_definitions =&gt; &#123;"MYSELFTIMESTAMP" =&gt; "20%&#123;YEAR&#125;-%&#123;MONTHNUM&#125;-%&#123;MONTHDAY&#125; %&#123;HOUR&#125;:?%&#123;MINUTE&#125;(?::?%&#123;SECOND&#125;)"&#125;</span><br><span class="line">&gt;         match =&gt; &#123;"message" =&gt; ["%&#123;MYSELFTIMESTAMP:timestamp&#125;"]&#125;</span><br><span class="line">&gt;     &#125;</span><br><span class="line">&gt; &#125;</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+</blockquote>
+</li>
+<li><p>patterns_dir </p>
+<blockquote>
+<p>值类型是数组，默认值是 []<br>描述：一些复杂的正则表达式，不适合直接写到filter中，可以指定一个文件夹，用来专门保存正则表达式的文件，需要注意的是该文件夹中的所有文件中的正则表达式都会被依次加载，包括备份文件。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt; patterns_dir =&gt; ["/opt/logstash/patterns", "/opt/logstash/extra_patterns"]1</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<blockquote>
+<p>正则文件以文本格式描述：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt; NAME PATTERN</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<blockquote>
+<p>例如：这是一个数字的表达式</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt; NUMBER \d+<span class="number">1</span></span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+</blockquote>
+</li>
+<li><p>patterns_file_glob </p>
+<blockquote>
+<p>字符串， 默认值：<code>*</code><br>描述：针对patterns_dir属性中指定的文件夹里哪些正则文件，可以在这个filter中生效，需要本属性来指定。默认值 <code>*</code> 是指所有正则文件都生效。</p>
+</blockquote>
+</li>
+<li><p>tag_on_failure </p>
+<blockquote>
+<p>值类型是数组，默认值是 _grokparsefailure<br>描述：没有成功匹配时，将值附加到字段</p>
+</blockquote>
+</li>
+<li><p>tag_on_timeout </p>
+<blockquote>
+<p>值类型是字符串，默认值是 _groktimeout<br>描述：如果Grok正则表达式超时，则应用标记。</p>
+</blockquote>
+</li>
+<li><p>timeout_millis </p>
+<blockquote>
+<p>值类型是数字，默认值是 30000<br>描述： 尝试在这段时间后终止正则表达式。如果应用了多个模式，则这适用于每个模式。这将永远不会提前超时，但超时可能需要一些时间。实际的超时时间是基于250ms量化的近似值。设置为0以禁用超时。</p>
+</blockquote>
+</li>
+</ol>
+<h2 id="常用选项"><a href="#常用选项" class="headerlink" title="常用选项"></a>常用选项</h2><p>所有过滤器插件都支持以下配置选项： </p>
+<ol>
+<li><p>add_field </p>
+<blockquote>
+<p>对象，默认值是 {}<br>描述：在匹配日志中增加一个 field，可以通过%{field}动态命名field名或field的值。例如：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&gt; filter &#123;</span><br><span class="line">&gt;   grok &#123;</span><br><span class="line">&gt;     add_field =&gt; &#123; "foo_%&#123;somefield&#125;" =&gt; "Hello world, from %&#123;host&#125;" &#125;</span><br><span class="line">&gt;   &#125;</span><br><span class="line">&gt; &#125;</span><br><span class="line">&gt; <span class="comment"># 你也可以一次添加多个字段</span></span><br><span class="line">&gt; filter &#123;</span><br><span class="line">&gt;   grok &#123;</span><br><span class="line">&gt;     add_field =&gt; &#123;</span><br><span class="line">&gt;       "foo_%&#123;somefield&#125;" =&gt; "Hello world, from %&#123;host&#125;"</span><br><span class="line">&gt;       "new_field" =&gt; "new_static_value"</span><br><span class="line">&gt;     &#125;</span><br><span class="line">&gt;   &#125;</span><br><span class="line">&gt; &#125;</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+</blockquote>
+</li>
+<li><p>add_tag </p>
+<blockquote>
+<p>数组，默认值是 []<br>描述：如果此过滤器成功，请向该事件添加任意标签。标签可以是动态的，并使用%{field} 语法包含事件的一部分。 </p>
+</blockquote>
+<blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&gt; filter &#123;</span><br><span class="line">&gt;   grok &#123;</span><br><span class="line">&gt;     add_tag =&gt; [ "foo_%&#123;somefield&#125;" ]</span><br><span class="line">&gt;   &#125;</span><br><span class="line">&gt; &#125;</span><br><span class="line">&gt; <span class="comment"># 你也可以一次添加多个标签</span></span><br><span class="line">&gt; filter &#123;</span><br><span class="line">&gt;   grok &#123;</span><br><span class="line">&gt;     add_tag =&gt; [ "foo_%&#123;somefield&#125;", "taggedy_tag"]</span><br><span class="line">&gt;   &#125;</span><br><span class="line">&gt; &#125;</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+</blockquote>
+</li>
+<li><p>enable_metric </p>
+<blockquote>
+<p>值类型是布尔值，默认值是 true<br>描述：禁用或启用度量标准</p>
+</blockquote>
+</li>
+<li><p>id </p>
+<blockquote>
+<p>值类型是字符串，此设置没有默认值。<br>描述：向插件实例添加唯一ID，此ID用于跟踪插件特定配置的信息。<br>例如：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&gt; filter &#123;</span><br><span class="line">&gt;   grok &#123;</span><br><span class="line">&gt;     id =&gt; "ABC"</span><br><span class="line">&gt;   &#125;</span><br><span class="line">&gt; &#125;</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+</blockquote>
+</li>
+<li><p>periodic_flush </p>
+<blockquote>
+<p>值类型是布尔值，默认值是 false<br>描述：如果设置为ture，会定时的调用filter的更新函数（flush method）</p>
+</blockquote>
+</li>
+<li><p>remove_field </p>
+<blockquote>
+<p>值的类型：array，默认值：[]<br>描述：删除当前文档中的指定filted</p>
+</blockquote>
+<blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&gt; filter &#123;</span><br><span class="line">&gt;   grok &#123;</span><br><span class="line">&gt;     remove_field =&gt; [ "foo_%&#123;somefield&#125;" ]</span><br><span class="line">&gt;   &#125;</span><br><span class="line">&gt; &#125;</span><br><span class="line">&gt; <span class="comment"># 你也可以一次移除多个字段:</span></span><br><span class="line">&gt; filter &#123;</span><br><span class="line">&gt;   grok &#123;</span><br><span class="line">&gt;     remove_field =&gt; [ "foo_%&#123;somefield&#125;", "my_extraneous_field" ]</span><br><span class="line">&gt;   &#125;</span><br><span class="line">&gt; &#125;</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+</blockquote>
+</li>
+<li><p>remove_tag </p>
+<blockquote>
+<p>值类型是数组，默认值是 []<br>描述：如果此过滤器成功，请从该事件中移除任意标签。标签可以是动态的，并使用%{field} 语法包括事件的一部分。 </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&gt; filter &#123;</span><br><span class="line">&gt;   grok &#123;</span><br><span class="line">&gt;     remove_tag =&gt; [ "foo_%&#123;somefield&#125;" ]</span><br><span class="line">&gt;   &#125;</span><br><span class="line">&gt; &#125;</span><br><span class="line">&gt; <span class="comment"># 你也可以一次删除多个标签</span></span><br><span class="line">&gt; filter &#123;</span><br><span class="line">&gt;   grok &#123;</span><br><span class="line">&gt;     remove_tag =&gt; [ "foo_%&#123;somefield&#125;", "sad_unwanted_tag"]</span><br><span class="line">&gt;   &#125;</span><br><span class="line">&gt; &#125;</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+</blockquote>
+</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/logstash-grok/" data-id="cjssqvcu3002r8uq4a72i4bru" class="article-share-link">Share</a>
+     
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/mask-subnet/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          子网掩码计算
+        
+      </div>
+    </a>
+  
+  
+    <a href="/buffer-vs-stream/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">buffer 和 stream</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

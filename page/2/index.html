@@ -54,10 +54,10 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-angular-dirty-touched-changed" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-curl-with-cookie" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/angular-dirty-touched-changed/" class="article-date">
-  <time datetime="2018-05-24T11:57:12.000Z" itemprop="datePublished">2018-05-24</time>
+    <a href="/curl-with-cookie/" class="article-date">
+  <time datetime="2018-10-17T03:48:12.000Z" itemprop="datePublished">2018-10-17</time>
 </a>
     
   </div>
@@ -68,7 +68,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/angular-dirty-touched-changed/">Angular 判断表单是否真的 dirty</a>
+      <a class="article-title" href="/curl-with-cookie/">curl 带 cookie</a>
     </h1>
   
 
@@ -79,416 +79,12 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <div class="article-preview">
-            <p>Angular 的动态表单验证，有 dirty 和 touched 属性可以用来判断是否被修改和是否失去焦点等状态，但是遗憾的是即使修改后撤销修改（改回原值），Angular 也认为已经 dirty 了。</p>
-<p>有人认为这样不合理，理由是：</p>
-<blockquote>
-<p>input 中原本是 3，你改成 4 之后自然 dirty，然后你再改回 3，就不应该是 dirty，只有值变化才能算 dirty。</p>
-</blockquote>
-<p>也有人认为这样很合理，给出的理由是：</p>
-<blockquote>
-<p>假如你面前有一杯白开水，你端起来喝了，然后又倒上一杯，虽然新的水跟之前喝掉的一样，但是由于你触碰了杯子，被子上已经粘上了你的指纹，所以 dirty 了，这里的杯子就是 input，水就是 3，当然你可以用洗洁精把指纹抹掉还原为 pristine，这就是 angular 提供的 <code>markAsPristine()</code> 方法。</p>
-</blockquote>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/angular-dirty-touched-changed/#more">Read More</a>
-          </p>
-        
+        <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -v --cookie <span class="string">"USER_TOKEN=Yes"</span> http://127.0.0.1:5000/</span><br></pre></td></tr></table></figure>
+
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/angular-dirty-touched-changed/" data-id="cjhq778h8002nizq3jpq260su" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-angular-reactive-form" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/angular-reactive-form/" class="article-date">
-  <time datetime="2018-05-24T02:01:12.000Z" itemprop="datePublished">2018-05-24</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/angular-reactive-form/">Angular 中的响应式表单</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <h2 id="基础概念"><a href="#基础概念" class="headerlink" title="基础概念"></a>基础概念</h2><ol>
-<li><p>FormControl</p>
-<p>代表 form 中的一个具体的元件，例如 input、select、radio、dropdown 等，是表单中不可分割的最小单元。</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; FormControl &#125; <span class="keyword">from</span> <span class="string">'@angular/forms'</span>;</span><br><span class="line">myName: FormControl;</span><br><span class="line"><span class="keyword">this</span>.myName = <span class="keyword">new</span> FormControl(<span class="string">'初始值'</span>);</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>FormGroup</p>
-<p>一组 FormControl 的合集，如果 FormControl 的值发生变化，那么 FormGroup 也发生变化。FormGroup 本身有很多 API，例如表单验证等，注意这里的验证器是针对 FormGroup 本身，而不是里面的 FormControl。</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; FormGroup &#125; <span class="keyword">from</span> <span class="string">'@angular/forms'</span>;</span><br><span class="line">myName: FormGroup;</span><br><span class="line"><span class="keyword">this</span>.myForm = <span class="keyword">new</span> FormGroup(&#123;</span><br><span class="line">  name: <span class="keyword">new</span> FormControl(<span class="string">'名字'</span>)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
-<p>这里面隐含的逻辑关系是：</p>
-<ol>
-<li>只要任何一个 FormControl 验证失败，整个 FormGroup 就验证失败</li>
-<li>即使所有 FormControl 验证通过，但 FormGroup 验证失败，那结果也是失败</li>
-<li>所有 FormControl 验证通过且 FormGroup 验证通过，才算通过</li>
-</ol>
-</li>
-<li><p>FormArray</p>
-<p>一组 FormControl/FormGroup/FormArray 的合集。</p>
-</li>
-</ol>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/angular-reactive-form/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/angular-reactive-form/" data-id="cjhq778hn0039izq3bsbxh6xe" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-export-html-to-word" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/export-html-to-word/" class="article-date">
-  <time datetime="2018-05-22T01:55:33.000Z" itemprop="datePublished">2018-05-22</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/export-html-to-word/">将 HTML 导出为 word</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <ol>
-<li><p>导出 <code>.doc</code> 文件</p>
- <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Export2Doc</span>(<span class="params">element, filename = <span class="string">''</span></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> preHtml = <span class="string">'&lt;html xmlns:o=\'urn:schemas-microsoft-com:office:office\' xmlns:w=\'urn:schemas-microsoft-com:office:word\' xmlns=\'http://www.w3.org/TR/REC-html40\'&gt;&lt;head&gt;&lt;meta charset=\'utf-8\'&gt;&lt;title&gt;Export HTML To Doc&lt;/title&gt;&lt;/head&gt;&lt;body&gt;'</span></span><br><span class="line">  <span class="keyword">var</span> postHtml = <span class="string">'&lt;/body&gt;&lt;/html&gt;'</span></span><br><span class="line">  <span class="keyword">var</span> html = preHtml + <span class="built_in">document</span>.getElementById(element).innerHTML + postHtml</span><br><span class="line">  <span class="keyword">var</span> blob = <span class="keyword">new</span> Blob([<span class="string">'\ufeff'</span>, html], &#123; <span class="attr">type</span>: <span class="string">'application/msword'</span> &#125;)</span><br><span class="line">  <span class="keyword">var</span> url = <span class="string">'data:application/vnd.ms-word;charset=utf-8,'</span> + <span class="built_in">encodeURIComponent</span>(html)</span><br><span class="line">  filename = filename ? filename + <span class="string">'.doc'</span> : <span class="string">'document.doc'</span> <span class="comment">// 指定文件名</span></span><br><span class="line">  <span class="keyword">var</span> downloadLink = <span class="built_in">document</span>.createElement(<span class="string">'a'</span>) <span class="comment">// 创建下载链接</span></span><br><span class="line">  <span class="built_in">document</span>.body.appendChild(downloadLink)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (navigator.msSaveOrOpenBlob) &#123;</span><br><span class="line">    navigator.msSaveOrOpenBlob(blob, filename)</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    downloadLink.href = url <span class="comment">// 链接到文件</span></span><br><span class="line">    downloadLink.download = filename <span class="comment">// 设置文件名</span></span><br><span class="line">    downloadLink.click() <span class="comment">// 触发下载</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">document</span>.body.removeChild(downloadLink)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/export-html-to-word/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/export-html-to-word/" data-id="cjhq778k4006kizq3l0dzovlb" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-angular-component-css-selector" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/angular-component-css-selector/" class="article-date">
-  <time datetime="2018-05-20T04:22:12.000Z" itemprop="datePublished">2018-05-20</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/angular-component-css-selector/">Angular 组件中的 CSS 选择器</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <h3 id="host-选择器"><a href="#host-选择器" class="headerlink" title=":host 选择器"></a>:host 选择器</h3><p>使用 <code>:host</code> 伪类选择器，用来选择组件宿主元素中的元素。</p>
-<p>为宿主元素添加边框</p>
-<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-pseudo">:host</span> &#123;</span><br><span class="line">  <span class="attribute">display</span>: block;</span><br><span class="line">  <span class="attribute">border</span>: <span class="number">1px</span> solid black;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>当宿主元素带 <code>.active</code> 类的时候，边框加粗：</p>
-<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-pseudo">:host(.active)</span> &#123;</span><br><span class="line">  <span class="attribute">border-width</span>: <span class="number">3px</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/angular-component-css-selector/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/angular-component-css-selector/" data-id="cjhq778h4002hizq3tj5lc953" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-js-module" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/js-module/" class="article-date">
-  <time datetime="2018-05-15T06:36:12.000Z" itemprop="datePublished">2018-05-15</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/js-module/">JS 模块化</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>随着 ES6 的普及，Webpack、Parcel 等打包工具的出现，模块化 JS 开发模式已经成为主流模式，但是当我们习以为常的时候，千万别忘记其实 JS 模块化的过程其实是很曲折的，让我们再回顾一下相关的概念：</p>
-<ol>
-<li><p>什么是模块？</p>
-<p>模块就是可复用的代码片段，封装了具体的实现细节，暴露公开的API，从而方便自己或他人调用。</p>
-</li>
-<li><p>为什么要模块化？</p>
-<p>没有模块，我们照样写代码，但是模块化有下面几个好处：</p>
-<ul>
-<li>代码抽象：只需要知道某个模块封装的功能、调用时需要传递的参数和返回格式即可，不用关系实现细节。</li>
-<li>代码封装：隐藏代码，不会被轻易变更。</li>
-<li>代码复用：避免重复劳动。</li>
-<li>依赖管理：在代码无需改动的情况下轻松更换依赖。</li>
-</ul>
-</li>
-</ol>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/js-module/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/js-module/" data-id="cjhq778o900bgizq3tsl0gfku" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-mongodb-comment-design" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/mongodb-comment-design/" class="article-date">
-  <time datetime="2018-05-04T02:57:03.000Z" itemprop="datePublished">2018-05-04</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/mongodb-comment-design/">MongoDB 评论模型设计</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <h3 id="数据库模型"><a href="#数据库模型" class="headerlink" title="数据库模型"></a>数据库模型</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> mongoose = <span class="built_in">require</span>(<span class="string">'mongoose'</span>)</span><br><span class="line"><span class="keyword">const</span> Schema = mongoose.Schema</span><br><span class="line"><span class="keyword">const</span> ObjectId = Schema.Types.ObjectId</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> Model = mongoose.model(<span class="string">'comment'</span>, <span class="keyword">new</span> Schema(&#123;</span><br><span class="line">  user: &#123;<span class="attr">type</span>: ObjectId, <span class="attr">ref</span>: <span class="string">'user'</span>, <span class="attr">required</span>: <span class="literal">true</span>&#125;,</span><br><span class="line">  targetId: &#123;<span class="attr">type</span>: ObjectId, <span class="attr">required</span>: <span class="literal">true</span>&#125;,</span><br><span class="line">  targetName: &#123;<span class="attr">type</span>: <span class="built_in">String</span>, <span class="attr">required</span>: <span class="literal">true</span>, <span class="attr">default</span>: <span class="string">'article'</span>&#125;,</span><br><span class="line">  type: &#123;<span class="attr">type</span>: <span class="built_in">String</span>, <span class="attr">required</span>: <span class="literal">true</span>, <span class="attr">default</span>: <span class="string">'text'</span>&#125;,</span><br><span class="line">  content: &#123;<span class="attr">type</span>: <span class="built_in">String</span>&#125;,</span><br><span class="line">  resource: &#123;<span class="attr">type</span>: ObjectId, <span class="attr">ref</span>: <span class="string">'resource'</span>&#125;,</span><br><span class="line">  targetUser: &#123;<span class="attr">type</span>: ObjectId, <span class="attr">ref</span>: <span class="string">'user'</span>&#125;, <span class="comment">// 预留字段：评论的评论的评论</span></span><br><span class="line">  likes: &#123;<span class="attr">type</span>: <span class="built_in">Number</span>&#125;, <span class="comment">// 预留字段：对评论的赞</span></span><br><span class="line">  createdAt: &#123;<span class="attr">type</span>: <span class="built_in">Date</span>, <span class="attr">default</span>: <span class="built_in">Date</span>.now&#125;,</span><br><span class="line">  updatedAt: &#123;<span class="attr">type</span>: <span class="built_in">Date</span>, <span class="attr">default</span>: <span class="built_in">Date</span>.now&#125;,</span><br><span class="line">&#125;))</span><br><span class="line"></span><br><span class="line"><span class="built_in">module</span>.exports = Model</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> type 评论类型 文字text、图片image、地理位置location、语音voice等</span></span><br><span class="line"><span class="comment"> targetName 取值 对文章或评论的评论 article、comment</span></span><br><span class="line"><span class="comment"> 评论默认针对对作者的文字，评论的评论（可以有多级，但所有评论下的评论都视为在同一个评论下的聊天）</span></span><br><span class="line"><span class="comment"> 评论排序应按照热门程度，即评论的评论数量</span></span><br><span class="line"><span class="comment"> */</span></span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/mongodb-comment-design/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/mongodb-comment-design/" data-id="cjhq778pt00dgizq3s5h8fk09" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-angular-component-communication" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/angular-component-communication/" class="article-date">
-  <time datetime="2018-04-28T10:17:08.000Z" itemprop="datePublished">2018-04-28</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/angular-component-communication/">Angular 兄弟组件通信</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>在 Angular 中，父子组件可以通过 Input 和 Output 进行通信，从而实现父组件向子组件传递数据和子组件向父组件输出数据，那兄弟组件 A 和组件 B 之间如何进行通信呢？</p>
-<p>例如 sidebar 和 sidebar-toggle 两个并列的组件，点击 sidebar-toggle 的时候希望 sidebar 能够展开。有三种方法可以实现这种效果：</p>
-<ol>
-<li><p>将 sidebar 的引用传递给 sidebar-toggle</p>
-<p><code>app.component.html</code></p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">app-side-bar-toggle</span> [<span class="attr">sideBar</span>]=<span class="string">"sideBar"</span>&gt;</span><span class="tag">&lt;/<span class="name">app-side-bar-toggle</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">app-side-bar</span> #<span class="attr">sideBar</span>&gt;</span><span class="tag">&lt;/<span class="name">app-side-bar</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p><code>side-bar-toggle.component.ts</code></p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span>(&#123;</span><br><span class="line">  selector: <span class="string">'app-side-bar-toggle'</span>,</span><br><span class="line">  templateUrl: <span class="string">'./side-bar-toggle.component.html'</span>,</span><br><span class="line">  styleUrls: [<span class="string">'./side-bar-toggle.component.css'</span>]</span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> SideBarToggleComponent &#123;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Input</span>() sideBar: SideBarComponent;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@HostListener</span>(<span class="string">'click'</span>)</span><br><span class="line">  click() &#123;</span><br><span class="line">    <span class="keyword">this</span>.sideBar.toggle();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/angular-component-communication/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/angular-component-communication/" data-id="cjhq778h9002pizq31s5jb65e" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-letsencrypt-wildcard-certificate" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/letsencrypt-wildcard-certificate/" class="article-date">
-  <time datetime="2018-04-23T10:14:23.000Z" itemprop="datePublished">2018-04-23</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/letsencrypt-wildcard-certificate/">letsencrypt 通配符证书</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>这里记录自己如何通过 certbot 申请 letsencrypt 的通配符证书的。</p>
-<p>首先安装 certbot：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install python2-certbot-nginx</span><br></pre></td></tr></table></figure>
-<p>然后申请：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">certbot certonly --manual --agree-tos --server https://acme-v02.api.letsencrypt.org/directory</span><br></pre></td></tr></table></figure>
-<p>其中：</p>
-<ul>
-<li><code>--manual</code>：交互模式</li>
-<li><code>--agree-tos</code>：同意服务协议</li>
-</ul>
-<p>certbot 命令有很多选项，这里顺便介绍一下用法：</p>
-<p><strong>用法:</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">certbot [子命令] [选项] [-d 域名] [-d 域名]</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/letsencrypt-wildcard-certificate/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/letsencrypt-wildcard-certificate/" data-id="cjkajvcqv000g4eq3w3pgdi64" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/curl-with-cookie/" data-id="cjssqvcs4000x8uq4rvzslz9d" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
 
@@ -499,10 +95,10 @@
 
 
   
-    <article id="post-js-generate-sequence" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-send-files-using-stream" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/js-generate-sequence/" class="article-date">
-  <time datetime="2018-04-23T06:06:56.000Z" itemprop="datePublished">2018-04-23</time>
+    <a href="/send-files-using-stream/" class="article-date">
+  <time datetime="2018-10-05T00:48:12.000Z" itemprop="datePublished">2018-10-05</time>
 </a>
     
   </div>
@@ -513,7 +109,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/js-generate-sequence/">js 中快速生成序列</a>
+      <a class="article-title" href="/send-files-using-stream/">服务器用流的方式传输文件</a>
     </h1>
   
 
@@ -524,15 +120,15 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <p>下面的方法可以快速生成 [0, 2, 3, …, N-1] 的序列：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Array</span>.from(<span class="built_in">Array</span>(N).keys())</span><br></pre></td></tr></table></figure>
-<p>或者更简单的 es6 语法：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[…<span class="built_in">Array</span>(N).keys()]</span><br></pre></td></tr></table></figure>
+        <p>创建一个 nodejs 服务器，用于传输文件给用户，可以用下面的方法：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> fs = <span class="built_in">require</span>(<span class="string">'fs'</span>)</span><br><span class="line"><span class="keyword">const</span> server = <span class="built_in">require</span>(<span class="string">'http'</span>).createServer();</span><br><span class="line"></span><br><span class="line">server.on(<span class="string">'request'</span>, (req, res) =&gt; &#123;</span><br><span class="line">  fs.readFile(<span class="string">'./big.file'</span>, (err, data) =&gt; &#123;</span><br><span class="line">    <span class="keyword">if</span> (err) <span class="keyword">throw</span> err</span><br><span class="line">    res.end(data)</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;)</span><br><span class="line">server.listen(<span class="number">8000</span>)</span><br></pre></td></tr></table></figure>
+<p>但是上面的方法有个弊端，就是服务器对内存的占用取决于 big.file 文件的大小，如果文件特别大的话就会导致服务器内存爆仓，更好的方式是采用流：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> fs = <span class="built_in">require</span>(<span class="string">'fs'</span>)</span><br><span class="line"><span class="keyword">const</span> server = <span class="built_in">require</span>(<span class="string">'http'</span>).createServer()</span><br><span class="line"></span><br><span class="line">server.on(<span class="string">'request'</span>, (req, res) =&gt; &#123;</span><br><span class="line">  <span class="keyword">const</span> src = fs.createReadStream(<span class="string">'./big.file'</span>)</span><br><span class="line">  src.pipe(res)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">server.listen(<span class="number">8000</span>)</span><br></pre></td></tr></table></figure>
 
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/js-generate-sequence/" data-id="cjkajvcqt000e4eq3ms8ehv42" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/send-files-using-stream/" data-id="cjssqvcv2003w8uq4wjc1iu47" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
@@ -543,10 +139,10 @@
 
 
   
-    <article id="post-hot-and-code-observable" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-docker-log-driver" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/hot-and-code-observable/" class="article-date">
-  <time datetime="2018-04-22T13:30:03.000Z" itemprop="datePublished">2018-04-22</time>
+    <a href="/docker-log-driver/" class="article-date">
+  <time datetime="2018-10-01T23:58:23.000Z" itemprop="datePublished">2018-10-02</time>
 </a>
     
   </div>
@@ -557,7 +153,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/hot-and-code-observable/">hot 和 cold 可观察对象</a>
+      <a class="article-title" href="/docker-log-driver/">docker 日志收集</a>
     </h1>
   
 
@@ -568,24 +164,401 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <p>可观察对象有两种：hot和cold。区别在于：</p>
+        <div class="article-preview">
+            <p>docker 默认的日志驱动是 json-file，即保存在文件中，路径可以通过下面的命令查看：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker inspect --format=<span class="string">'&#123;&#123;.LogPath&#125;&#125;'</span> NAME|ID</span><br></pre></td></tr></table></figure>
+<p>例如：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ docker inspect --format=<span class="string">'&#123;&#123;.LogPath&#125;&#125;'</span> mysql</span><br><span class="line">/var/lib/docker/containers/54571b675a6b52f70aea806977359d8bcd74543cb09e1aa139853113f835d1c4/54571b675a6b52f70aea806977359d8bcd74543cb09e1aa139853113f835d1c4-json.log</span><br></pre></td></tr></table></figure>
+<p>json-file 驱动会在启动某个容器时自动创建一个 json 文件，用于存储容器 stdout 与 stderr 输出的内容 ，当在宿主机中运行 <code>docker logs -f 容器名</code> 时，就会读取该文件的内容并显示在终端上。</p>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/docker-log-driver/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/docker-log-driver/" data-id="cjssqvcs900158uq464xl4wsf" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/">Docker</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-git-rename-and-delete-branch" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/git-rename-and-delete-branch/" class="article-date">
+  <time datetime="2018-09-30T06:08:23.000Z" itemprop="datePublished">2018-09-30</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/git-rename-and-delete-branch/">git 删除和重命名分支</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>本地分支重命名</strong></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git branch -m old new</span><br></pre></td></tr></table></figure>
+<p><strong>删除本地分支</strong></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git branch -D 本地分支名</span><br></pre></td></tr></table></figure>
+<p><strong>远程分支重命名</strong></p>
 <ul>
-<li>hot：为每个订阅者创建一个数据提供方。</li>
-<li>cold：先创建一个数据提供方，每个订阅者都从这个数据提供方这里获取数据。</li>
+<li><p>删除远程分支</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git push origin  :远程分支名(你要删除的远程分支名)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>将本地分支推送到远程分支上，如果远程分支不存在，则创建此远程分支</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git push origin  本地分支名:远程分支名</span><br></pre></td></tr></table></figure>
+</li>
 </ul>
-<p>比较抽象，可以形象的比喻成“网上看电影”和“电影院看电影”的区别：</p>
-<ul>
-<li>网上看电影：当用户点击播放按钮时，网站为每个用户都提供了完整的数据流，彼此互不影响，每个用户可以有不同的观看进度，随时可以从任意位置开始播放。</li>
-<li>电影院看电影：假如电影晚上6点开始，那么6点准时开播，创建了唯一的数据流，观看者的进度是完全一致的，如果有人迟到的话只能从他抵达时刻开始看后续内容。</li>
-</ul>
-<p>这样就不难理解：cold observable 仅在订阅之后开始创建数据流，hot obervable 无论有没有订阅都会产生数据流。</p>
+<p>如果其他开发者已经删除了远程分支，但本地 <code>git branch -a</code> 依然显示，用 <code>git fetch -p</code> 即可</p>
 
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/hot-and-code-observable/" data-id="cjhq778m30096izq3rcb82pmw" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/git-rename-and-delete-branch/" data-id="cjssqvcso001t8uq4hao2w0hs" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/">Git</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-not-a-constructor" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/not-a-constructor/" class="article-date">
+  <time datetime="2018-09-30T05:35:07.000Z" itemprop="datePublished">2018-09-30</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/not-a-constructor/">require 时报错 not a constructor</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>当引用第三方库的时候，经常会遇到下面的错误：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xxx is not a constructor</span><br></pre></td></tr></table></figure>
+<p>原因是该第三方库使用 es6 语法暴露出来一个类，但是在项目中使用了 require 来引用导致的。这是 babel 在转换 <code>import</code> 和 <code>export</code> 到 <code>require</code> 和 <code>exports</code> 时存在的差异，举个例子，用 es6 写 processor.js 暴露一个类：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// processor.js</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Processor</span> </span>&#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> Processor</span><br></pre></td></tr></table></figure>
+<p>如果用 require 来引用：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// require.js</span></span><br><span class="line"><span class="keyword">const</span> Processor = <span class="built_in">require</span>(<span class="string">'./processor'</span>);</span><br><span class="line"><span class="keyword">const</span> processor = <span class="keyword">new</span> Processor() <span class="comment">// 会报错</span></span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/not-a-constructor/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/not-a-constructor/" data-id="cjssqvcur003i8uq4gflmeynz" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-sudo-keep-env" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/sudo-keep-env/" class="article-date">
+  <time datetime="2018-09-28T01:06:07.000Z" itemprop="datePublished">2018-09-28</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/sudo-keep-env/">sudo 保持环境变量</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>sudo 之后环境变量就没了，但有个 <code>-E</code> 选项能够保持环境变量：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ export HTTP_PROXY=foof</span><br><span class="line">$ sudo -E bash -c &apos;echo $HTTP_PROXY&apos;</span><br></pre></td></tr></table></figure>
+<p>帮助页面解释如下:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-E, --preserve-env</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>Indicates to the security policy that the user wishes to preserve their existing environment variables.  The security policy may return an error if the user does not have permission to preserve the environment.</p>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/sudo-keep-env/" data-id="cjssqvcv900448uq4zkm2okf2" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-linux-route" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/linux-route/" class="article-date">
+  <time datetime="2018-09-27T14:43:07.000Z" itemprop="datePublished">2018-09-27</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/linux-route/">Linux 路由表</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>route 可查看路由表：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># route</span><br><span class="line">Destination     Gateway         Genmask Flags Metric Ref    Use Iface</span><br><span class="line">192.168.0.0     *               255.255.255.0   U     0      0        0 eth0</span><br><span class="line">169.254.0.0     *               255.255.0.0     U     0      0        0 eth0</span><br><span class="line">default         192.168.0.1     0.0.0.0         UG    0      0        0 eth0</span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th>Destination</th>
+<th>目标网段或者主机</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Gateway</td>
+<td>网关地址，”*” 表示目标是本主机所属的网络，不需要路由</td>
+</tr>
+<tr>
+<td>Genmask</td>
+<td>网络掩码</td>
+</tr>
+<tr>
+<td>Flags</td>
+<td>标记。</td>
+</tr>
+<tr>
+<td>Metric</td>
+<td>路由距离，到达指定网络所需的中转数（linux 内核中没有使用）</td>
+</tr>
+<tr>
+<td>Ref</td>
+<td>路由项引用次数（linux 内核中没有使用）</td>
+</tr>
+<tr>
+<td>Use</td>
+<td>此路由项被路由软件查找的次数</td>
+</tr>
+<tr>
+<td>Iface</td>
+<td>该路由表项对应的输出接口</td>
+</tr>
+</tbody>
+</table>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/linux-route/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/linux-route/" data-id="cjssqvctz002l8uq4wqkfpgce" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-docker-quick-rm" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/docker-quick-rm/" class="article-date">
+  <time datetime="2018-09-27T01:47:23.000Z" itemprop="datePublished">2018-09-27</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/docker-quick-rm/">一句话删除所有容器和镜像</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <ol>
+<li>删除所有正在运行的容器：<code>docker kill $(docker ps -q)</code></li>
+<li>删除所有已停止的容器：<code>docker rm $(docker ps -a -q)</code></li>
+<li>删除所有镜像：<code>docker rmi $(docker images -q)</code></li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/docker-quick-rm/" data-id="cjssqvcsa00178uq4j518nrwk" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/">Docker</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-mac-ntfs" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/mac-ntfs/" class="article-date">
+  <time datetime="2018-09-26T22:45:23.000Z" itemprop="datePublished">2018-09-27</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/mac-ntfs/">Mac 读写 NTFS 硬盘</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Mac 打开 NTFS 格式硬盘读写功能：</p>
+<ol>
+<li><p><code>diskutil list</code> 找到磁盘名称，例如 Seagate</p>
+</li>
+<li><p><code>sudo vi /etc/fstab</code>，输入 <code>LABEL=Seagate none ntfs rw,auto,nobrowse</code></p>
+</li>
+<li><p><code>ln -s /Volumes/Seagate ~/Desktop/Seagate</code> 创建快捷方式</p>
+</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/mac-ntfs/" data-id="cjssqvcu9002y8uq4w3i12d1i" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Mac/">Mac</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-react-native-upload-image" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/react-native-upload-image/" class="article-date">
+  <time datetime="2018-09-26T13:55:08.000Z" itemprop="datePublished">2018-09-26</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/react-native-upload-image/">React Native 上传图片</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>写一个通用的上传函数：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">async</span> upload(url, data) &#123;</span><br><span class="line">  <span class="keyword">let</span> options = &#123;</span><br><span class="line">    headers: &#123;</span><br><span class="line">      <span class="string">'Content-Type'</span>: <span class="string">'multipart/form-data'</span></span><br><span class="line">    &#125;,</span><br><span class="line">    method: <span class="string">'POST'</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  options.body = <span class="keyword">new</span> FormData();</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">let</span> key <span class="keyword">in</span> data) &#123;</span><br><span class="line">    options.body.append(key, data[key]);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> fetch(requestUrl, options)</span><br><span class="line">      .then(<span class="function"><span class="params">response</span> =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> response.json()</span><br><span class="line">          .then(<span class="function"><span class="params">responseJson</span> =&gt;</span> &#123;</span><br><span class="line">            <span class="comment">//You put some checks here</span></span><br><span class="line">            <span class="keyword">return</span> responseJson;</span><br><span class="line">          &#125;)</span><br><span class="line">      &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后调用：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">this</span>.upload(<span class="string">'http://xxx.com/api'</span>, &#123;</span><br><span class="line">  file: &#123;</span><br><span class="line">    uri: image.path,</span><br><span class="line">    type: image.mime,</span><br><span class="line">    name: image.name,</span><br><span class="line">  &#125;</span><br><span class="line">&#125;).then(<span class="function"><span class="params">res</span> =&gt;</span> &#123;</span><br><span class="line">  </span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/react-native-upload-image/" data-id="cjssqvcuy003q8uq4k05x0uqy" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
     </footer>
   </div>
@@ -597,7 +570,7 @@
 
 
   <nav id="page-nav">
-    <a class="extend prev" rel="prev" href="/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/39/">39</a><a class="extend next" rel="next" href="/page/3/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/47/">47</a><a class="extend next" rel="next" href="/page/3/">Next &raquo;</a>
   </nav>
 </section>
 
@@ -612,7 +585,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mongodb/">mongodb</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
     </div>
   </div>
 
@@ -622,7 +595,7 @@
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2018 zju.date
+      &copy; 2019 zju.date
       &nbsp;&nbsp;&nbsp;
       contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
     </div>

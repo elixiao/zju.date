@@ -13,7 +13,7 @@
 <meta property="og:site_name" content=".">
 <meta property="og:description" content="NFS (network file system) 网络文件系统，类似 Windows 中的文件夹共享，多台机器可以访问同一个目录。 服务端NFS 其实可以被视为一个 RPC 服务，可以通过下面的命令开启： 12systemctl start rpcbind # 开启 rpcbindsystemctl start nfs # 开启 nfs 如果系统没安装的话，使用下面的命令安装： 12345yum">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2018-03-19T09:41:01.000Z">
+<meta property="og:updated_time" content="2019-01-20T12:38:44.196Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="NFS笔记">
 <meta name="twitter:description" content="NFS (network file system) 网络文件系统，类似 Windows 中的文件夹共享，多台机器可以访问同一个目录。 服务端NFS 其实可以被视为一个 RPC 服务，可以通过下面的命令开启： 12systemctl start rpcbind # 开启 rpcbindsystemctl start nfs # 开启 nfs 如果系统没安装的话，使用下面的命令安装： 12345yum">
@@ -88,7 +88,7 @@
 <p>如果系统没安装的话，使用下面的命令安装：</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">yum install nfs-utils</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加开启启动</span></span><br><span class="line">systemctl <span class="built_in">enable</span> rpcbind.service</span><br><span class="line">systemctl <span class="built_in">enable</span> nfs-server.service</span><br></pre></td></tr></table></figure>
 <p>然后就可以添加从机了，假如我们想共享本地文件夹 /home/nfs：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">vim  /etc/exports</span><br><span class="line">/home/nfs   192.168.120.8(rw,sync,fsid=0)   192.168.120.9(rw,sync,fsid=0)</span><br><span class="line">/home/nfs 192.168.120.8(rw,all_squash,anonuid=1000,anongid=1000) 192.168.120.9(rw,all_squash,anonuid=1000,anongid=1000)</span><br></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">vim  /etc/exports</span><br><span class="line">/home/nfs 192.168.120.8(rw,all_squash,anonuid=1000,anongid=1000) 192.168.120.9(rw,all_squash,anonuid=1000,anongid=1000) </span><br><span class="line"><span class="comment"># 或者</span></span><br><span class="line">/home/nfs 192.168.120.8(rw,sync,fsid=0,anonuid=0,anongid=0) 192.168.120.9(rw,sync,fsid=0,anonuid=0,anongid=0)</span><br></pre></td></tr></table></figure>
 <a id="more"></a>
 <p>解释如下：</p>
 <ul>
@@ -99,8 +99,8 @@
 <li>no_root_squash：root用户就会对共享的目录拥有至高的权限控制，就像是对本机的目录操作一样。不安全，不建议使用</li>
 <li>root_squash：和上面的选项对应，root用户对共享目录的权限不高，只有普通用户的权限，即限制了root；</li>
 <li>all_squash：不管使用NFS的用户是谁，他的身份都会被限定成为一个指定的普通用户身份；</li>
-<li>anonuid/anongid：匿名用户的 uid/gid，要和root_squash 以及all_squash一同使用，用于指定使用NFS的用户限定后的uid和gid，前提是本机的/etc/passwd中存在这个uid和gid，uid 和 gid 最好为客户端和服务端都存在的 uid 和 gid 值。</li>
-<li>fsid=0表示将/home/nfs整个目录包装成根目录</li>
+<li>anonuid/anongid：匿名用户的 uid/gid，要和root_squash 以及all_squash一同使用，用于指定使用NFS的用户限定后的uid和gid，前提是本机的 /etc/passwd 中存在这个 uid 和 gid，uid 和 gid 最好为客户端和服务端都存在的 uid 和 gid 值。</li>
+<li>fsid=0表示将 /home/nfs 整个目录包装成根目录</li>
 </ul>
 <p>NFS 修改配置文件后无需重启服务，如下命令刷新即可：</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo exportfs -rv</span><br><span class="line">exporting 192.168.120.8:/home/nfs</span><br><span class="line">exporting 192.168.120.9:/home/nfs</span><br></pre></td></tr></table></figure>
@@ -139,11 +139,23 @@
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">192.168.222.200:/home/nfs /home/nfs nfs nolock 0 0</span><br><span class="line">192.168.222.200:/home/nfs1 /home/nfs1 nfs nolock 0 0</span><br></pre></td></tr></table></figure>
 <p>重新挂载：</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mount -a</span><br><span class="line">vim /etc/rc.local</span><br><span class="line">mount  -t nfs  192.168.222.200:/home/nfs1/  /home/nfs1/</span><br></pre></td></tr></table></figure>
-<h2 id="错误解决"><a href="#错误解决" class="headerlink" title="错误解决"></a>错误解决</h2><p>执行 mount 报错</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">clnt_create: RPC: Port mapper failure - Unable to receive: errno 113 (No route to host)</span><br></pre></td></tr></table></figure>
-<p>关闭防火墙，或者执行如下：</p>
+<h2 id="错误解决"><a href="#错误解决" class="headerlink" title="错误解决"></a>错误解决</h2><ol>
+<li><p>执行 mount 报错</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">clnt_create: RPC: Port mapper failure - Unable to receive: errno 113 (No route to host)</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<pre><code>关闭防火墙，或者执行如下：
+
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rpcinfo  -p  192.168.221.100</span><br></pre></td></tr></table></figure>
-<p>将列出端口都添加至防火墙规则，放行。</p>
+
+
+将列出端口都添加至防火墙规则，放行。
+</code></pre><ol>
+<li><p>执行 <code>showmount</code> 的时候卡死</p>
+<p> 当客户端加载NFS不成功时，会一直重试，直到 NFS 服务器有响应，如果服务器不响应，就会出现客户端卡死现象，ctrl+c也不能强行退出。这个时候就有可能是服务器防火墙的问题，记得要把相应的端口放行：</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">firewall-cmd --permanent --add-service=nfs</span><br><span class="line">firewall-cmd --permanent --add-service=mountd</span><br><span class="line">firewall-cmd --permanent --add-service=rpc-bind</span><br><span class="line">firewall-cmd --reload</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
 
       
     </div>
@@ -191,7 +203,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mongodb/">mongodb</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
     </div>
   </div>
 
@@ -201,7 +213,7 @@
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2018 zju.date
+      &copy; 2019 zju.date
       &nbsp;&nbsp;&nbsp;
       contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
     </div>

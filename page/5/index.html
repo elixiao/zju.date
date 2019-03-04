@@ -54,10 +54,10 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-mac-@" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-alpine-set-timezone" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/mac-@/" class="article-date">
-  <time datetime="2018-03-04T15:36:07.000Z" itemprop="datePublished">2018-03-04</time>
+    <a href="/alpine-set-timezone/" class="article-date">
+  <time datetime="2018-06-29T01:40:23.000Z" itemprop="datePublished">2018-06-29</time>
 </a>
     
   </div>
@@ -68,53 +68,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/mac-@/">Mac文件夹后面的@符号</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>mac 权限 <code>drwxr-xr-x@</code> 其中 <code>@</code> 表示什么？</p>
-<p>如果文件或目录有扩展属性,则使用 <code>-l</code> 选项执行 <code>ls</code> 命令时，会在权限许可字段后面附加一个字符 <code>@</code>。<br>如果文件或目录有扩展安全信息，则使用 <code>-l</code> 选项执行 <code>ls</code> 命令时，会在权限许可字段后面附件一个字符 <code>+</code>。</p>
-<blockquote>
-<p>  If the file or directory has extended<br>  attributes, the permissions field printed by the -l option is followed by<br>  a ‘@’ character. Otherwise, if the file or directory has extended secu-<br>  rity information, the permissions field printed by the -l option is fol-<br>  lowed by a ‘+’ character.</p>
-</blockquote>
-<p>使用 <code>xattr -c</code> 文件名 可以去除 <code>@</code></p>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/mac-@/" data-id="cjhq778p800coizq3le8650ds" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-echo" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/echo/" class="article-date">
-  <time datetime="2018-03-01T02:11:03.000Z" itemprop="datePublished">2018-03-01</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/echo/">echo 命令</a>
+      <a class="article-title" href="/alpine-set-timezone/">alpine 设置时区</a>
     </h1>
   
 
@@ -126,20 +80,20 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <p>echo 默认会换行，例如：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ echo 123;echo 456</span><br><span class="line">123</span><br><span class="line">456</span><br></pre></td></tr></table></figure>
-<p>使用 echo -n 可以不换行输出</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ echo -n 123;echo 456</span><br><span class="line">123456</span><br></pre></td></tr></table></figure>
+            <p>在 Linux 中查看服务器时区：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">date -R</span><br><span class="line">Wed, 01 Aug 2017 17:05:44 +0800</span><br></pre></td></tr></table></figure>
+<p>最后的 <code>+0800</code> 表示东八区，在 alpine 中设置时区需要安装 tzdata 这个依赖，可以进入容器内进行安装：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装和更新依赖</span></span><br><span class="line">RUN apk update</span><br><span class="line">RUN apk upgrade</span><br><span class="line">RUN apk add ca-certificates &amp;&amp; update-ca-certificates</span><br><span class="line"><span class="comment"># 修改时区</span></span><br><span class="line">RUN apk add --update tzdata</span><br><span class="line">ENV TZ=Asia/Shanghai</span><br><span class="line"><span class="comment"># 清空缓存包</span></span><br><span class="line">RUN rm -rf /var/cache/apk/*</span><br></pre></td></tr></table></figure>
         </div>
         
           <p class="article-more-link">
-            <a href="/echo/#more">Read More</a>
+            <a href="/alpine-set-timezone/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/echo/" data-id="cjhq778jv0065izq308f8k0yv" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/alpine-set-timezone/" data-id="cjkdl4umc00004hq31ytd7ozm" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
 
@@ -150,10 +104,10 @@
 
 
   
-    <article id="post-ssh-auto-password" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-install-java-on-centos" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/ssh-auto-password/" class="article-date">
-  <time datetime="2018-02-28T11:31:23.000Z" itemprop="datePublished">2018-02-28</time>
+    <a href="/install-java-on-centos/" class="article-date">
+  <time datetime="2018-06-25T12:04:20.000Z" itemprop="datePublished">2018-06-25</time>
 </a>
     
   </div>
@@ -164,7 +118,53 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/ssh-auto-password/">ssh自动输入密码</a>
+      <a class="article-title" href="/install-java-on-centos/">Centos 安装 Java</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Centos 安装 Java：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">yum install java-1.8.0-openjdk <span class="comment"># 安装jre</span></span><br><span class="line">yum install java-1.8.0-openjdk-devel <span class="comment"># 安装jdk</span></span><br></pre></td></tr></table></figure>
+<p>但是需要手动配置 JAVA_HOME 的环境变量，openJDK安装好后的目录位于：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.181-3.b13.el7_5.x86_64</span><br></pre></td></tr></table></figure>
+<p>其他版本都在 <code>/usr/lib/jvm</code> 下，包括 jre 和 jdk，<code>vim ~/.bashrc</code>，</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.181-3.b13.el7_5.x86_64</span><br><span class="line"><span class="built_in">export</span> CLASSPATH=.:<span class="variable">$JAVA_HOME</span>/jre/lib/rt.jar:<span class="variable">$JAVA_HOME</span>/lib/dt.jar:<span class="variable">$JAVA_HOME</span>/lib/tools.jar </span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$PATH</span>:<span class="variable">$JAVA_HOME</span>/bin</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/install-java-on-centos/" data-id="cjssqvctq00278uq45xgtmgle" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-mongodb-$cond" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/mongodb-$cond/" class="article-date">
+  <time datetime="2018-06-25T11:27:56.000Z" itemprop="datePublished">2018-06-25</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/mongodb-$cond/">mongodb $cond 运算符</a>
     </h1>
   
 
@@ -176,21 +176,20 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <p>假设管理员密码为 “12345”，要执行的 <code>sudo vi test.txt</code>，那我们就写一个 test.sh 档，里面的内容是：<code>echo 12345 | sudo -S vi test.txt</code>，主要就是把密码利用 echo 打在前面，后样 sudo 加上 <code>-S</code>，然后中间用 pipe 串起来即可。这个 <code>-S</code> 的意思是从 stdin 读取密码。</p>
-<p>但是对于 ssh，却没有这个选项，不过可以安装 sshpass 来实现：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">brew install sshpass</span><br><span class="line">Error: No available formula with the name <span class="string">"sshpass"</span> </span><br><span class="line">We won<span class="string">'t add sshpass because it makes it too easy for novice SSH users to</span></span><br><span class="line"><span class="string">ruin SSH'</span>s security.</span><br></pre></td></tr></table></figure>
+            <p><code>$cond</code> 运算符能够在聚合的时候进行条件判断，类似于编程语言中的 if/else，它有两种语法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&#123; $cond: &#123; if: &lt;判断条件&gt;, then: &lt;真值&gt;, else: &lt;假值&gt; &#125; &#125;</span><br><span class="line">&#123; $cond: [ &lt;判断条件&gt;, &lt;真值&gt;, &lt;假值&gt; ] &#125;</span><br></pre></td></tr></table></figure>
         </div>
         
           <p class="article-more-link">
-            <a href="/ssh-auto-password/#more">Read More</a>
+            <a href="/mongodb-$cond/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/ssh-auto-password/" data-id="cjhq778su00h8izq3b7xgvonm" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/mongodb-$cond/" data-id="cjkdl4un100034hq3jr6trq99" class="article-share-link">Share</a>
      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
 
     </footer>
   </div>
@@ -199,10 +198,10 @@
 
 
   
-    <article id="post-wordpress-backup" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-angular-formgroup-vs-formgroupname" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/wordpress-backup/" class="article-date">
-  <time datetime="2018-02-24T09:09:03.000Z" itemprop="datePublished">2018-02-24</time>
+    <a href="/angular-formgroup-vs-formgroupname/" class="article-date">
+  <time datetime="2018-06-21T11:25:23.000Z" itemprop="datePublished">2018-06-21</time>
 </a>
     
   </div>
@@ -213,7 +212,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/wordpress-backup/">docker wordpress 备份</a>
+      <a class="article-title" href="/angular-formgroup-vs-formgroupname/">Angular 中的 formGroup 和 formGroupName</a>
     </h1>
   
 
@@ -225,25 +224,20 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <p>数据库在 mysql 容器里面，用户上传的文件在 wordpress 容器里面。</p>
-<h2 id="备份-MySQL-数据库"><a href="#备份-MySQL-数据库" class="headerlink" title="备份 MySQL 数据库"></a>备份 MySQL 数据库</h2><p><code>ssh</code> 到服务器，然后使用 <code>docker exec</code> 或 <code>docker-compose exec</code> 进入 MySQL 容器内查看数据库结构：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql -uwordpress -pwordpress</span><br></pre></td></tr></table></figure>
-<p>在 mysql 命令行：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show databases;</span><br><span class="line">+--------------------+</span><br><span class="line">| Database           |</span><br><span class="line">+--------------------+</span><br><span class="line">| information_schema |</span><br><span class="line">| wordpress          |</span><br><span class="line">+--------------------+</span><br><span class="line">2 rows <span class="keyword">in</span> <span class="built_in">set</span> (0.01 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; use wordpress;</span><br><span class="line">Reading table information <span class="keyword">for</span> completion of table and column names</span><br><span class="line">You can turn off this feature to get a quicker startup with -A</span><br><span class="line"></span><br><span class="line">Database changed</span><br><span class="line"></span><br><span class="line">mysql&gt; show tables;</span><br><span class="line">+-----------------------+</span><br><span class="line">| Tables_in_wordpress   |</span><br><span class="line">+-----------------------+</span><br><span class="line">| wp_commentmeta        |</span><br><span class="line">| wp_comments           |</span><br><span class="line">| wp_hfcm_scripts       |</span><br><span class="line">| wp_links              |</span><br><span class="line">| wp_options            |</span><br><span class="line">| wp_postmeta           |</span><br><span class="line">| wp_posts              |</span><br><span class="line">| wp_term_relationships |</span><br><span class="line">| wp_term_taxonomy      |</span><br><span class="line">| wp_termmeta           |</span><br><span class="line">| wp_terms              |</span><br><span class="line">| wp_usermeta           |</span><br><span class="line">| wp_users              |</span><br><span class="line">+-----------------------+</span><br><span class="line">13 rows <span class="keyword">in</span> <span class="built_in">set</span> (0.00 sec)</span><br></pre></td></tr></table></figure>
-<p>备份的时候可以在容器内备份完毕后拷贝到宿主机，也可以直接备份到宿主机。</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 进入容器内备份</span></span><br><span class="line">docker-compose <span class="built_in">exec</span> mysql sh</span><br><span class="line">mysqldump -uwordpress -pwordpress wordpress &gt; /var/backups/db.sql</span><br><span class="line">docker cp mysql:/var/backups/db.sql /ali/bak/wordpress/db.sql</span><br><span class="line"></span><br><span class="line"><span class="comment"># 直接备份出来</span></span><br><span class="line">docker-compose <span class="built_in">exec</span> mysql \</span><br><span class="line">    mysqldump -uwordpress -pwordpress wordpress &gt; /ali/bak/wordpress/db.sql</span><br></pre></td></tr></table></figure>
+            <p>有一个 formGroup，里面嵌套另一个 formGroup 和 fromArray 的场景，例如：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">this</span>.myForm = fb.group(&#123;</span><br><span class="line">  name: [<span class="string">'我的名字'</span>, Validators.required],</span><br><span class="line">  age: [<span class="number">30</span>, Validators.required],</span><br><span class="line">  mother: fb.group(&#123;</span><br><span class="line">    name: [<span class="string">'母亲姓名'</span>],</span><br><span class="line">    age: [<span class="number">50</span>]</span><br><span class="line">  &#125;),</span><br><span class="line">  children: fb.array([</span><br><span class="line">    fb.group(&#123;</span><br><span class="line">      name: [<span class="string">'大宝'</span>],</span><br><span class="line">      age: [<span class="number">5</span>]</span><br><span class="line">    &#125;,</span><br><span class="line">    fb.group(&#123;</span><br><span class="line">      name: [<span class="string">'二宝'</span>],</span><br><span class="line">      age: [<span class="number">3</span>]</span><br><span class="line">    &#125;    </span><br><span class="line">  ])</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
         </div>
         
           <p class="article-more-link">
-            <a href="/wordpress-backup/#more">Read More</a>
+            <a href="/angular-formgroup-vs-formgroupname/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/wordpress-backup/" data-id="cjhq778vo00k0izq376wlf0j9" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/angular-formgroup-vs-formgroupname/" data-id="cjssqvcpp00038uq4lggaw3xs" class="article-share-link">Share</a>
      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
     </footer>
   </div>
@@ -252,10 +246,10 @@
 
 
   
-    <article id="post-ssh-broken-pipe" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-node-max-old-space-size" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/ssh-broken-pipe/" class="article-date">
-  <time datetime="2018-02-09T06:05:03.000Z" itemprop="datePublished">2018-02-09</time>
+    <a href="/node-max-old-space-size/" class="article-date">
+  <time datetime="2018-06-12T13:03:07.000Z" itemprop="datePublished">2018-06-12</time>
 </a>
     
   </div>
@@ -266,7 +260,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/ssh-broken-pipe/">ssh broken pipe</a>
+      <a class="article-title" href="/node-max-old-space-size/">nodejs 增大内存</a>
     </h1>
   
 
@@ -277,25 +271,15 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <p>使用ssh，如果很长一段时间不登录，会出现：</p>
-<blockquote>
-<p>  Write failed: Broken pipe<br>  <a href="https://www.logcg.com/archives/tag/write-failed-broken-pipe" target="_blank" rel="noopener"></a></p>
-</blockquote>
-<p>因为空闲时间太长了，可以修改SSH默认配置来让它自动关闭链接。</p>
-<blockquote>
-<p>ServerAliveInterval</p>
-<p>Sets a timeout interval in seconds after which if no data has been received from the server, ssh(1) will send a message through the encrypted channel to request a response from the server.  The default is 0, indicating that these messages will not be sent to the server.  This option applies to protocol version 2 only.</p>
-<p>ClientAliveInterval</p>
-<p>Sets a timeout interval in seconds after which if no data has  been received from the client, sshd(8) will send a message  through the encrypted channel to request a response from the  client.  The default is 0, indicating that these messages will not be sent to the client.  This option applies to protocol version 2 only.</p>
-</blockquote>
-<p>开启发送keep-alive包的功能，允许客户端/服务器在一定时间内发送一个特定的包给对方，这样就避免了链接长时间挂着导致报错。</p>
+        <p>如果 nodejs 运行时内存不够了，可以通过下面的参数增大内存：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">node --max-old-space-size=1024 index.js # 增至 1gb</span><br><span class="line">node --max-old-space-size=2048 index.js # 增至 2gb</span><br><span class="line">node --max-old-space-size=3072 index.js # 增至 3gb</span><br><span class="line">node --max-old-space-size=4096 index.js # 增至 4gb</span><br><span class="line">node --max-old-space-size=5120 index.js # 增至 5gb</span><br><span class="line">node --max-old-space-size=6144 index.js # 增至 6gb</span><br><span class="line">node --max-old-space-size=7168 index.js # 增至 7gb</span><br><span class="line">node --max-old-space-size=8192 index.js # 增至 8gb</span><br></pre></td></tr></table></figure>
 
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/ssh-broken-pipe/" data-id="cjhq778sx00hcizq3pmxyaifv" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/node-max-old-space-size/" data-id="cjssqvcun003e8uq4qx6ujjem" class="article-share-link">Share</a>
      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
     </footer>
   </div>
@@ -304,10 +288,10 @@
 
 
   
-    <article id="post-docker-ssh" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-mongodb-$group" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/docker-ssh/" class="article-date">
-  <time datetime="2018-02-09T05:51:23.000Z" itemprop="datePublished">2018-02-09</time>
+    <a href="/mongodb-$group/" class="article-date">
+  <time datetime="2018-06-12T02:05:05.000Z" itemprop="datePublished">2018-06-12</time>
 </a>
     
   </div>
@@ -318,7 +302,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/docker-ssh/">通过 docker ssh 到另一个容器</a>
+      <a class="article-title" href="/mongodb-$group/">mongodb $group 运算符</a>
     </h1>
   
 
@@ -330,23 +314,20 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <p>通过 docker-compose 建立的应用，如果没有把某个服务的端口暴露在宿主机上，那么只能在容器内部访问，例如 mongodb，如果我们想通过 ssh 远程连接这个数据库应该怎么办呢？解决办法是再建立一个 ssh 容器，使用 mongodb 容器所在的网络，然后建立反向通道，将 mongodb 的 27017 端口映射到本地的 28018 端口。</p>
-<h2 id="创建-ssh-镜像"><a href="#创建-ssh-镜像" class="headerlink" title="创建 ssh 镜像"></a>创建 ssh 镜像</h2><p>随便创建一个 centos 容器，然后进入其内部：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -itd --name ssh centos sh</span><br></pre></td></tr></table></figure>
-<p>安装 ssh ：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">RUN yum install -y openssh-server openssh-clients</span><br></pre></td></tr></table></figure>
+            <p><code>$group</code> 运算符的作用是：对数据在某个维度做某种运算。其语法为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123; $group: &#123; _id: &lt;表达式&gt;, &lt;字段1&gt;: &#123; &lt;运算符1&gt;: &lt;表达式1&gt; &#125;, ... &#125; &#125;</span><br></pre></td></tr></table></figure>
         </div>
         
           <p class="article-more-link">
-            <a href="/docker-ssh/#more">Read More</a>
+            <a href="/mongodb-$group/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/docker-ssh/" data-id="cjhq778jo005vizq3v896fwl5" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/mongodb-$group/" data-id="cjkdl4un500054hq3tcyaa52w" class="article-share-link">Share</a>
      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
 
     </footer>
   </div>
@@ -355,10 +336,10 @@
 
 
   
-    <article id="post-mac-install-unknown" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-mongodb-$lookup" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/mac-install-unknown/" class="article-date">
-  <time datetime="2018-02-08T02:12:55.000Z" itemprop="datePublished">2018-02-08</time>
+    <a href="/mongodb-$lookup/" class="article-date">
+  <time datetime="2018-06-02T03:25:07.000Z" itemprop="datePublished">2018-06-02</time>
 </a>
     
   </div>
@@ -369,7 +350,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/mac-install-unknown/">mac 允许任意应用</a>
+      <a class="article-title" href="/mongodb-$lookup/">mongodb $lookup 运算符</a>
     </h1>
   
 
@@ -380,26 +361,35 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <p>Mac 升级之后只有：</p>
+        <div class="article-preview">
+            <p>有了 <code>$lookup</code> 之后，MongoDB 也能做关联查询了，典型的案例就是商品和订单，订单里面有商品，模型如下：</p>
+<p><strong>商品模型</strong>：</p>
 <ul>
-<li>App Store</li>
-<li>App Store 和被认可的开发者</li>
+<li><code>_id</code>：唯一标识符</li>
+<li><code>name</code>：商品名称</li>
+<li><code>price</code>：商品价格</li>
 </ul>
-<p>运行下面的命令：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo spctl --master-disable</span><br></pre></td></tr></table></figure>
-<p>会变成：</p>
+<p>创建三条商品数据：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">db.products.insert(&#123;<span class="attr">name</span>:<span class="string">'矿泉水'</span>, <span class="attr">price</span>:<span class="number">1</span>&#125;) <span class="comment">// 5b120c565c5d2ea98f402c06</span></span><br><span class="line">db.products.insert(&#123;<span class="attr">name</span>:<span class="string">'菜园小饼'</span>, <span class="attr">price</span>:<span class="number">4</span>&#125;) <span class="comment">// 5b120c565c5d2ea98f402c07</span></span><br><span class="line">db.products.insert(&#123;<span class="attr">name</span>:<span class="string">'挂面'</span>, <span class="attr">price</span>:<span class="number">5</span>&#125;) <span class="comment">// 5b120f995c5d2ea98f402c0b</span></span><br></pre></td></tr></table></figure>
+<p><strong>订单模型</strong>：</p>
 <ul>
-<li>App Store</li>
-<li>App Store 和被认可的开发者</li>
-<li>任何来源</li>
+<li><code>_id</code>：唯一标识符</li>
+<li><code>user</code>：购买人（这里为了演示方便，就用字符串保存姓名）</li>
+<li><code>product</code>：购买的商品（引用类型，存商品模型的 ObjectId）</li>
+<li><code>createdAt</code>：购买时间</li>
 </ul>
-
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/mongodb-$lookup/#more">Read More</a>
+          </p>
+        
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/mac-install-unknown/" data-id="cjhq778pd00cuizq35kcsouoc" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/mongodb-$lookup/" data-id="cjkdl4un800074hq3lv279s51" class="article-share-link">Share</a>
      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
 
     </footer>
   </div>
@@ -408,10 +398,10 @@
 
 
   
-    <article id="post-docker-version-install" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-yarn-config-list" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/docker-version-install/" class="article-date">
-  <time datetime="2018-02-04T02:52:13.000Z" itemprop="datePublished">2018-02-04</time>
+    <a href="/yarn-config-list/" class="article-date">
+  <time datetime="2018-05-30T10:18:18.000Z" itemprop="datePublished">2018-05-30</time>
 </a>
     
   </div>
@@ -422,7 +412,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/docker-version-install/">安装指定版本的 docker</a>
+      <a class="article-title" href="/yarn-config-list/">获取 yarn 全部配置</a>
     </h1>
   
 
@@ -433,21 +423,15 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <p>首先要确保 docker 卸载干净：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sudo yum remove docker \</span><br><span class="line">                  docker-common \</span><br><span class="line">                  container-selinux \</span><br><span class="line">                  docker-selinux \</span><br><span class="line">                  docker-engine</span><br></pre></td></tr></table></figure>
-<p>然后添加源：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ sudo yum-config-manager \</span><br><span class="line">&gt;     --add-repo \</span><br><span class="line">&gt;     https://download.docker.com/linux/centos/docker-ce.repo</span><br><span class="line">Loaded plugins: langpacks</span><br><span class="line">adding repo from: https://download.docker.com/linux/centos/docker-ce.repo</span><br><span class="line">grabbing file https://download.docker.com/linux/centos/docker-ce.repo to /etc/yum.repos.d/docker-ce.repo</span><br><span class="line">repo saved to /etc/yum.repos.d/docker-ce.repo</span><br></pre></td></tr></table></figure>
-<p>查找版本：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">yum list docker-ce --showduplicates | sort -r</span><br><span class="line">已加载插件：fastestmirror</span><br><span class="line">可安装的软件包</span><br><span class="line">Loading mirror speeds from cached hostfile</span><br><span class="line">docker-ce.x86_64            17.12.0.ce-1.el7.centos             docker-ce-stable</span><br><span class="line">docker-ce.x86_64            17.09.1.ce-1.el7.centos             docker-ce-stable</span><br><span class="line">docker-ce.x86_64            17.09.0.ce-1.el7.centos             docker-ce-stable</span><br><span class="line">docker-ce.x86_64            17.06.2.ce-1.el7.centos             docker-ce-stable</span><br><span class="line">docker-ce.x86_64            17.06.1.ce-1.el7.centos             docker-ce-stable</span><br><span class="line">docker-ce.x86_64            17.06.0.ce-1.el7.centos             docker-ce-stable</span><br><span class="line">docker-ce.x86_64            17.03.2.ce-1.el7.centos             docker-ce-stable</span><br><span class="line">docker-ce.x86_64            17.03.1.ce-1.el7.centos             docker-ce-stable</span><br><span class="line">docker-ce.x86_64            17.03.0.ce-1.el7.centos             docker-ce-stable</span><br></pre></td></tr></table></figure>
-<p>指定版本安装：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ yum install --<span class="built_in">setopt</span>=obsoletes=0 \</span><br><span class="line">   docker-ce-17.03.2.ce-1.el7.centos.x86_64 \</span><br><span class="line">   docker-ce-selinux-17.03.2.ce-1.el7.centos.noarch <span class="comment"># on a new system with yum repo defined, forcing older version and ignoring obsoletes introduced by 17.06.0</span></span><br></pre></td></tr></table></figure>
+        <p>下面的命令可以获取 yarn 的所有配置：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">$ yarn config list</span><br><span class="line">yarn config v1.7.0</span><br><span class="line">info yarn config</span><br><span class="line">&#123; <span class="string">'version-tag-prefix'</span>: <span class="string">'v'</span>,</span><br><span class="line">  <span class="string">'version-git-tag'</span>: <span class="literal">true</span>,</span><br><span class="line">  <span class="string">'version-commit-hooks'</span>: <span class="literal">true</span>,</span><br><span class="line">  <span class="string">'version-git-sign'</span>: <span class="literal">false</span>,</span><br><span class="line">  <span class="string">'version-git-message'</span>: <span class="string">'v%s'</span>,</span><br><span class="line">  <span class="string">'init-version'</span>: <span class="string">'1.0.0'</span>,</span><br><span class="line">  <span class="string">'init-license'</span>: <span class="string">'MIT'</span>,</span><br><span class="line">  <span class="string">'save-prefix'</span>: <span class="string">'^'</span>,</span><br><span class="line">  <span class="string">'bin-links'</span>: <span class="literal">true</span>,</span><br><span class="line">  <span class="string">'ignore-scripts'</span>: <span class="literal">false</span>,</span><br><span class="line">  <span class="string">'ignore-optional'</span>: <span class="literal">false</span>,</span><br><span class="line">  registry: <span class="string">'https://registry.yarnpkg.com'</span>,</span><br><span class="line">  <span class="string">'strict-ssl'</span>: <span class="literal">true</span>,</span><br><span class="line">  <span class="string">'user-agent'</span>: <span class="string">'yarn/1.7.0 npm/? node/v8.9.3 darwin x64'</span>,</span><br><span class="line">  lastUpdateCheck: 1527594120804,</span><br><span class="line">  prefix: <span class="string">'/Users/lixiao/.yarn'</span> &#125;</span><br><span class="line">info npm config</span><br><span class="line">&#123; <span class="string">'//registry.npmjs.org/:_authToken'</span>: <span class="string">'fb6b7b54-8ba3-4b6c-9fa5-2d350441cdd9'</span>,</span><br><span class="line">  registry: <span class="string">'https://registry.npmjs.org/'</span>,</span><br><span class="line">  python: <span class="string">'/usr/bin/python'</span> &#125;</span><br></pre></td></tr></table></figure>
 
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/docker-version-install/" data-id="cjhq778jr005zizq36a584eir" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/yarn-config-list/" data-id="cjssqvcvo004o8uq4uooo50ko" class="article-share-link">Share</a>
      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
     </footer>
   </div>
@@ -456,10 +440,10 @@
 
 
   
-    <article id="post-git-rename-branch" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-js-date-in-safari" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/git-rename-branch/" class="article-date">
-  <time datetime="2018-02-04T02:52:13.000Z" itemprop="datePublished">2018-02-04</time>
+    <a href="/js-date-in-safari/" class="article-date">
+  <time datetime="2018-05-29T13:30:12.000Z" itemprop="datePublished">2018-05-29</time>
 </a>
     
   </div>
@@ -470,7 +454,51 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/git-rename-branch/">git 重命名分支</a>
+      <a class="article-title" href="/js-date-in-safari/">注意 Safari 浏览器中的 new Date</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>请看下面这行代码：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(<span class="keyword">new</span> <span class="built_in">Date</span>(<span class="string">'2018-05-20 10:00'</span>))</span><br></pre></td></tr></table></figure>
+<p>在 Chrome、Firefox 和 Node.js 中运行都没问题，但是在 Safari 下却是 Invalid Date。这是一个大坑，因为 iPhone 手机浏览器都是 Safari 浏览器。但是下面的代码在所有浏览器上都可以正常执行：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(<span class="keyword">new</span> <span class="built_in">Date</span>(<span class="string">'2018/05/20 10:00'</span>))</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/js-date-in-safari/" data-id="cjhrqabzp00009mq3b1za98ga" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-github-page-https" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/github-page-https/" class="article-date">
+  <time datetime="2018-05-26T07:49:12.000Z" itemprop="datePublished">2018-05-26</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/github-page-https/">github page 添加 https 支持</a>
     </h1>
   
 
@@ -482,76 +510,34 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <p>假设分支名称为oldName，想要修改为 newName，-m 是 move（或mv）的意思：</p>
+            <p>一直用 hexo 写博客，然后发布到 Github Page，现在 GitHub 宣布与 Let’s Encrypt 合作，为 Github Pages 自定义域名提供官方的 HTTPS 支持。配置 https 的方法如下：</p>
 <ol>
-<li><p>本地分支重命名（还没有推送到远程）</p>
-<p> a. 重命名任意分支</p>
- <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git branch -m &lt;oldname&gt; &lt;newname&gt;</span><br></pre></td></tr></table></figure>
-<p> b. 重命名当前分支</p>
- <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git branch -m &lt;newname&gt;</span><br></pre></td></tr></table></figure>
+<li><p>先把 Custom domain 清空（假设原来是 zju.date）</p>
+<p>如果不清空的话，下面的 checkbox 是无法点击的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Enforce HTTPS — Unavailable for your site because a certificate has not yet been issued for your domain (zju.date)</span><br></pre></td></tr></table></figure>
 </li>
-</ol>
+<li><p>如果是 CNAME 记录，请跳过这一步。如果是 A 记录，去域名服务商那里，把原来的域名 A 记录指向的 IP 地址（<code>192.30.252.153</code> 和 <code>192.30.252.154</code>） ，改成下面几个<a href="https://help.github.com/articles/setting-up-an-apex-domain/#configuring-a-records-with-your-dns-provider" target="_blank" rel="noopener">新地址</a>之一：</p>
+<blockquote>
+<ul>
+<li><code>185.199.108.153</code></li>
+<li><code>185.199.109.153</code></li>
+<li><code>185.199.110.153</code></li>
+<li><code>185.199.111.153</code></li>
+</ul>
+</blockquote>
+<p>保存修改后，等待 DNS 记录生效。</p>
         </div>
         
           <p class="article-more-link">
-            <a href="/git-rename-branch/#more">Read More</a>
+            <a href="/github-page-https/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/git-rename-branch/" data-id="cjhq778l60084izq30s29zphb" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/github-page-https/" data-id="cjhq778l40082izq3jw94tmop" class="article-share-link">Share</a>
      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/">Git</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-nginx-alias-vs-root" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/nginx-alias-vs-root/" class="article-date">
-  <time datetime="2018-02-02T14:04:07.000Z" itemprop="datePublished">2018-02-02</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/nginx-alias-vs-root/">nginx alias 和 root</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>alias 语法：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">location /abc/ &#123;</span><br><span class="line">    alias /home/html/abc/;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><code>/abc/a.html</code> 就指的是 <code>/home/html/abc/a.html</code>，与下面的配置相同：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">location /abc/ &#123;</span><br><span class="line">    root /home/html/;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>使用 root 设置目录的绝对路径时，少了 /abc,也就是说，使用 root 来设置前端非根目录时，nginx 会组合 root 和 location 的路径。例如：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">location /static/ &#123;</span><br><span class="line">	root /var/www/app/static/;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>表示 <code>/var/www/app/static/static</code>，而：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">location /static/ &#123;</span><br><span class="line"> alias /var/www/app/static/;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>表示 <code>/var/www/app/static</code></p>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/nginx-alias-vs-root/" data-id="cjhq778qh00eeizq3g3rs9ldq" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Nginx/">Nginx</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/HTTP/">HTTP</a></li></ul>
 
     </footer>
   </div>
@@ -563,7 +549,7 @@
 
 
   <nav id="page-nav">
-    <a class="extend prev" rel="prev" href="/page/4/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/39/">39</a><a class="extend next" rel="next" href="/page/6/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/4/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/47/">47</a><a class="extend next" rel="next" href="/page/6/">Next &raquo;</a>
   </nav>
 </section>
 
@@ -578,7 +564,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mongodb/">mongodb</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
     </div>
   </div>
 
@@ -588,7 +574,7 @@
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2018 zju.date
+      &copy; 2019 zju.date
       &nbsp;&nbsp;&nbsp;
       contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
     </div>

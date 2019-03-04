@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Docker 每次重启后，容器的IP地址会变化，如何设置固定IP呢？Docker 安装后，默认会创建下面三种网络类型： 12345$ docker network lsNETWORK ID          NAME                DRIVER              SCOPE9781b1f585ae        bridge              bridge">
+<meta name="keywords" content="Linux">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux 上安装 rar 和 unrar">
+<meta property="og:url" content="https://zju.date/docker-container-static-ip/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="Docker 每次重启后，容器的IP地址会变化，如何设置固定IP呢？Docker 安装后，默认会创建下面三种网络类型： 12345$ docker network lsNETWORK ID          NAME                DRIVER              SCOPE9781b1f585ae        bridge              bridge">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-11-19T03:15:10.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Linux 上安装 rar 和 unrar">
+<meta name="twitter:description" content="Docker 每次重启后，容器的IP地址会变化，如何设置固定IP呢？Docker 安装后，默认会创建下面三种网络类型： 12345$ docker network lsNETWORK ID          NAME                DRIVER              SCOPE9781b1f585ae        bridge              bridge">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-docker-container-static-ip" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/docker-container-static-ip/" class="article-date">
+  <time datetime="2018-04-05T14:18:23.000Z" itemprop="datePublished">2018-04-05</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Linux 上安装 rar 和 unrar
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Docker 每次重启后，容器的IP地址会变化，如何设置固定IP呢？Docker 安装后，默认会创建下面三种网络类型：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ docker network ls</span><br><span class="line">NETWORK ID          NAME                DRIVER              SCOPE</span><br><span class="line">9781b1f585ae        bridge              bridge              local</span><br><span class="line">1252da701e55        host                host                local</span><br><span class="line">237ea3d5cfbf        none                null                local</span><br></pre></td></tr></table></figure>
+<p>启动 Docker的时候，用 <code>--network</code> 参数，可以指定网络类型，如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ docker run -itd --name test1 --network bridge --ip 172.17.0.10 centos:latest /bin/bash</span><br></pre></td></tr></table></figure>
+<p>可以定义如下几种网络类型：</p>
+<ul>
+<li><p>桥接网络（bridge）</p>
+<p>  默认都是使用 bridge，每次 Docker 容器重启时，会按照顺序获取对应的 IP 地址，于是 IP 地址就变了。</p>
+</li>
+<li><p>无指定网络（none）</p>
+<p>  使用 <code>--network=none</code> ，docker 容器就不会分配局域网的IP。</p>
+</li>
+<li><p>宿主机网络（host）</p>
+<p>  使用 <code>--network=host</code>，此时，Docker 容器的网络会附属在主机上，两者互通。</p>
+</li>
+<li><p>创建自定义网络</p>
+<p>  指定网段和每个容器在这个网段中的具体IP。</p>
+</li>
+</ul>
+<a id="more"></a>
+<p>启动 Docker 容器的时候，默认是不支持指定 IP 的：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ docker run -itd  --net bridge --ip 172.17.0.10 centos:latest /bin/bash</span><br><span class="line">6eb1f228cf308d1c60db30093c126acbfd0cb21d76cb448c678bab0f1a7c0df6</span><br><span class="line">docker: Error response from daemon: User specified IP address is supported on user defined networks only.</span><br></pre></td></tr></table></figure>
+<p>可按照下面的步骤设置：</p>
+<ol>
+<li><p>创建自定义网络，并且指定网段：172.18.0.0/16</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ docker network create --subnet=172.18.0.0/16 mynetwork</span><br><span class="line">$ docker network ls</span><br><span class="line">NETWORK ID          NAME                DRIVER              SCOPE</span><br><span class="line">9781b1f585ae        bridge              bridge              <span class="built_in">local</span></span><br><span class="line">1252da701e55        host                host                <span class="built_in">local</span></span><br><span class="line">4f11ae9c85de        mynetwork           bridge              <span class="built_in">local</span></span><br><span class="line">237ea3d5cfbf        none                null                <span class="built_in">local</span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<ol>
+<li><p>创建Docker容器，并指定IP</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ docker run itd --name networkTest1 --net mynetwork --ip 172.18.0.2 centos:latest /bin/bash</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<pre><code>这个时候，创建的容器就会使用 172.18.0.2 这个IP.
+
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">$ ifconfig</span><br><span class="line">eth0      Link encap:Ethernet  HWaddr 02:42:AC:12:00:02</span><br><span class="line">          inet addr:172.18.0.2  Bcast:0.0.0.0  Mask:255.255.0.0</span><br><span class="line">          inet6 addr: fe80::42:acff:fe12:2/64 Scope:Link</span><br><span class="line">          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1</span><br><span class="line">          RX packets:88 errors:0 dropped:0 overruns:0 frame:0</span><br><span class="line">          TX packets:14 errors:0 dropped:0 overruns:0 carrier:0</span><br><span class="line">          collisions:0 txqueuelen:0</span><br><span class="line">          RX bytes:4056 (3.9 KiB)  TX bytes:1068 (1.0 KiB)</span><br><span class="line">    </span><br><span class="line">lo        Link encap:Local Loopback</span><br><span class="line">          inet addr:127.0.0.1  Mask:255.0.0.0</span><br><span class="line">          inet6 addr: ::1/128 Scope:Host</span><br><span class="line">          UP LOOPBACK RUNNING  MTU:65536  Metric:1</span><br><span class="line">          RX packets:0 errors:0 dropped:0 overruns:0 frame:0</span><br><span class="line">          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0</span><br><span class="line">          collisions:0 txqueuelen:1</span><br><span class="line">          RX bytes:0 (0.0 b)  TX bytes:0 (0.0 b)</span><br></pre></td></tr></table></figure>
+</code></pre>
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/docker-container-static-ip/" data-id="cjssqvcs6000z8uq4l73vd5wt" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/install-rar-on-linux/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Linux 上安装 rar 和 unrar
+        
+      </div>
+    </a>
+  
+  
+    <a href="/alias-package-using-yarn/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">用 yarn 来安装依赖的不同版本</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="moment 默认会使用系统时区，如果要重置时区，使用下面的命令： 12moment.tz.setDefault(String)moment.tz.setDefault(&quot;America/New_York&quot;) 恢复默认： 1moment.tz.setDefault()  注意：如果根据某个时区创建了moment对象，后面又改变了时区，那么只会影响改变时区事件发生后的对象，之前的对象时区未变！对之">
+<meta name="keywords" content="JavaScript">
+<meta property="og:type" content="article">
+<meta property="og:title" content="关于 moment-timezone">
+<meta property="og:url" content="https://zju.date/moment-timezone/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="moment 默认会使用系统时区，如果要重置时区，使用下面的命令： 12moment.tz.setDefault(String)moment.tz.setDefault(&quot;America/New_York&quot;) 恢复默认： 1moment.tz.setDefault()  注意：如果根据某个时区创建了moment对象，后面又改变了时区，那么只会影响改变时区事件发生后的对象，之前的对象时区未变！对之">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-11-23T06:04:55.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="关于 moment-timezone">
+<meta name="twitter:description" content="moment 默认会使用系统时区，如果要重置时区，使用下面的命令： 12moment.tz.setDefault(String)moment.tz.setDefault(&quot;America/New_York&quot;) 恢复默认： 1moment.tz.setDefault()  注意：如果根据某个时区创建了moment对象，后面又改变了时区，那么只会影响改变时区事件发生后的对象，之前的对象时区未变！对之">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-moment-timezone" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/moment-timezone/" class="article-date">
+  <time datetime="2018-08-13T02:14:07.000Z" itemprop="datePublished">2018-08-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      关于 moment-timezone
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p> moment 默认会使用系统时区，如果要重置时区，使用下面的命令：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">moment.tz.setDefault(<span class="built_in">String</span>)</span><br><span class="line">moment.tz.setDefault(<span class="string">"America/New_York"</span>)</span><br></pre></td></tr></table></figure>
+<p>恢复默认：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">moment.tz.setDefault()</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>注意：如果根据某个时区创建了moment对象，后面又改变了时区，那么只会影响改变时区事件发生后的对象，之前的对象时区未变！对之前的对象进行 clone 也不会变为新时区，也就是说对象的时区保存了创建时 moment 时区的快照！</p>
+</blockquote>
+<a id="more"></a>
+<p>例如：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> moment = <span class="built_in">require</span>(<span class="string">'moment-timezone'</span>)</span><br><span class="line">moment.tz.setDefault(<span class="string">'America/Los_Angeles'</span>)</span><br><span class="line"><span class="keyword">const</span> m1 = moment().format()</span><br><span class="line"><span class="built_in">console</span>.log(m1) <span class="comment">// 2018-08-12T20:11:51-07:00</span></span><br><span class="line">moment.tz.setDefault(<span class="string">'Asia/Shanghai'</span>)</span><br><span class="line"><span class="keyword">const</span> m2 = moment().format()</span><br><span class="line"><span class="built_in">console</span>.log(m2) <span class="comment">// 2018-08-13T11:11:51+08:00</span></span><br><span class="line"><span class="built_in">console</span>.log(m1) <span class="comment">// 2018-08-12T20:11:51-07:00</span></span><br></pre></td></tr></table></figure>
+<p>所以，比较危险的情况是：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> moment = <span class="built_in">require</span>(<span class="string">'moment-timezone'</span>)</span><br><span class="line"><span class="keyword">const</span> other = <span class="built_in">require</span>(<span class="string">'./other'</span>)</span><br><span class="line"><span class="keyword">const</span> m1 = moment().format()</span><br><span class="line"><span class="built_in">console</span>.log(m1) <span class="comment">// 希望时区是 +08:00</span></span><br></pre></td></tr></table></figure>
+<p>在 other.js 里面：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> moment = <span class="built_in">require</span>(<span class="string">'moment-timezone'</span>)</span><br><span class="line">moment.tz.setDefault(<span class="string">'America/Los_Angeles'</span>) <span class="comment">// 改变了时区为 -07:00</span></span><br></pre></td></tr></table></figure>
+<p>导致 m1 的时区是 other.js 里面定义的时区。还有一种情况是在函数里面：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> moment = <span class="built_in">require</span>(<span class="string">'moment-timezone'</span>)</span><br><span class="line">moment.tz.setDefault(<span class="string">'Asia/Shanghai'</span>)</span><br><span class="line"></span><br><span class="line">now() <span class="comment">// 这里调用的时候时区还是 +08:00</span></span><br><span class="line"><span class="keyword">const</span> other = <span class="built_in">require</span>(<span class="string">'./other'</span>)</span><br><span class="line">now() <span class="comment">// 这里调用就是 -07:00 了</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">now</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(moment().format())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>所以想让自己文件里面的时区生效，记得一定要放在 require 的最后，还有，如果</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> moment = <span class="built_in">require</span>(<span class="string">'moment-timezone'</span>)</span><br><span class="line">moment.tz.setDefault(<span class="string">'Asia/Shanghai'</span>)</span><br><span class="line"></span><br><span class="line">now()</span><br><span class="line">tomorrow() <span class="comment">// 使用的是 -07:00</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">now</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  moment.tz.setDefault(<span class="string">'America/Los_Angeles'</span>)</span><br><span class="line">  <span class="built_in">console</span>.log(moment().format())</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">tomorrow</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(moment().add(<span class="number">1</span>, <span class="string">'days'</span>).format())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>所以，最好全局建一个 moment-timezone 文件，然后引用这个文件。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/moment-timezone/" data-id="cjssqvcua00308uq4gy602aai" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/though2-notes/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          though2 快速创建转换流
+        
+      </div>
+    </a>
+  
+  
+    <a href="/docker-ps-format/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">docker ps 指定列</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

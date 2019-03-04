@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="syslog 服务器可以用作日志监控中心，这样更容易地查看和获取重要的日志消息。rsyslog 是 syslog 的守护进程，预装在了大多数的Linux发行版中，扮演了两种角色：  作为服务器收集来自其他设施的日志信息； 作为客户端将其内部的日志信息传输到远程的 syslog 服务器。  相关文件的位置如下：  执行文件： /sbin/rsyslogd 主配置文件: /etc/rsyslog.co">
+<meta name="keywords" content="Linux">
+<meta property="og:type" content="article">
+<meta property="og:title" content="syslog 学习笔记">
+<meta property="og:url" content="https://zju.date/syslog-notes/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="syslog 服务器可以用作日志监控中心，这样更容易地查看和获取重要的日志消息。rsyslog 是 syslog 的守护进程，预装在了大多数的Linux发行版中，扮演了两种角色：  作为服务器收集来自其他设施的日志信息； 作为客户端将其内部的日志信息传输到远程的 syslog 服务器。  相关文件的位置如下：  执行文件： /sbin/rsyslogd 主配置文件: /etc/rsyslog.co">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-03-03T10:04:44.260Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="syslog 学习笔记">
+<meta name="twitter:description" content="syslog 服务器可以用作日志监控中心，这样更容易地查看和获取重要的日志消息。rsyslog 是 syslog 的守护进程，预装在了大多数的Linux发行版中，扮演了两种角色：  作为服务器收集来自其他设施的日志信息； 作为客户端将其内部的日志信息传输到远程的 syslog 服务器。  相关文件的位置如下：  执行文件： /sbin/rsyslogd 主配置文件: /etc/rsyslog.co">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-syslog-notes" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/syslog-notes/" class="article-date">
+  <time datetime="2018-12-29T08:47:23.000Z" itemprop="datePublished">2018-12-29</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      syslog 学习笔记
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>syslog 服务器可以用作日志监控中心，这样更容易地查看和获取重要的日志消息。rsyslog 是 syslog 的守护进程，预装在了大多数的Linux发行版中，扮演了两种角色：</p>
+<ol>
+<li>作为服务器收集来自其他设施的日志信息；</li>
+<li>作为客户端将其内部的日志信息传输到远程的 syslog 服务器。</li>
+</ol>
+<p>相关文件的位置如下：</p>
+<ul>
+<li>执行文件： <code>/sbin/rsyslogd</code></li>
+<li>主配置文件: <code>/etc/rsyslog.conf</code></li>
+<li>自定义配置文件: <code>/etc/rsyslog.d/*.conf</code></li>
+</ul>
+<p>通过下面的命令可查看状态和重启服务：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">service rsyslog status <span class="comment"># 查看状态</span></span><br><span class="line">/etc/init.d/rsyslog restart <span class="comment"># 重启服务</span></span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<p>日志文件中定义了严重程度：</p>
+<table>
+<thead>
+<tr>
+<th>字符</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>debug</td>
+<td>有调式信息的，日志信息最多</td>
+</tr>
+<tr>
+<td>info</td>
+<td>一般信息的日志，最常用</td>
+</tr>
+<tr>
+<td>notice</td>
+<td>最具有重要性的普通条件的信息</td>
+</tr>
+<tr>
+<td>warning/warn</td>
+<td>警告级别</td>
+</tr>
+<tr>
+<td>err/error</td>
+<td>错误级别，阻止某个功能或者模块不能正常工作的信息</td>
+</tr>
+<tr>
+<td>crit</td>
+<td>严重级别，阻止整个系统或者整个软件不能正常工作的信息</td>
+</tr>
+<tr>
+<td>alert</td>
+<td>需要立刻修改的信息</td>
+</tr>
+<tr>
+<td>emerg/panic</td>
+<td>内核崩溃等严重信息</td>
+</tr>
+</tbody>
+</table>
+<p>发送消息给 syslog 服务器时可以用 TCP 协议，也可以用 UDP 协议，一般选择 TCP ，除非在意性能，且能忍受部分丢失，可以改用 UDP。但是注意：<strong>如果消息每行大小超过了4k，只能用 TCP</strong>。这是因为 UDP 栈大小限制的。</p>
+<p>启动 syslog 的 docker 服务：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">docker run --name syslog \</span><br><span class="line">-p 514:514 -d \</span><br><span class="line">-v /ali/docker/devops/syslog/api.conf:/etc/rsyslog.conf.d/api.conf \</span><br><span class="line">rsyslog/syslog_appliance_alpine</span><br></pre></td></tr></table></figure>
+<p>从命令行生成一条消息，并通过 TCP 协议发送到 syslog 服务器：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">"message"</span> | nc 127.0.0.1 514</span><br><span class="line"><span class="built_in">echo</span> <span class="string">"我不信"</span> | nc 192.168.120.7:514</span><br></pre></td></tr></table></figure>
+<p>也可以使用 UDP 协议：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">"UDP包"</span> | nc -u localhost 514</span><br><span class="line"><span class="built_in">echo</span> <span class="string">"测试"</span> | nc -u 192.168.120.7:514</span><br></pre></td></tr></table></figure>
+<p>或者把文件 <code>file.log</code> 逐行发送：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc 127.0.0.1 514 &lt; file.log</span><br></pre></td></tr></table></figure>
+<p>我们查看 <code>/etc/rsyslog.conf</code> 文件的内容</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">global(processInternalMessages=<span class="string">"on"</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#module(load="imtcp" StreamDriver.AuthMode="anon" StreamDriver.Mode="1")</span></span><br><span class="line">module(load=<span class="string">"impstats"</span>) <span class="comment"># config.enabled=`echo $ENABLE_STATISTICS`)</span></span><br><span class="line">module(load=<span class="string">"imrelp"</span>)</span><br><span class="line">module(load=<span class="string">"imptcp"</span>)</span><br><span class="line">module(load=<span class="string">"imudp"</span> TimeRequery=<span class="string">"500"</span>)</span><br><span class="line"></span><br><span class="line">module(load=<span class="string">"omstdout"</span>)</span><br><span class="line">module(load=<span class="string">"omelasticsearch"</span>)</span><br><span class="line"></span><br><span class="line">module(load=<span class="string">"mmjsonparse"</span>)</span><br><span class="line">module(load=<span class="string">"mmutf8fix"</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">input(<span class="built_in">type</span>=<span class="string">"imptcp"</span> port=<span class="string">"514"</span>)</span><br><span class="line">input(<span class="built_in">type</span>=<span class="string">"imudp"</span> port=<span class="string">"514"</span>)</span><br><span class="line">input(<span class="built_in">type</span>=<span class="string">"imrelp"</span> port=<span class="string">"1601"</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># includes done explicitely</span></span><br><span class="line">include(file=<span class="string">"/etc/rsyslog.conf.d/log_to_logsene.conf"</span> config.enabled=`<span class="built_in">echo</span> <span class="variable">$ENABLE_LOGSENE</span>`)</span><br><span class="line">include(file=<span class="string">"/etc/rsyslog.conf.d/log_to_files.conf"</span> config.enabled=`<span class="built_in">echo</span> <span class="variable">$ENABLE_LOGFILES</span>`)</span><br></pre></td></tr></table></figure>
+<p>监听端口是 <code>514</code>，不过你可以改成任意想要的值。文件中最后一行通过 <code>include</code> 指令，加载了 <code>/etc/ryslog.d</code> 下的所有配置。我们可以通过编程的方式把日志分发到不同的文件中：</p>
+<ol>
+<li><p>根据来源 IP 分发</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$ModLoad</span> imtcp</span><br><span class="line"><span class="variable">$InputTCPServerRun</span> 10514</span><br><span class="line"><span class="comment"># do this in FRONT of the local/regular rules</span></span><br><span class="line"><span class="keyword">if</span> <span class="variable">$fromhost</span>-ip startswith <span class="string">'192.0.1.'</span> <span class="keyword">then</span> /var/<span class="built_in">log</span>/network1.log</span><br><span class="line">&amp; ~</span><br><span class="line"><span class="keyword">if</span> <span class="variable">$fromhost</span>-ip startswith <span class="string">'192.0.2.'</span> <span class="keyword">then</span> /var/<span class="built_in">log</span>/network2.log</span><br><span class="line">&amp; ~</span><br><span class="line"><span class="comment"># local/regular rules, like</span></span><br><span class="line">*.* /var/<span class="built_in">log</span>/syslog.log</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>根据 tag 分发</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">:syslogtag, isequal, <span class="string">"giomanager:"</span> /var/<span class="built_in">log</span>/giomanager.log</span><br><span class="line">&amp; stop</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> <span class="variable">$syslogtag</span> startswith <span class="string">'api_'</span> <span class="keyword">then</span> /<span class="built_in">log</span>/api.log</span><br><span class="line">&amp; ~</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/syslog-notes/" data-id="cjssqvcva00468uq4twhk137m" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/angular-video-autoPlay/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Angular 中 video 自动静音播放
+        
+      </div>
+    </a>
+  
+  
+    <a href="/logspout-notes/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">logspout 集中查看日志</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

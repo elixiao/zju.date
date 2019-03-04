@@ -54,10 +54,10 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-angularjs-ui-tab" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-canvas-notes" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/angularjs-ui-tab/" class="article-date">
-  <time datetime="2016-08-09T07:22:37.000Z" itemprop="datePublished">2016-08-09</time>
+    <a href="/canvas-notes/" class="article-date">
+  <time datetime="2017-07-14T02:29:32.000Z" itemprop="datePublished">2017-07-14</time>
 </a>
     
   </div>
@@ -68,7 +68,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/angularjs-ui-tab/">angular-ui-tab源码剖析</a>
+      <a class="article-title" href="/canvas-notes/">canvas学习笔记</a>
     </h1>
   
 
@@ -80,20 +80,21 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <p>首先声明<code>ui.bootstrap.tabs</code>模块，该模块无任何依赖。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">angular.module(<span class="string">'ui.bootstrap.tabs'</span>, [])</span><br></pre></td></tr></table></figure>
-<p>定义tab容器controller，用于存放多个标签，并处理响应逻辑。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br></pre></td><td class="code"><pre><span class="line">.controller(<span class="string">'UibTabsetController'</span>, [<span class="string">'$scope'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">$scope</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> ctrl = <span class="keyword">this</span>,</span><br><span class="line">      oldIndex; <span class="comment">// 上次选中的标签页</span></span><br><span class="line">      ctrl.tabs = []; <span class="comment">//标签列表</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">// 选择标签页</span></span><br><span class="line">  ctrl.select = <span class="function"><span class="keyword">function</span>(<span class="params">index, evt</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (!destroyed) &#123;</span><br><span class="line">      <span class="keyword">var</span> previousIndex = findTabIndex(oldIndex); <span class="comment">//找到上次index值在tab数组中的位置</span></span><br><span class="line">      <span class="keyword">var</span> previousSelected = ctrl.tabs[previousIndex]; <span class="comment">//找到上次选中的tab</span></span><br><span class="line">      <span class="keyword">if</span> (previousSelected) &#123; <span class="comment">//如果上次选中的tab存在，则取消选中</span></span><br><span class="line">        previousSelected.tab.onDeselect(&#123;</span><br><span class="line">          $event: evt,</span><br><span class="line">          $selectedIndex: index</span><br><span class="line">        &#125;);</span><br><span class="line">        <span class="keyword">if</span> (evt &amp;&amp; evt.isDefaultPrevented()) &#123;</span><br><span class="line">          <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        previousSelected.tab.active = <span class="literal">false</span>;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">var</span> selected = ctrl.tabs[index];<span class="comment">//当前选中的tab</span></span><br><span class="line">      <span class="keyword">if</span> (selected) &#123;</span><br><span class="line">        selected.tab.onSelect(&#123;</span><br><span class="line">          $event: evt</span><br><span class="line">        &#125;);</span><br><span class="line">        selected.tab.active = <span class="literal">true</span>;<span class="comment">//被选中的tab页的active为true</span></span><br><span class="line">        ctrl.active = selected.index;<span class="comment">//ctrl的active是当前选中tab的index</span></span><br><span class="line">        oldIndex = selected.index;<span class="comment">//上次index也是</span></span><br><span class="line">      &#125; <span class="keyword">else</span> <span class="keyword">if</span> (!selected &amp;&amp; angular.isDefined(oldIndex)) &#123; <span class="comment">//如果选中的不存在</span></span><br><span class="line">        ctrl.active = <span class="literal">null</span>;</span><br><span class="line">        oldIndex = <span class="literal">null</span>;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 增加标签页</span></span><br><span class="line">  ctrl.addTab = <span class="function"><span class="keyword">function</span> <span class="title">addTab</span>(<span class="params">tab</span>) </span>&#123;</span><br><span class="line">    ctrl.tabs.push(&#123;</span><br><span class="line">      tab: tab,</span><br><span class="line">      index: tab.index</span><br><span class="line">    &#125;);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 按照index进行排序，如果是字符串就按照字母表排序了</span></span><br><span class="line">    ctrl.tabs.sort(<span class="function"><span class="keyword">function</span>(<span class="params">t1, t2</span>) </span>&#123;</span><br><span class="line">      <span class="keyword">if</span> (t1.index &gt; t2.index) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">if</span> (t1.index &lt; t2.index) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (tab.index === ctrl.active || !angular.isDefined(ctrl.active) &amp;&amp; ctrl.tabs.length === <span class="number">1</span>) &#123;</span><br><span class="line">      <span class="keyword">var</span> newActiveIndex = findTabIndex(tab.index);</span><br><span class="line">      ctrl.select(newActiveIndex);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 删除标签页</span></span><br><span class="line">  ctrl.removeTab = <span class="function"><span class="keyword">function</span> <span class="title">removeTab</span>(<span class="params">tab</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> index;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; ctrl.tabs.length; i++) &#123;</span><br><span class="line">      <span class="keyword">if</span> (ctrl.tabs[i].tab === tab) &#123;</span><br><span class="line">        index = i;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 如果删除了当前的标签页，那么会自动选择下一个标签页</span></span><br><span class="line">    <span class="keyword">if</span> (ctrl.tabs[index].index === ctrl.active) &#123;</span><br><span class="line">      <span class="keyword">var</span> newActiveTabIndex = index === ctrl.tabs.length - <span class="number">1</span> ?</span><br><span class="line">        index - <span class="number">1</span> : index + <span class="number">1</span> % ctrl.tabs.length;</span><br><span class="line">      ctrl.select(newActiveTabIndex);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ctrl.tabs.splice(index, <span class="number">1</span>);</span><br><span class="line">  &#125;;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 监听index的变化，并选择相应标签页</span></span><br><span class="line">  $scope.$watch(<span class="string">'tabset.active'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">val</span>) </span>&#123;</span><br><span class="line">    <span class="comment">// 如果active被定义存在并且不等于旧值，那么选中这个新标签页</span></span><br><span class="line">    <span class="keyword">if</span> (angular.isDefined(val) &amp;&amp; val !== oldIndex) &#123;</span><br><span class="line">      ctrl.select(findTabIndex(val)); </span><br><span class="line">    &#125;</span><br><span class="line">  &#125;);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">var</span> destroyed;</span><br><span class="line">  $scope.$on(<span class="string">'$destroy'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    destroyed = <span class="literal">true</span>;</span><br><span class="line">  &#125;);</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 发现当前标签页在数组中的位置（和用户传的index不一样）</span></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">findTabIndex</span>(<span class="params">index</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; ctrl.tabs.length; i++) &#123;</span><br><span class="line">      <span class="keyword">if</span> (ctrl.tabs[i].index === index) &#123;</span><br><span class="line">        <span class="keyword">return</span> i;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;])</span><br></pre></td></tr></table></figure>
+            <p><code>canvas</code>对象是HTML5的新特性，可利用JavaScript脚本在web页面上绘制图形、创建动画。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">canvas</span> <span class="attr">id</span>=<span class="string">"canvas"</span> <span class="attr">width</span>=<span class="string">"150"</span> <span class="attr">height</span>=<span class="string">"150"</span>&gt;</span><span class="tag">&lt;/<span class="name">canvas</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>如果不指定宽高，则<code>canvas</code>默认300*150。JavaScript可以通过下面的代码获取画布：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> canvas = <span class="built_in">document</span>.getElementById(<span class="string">'canvas'</span>);</span><br><span class="line"><span class="keyword">if</span> (canvas.getContext)&#123;</span><br><span class="line">  <span class="keyword">var</span> ctx = canvas.getContext(<span class="string">'2d'</span>);</span><br><span class="line">  <span class="comment">// 2d画布已获取，可在此添加代码</span></span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">  <span class="comment">// 浏览器不支持canvas</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="画布坐标系统"><a href="#画布坐标系统" class="headerlink" title="画布坐标系统"></a>画布坐标系统</h2><p><img src="http://img.react.ren/blog/canvas-default-grid.png" alt="grid"></p>
         </div>
         
           <p class="article-more-link">
-            <a href="/angularjs-ui-tab/#more">Read More</a>
+            <a href="/canvas-notes/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/angularjs-ui-tab/" data-id="cjhq778hu003lizq338hilmql" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/canvas-notes/" data-id="cjhq778ib0047izq3i9u90pzl" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
@@ -104,10 +105,10 @@
 
 
   
-    <article id="post-powerful-chrome-console" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-install-mongodb-on-linux" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/powerful-chrome-console/" class="article-date">
-  <time datetime="2016-08-05T12:31:20.000Z" itemprop="datePublished">2016-08-05</time>
+    <a href="/install-mongodb-on-linux/" class="article-date">
+  <time datetime="2017-07-14T02:23:47.000Z" itemprop="datePublished">2017-07-14</time>
 </a>
     
   </div>
@@ -118,160 +119,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/powerful-chrome-console/">厉害了，我的chrome控制台</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="copy"><a href="#copy" class="headerlink" title="copy"></a>copy</h2><p>过此命令可以将在控制台获取到的内容复制到剪贴板：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">copy(<span class="built_in">document</span>.body)</span><br></pre></td></tr></table></figure>
-<h2 id="keys-amp-values"><a href="#keys-amp-values" class="headerlink" title="keys &amp; values"></a>keys &amp; values</h2><p>返回对象所有属性名和属性值：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> tboy=&#123;<span class="attr">name</span>:<span class="string">'wayou'</span>,<span class="attr">gender</span>:<span class="string">'unknown'</span>,<span class="attr">hobby</span>:<span class="string">'opposite to the gender'</span>&#125;;</span><br><span class="line">keys(tboy);</span><br><span class="line">values(tboy);</span><br></pre></td></tr></table></figure>
-<h2 id="console-dir"><a href="#console-dir" class="headerlink" title="console.dir"></a>console.dir</h2><p>将DOM结点以JavaScript对象的形式输出到控制台：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.dir(<span class="built_in">document</span>.body);</span><br></pre></td></tr></table></figure>
-<h2 id="console-count"><a href="#console-count" class="headerlink" title="console.count"></a>console.count</h2><p>用于计数。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">foo</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.count(<span class="string">'foo 被执行的次数：'</span>);</span><br><span class="line">&#125;</span><br><span class="line">foo();</span><br><span class="line">foo();</span><br><span class="line">foo();</span><br></pre></td></tr></table></figure>
-<h2 id="console-log"><a href="#console-log" class="headerlink" title="console.log"></a>console.log</h2><p>console.log() 接收不定参数，参数间用逗号分隔，最终会输出会将它们以空白字符连接。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(<span class="string">'%c你好'</span>,<span class="string">'color:red;'</span>,<span class="string">'小明'</span>,<span class="string">'你知道小红被妈妈打了么'</span>);</span><br></pre></td></tr></table></figure>
-<p>第一个参数可以包含一些格式化的指令比如<code>%c</code>：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//红色大写的hello world</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'%chello world'</span>,<span class="string">'font-size:25px;color:red;'</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//彩色的hello world</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'%chello world'</span>, <span class="string">'background-image:-webkit-gradient( linear, left top, right top, color-stop(0, #f22), color-stop(0.15, #f2f), color-stop(0.3, #22f), color-stop(0.45, #2ff), color-stop(0.6, #2f2),color-stop(0.75, #2f2), color-stop(0.9, #ff2), color-stop(1, #f22) );color:transparent;-webkit-background-clip: text;font-size:5em;'</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//动图</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">"%c"</span>, <span class="string">"padding:50px 300px;line-height:120px;background:url('http://wayou.github.io/2014/09/10/chrome-console-tips-and-tricks/rabbit.gif') no-repeat;"</span>);</span><br></pre></td></tr></table></figure>
-<p>以下命令可以在特殊场合替代<code>console.log</code>：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">console.log：普通信息</span><br><span class="line">console.info：提示类信息</span><br><span class="line">console.error：错误信息</span><br><span class="line">console.warn：警示信息</span><br></pre></td></tr></table></figure>
-<p>当合理使用上述log方法后，可以很方便地在控制台选择查看特定类型的信息。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(<span class="string">'普通信息'</span>);</span><br><span class="line"><span class="built_in">console</span>.info(<span class="string">'提示类信息'</span>);</span><br><span class="line"><span class="built_in">console</span>.warn(<span class="string">'错误信息'</span>);</span><br><span class="line"><span class="built_in">console</span>.error(<span class="string">'警示信息'</span>);</span><br></pre></td></tr></table></figure>
-<h2 id="console-table"><a href="#console-table" class="headerlink" title="console.table"></a>console.table</h2><p>输出表格：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> data = [&#123;<span class="string">'姓名'</span>: <span class="string">'小明'</span>, <span class="string">'年龄'</span>: <span class="number">28</span>&#125;, &#123;<span class="string">'姓名'</span>: <span class="string">'小红'</span>, <span class="string">'年龄'</span>: <span class="number">25</span>&#125;];</span><br><span class="line"><span class="built_in">console</span>.table(data);</span><br></pre></td></tr></table></figure>
-<h2 id="contenteditable"><a href="#contenteditable" class="headerlink" title="contenteditable"></a>contenteditable</h2><p>在地址栏输入下面的语句可将浏览器变成编辑器：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">data:text/html, &lt;html contenteditable&gt;</span><br></pre></td></tr></table></figure>
-<p>将以下在console执行可使整个页面将变成可编辑：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">document</span>.body.contentEditable=<span class="string">'true'</span>;</span><br></pre></td></tr></table></figure>
-<h2 id="lt-a-gt-标签提取域名等"><a href="#lt-a-gt-标签提取域名等" class="headerlink" title="&lt;a&gt;标签提取域名等"></a><code>&lt;a&gt;</code>标签提取域名等</h2><p><code>&lt;a&gt;</code>标签可以提取域名、参数等信息，不需要自行写正则处理URL了：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">parseURL</span>(<span class="params">url</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> a =  <span class="built_in">document</span>.createElement(<span class="string">'a'</span>);</span><br><span class="line">    a.href = url;</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">        source: url,</span><br><span class="line">        protocol: a.protocol.replace(<span class="string">':'</span>,<span class="string">''</span>),</span><br><span class="line">        host: a.hostname,</span><br><span class="line">        port: a.port,</span><br><span class="line">        query: a.search,</span><br><span class="line">        params: (<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">            <span class="keyword">var</span> ret = &#123;&#125;,</span><br><span class="line">                seg = a.search.replace(<span class="regexp">/^\?/</span>,<span class="string">''</span>).split(<span class="string">'&amp;'</span>),</span><br><span class="line">                len = seg.length, i = <span class="number">0</span>, s;</span><br><span class="line">            <span class="keyword">for</span> (;i&lt;len;i++) &#123;</span><br><span class="line">                <span class="keyword">if</span> (!seg[i]) &#123; <span class="keyword">continue</span>; &#125;</span><br><span class="line">                s = seg[i].split(<span class="string">'='</span>);</span><br><span class="line">                ret[s[<span class="number">0</span>]] = s[<span class="number">1</span>];</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> ret;</span><br><span class="line">        &#125;)(),</span><br><span class="line">        file: (a.pathname.match(<span class="regexp">/\/([^\/?#]+)$/i</span>) || [,<span class="string">''</span>])[<span class="number">1</span>],</span><br><span class="line">        hash: a.hash.replace(<span class="string">'#'</span>,<span class="string">''</span>),</span><br><span class="line">        path: a.pathname.replace(<span class="regexp">/^([^\/])/</span>,<span class="string">'/$1'</span>),</span><br><span class="line">        relative: (a.href.match(<span class="regexp">/tps?:\/\/[^\/]+(.+)/</span>) || [,<span class="string">''</span>])[<span class="number">1</span>],</span><br><span class="line">        segments: a.pathname.replace(<span class="regexp">/^\//</span>,<span class="string">''</span>).split(<span class="string">'/'</span>)</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="禁止别人用iframe加载你的页面"><a href="#禁止别人用iframe加载你的页面" class="headerlink" title="禁止别人用iframe加载你的页面"></a>禁止别人用iframe加载你的页面</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (<span class="built_in">window</span>.location != <span class="built_in">window</span>.parent.location) <span class="built_in">window</span>.parent.location = <span class="built_in">window</span>.location;</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/powerful-chrome-console/" data-id="cjhq778rc00fiizq39osyuh2j" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-focus-to-browser-tab" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/focus-to-browser-tab/" class="article-date">
-  <time datetime="2016-07-20T12:33:34.000Z" itemprop="datePublished">2016-07-20</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/focus-to-browser-tab/">浏览器自动聚焦到指定窗口</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>有时候我们通过js让浏览器打开一个新窗口之后，想让浏览器再次聚焦到改窗口，可以用如下的方式：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> newwin;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">popup</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">   <span class="keyword">if</span> (newwin == <span class="literal">null</span>) &#123;</span><br><span class="line">       newwin = <span class="built_in">window</span>.open(<span class="string">'http://www.baidu.com'</span>, <span class="string">'newwin'</span>);</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">else</span> &#123;</span><br><span class="line">       newwin.focus();</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这段代码会判断window对象里面有没有newwin属性，有的话就聚焦到该对象，否则创建新的窗口，设置该窗口的名字为newmin。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/focus-to-browser-tab/" data-id="cjhq778kk0076izq3agdztzdv" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-download-sub-directory-from-github" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/download-sub-directory-from-github/" class="article-date">
-  <time datetime="2016-07-13T12:30:08.000Z" itemprop="datePublished">2016-07-13</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/download-sub-directory-from-github/">从github上下载子目录</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>如何从github项目中下载某个子目录？例如github仓库的目录结构为：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Test/</span><br><span class="line">    foo/ </span><br><span class="line">       a.py</span><br><span class="line">       b.py</span><br><span class="line">    bar/</span><br><span class="line">       c.py</span><br><span class="line">       d.py</span><br></pre></td></tr></table></figure>
-<p>如何只下载foo文件夹呢？</p>
-<p>git并不支持这个需求，网上有解决方案是通过svn来做的，不是很方便，但github上有大神做了一个项目，只要输入项目子目录地址就能下载该目录，网址如下：</p>
-<p><a href="http://kinolien.github.io/gitzip/" target="_blank" rel="noopener">网址1</a><br><a href="https://minhaskamal.github.io/DownGit/" target="_blank" rel="noopener">网址2</a>   </p>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/download-sub-directory-from-github/" data-id="cjhq778jt0061izq3rou5q3q5" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/">Git</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-git-push-u" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/git-push-u/" class="article-date">
-  <time datetime="2016-07-12T01:10:42.000Z" itemprop="datePublished">2016-07-12</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/git-push-u/">git push -u</a>
+      <a class="article-title" href="/install-mongodb-on-linux/">Linux上安装mongodb</a>
     </h1>
   
 
@@ -283,24 +131,33 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <p>git push 的 -u 参数具体适合含义？</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-u, --<span class="built_in">set</span>-upstream</span><br></pre></td></tr></table></figure>
-<p>一般只有同时存在多个远程仓库时才会用到 –set-upstream 。每个 git branch 可以有个对应的 upstream。假设你有两个upstream，分别叫 server1 和 server2，本地 master branch 的 upstream 是 server1 上的 master，那么当你不带参数直接输入 git pull 或者 git push 时，默认是对 server1 进行 pull/push。如果你成功运行 <code>git push -u server2 master</code>，那么除了本地 branch 会被 push 到 server2 之外，还会把 server2 设置成 upstream。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git push origin</span><br></pre></td></tr></table></figure>
-<p>上面命令表示，将当前分支推送到origin主机的对应分支，如果当前分支只有一个追踪分支，那么主机名都可以省略。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git push</span><br></pre></td></tr></table></figure>
+            <ol>
+<li><p>下载</p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -O https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-3.4.6.tgz</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>解压</p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar -zxvf mongodb-linux-x86_64-3.4.6.tgz</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>添加环境变量</p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> PATH=&lt;mongodb-install-directory&gt;/bin:<span class="variable">$PATH</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>创建数据库目录</p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mkdir -p /data/db</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>运行</p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mongod --dbpath &lt;path to data directory&gt;</span><br></pre></td></tr></table></figure>
         </div>
         
           <p class="article-more-link">
-            <a href="/git-push-u/#more">Read More</a>
+            <a href="/install-mongodb-on-linux/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/git-push-u/" data-id="cjhq778l2007yizq32nkko4z3" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/install-mongodb-on-linux/" data-id="cjhq778my009uizq3bl73dkbx" class="article-share-link">Share</a>
      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/">Git</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
 
     </footer>
   </div>
@@ -309,10 +166,10 @@
 
 
   
-    <article id="post-webpack-handle-angular-styles" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-firewall-cmd-command" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/webpack-handle-angular-styles/" class="article-date">
-  <time datetime="2016-07-09T12:30:08.000Z" itemprop="datePublished">2016-07-09</time>
+    <a href="/firewall-cmd-command/" class="article-date">
+  <time datetime="2017-07-14T02:22:47.000Z" itemprop="datePublished">2017-07-14</time>
 </a>
     
   </div>
@@ -323,7 +180,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/webpack-handle-angular-styles/">webpack打包angular样式文件</a>
+      <a class="article-title" href="/firewall-cmd-command/">firewall-cmd常用命令</a>
     </h1>
   
 
@@ -335,18 +192,125 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <p>用webpack打包angular2项目的时候，想用less预处理器，可以在webpack.config.js的loader里面这写：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">	test: <span class="regexp">/\.less$/</span>, </span><br><span class="line">	include: helpers.root(<span class="string">'src'</span>, <span class="string">'app'</span>),</span><br><span class="line">	loader: <span class="string">'raw!less'</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+            <p>启动：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl start firewalld.service</span><br></pre></td></tr></table></figure>
+<p>如果报错：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Failed to start firewalld.service: Unit firewalld.service is masked.</span><br></pre></td></tr></table></figure>
+<p>解决办法：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl unmask firewalld.service</span><br></pre></td></tr></table></figure>
+<p>启动firewalld.service</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl start firewalld.service</span><br></pre></td></tr></table></figure>
+<p>把80端口和9222端口添加到防火墙开放端口中</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">firewall-cmd --permanent --zone=public --add-port=80/tcp</span><br><span class="line">firewall-cmd --permanent --zone=public --add-port=9222/tcp</span><br></pre></td></tr></table></figure>
         </div>
         
           <p class="article-more-link">
-            <a href="/webpack-handle-angular-styles/#more">Read More</a>
+            <a href="/firewall-cmd-command/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/webpack-handle-angular-styles/" data-id="cjhq778v900jgizq38fclvuzq" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/firewall-cmd-command/" data-id="cjhq778kb006wizq3si5ox8wz" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-install-PHP7-on-centos7" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/install-PHP7-on-centos7/" class="article-date">
+  <time datetime="2017-07-12T00:53:32.000Z" itemprop="datePublished">2017-07-12</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/install-PHP7-on-centos7/">centos7安装PHP7</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <h2 id="安装PHP7"><a href="#安装PHP7" class="headerlink" title="安装PHP7"></a>安装PHP7</h2><p>在centos7通过yum安装PHP7，首先在终端运行：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm</span><br></pre></td></tr></table></figure>
+<p>如果提示错误：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">error: Failed dependencies:</span><br><span class="line">epel-release &gt;= 7 is needed by webtatic-release-7-3.noarch</span><br></pre></td></tr></table></figure>
+<p>需要先安装epel-release。</p>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/install-PHP7-on-centos7/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/install-PHP7-on-centos7/" data-id="cjhq778mk009iizq3hk8bjcwn" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-commonjs-vs-es6-module" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/commonjs-vs-es6-module/" class="article-date">
+  <time datetime="2017-06-30T02:45:07.000Z" itemprop="datePublished">2017-06-30</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/commonjs-vs-es6-module/">commonjs和es6 module语法</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>commonjs写法：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>.exports = <span class="number">1</span></span><br><span class="line"><span class="built_in">module</span>.exports = <span class="literal">NaN</span></span><br><span class="line"><span class="built_in">module</span>.exports = <span class="string">'foo'</span></span><br><span class="line"><span class="built_in">module</span>.exports = &#123; <span class="attr">foo</span>: <span class="string">'bar'</span> &#125;</span><br><span class="line"><span class="built_in">module</span>.exports = [<span class="string">'foo'</span>, <span class="string">'bar'</span>]</span><br><span class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="keyword">function</span> <span class="title">foo</span> (<span class="params"></span>) </span>&#123;&#125;</span><br></pre></td></tr></table></figure>
+<p>es6写法：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="number">1</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="literal">NaN</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="string">'foo'</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123; <span class="attr">foo</span>: <span class="string">'bar'</span> &#125;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> [<span class="string">'foo'</span>, <span class="string">'bar'</span>]</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="function"><span class="keyword">function</span> <span class="title">foo</span> (<span class="params"></span>) </span>&#123;&#125;</span><br></pre></td></tr></table></figure>
+<p>commonjs写法：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>.exports.foo = <span class="string">'bar'</span></span><br><span class="line"><span class="built_in">module</span>.exports.baz = <span class="string">'ponyfoo'</span></span><br></pre></td></tr></table></figure>
+<p>es6写法：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">var</span> foo = <span class="string">'bar'</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">var</span> baz = <span class="string">'ponyfoo'</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 或者</span></span><br><span class="line"><span class="keyword">var</span> foo = <span class="string">'ponyfoo'</span></span><br><span class="line"><span class="keyword">var</span> bar = <span class="string">'baz'</span></span><br><span class="line"><span class="keyword">export</span> &#123; foo, bar &#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/commonjs-vs-es6-module/" data-id="cjhq778ip004pizq3uur4hm3y" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
@@ -357,10 +321,10 @@
 
 
   
-    <article id="post-react-native-common-errors" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-css-pseudo-element" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/react-native-common-errors/" class="article-date">
-  <time datetime="2016-07-07T02:50:52.000Z" itemprop="datePublished">2016-07-07</time>
+    <a href="/css-pseudo-element/" class="article-date">
+  <time datetime="2017-06-17T08:38:07.000Z" itemprop="datePublished">2017-06-17</time>
 </a>
     
   </div>
@@ -371,7 +335,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/react-native-common-errors/">react-native常见错误及其解决办法</a>
+      <a class="article-title" href="/css-pseudo-element/">CSS伪元素</a>
     </h1>
   
 
@@ -383,127 +347,29 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <h4 id="import时大括号使用错误"><a href="#import时大括号使用错误" class="headerlink" title="import时大括号使用错误"></a>import时大括号使用错误</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Uncaught Error: Invariant Violation: Element type is invalid: expected a string (for built-in components) or a class/function but got: object</span><br></pre></td></tr></table></figure>
-<p>如果export default就不需要大括号，否则需要大括号：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">import &#123;MyComponent&#125; from &apos;../components/xyz.js&apos;;</span><br><span class="line">import MyComponent from &apos;../components/xyz.js&apos;;</span><br></pre></td></tr></table></figure></p>
-<p>如果第二个是对的，那么第一个会报上面的错。</p>
-<h4 id="在render中更新props和state"><a href="#在render中更新props和state" class="headerlink" title="在render中更新props和state"></a>在render中更新props和state</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Warning: setState(...): Cannot update during an existing state transition (such as within `render` or another component&apos;s constructor) Render methods should be a pure function of props and state; constructor side-effects are an anti-pattern, but can be moved to &apos;componentWillMount&apos;</span><br></pre></td></tr></table></figure>
-<p>大体意思就是在 render 这种需要 props 和 state 进行渲染的方法中，不能再对 props 和 state 进行更新。因为React 会在 props 和 state 改变的时候调用 render 进行 DOM diff 然后渲染，如果在渲染过程中再对 props 和 state 进行更改，就陷入死循环了。onPress 应该传递进一个函数，这个函数会在点击的时候执行。一种可行的写法是使用匿名函数封装：</p>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/react-native-common-errors/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/react-native-common-errors/" data-id="cjhq778ry00g4izq3hxf7dinj" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-react-native-notes" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/react-native-notes/" class="article-date">
-  <time datetime="2016-07-06T14:44:05.000Z" itemprop="datePublished">2016-07-06</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/react-native-notes/">ReactNative学习笔记</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <h2 id="创建项目"><a href="#创建项目" class="headerlink" title="创建项目"></a>创建项目</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">npm install -g react-native-cli</span><br><span class="line">react-native init First</span><br><span class="line"><span class="built_in">cd</span> First</span><br></pre></td></tr></table></figure>
-<h2 id="添加依赖"><a href="#添加依赖" class="headerlink" title="添加依赖"></a>添加依赖</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> React, &#123;Component&#125; <span class="keyword">from</span> <span class="string">'react'</span>;</span><br><span class="line"><span class="keyword">import</span> &#123;AppRegistry, Text, View&#125; <span class="keyword">from</span> <span class="string">'react-native'</span>;</span><br></pre></td></tr></table></figure>
-<p>简而言之，第一句话是从react库中引入所需的依赖，第二句是从react-natice库中引入所需的依赖，两句话一个都不能少。但是你可能会有一个疑问，为什么大部分依赖放在大括号<code>{}</code>里面，而React没有加大括号。这个涉及到ES6的模块加载机制，详情可参见阮一峰的<a href="http://es6.ruanyifeng.com/#docs/module" target="_blank" rel="noopener">教程</a>，没时间看的话可以这么理解：React是react库的默认导出（export default），而Component是可选的变量（export Component）,同理<code>AppRegistry</code>,<code>Text</code>, <code>View</code>也是react-native的可选变量。</p>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/react-native-notes/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/react-native-notes/" data-id="cjhq778s100g8izq3iy2vwquo" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-react-notes" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/react-notes/" class="article-date">
-  <time datetime="2016-07-05T09:25:08.000Z" itemprop="datePublished">2016-07-05</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/react-notes/">React学习笔记</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <h2 id="添加依赖"><a href="#添加依赖" class="headerlink" title="添加依赖"></a>添加依赖</h2><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"../build/react.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"../build/react-dom.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"../build/browser.min.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"text/babel"</span>&gt;</span><span class="undefined"></span></span><br><span class="line"><span class="javascript">	<span class="comment">//代码写在这里</span></span></span><br><span class="line"><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+            <p>伪元素(Pseudo Element)，顾名思义“不是网页里面真正的元素”，但看起来和真正元素一样，是它必须依附在一个真实的元素上。</p>
+<p>在 W3C 的定义里总共有五个伪元素 ( 其他仍在测试阶段 )，分别是</p>
 <ul>
-<li>react.js是react的核心库；</li>
-<li>react-dom.js是提供与DOM相关的功能；</li>
-<li>browser.js是将JSX语法转换为js语法。</li>
-<li>script的type属性为text/babel，react独有的JSX语法。</li>
+<li>::before</li>
+<li>::after</li>
+<li>::first-line</li>
+<li>::first-letter</li>
+<li>::selection</li>
 </ul>
-<h2 id="渲染页面"><a href="#渲染页面" class="headerlink" title="渲染页面"></a>渲染页面</h2><p>ReactDOM.render()的作用是把JSX语法转换成HTML格式，然后渲染在指定的DOM节点上。它接收两个参数，第一个参数是JSX语法的DOM树，第二个参数是被挂载的DOM节点。例如：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ReactDOM.render(</span><br><span class="line">   &lt;h1&gt;Hello, world!<span class="xml"><span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span>,</span><br><span class="line">   <span class="built_in">document</span>.getElementById(<span class="string">'example'</span>)</span><br><span class="line"> );</span><br></pre></td></tr></table></figure>
+<h2 id="before和-after"><a href="#before和-after" class="headerlink" title="::before和::after"></a>::before和::after</h2><p>::before 是在原本的元素“之前”加入内容，::after 则是在原本的元素“之后”加入内容，两者的表现形式都是 <code>display:inline-block</code>。</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">div</span><span class="selector-pseudo">::before</span>&#123;</span><br><span class="line">    <span class="attribute">content</span>:<span class="string">"before"</span>;</span><br><span class="line">    <span class="attribute">color</span>:red;</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-tag">div</span><span class="selector-pseudo">::after</span>&#123;</span><br><span class="line">    <span class="attribute">content</span>:<span class="string">"after"</span>;</span><br><span class="line">    <span class="attribute">color</span>:red;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
         </div>
         
           <p class="article-more-link">
-            <a href="/react-notes/#more">Read More</a>
+            <a href="/css-pseudo-element/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/react-notes/" data-id="cjhq778s400gcizq3i71cpsta" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/css-pseudo-element/" data-id="cjhq778j40059izq3dl1no653" class="article-share-link">Share</a>
      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CSS/">CSS</a></li></ul>
 
     </footer>
   </div>
@@ -512,10 +378,10 @@
 
 
   
-    <article id="post-es-model" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-install-node.js-and-mongodb-on-linux" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/es-model/" class="article-date">
-  <time datetime="2016-06-30T08:31:11.000Z" itemprop="datePublished">2016-06-30</time>
+    <a href="/install-node.js-and-mongodb-on-linux/" class="article-date">
+  <time datetime="2017-06-16T01:23:12.000Z" itemprop="datePublished">2017-06-16</time>
 </a>
     
   </div>
@@ -526,7 +392,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/es-model/">elasticsearch 表结构</a>
+      <a class="article-title" href="/install-node.js-and-mongodb-on-linux/">Linux搭建node.js和mongodb环境</a>
     </h1>
   
 
@@ -537,16 +403,157 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <p>建立索引：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -XPUT <span class="string">"http://142.96.248.197:9200/contx_test"</span></span><br></pre></td></tr></table></figure>
-<p>设置索引mapping：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line">curl -XPOST <span class="string">"http://142.96.248.197:9200/contx_test/article/_mapping?pretty"</span> -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">    "article": &#123;</span></span><br><span class="line"><span class="string">    	"_timestamp": &#123; </span></span><br><span class="line"><span class="string">			"enabled": true</span></span><br><span class="line"><span class="string">		&#125;,</span></span><br><span class="line"><span class="string">       "_all": &#123;</span></span><br><span class="line"><span class="string">			"analyzer": "ik_max_word",</span></span><br><span class="line"><span class="string">			"search_analyzer": "ik_max_word",</span></span><br><span class="line"><span class="string">			"term_vector": "no",</span></span><br><span class="line"><span class="string">			"store": false</span></span><br><span class="line"><span class="string">        &#125;,</span></span><br><span class="line"><span class="string">    	"properties": &#123;</span></span><br><span class="line"><span class="string">    		"id": &#123;</span></span><br><span class="line"><span class="string">    			"type": "string",</span></span><br><span class="line"><span class="string">    			"index": "not_analyzed",</span></span><br><span class="line"><span class="string">				"include_in_all": false</span></span><br><span class="line"><span class="string">    		&#125;,</span></span><br><span class="line"><span class="string">			"title": &#123;</span></span><br><span class="line"><span class="string">				"type": "string",</span></span><br><span class="line"><span class="string">				"store": "no",</span></span><br><span class="line"><span class="string">				"term_vector": "with_positions_offsets",</span></span><br><span class="line"><span class="string">				"analyzer": "ik_max_word",</span></span><br><span class="line"><span class="string">				"search_analyzer": "ik_max_word",</span></span><br><span class="line"><span class="string">				"include_in_all": true</span></span><br><span class="line"><span class="string">			&#125;,</span></span><br><span class="line"><span class="string">			"content": &#123;</span></span><br><span class="line"><span class="string">				"type": "string",</span></span><br><span class="line"><span class="string">				"store": "no",</span></span><br><span class="line"><span class="string">				"term_vector": "with_positions_offsets",</span></span><br><span class="line"><span class="string">				"analyzer": "ik_max_word",</span></span><br><span class="line"><span class="string">				"search_analyzer": "ik_max_word",</span></span><br><span class="line"><span class="string">				"include_in_all": true</span></span><br><span class="line"><span class="string">			&#125;,</span></span><br><span class="line"><span class="string">			"source": &#123;</span></span><br><span class="line"><span class="string">				"type": "string",</span></span><br><span class="line"><span class="string">				"index": "not_analyzed",</span></span><br><span class="line"><span class="string">				"include_in_all": false</span></span><br><span class="line"><span class="string">			&#125;,</span></span><br><span class="line"><span class="string">			"hot": &#123;</span></span><br><span class="line"><span class="string">				"type": "long",</span></span><br><span class="line"><span class="string">				"include_in_all": false</span></span><br><span class="line"><span class="string">			&#125;,</span></span><br><span class="line"><span class="string">			"priurl": &#123;</span></span><br><span class="line"><span class="string">				"type": "string",</span></span><br><span class="line"><span class="string">				"index": "no"</span></span><br><span class="line"><span class="string">			&#125;,</span></span><br><span class="line"><span class="string">			"tags": &#123;</span></span><br><span class="line"><span class="string">				"type": "string",</span></span><br><span class="line"><span class="string">				"index": "not_analyzed",</span></span><br><span class="line"><span class="string">				"include_in_all": false</span></span><br><span class="line"><span class="string">			&#125;,</span></span><br><span class="line"><span class="string">			"catalog": &#123;</span></span><br><span class="line"><span class="string">				"type": "string",</span></span><br><span class="line"><span class="string">				"index": "not_analyzed",</span></span><br><span class="line"><span class="string">				"include_in_all": false</span></span><br><span class="line"><span class="string">			&#125;,</span></span><br><span class="line"><span class="string">			"app": &#123;</span></span><br><span class="line"><span class="string">				"type": "string",</span></span><br><span class="line"><span class="string">				"index": "not_analyzed",</span></span><br><span class="line"><span class="string">				"include_in_all": false</span></span><br><span class="line"><span class="string">			&#125;,</span></span><br><span class="line"><span class="string">			"time": &#123;</span></span><br><span class="line"><span class="string">				"type": "date",</span></span><br><span class="line"><span class="string">				"include_in_all": false</span></span><br><span class="line"><span class="string">			&#125;</span></span><br><span class="line"><span class="string">		&#125;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">&#125;'</span></span><br></pre></td></tr></table></figure>
+        <div class="article-preview">
+            <h2 id="安装nodejs"><a href="#安装nodejs" class="headerlink" title="安装nodejs"></a>安装nodejs</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># 推荐安装方式：</span><br><span class="line">curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.2/install.sh | bash</span><br><span class="line">nvm install v8.1.2</span><br><span class="line"></span><br><span class="line"># 也可以这么安装：</span><br><span class="line">sudo su</span><br><span class="line">curl --silent --location https://rpm.nodesource.com/setup_8.x | bash -</span><br><span class="line">yum install -y nodejs</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/install-node.js-and-mongodb-on-linux/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/install-node.js-and-mongodb-on-linux/" data-id="cjhq778n300a2izq3h9n2mwbx" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-public-vs-private-in-angular-componet" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/public-vs-private-in-angular-componet/" class="article-date">
+  <time datetime="2017-06-15T02:45:07.000Z" itemprop="datePublished">2017-06-15</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/public-vs-private-in-angular-componet/">angular组件中的public和private修饰符</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>angular 组件中变量的 <code>public</code> 和 <code>private</code> 修饰符会影响到 AoT 编译：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">template: <span class="string">"&lt;div&gt;&#123;&#123;hello&#125;&#125;&lt;/div&gt;"</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">someModule</span> </span>&#123;</span><br><span class="line">    private hello: string;            <span class="xml"><span class="tag">&lt;<span class="name">--</span> <span class="attr">doesn</span>'<span class="attr">t</span> <span class="attr">work</span> <span class="attr">with</span> <span class="attr">AOT</span> <span class="attr">compiler</span></span></span></span><br><span class="line"><span class="xml">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>在 AoT 模式下模板里面不允许访问组件类中的 <code>private</code> 属性，因为在 JiT 模式下是编译后的 ES5 代码，而在 JavaScript 中并没有公有属性和私有属性一说，但 AoT 模式下 typescript 会对变量的访问范围作出限制。</p>
+<p>建议所有的属性都设置为公有属性，在 <code>constructor</code> 里面注入的 <code>service</code>，因为一般只会在 <code>component</code> 中使用，故设置为私有属性。</p>
 
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/es-model/" data-id="cjhq778k2006gizq3x7eo8sqf" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/public-vs-private-in-angular-componet/" data-id="cjhq778rk00fsizq31scxegii" class="article-share-link">Share</a>
      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-mongodb-aggregate-notes" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/mongodb-aggregate-notes/" class="article-date">
+  <time datetime="2017-06-14T08:32:07.000Z" itemprop="datePublished">2017-06-14</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/mongodb-aggregate-notes/">mongodb 聚合使用笔记</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">daily</span>(<span class="params">pay</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> Model.Bill.aggregate(</span><br><span class="line">    &#123;<span class="attr">$match</span>: &#123;[target]: id, month, pay&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$group</span>: &#123;<span class="attr">_id</span>: <span class="string">'$day'</span>, <span class="attr">money</span>: &#123;<span class="attr">$sum</span>: <span class="string">'$money'</span>&#125;&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$project</span>: &#123;<span class="attr">_id</span>: <span class="number">0</span>, <span class="attr">day</span>: <span class="string">'$_id'</span>, <span class="attr">money</span>: <span class="number">1</span>&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$sort</span>: &#123;<span class="attr">day</span>: <span class="number">1</span>&#125;&#125;</span><br><span class="line">  )</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">partner</span>(<span class="params">pay</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> Model.Bill.aggregate(</span><br><span class="line">    &#123;<span class="attr">$match</span>: &#123;[target]: id, month, pay&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$group</span>: &#123;<span class="attr">_id</span>: <span class="string">'$partner'</span>, <span class="attr">money</span>: &#123;<span class="attr">$sum</span>: <span class="string">'$money'</span>&#125;&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$lookup</span>: &#123;<span class="attr">from</span>: <span class="string">'partners'</span>, <span class="attr">localField</span>: <span class="string">'_id'</span>, <span class="attr">foreignField</span>: <span class="string">'_id'</span>, <span class="attr">as</span>: <span class="string">'partner'</span>&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$unwind</span>: &#123;<span class="attr">path</span>: <span class="string">'$partner'</span>, <span class="attr">preserveNullAndEmptyArrays</span>: <span class="literal">true</span>&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$project</span>: &#123;<span class="attr">_id</span>: <span class="number">0</span>, <span class="attr">money</span>: <span class="number">1</span>, <span class="attr">name</span>: <span class="string">'$partner.name'</span>&#125;&#125;</span><br><span class="line">  )</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">book</span>(<span class="params">pay</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> Model.Bill.aggregate(</span><br><span class="line">    &#123;<span class="attr">$match</span>: &#123;[target]: id, month, pay&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$group</span>: &#123;<span class="attr">_id</span>: <span class="string">'$book'</span>, <span class="attr">money</span>: &#123;<span class="attr">$sum</span>: <span class="string">'$money'</span>&#125;&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$lookup</span>: &#123;<span class="attr">from</span>: <span class="string">'books'</span>, <span class="attr">localField</span>: <span class="string">'_id'</span>, <span class="attr">foreignField</span>: <span class="string">'_id'</span>, <span class="attr">as</span>: <span class="string">'book'</span>&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$unwind</span>: &#123;<span class="attr">path</span>: <span class="string">'$book'</span>, <span class="attr">preserveNullAndEmptyArrays</span>: <span class="literal">true</span>&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$project</span>: &#123;<span class="attr">_id</span>: <span class="number">0</span>, <span class="attr">money</span>: <span class="number">1</span>, <span class="attr">name</span>: <span class="string">'$book.name'</span>&#125;&#125;</span><br><span class="line">  )</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">account</span>(<span class="params">pay</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> Model.Bill.aggregate(</span><br><span class="line">    &#123;<span class="attr">$match</span>: &#123;[target]: id, month, pay&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$group</span>: &#123;<span class="attr">_id</span>: <span class="string">'$account'</span>, <span class="attr">money</span>: &#123;<span class="attr">$sum</span>: <span class="string">'$money'</span>&#125;&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$lookup</span>: &#123;<span class="attr">from</span>: <span class="string">'accounts'</span>, <span class="attr">localField</span>: <span class="string">'_id'</span>, <span class="attr">foreignField</span>: <span class="string">'_id'</span>, <span class="attr">as</span>: <span class="string">'account'</span>&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$unwind</span>: &#123;<span class="attr">path</span>: <span class="string">'$account'</span>, <span class="attr">preserveNullAndEmptyArrays</span>: <span class="literal">true</span>&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$project</span>: &#123;<span class="attr">_id</span>: <span class="number">0</span>, <span class="attr">money</span>: <span class="number">1</span>, <span class="attr">name</span>: <span class="string">'$account.name'</span>&#125;&#125;</span><br><span class="line">  )</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">catalog</span>(<span class="params">pay</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> Model.Bill.aggregate(</span><br><span class="line">    &#123;<span class="attr">$match</span>: &#123;[target]: id, month, pay&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$group</span>: &#123;<span class="attr">_id</span>: <span class="string">'$name'</span>, <span class="attr">money</span>: &#123;<span class="attr">$sum</span>: <span class="string">'$money'</span>&#125;&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$project</span>: &#123;<span class="attr">_id</span>: <span class="number">0</span>, <span class="attr">name</span>: <span class="string">'$_id'</span>, <span class="attr">money</span>: <span class="number">1</span>&#125;&#125;</span><br><span class="line">  )</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">total</span>(<span class="params">pay</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> Model.Bill.aggregate(</span><br><span class="line">    &#123;<span class="attr">$match</span>: &#123;year, pay&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$group</span>: &#123;<span class="attr">_id</span>: <span class="literal">null</span>, <span class="attr">money</span>: &#123;<span class="attr">$sum</span>: <span class="string">'$money'</span>&#125;, <span class="attr">count</span>: &#123;<span class="attr">$sum</span>: <span class="number">1</span>&#125;&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$project</span>: &#123;<span class="attr">_id</span>: <span class="number">0</span>, <span class="attr">money</span>: <span class="number">1</span>, <span class="attr">count</span>: <span class="number">1</span>&#125;&#125;</span><br><span class="line">  ).then(<span class="function"><span class="params">data</span> =&gt;</span> data[<span class="number">0</span>])</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">monthly</span>(<span class="params">pay</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> Model.Bill.aggregate(</span><br><span class="line">    &#123;<span class="attr">$match</span>: &#123;year, pay&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$group</span>: &#123;<span class="attr">_id</span>: <span class="string">'$month'</span>, <span class="attr">money</span>: &#123;<span class="attr">$sum</span>: <span class="string">'$money'</span>&#125;&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$project</span>: &#123;<span class="attr">_id</span>: <span class="number">0</span>, <span class="attr">month</span>: <span class="string">'$_id'</span>, <span class="attr">money</span>: <span class="number">1</span>&#125;&#125;</span><br><span class="line">  )</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">catalogTop6</span>(<span class="params">pay</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> Model.Bill.aggregate(</span><br><span class="line">    &#123;<span class="attr">$match</span>: &#123;year, pay&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$group</span>: &#123;<span class="attr">_id</span>: <span class="string">'$name'</span>, <span class="attr">money</span>: &#123;<span class="attr">$sum</span>: <span class="string">'$money'</span>&#125;&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$project</span>: &#123;<span class="attr">_id</span>: <span class="number">0</span>, <span class="attr">day</span>: <span class="string">'$_id'</span>, <span class="attr">money</span>: <span class="number">1</span>&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$sort</span>: &#123;<span class="attr">money</span>: <span class="number">-1</span>&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$limit</span>: <span class="number">6</span>&#125;</span><br><span class="line">  )</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">partner</span>(<span class="params">pay</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> Model.Bill.aggregate(</span><br><span class="line">    &#123;<span class="attr">$match</span>: &#123;year, pay&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$group</span>: &#123;<span class="attr">_id</span>: <span class="string">'$partner'</span>, <span class="attr">money</span>: &#123;<span class="attr">$sum</span>: <span class="string">'$money'</span>&#125;&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$lookup</span>: &#123;<span class="attr">from</span>: <span class="string">'partners'</span>, <span class="attr">localField</span>: <span class="string">'_id'</span>, <span class="attr">foreignField</span>: <span class="string">'_id'</span>, <span class="attr">as</span>: <span class="string">'partner'</span>&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$unwind</span>: &#123;<span class="attr">path</span>: <span class="string">'$partner'</span>, <span class="attr">preserveNullAndEmptyArrays</span>: <span class="literal">true</span>&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$project</span>: &#123;<span class="attr">_id</span>: <span class="number">0</span>, <span class="attr">money</span>: <span class="number">1</span>, <span class="attr">name</span>: <span class="string">'$partner.name'</span>&#125;&#125;</span><br><span class="line">  )</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">book</span>(<span class="params">pay</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> Model.Bill.aggregate(</span><br><span class="line">    &#123;<span class="attr">$match</span>: &#123;year, pay&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$group</span>: &#123;<span class="attr">_id</span>: <span class="string">'$book'</span>, <span class="attr">money</span>: &#123;<span class="attr">$sum</span>: <span class="string">'$money'</span>&#125;&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$lookup</span>: &#123;<span class="attr">from</span>: <span class="string">'books'</span>, <span class="attr">localField</span>: <span class="string">'_id'</span>, <span class="attr">foreignField</span>: <span class="string">'_id'</span>, <span class="attr">as</span>: <span class="string">'book'</span>&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$unwind</span>: &#123;<span class="attr">path</span>: <span class="string">'$book'</span>, <span class="attr">preserveNullAndEmptyArrays</span>: <span class="literal">true</span>&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$project</span>: &#123;<span class="attr">_id</span>: <span class="number">0</span>, <span class="attr">money</span>: <span class="number">1</span>, <span class="attr">name</span>: <span class="string">'$book.name'</span>&#125;&#125;</span><br><span class="line">  )</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">account</span>(<span class="params">pay</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> Model.Bill.aggregate(</span><br><span class="line">    &#123;<span class="attr">$match</span>: &#123;account, pay&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$group</span>: &#123;<span class="attr">_id</span>: <span class="string">'$account'</span>, <span class="attr">money</span>: &#123;<span class="attr">$sum</span>: <span class="string">'$money'</span>&#125;&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$lookup</span>: &#123;<span class="attr">from</span>: <span class="string">'accounts'</span>, <span class="attr">localField</span>: <span class="string">'_id'</span>, <span class="attr">foreignField</span>: <span class="string">'_id'</span>, <span class="attr">as</span>: <span class="string">'account'</span>&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$unwind</span>: &#123;<span class="attr">path</span>: <span class="string">'$account'</span>, <span class="attr">preserveNullAndEmptyArrays</span>: <span class="literal">true</span>&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$project</span>: &#123;<span class="attr">_id</span>: <span class="number">0</span>, <span class="attr">money</span>: <span class="number">1</span>, <span class="attr">name</span>: <span class="string">'$account.name'</span>&#125;&#125;</span><br><span class="line">  )</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">billsAndDays</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> Model.Bill.aggregate(</span><br><span class="line">    &#123;<span class="attr">$match</span>: &#123;year&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$group</span>: &#123;<span class="attr">_id</span>: <span class="string">'$day'</span>, <span class="attr">bill</span>: &#123;<span class="attr">$sum</span>: <span class="number">1</span>&#125;, <span class="attr">day</span>: &#123;<span class="attr">$first</span>: <span class="number">1</span>&#125;&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$group</span>: &#123;<span class="attr">_id</span>: <span class="literal">null</span>, <span class="attr">bills</span>: &#123;<span class="attr">$sum</span>: <span class="string">'$bill'</span>&#125;, <span class="attr">days</span>: &#123;<span class="attr">$sum</span>: <span class="string">'$day'</span>&#125;&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$project</span>: &#123;<span class="attr">_id</span>: <span class="number">0</span>, <span class="attr">bills</span>: <span class="number">1</span>, <span class="attr">days</span>: <span class="number">1</span>&#125;&#125;</span><br><span class="line">  ).then(<span class="function"><span class="params">data</span> =&gt;</span> data[<span class="number">0</span>])</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/mongodb-aggregate-notes/" data-id="cjhq778pp00daizq3cp7on6lp" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-mongodb-data-migration" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/mongodb-data-migration/" class="article-date">
+  <time datetime="2017-06-14T00:58:02.000Z" itemprop="datePublished">2017-06-14</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/mongodb-data-migration/">mongodb数据迁移</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>MongoDB数据迁移主要用到两个命令，一个是备份命令<code>mongodump</code>，一个是恢复命令<code>mongorestore</code>。</p>
+<h2 id="mongodump"><a href="#mongodump" class="headerlink" title="mongodump"></a>mongodump</h2><p>该命令可以导出所有数据到指定目录中，命令格式：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mongodump -h <span class="string">'dbhost'</span>  -d <span class="string">'dbname'</span> -o <span class="string">'dbdirectory'</span></span><br></pre></td></tr></table></figure>
+<p>参数含义：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">-h: mongodb所在服务器地址，例如127.0.0.1，也可以指定端口:127.0.0.1:27017</span><br><span class="line">-d: 需要备份的数据库名称，例如：test_data</span><br><span class="line">-o: 备份的数据存放的位置，例如：/home/bak(需要提前新建)</span><br><span class="line">-u: 用户名称，使用权限验证的mongodb服务，需要指明导出账号</span><br><span class="line">-p: 用户密码，使用权限验证的mongodb服务，需要指明导出账号密码</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/mongodb-data-migration/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/mongodb-data-migration/" data-id="cjhq778pw00dkizq3k1ojkppk" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
+
     </footer>
   </div>
   
@@ -557,7 +564,7 @@
 
 
   <nav id="page-nav">
-    <a class="extend prev" rel="prev" href="/page/25/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/24/">24</a><a class="page-number" href="/page/25/">25</a><span class="page-number current">26</span><a class="page-number" href="/page/27/">27</a><a class="page-number" href="/page/28/">28</a><span class="space">&hellip;</span><a class="page-number" href="/page/39/">39</a><a class="extend next" rel="next" href="/page/27/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/25/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/24/">24</a><a class="page-number" href="/page/25/">25</a><span class="page-number current">26</span><a class="page-number" href="/page/27/">27</a><a class="page-number" href="/page/28/">28</a><span class="space">&hellip;</span><a class="page-number" href="/page/47/">47</a><a class="extend next" rel="next" href="/page/27/">Next &raquo;</a>
   </nav>
 </section>
 
@@ -572,7 +579,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JAVA/">JAVA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mongodb/">mongodb</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
     </div>
   </div>
 
@@ -582,7 +589,7 @@
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2018 zju.date
+      &copy; 2019 zju.date
       &nbsp;&nbsp;&nbsp;
       contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
     </div>

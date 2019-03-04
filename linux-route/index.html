@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="route 可查看路由表： 12345# routeDestination     Gateway         Genmask Flags Metric Ref    Use Iface192.168.0.0     *               255.255.255.0   U     0      0        0 eth0169.254.0.0     *">
+<meta name="keywords" content="Linux">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux 路由表">
+<meta property="og:url" content="https://zju.date/linux-route/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="route 可查看路由表： 12345# routeDestination     Gateway         Genmask Flags Metric Ref    Use Iface192.168.0.0     *               255.255.255.0   U     0      0        0 eth0169.254.0.0     *">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-11-19T05:51:08.009Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Linux 路由表">
+<meta name="twitter:description" content="route 可查看路由表： 12345# routeDestination     Gateway         Genmask Flags Metric Ref    Use Iface192.168.0.0     *               255.255.255.0   U     0      0        0 eth0169.254.0.0     *">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-linux-route" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/linux-route/" class="article-date">
+  <time datetime="2018-09-27T14:43:07.000Z" itemprop="datePublished">2018-09-27</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Linux 路由表
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>route 可查看路由表：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># route</span><br><span class="line">Destination     Gateway         Genmask Flags Metric Ref    Use Iface</span><br><span class="line">192.168.0.0     *               255.255.255.0   U     0      0        0 eth0</span><br><span class="line">169.254.0.0     *               255.255.0.0     U     0      0        0 eth0</span><br><span class="line">default         192.168.0.1     0.0.0.0         UG    0      0        0 eth0</span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th>Destination</th>
+<th>目标网段或者主机</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Gateway</td>
+<td>网关地址，”*” 表示目标是本主机所属的网络，不需要路由</td>
+</tr>
+<tr>
+<td>Genmask</td>
+<td>网络掩码</td>
+</tr>
+<tr>
+<td>Flags</td>
+<td>标记。</td>
+</tr>
+<tr>
+<td>Metric</td>
+<td>路由距离，到达指定网络所需的中转数（linux 内核中没有使用）</td>
+</tr>
+<tr>
+<td>Ref</td>
+<td>路由项引用次数（linux 内核中没有使用）</td>
+</tr>
+<tr>
+<td>Use</td>
+<td>此路由项被路由软件查找的次数</td>
+</tr>
+<tr>
+<td>Iface</td>
+<td>该路由表项对应的输出接口</td>
+</tr>
+</tbody>
+</table>
+<a id="more"></a>
+<p>标记：</p>
+<ul>
+<li>U — 路由是活动的</li>
+<li>H — 目标是一个主机</li>
+<li>G — 路由指向网关</li>
+<li>R — 恢复动态路由产生的表项</li>
+<li>D — 由路由的后台程序动态地安装</li>
+<li>M — 由路由的后台程序修改</li>
+<li>! — 拒绝路由</li>
+</ul>
+<p>三种路由类型</p>
+<ol>
+<li><p>主机路由</p>
+<p>主机路由是路由选择表中指向单个IP地址或主机名的路由记录。主机路由的Flags字段为H。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Destination    Gateway     Genmask            Flags     Metric    Ref    Use    Iface</span><br><span class="line">10.0.0.10     192.168.1.1    255.255.255.255   UH        0         0      0     eth0</span><br></pre></td></tr></table></figure>
+<p>本地主机通过IP地址192.168.1.1的路由器到达IP地址为10.0.0.10的主机。</p>
+</li>
+<li><p>网络路由</p>
+<p>网络路由是代表主机可以到达的网络。网络路由的Flags字段为N。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Destination    Gateway       Genmask           Flags     Metric    Ref    Use    Iface</span><br><span class="line">192.19.12     192.168.1.1    255.255.255.0      UN        0         0      0     eth0</span><br></pre></td></tr></table></figure>
+<p>本地主机将发送到网络192.19.12的数据包转发到IP地址为192.168.1.1的路由器。</p>
+</li>
+<li><p>默认路由</p>
+<p>当主机不能在路由表中查找到目标主机的IP地址或网络路由时，数据包就被发送到默认路由（默认网关）上。默认路由的Flags字段为G。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Destination    Gateway        Genmask    Flags   Metric    Ref    Use   Iface</span><br><span class="line">default       192.168.1.1     0.0.0.0    UG      0         0      0     eth0</span><br></pre></td></tr></table></figure>
+<p>默认路由是IP地址为192.168.1.1的路由器。</p>
+</li>
+</ol>
+<p>语法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">route  [add|del] [-net|-host] target [netmask Nm] [gw Gw] [[dev] If]</span><br></pre></td></tr></table></figure>
+<ul>
+<li>add : 添加一条路由规则</li>
+<li>del : 删除一条路由规则</li>
+<li>-net : 目的地址是一个网络</li>
+<li>-host : 目的地址是一个主机</li>
+<li>target : 目的网络或主机</li>
+<li>netmask : 目的地址的网络掩码</li>
+<li>gw : 路由数据包通过的网关</li>
+<li>dev : 为路由指定的网络接口</li>
+</ul>
+<p>添加到主机的路由 </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">route add -host 192.168.1.2 dev eth0 </span><br><span class="line">route add -host 10.20.30.148 gw 10.20.30.40     <span class="comment"># 添加到10.20.30.148的网管</span></span><br></pre></td></tr></table></figure>
+<p>添加到网络的路由 </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">route add -net 10.20.30.40 netmask 255.255.255.248 eth0   <span class="comment"># 添加10.20.30.40的网络</span></span><br><span class="line">route add -net 10.20.30.48 netmask 255.255.255.248 gw 10.20.30.41 <span class="comment"># 添加10.20.30.48的网络</span></span><br><span class="line">route add -net 192.168.1.0/24 eth1</span><br><span class="line"></span><br><span class="line">route add 0.0.0.0 netmask 0.0.0.0 gw 192.168.120.1 dev eth0</span><br><span class="line">route del 0.0.0.0 netmask 0.0.0.0 gw 192.168.120.1 dev eth0</span><br><span class="line">route add -net 169.254.169.254 netmask 255.255.255.255 gw 192.168.120.2</span><br></pre></td></tr></table></figure>
+<p>添加默认路由 </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">route add default gw 192.168.1.1</span><br><span class="line">route add default gw 192.168.120.1 </span><br><span class="line">route add 0.0.0.0 gw 192.168.120.1 dev eth0</span><br><span class="line">route del 0.0.0.0 gw 192.168.120.1 dev eth0</span><br></pre></td></tr></table></figure>
+<p>删除路由 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># route del -host 192.168.1.2 dev eth0:0</span><br><span class="line"># route del -host 10.20.30.148 gw 10.20.30.40</span><br><span class="line"># route del -net 10.20.30.40 netmask 255.255.255.248 eth0</span><br><span class="line"># route del -net 10.20.30.48 netmask 255.255.255.248 gw 10.20.30.41</span><br><span class="line"># route del -net 192.168.1.0/24 eth1</span><br><span class="line"># route del default gw 192.168.1.1</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/linux-route/" data-id="cjssqvctz002l8uq4wqkfpgce" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/sudo-keep-env/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          sudo 保持环境变量
+        
+      </div>
+    </a>
+  
+  
+    <a href="/docker-quick-rm/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">一句话删除所有容器和镜像</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>
