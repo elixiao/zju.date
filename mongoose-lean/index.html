@@ -13,7 +13,7 @@
 <meta property="og:site_name" content=".">
 <meta property="og:description" content="1Model.find(&amp;#123;&amp;#125;).exec() 平均执行时间 218 毫秒，如果使用 lean() 1Model.find(&amp;#123;&amp;#125;).exec().lean() 执行时间变成 71 毫秒。那 lean() 到底做了什么？  不加 lean 查出来的是 Mongoose 文档，加 lean 查询出来的文档是普通的 JavaScript 对象，从而没有 save 方">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2017-12-29T13:58:42.783Z">
+<meta property="og:updated_time" content="2019-03-16T09:41:52.496Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="mongoose lean 的作用">
 <meta name="twitter:description" content="1Model.find(&amp;#123;&amp;#125;).exec() 平均执行时间 218 毫秒，如果使用 lean() 1Model.find(&amp;#123;&amp;#125;).exec().lean() 执行时间变成 71 毫秒。那 lean() 到底做了什么？  不加 lean 查出来的是 Mongoose 文档，加 lean 查询出来的文档是普通的 JavaScript 对象，从而没有 save 方">
@@ -82,13 +82,17 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Model.find(&#123;&#125;).exec()</span><br></pre></td></tr></table></figure>
+        <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Model.find(&#123;&#125;).exec()</span><br></pre></td></tr></table></figure>
 <p>平均执行时间 218 毫秒，如果使用 <code>lean()</code></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Model.find(&#123;&#125;).exec().lean()</span><br></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Model.find(&#123;&#125;).exec().lean()</span><br></pre></td></tr></table></figure>
 <p>执行时间变成 71 毫秒。那 <code>lean()</code> 到底做了什么？</p>
 <blockquote>
 <p>不加 lean 查出来的是 Mongoose 文档，加 lean 查询出来的文档是普通的 JavaScript 对象，从而没有 save 方法，没有 getters 和 setters，因此会有更高的性能。</p>
 </blockquote>
+<p>而创建对象的时候，总是返回 Mongoose 文档，没有 lean() 方法，例如下面的语法是不正确的：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Model.create().lean()</span><br></pre></td></tr></table></figure>
+<p>创建之后如果想返回一个普通的对象，可以用 toObject 方法：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> instance = <span class="keyword">await</span> Model.create()</span><br><span class="line">instance.toObject()</span><br></pre></td></tr></table></figure>
 
       
     </div>
@@ -103,19 +107,19 @@
     
 <nav id="article-nav">
   
-    <a href="/seneca-fatal-error/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/homebrew/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
-          Seneca Fatal Error
+          Homebrew使用记录
         
       </div>
     </a>
   
   
-    <a href="/javascript-create-object/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/git-cherry-pick/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">JavaScript创建对象</div>
+      <div class="article-nav-title">将分支 A 上的某些 commit 提交到分支 B</div>
     </a>
   
 </nav>

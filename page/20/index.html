@@ -54,6 +54,473 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-change-system-environment" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/change-system-environment/" class="article-date">
+  <time datetime="2017-09-16T05:17:07.000Z" itemprop="datePublished">2017-09-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/change-system-environment/">修改系统环境变量</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>当在 Linux 或 Mac 下的 shell 里面运行命令的时候，shell会去PATH环境变量指定的路径下寻找可执行文件。也就是说如果把可执行文件所在的目录保存在PATH环境变量里面，每次运行这个程序的时候就不需要跑到该程序所在的文件夹了。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> PATH=/opt/<span class="built_in">local</span>/bin:/opt/<span class="built_in">local</span>/sbin:<span class="variable">$PATH</span></span><br></pre></td></tr></table></figure>
+<p>注意，如果路径里面包含空格（例如文件夹的名字里面出现空格），必须在后面加上引号：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> PATH=<span class="string">"/your path/here"</span></span><br></pre></td></tr></table></figure>
+<p>export关键字很重要，如果定义了一个变量但没有export，那么这个变量只在当前shell下有效，例如：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ A=4</span><br><span class="line">$ <span class="built_in">echo</span> <span class="variable">$A</span></span><br><span class="line">4</span><br></pre></td></tr></table></figure>
+<p>如果再打开一个shell，这个变量就不存在了，也许你觉得这样也行啊，反正我就在当前shell下工作，但是如果你运行一个shell脚本的时候就无法使用该变量。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> PATH=/mightyq/bin:/opt/<span class="built_in">local</span>/bin:/opt/<span class="built_in">local</span>/sbin:<span class="variable">$PATH</span></span><br><span class="line"><span class="built_in">export</span> PATH=/opt/<span class="built_in">local</span>/bin:/mightyq/bin:/opt/<span class="built_in">local</span>/sbin:<span class="variable">$PATH</span></span><br><span class="line"><span class="built_in">export</span> PATH=/opt/<span class="built_in">local</span>/bin:/opt/<span class="built_in">local</span>/sbin:<span class="variable">$PATH</span>:/mightyq/bin</span><br></pre></td></tr></table></figure>
+<p>使用文件中设置的环境变量：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">. ./.profile echo $PATH</span><br></pre></td></tr></table></figure>
+<p>这里的 <code>.</code> 是 <code>source</code> 的简写。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/change-system-environment/" data-id="cjhq778ij004fizq33ytc82ct" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-mongoose-aggregation" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/mongoose-aggregation/" class="article-date">
+  <time datetime="2017-09-16T04:27:07.000Z" itemprop="datePublished">2017-09-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/mongoose-aggregation/">mongoose 聚合查询</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>mongoose 聚合查询语法： </p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">db.collection.aggregrate([</span><br><span class="line">   pipe1_operator : &#123;....&#125;,</span><br><span class="line">   pipe2_operator : &#123;....&#125;,</span><br><span class="line">   pipe3_operator : &#123;....&#125;</span><br><span class="line">])</span><br></pre></td></tr></table></figure>
+<h2 id="分组-group"><a href="#分组-group" class="headerlink" title="分组 $group"></a>分组 <code>$group</code></h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  $group: &#123;</span><br><span class="line">    _id: &apos;$region&apos;,</span><br><span class="line">    count: &#123; $sum: 1 &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="匹配-match"><a href="#匹配-match" class="headerlink" title="匹配 $match"></a>匹配 <code>$match</code></h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  $match: &#123;</span><br><span class="line">    created: &#123; $gt: new Date(time) &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/mongoose-aggregation/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/mongoose-aggregation/" data-id="cjhq778q600dyizq3lbpd8qp9" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-linux-sudo-lost" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/linux-sudo-lost/" class="article-date">
+  <time datetime="2017-09-16T04:18:31.000Z" itemprop="datePublished">2017-09-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/linux-sudo-lost/">sudo找不到命令</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><code>sudo npm i</code>  报错：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[ec2-user@ip-17-31-41]$ sudo npm i</span><br><span class="line">sudo：npm：找不到命令</span><br></pre></td></tr></table></figure>
+<p>sudo 有时候会出现找不到命令，而明明 PATH 路径下包含该命令，让人非常疑惑。其实出现这种情况的原因是：出于系统安全的考虑，当 sudo 以管理权限执行命令的时候，linux 将 PATH 环境变量进行了重置，因此搜索的路径不是我们想要的PATH变量的路径。两种方法解决该问题：</p>
+<p>首先，都要打开sudo的配置文件：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo visudo</span><br></pre></td></tr></table></figure>
+<ol>
+<li><p>可以使用 secure_path 指令修改 sudoers 中默认的 PATH为你想要的路径。这个指令指定当用户执行 sudo 命令时在什么地方寻找二进制代码和命令。这个选项的目的显然是要限制用户运行 sudo 命令的范围，这是一种好做法。</p>
+</li>
+<li><p>将 <code>Defaults env_reset</code> 改成 <code>Defaults !env_reset</code> 取消掉对 PATH 变量的重置，然后在 .bashrc 中最后 <code>alias sudo=&#39;sudo env PATH=$PATH&#39;</code>，这样sudo执行命令时所搜寻的路径就是系统的PATH变量中的路径，如想添加其他变量也是类似。</p>
+</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/linux-sudo-lost/" data-id="cjhq778oz00ccizq3qwde6uyd" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-mongodb-query-empty-array-or-undefined" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/mongodb-query-empty-array-or-undefined/" class="article-date">
+  <time datetime="2017-09-15T14:34:23.000Z" itemprop="datePublished">2017-09-15</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/mongodb-query-empty-array-or-undefined/">mongodb 数组字段相关查询</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>查询的时候，匹配某个数组字段至少包含一个以上元素的方法：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">db.xxx.find(&#123;<span class="attr">field</span>: &#123;<span class="attr">$exists</span>: <span class="literal">true</span>, <span class="attr">$gt</span>: &#123;<span class="attr">$size</span>: <span class="number">0</span>&#125;&#125;&#125;)</span><br><span class="line">db.xxx.find(&#123;<span class="attr">field</span>: &#123;<span class="attr">$exists</span>: <span class="literal">true</span>, <span class="attr">$not</span>: &#123;<span class="attr">$size</span>: <span class="number">0</span>&#125;&#125;&#125;)</span><br><span class="line">db.xxx.find(&#123;<span class="string">'field.0'</span>: &#123;<span class="attr">$exists</span>: <span class="literal">true</span>&#125;&#125;)</span><br></pre></td></tr></table></figure>
+<p>反过来，匹配字段不存在或者为空数组的写法：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">db.xxx.find(&#123;<span class="string">'field.0'</span>: &#123;<span class="attr">$exists</span>: <span class="literal">false</span>&#125;&#125;)</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/mongodb-query-empty-array-or-undefined/" data-id="cju5m2z67000bqqq4zf45bhh3" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MongoDB/">MongoDB</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-node-module-mjs" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/node-module-mjs/" class="article-date">
+  <time datetime="2017-09-13T01:51:07.000Z" itemprop="datePublished">2017-09-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/node-module-mjs/">nodejs支持es6模块语法</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>在此之前，node.js中一直不支持es6模块语法，即 <code>import</code> 和 <code>export</code>，如果在命令行编译包含es6模块的文件，就会报下面的错误：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(function (exports, require, module, __filename, __dirname) &#123; import * as utils from &apos;./index.js&apos;</span><br><span class="line">                                                              ^^^^^^</span><br><span class="line">SyntaxError: Unexpected token import</span><br></pre></td></tr></table></figure>
+<p>于是不得不使用类似于 <code>babel</code> 的转换器进行转换，你需要安装 <code>babel-cli</code> 然后用命令 <code>babel-node</code> 来转换：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">babel-node index.js</span><br></pre></td></tr></table></figure>
+<p>而昨天发布的 8.5.0 版本增加了对模块的支持，语法是：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">node --experimental-modules index.mjs</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/node-module-mjs/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/node-module-mjs/" data-id="cjhq778qw00eyizq39qdq3elj" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-js-object-vs-function" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/js-object-vs-function/" class="article-date">
+  <time datetime="2017-09-05T15:30:25.000Z" itemprop="datePublished">2017-09-05</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/js-object-vs-function/">js 中的对象和函数</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>instanceof 操作符可用于判断一个对象是什么类型，如果使用 instanceof 来检测基本类型的值，则始终返回 false，因为基本类型不是对象，而如果变量是给定引用类型的实例，就会返回 true，所有引用类型的值都是 Object 的实例。</p>
+<p>Object 的每个实例都具有下面的属性和方法：</p>
+<ul>
+<li><code>constructor</code>：构造函数（即创建当前对象的函数）</li>
+<li><code>hasOwnProperty(name)</code>：检查属性是否在当前对象而非原型当中</li>
+<li><code>isPrototypeOf(object)</code>：检查当前对象是否是被传入对象object的原型</li>
+<li><code>propertyIsEnumerable(name)</code>：检查属性是否可枚举</li>
+<li><code>toString()</code>：返回对象的字符串表示</li>
+<li><code>toLocaleString()</code>：返回对象的本地字符串表示</li>
+<li><code>valueOf()</code>：返回对象的数值表示</li>
+</ul>
+<p>函数实际上是对象，每个函数都是Function类型的实例，函数名是指向函数对象的指针。</p>
+<p>下面三种写法是等价的：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">sum</span>(<span class="params">a,b</span>) </span>&#123; <span class="keyword">return</span> a+b &#125;</span><br><span class="line"><span class="keyword">var</span> sum = <span class="function"><span class="keyword">function</span>(<span class="params">a,b</span>) </span>&#123; <span class="keyword">return</span> a+b &#125;</span><br><span class="line"><span class="keyword">var</span> sum = <span class="keyword">new</span> <span class="built_in">Function</span>(<span class="string">'a'</span>,<span class="string">'b'</span>,<span class="string">'return a+b'</span>)</span><br></pre></td></tr></table></figure>
+<p>Function 是 javascript 里最常用的一个概念，javascript 里的 function 是最容易入手的一个功能，但它也是 javascript 最难理解最难掌握的一个概念。今天我们来尝试理解 Function 和 Object。因为这个里面有些人前期可能会搞糊涂，他们之间到底是什么关系，官方定义: 在Javascript中，每一个函数实际上都是一个函数对象.</p>
+<p>我们先来看最简单的两个代码,也是最容易理解的.</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">func</span>(<span class="params"></span>)</span>&#123;&#125;</span><br><span class="line"><span class="keyword">var</span> obj = &#123;&#125;</span><br><span class="line"><span class="built_in">console</span>.log(func <span class="keyword">instanceof</span> <span class="built_in">Function</span>) <span class="comment">//true</span></span><br><span class="line"><span class="built_in">console</span>.log(obj <span class="keyword">instanceof</span> <span class="built_in">Object</span>) <span class="comment">//true</span></span><br><span class="line"><span class="built_in">console</span>.log(func <span class="keyword">instanceof</span> <span class="built_in">Object</span>) <span class="comment">//true</span></span><br><span class="line"><span class="built_in">console</span>.log(obj <span class="keyword">instanceof</span> <span class="built_in">Function</span>) <span class="comment">//false</span></span><br></pre></td></tr></table></figure>
+<p>前面两个打印的效果容易理解.后面 fn instanceof Object 是为 true 的原因是: 在javascript中一切函数实际都是函数对象。我们再来看一个代码</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(<span class="built_in">Function</span> <span class="keyword">instanceof</span> <span class="built_in">Object</span>) <span class="comment">// true</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="built_in">Object</span> <span class="keyword">instanceof</span> <span class="built_in">Function</span>) <span class="comment">// true</span></span><br></pre></td></tr></table></figure>
+<p>函数实际也是一个函数对象，所以第一个为true，而 Object 也是函数，因为 Object的 结构是 <code>function Object(){native code}</code>，当然就是函数了，所以两个都是为true.</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/js-object-vs-function/" data-id="cjssqvcty002j8uq4z9bgmjy8" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-nginx-gzip" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/nginx-gzip/" class="article-date">
+  <time datetime="2017-09-03T09:58:20.000Z" itemprop="datePublished">2017-09-03</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/nginx-gzip/">nginx 配置 gzip 压缩</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>直接修改 nginx.conf 文件，添加下面内容：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">sendfile            on;</span><br><span class="line">tcp_nopush          on;</span><br><span class="line">tcp_nodelay         on;</span><br><span class="line">keepalive_timeout   65;</span><br><span class="line">types_hash_max_size 2048;</span><br><span class="line">gzip  on;</span><br><span class="line">gzip_min_length 1k;</span><br><span class="line">gzip_buffers 4 16k;</span><br><span class="line">gzip_http_version 1.1;</span><br><span class="line">gzip_comp_level 9;</span><br><span class="line">gzip_types text/plain application/x-javascript application/javascript text/css application/xml text/javascript application/x-httpd-php image/jpeg image/gif image/png;</span><br><span class="line">gzip_disable <span class="string">"MSIE [1-6]\."</span>;</span><br></pre></td></tr></table></figure>
+<p>或者在 <code>/etc/nginx/conf.d</code> 下面创建一个 <code>gzip.conf</code> 文件，然后输入下面的内容</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">gzip on;</span><br><span class="line">gzip_disable &quot;msie6&quot;;</span><br><span class="line"></span><br><span class="line">gzip_vary on;</span><br><span class="line">gzip_proxied any;</span><br><span class="line">gzip_comp_level 6;</span><br><span class="line">gzip_http_version 1.1;</span><br><span class="line">gzip_min_length 256;</span><br><span class="line">gzip_types text/plain text/css application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript application/javascript application/vnd.ms-fontobject application/x-font-ttf font/opentype image/svg+xml image/x-icon;</span><br></pre></td></tr></table></figure>
+<p>配置项的含义：</p>
+<ul>
+<li><code>gzip on</code>  启用gzip</li>
+<li><code>gzip_disable &quot;msie6&quot;</code>  排除IE6浏览器上对文件压缩，因为IE6不再支持gzip压缩的.</li>
+<li><code>gzip_vary</code>  <code>和`</code>gzip_proxied` 是让代理服务器上的浏览器和服务器能正确辨认gzip压缩功能.</li>
+<li><code>gzip_comp_level 6</code> 设置文件压缩的级别，数字越大，压缩越高，一般6是最合适的.</li>
+<li><code>gzip_http_version 1.1</code> 用来限制 <code>gzip</code> 是否支持浏览器HTTP/1.1  协议的 ，一般浏览器不支持的话，gzip很可能就不能支持</li>
+<li><code>gzip_min_length 256</code>  让Nginx对小于256kb的文件不压缩.小的文件一般也不用压缩的.</li>
+<li><code>gzip_types</code>  列出所有的需要压缩的MIME类型文件. 我们配置的就有, HTML 页面, CSS stylesheets, Javascript 和JSON 文件, XML 文件爱你, icons, SVG 镜像, 和web字体.</li>
+</ul>
+<p>重启Nginx让配置生效.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl restart nginx</span><br></pre></td></tr></table></figure>
+<p>## </p>
+<p>下面就来测试下我们的配置是否生效</p>
+<p>我们还是安装步骤2那样来测试，看看头信息里面有没有 <code>Content-Encoding: gzip</code> .</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -H &quot;Accept-Encoding: gzip&quot; -I http://localhost/test.html</span><br></pre></td></tr></table></figure>
+<p>在相应头信息中我们找下是否有<code>Content-Encoding: gzip</code></p>
+<p>Nginx response headers</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">HTTP/1.1 200 OK</span><br><span class="line">Server: nginx/1.6.3</span><br><span class="line">Date: Fri, 11 Mar 2016 13:19:16 GMT</span><br><span class="line">Content-Type: text/html</span><br><span class="line">Last-Modified: Fri, 11 Mar 2016 12:48:02 GMT</span><br><span class="line">Connection: keep-alive</span><br><span class="line">Vary: Accept-Encoding</span><br><span class="line">Content-Encoding: gzip</span><br></pre></td></tr></table></figure>
+<p>同样测试其他文件:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">curl -H &quot;Accept-Encoding: gzip&quot; -I http://localhost/test.jpg </span><br><span class="line">curl -H &quot;Accept-Encoding: gzip&quot; -I http://localhost/test.css </span><br><span class="line">curl -H &quot;Accept-Encoding: gzip&quot; -I http://localhost/test.js</span><br></pre></td></tr></table></figure>
+<p>当我们找到<code>Content-Encoding: gzip</code> 后就说明gzip功能已开启了</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/nginx-gzip/" data-id="cjhq778ql00ejizq3ptk0o812" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Nginx/">Nginx</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-js-perfect-square" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/js-perfect-square/" class="article-date">
+  <time datetime="2017-09-03T09:47:13.000Z" itemprop="datePublished">2017-09-03</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/js-perfect-square/">js 查找完全平方数</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> arr = []</span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">let</span> i=<span class="number">1000</span>;i&lt;<span class="number">10000</span>;i++) &#123;</span><br><span class="line">	<span class="keyword">let</span> n = isSuperPefect(i)</span><br><span class="line">	<span class="keyword">if</span>(n) arr.push(&#123;<span class="attr">x</span>:i,<span class="attr">i</span>:n*<span class="number">1111</span>&#125;)</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">isPerfectSquare</span>(<span class="params">n</span>) </span>&#123;</span><br><span class="line">	<span class="keyword">return</span> n&gt;<span class="number">0</span>&amp;&amp;<span class="built_in">Number</span>.isInteger(<span class="built_in">Math</span>.sqrt(n))</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">isSuperPefect</span>(<span class="params">n</span>) </span>&#123;</span><br><span class="line">	<span class="keyword">if</span>(!isPerfectSquare(n)) <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">	<span class="keyword">for</span>(<span class="keyword">let</span> i=<span class="number">1</span>;i&lt;<span class="number">10</span>;i++) <span class="keyword">if</span>(isPerfectSquare(n-i*<span class="number">1111</span>)) <span class="keyword">return</span> i</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">console</span>.log(<span class="built_in">JSON</span>.stringify(arr))</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/js-perfect-square/" data-id="cjhq778oc00bkizq3xuwstryt" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-node-qr-image" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/node-qr-image/" class="article-date">
+  <time datetime="2017-08-25T06:19:20.000Z" itemprop="datePublished">2017-08-25</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/node-qr-image/">node.js二维码生成工具</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p><a href="https://github.com/alexeyten/qr-image" target="_blank" rel="noopener">qr-image</a> 包可以非常方便的生成二维码，项目本身无任何依赖，非常轻量级，安装方法：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">npm install qr-image</span><br><span class="line"><span class="comment"># 或者</span></span><br><span class="line">yarn add qr-image</span><br></pre></td></tr></table></figure>
+<p>支持图片格式：<code>png</code>、 <code>svg</code>、 <code>eps</code> 和 <code>pdf</code>，使用方法：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> qr = <span class="built_in">require</span>(<span class="string">'qr-image'</span>);  </span><br><span class="line"><span class="keyword">var</span> fs = <span class="built_in">require</span>(<span class="string">'fs'</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> code = qr.image(<span class="string">'http://zju.date'</span>, &#123; <span class="attr">type</span>: <span class="string">'svg'</span> &#125;);  </span><br><span class="line"><span class="keyword">var</span> output = fs.createWriteStream(<span class="string">'zju.date.svg'</span>)</span><br><span class="line"></span><br><span class="line">code.pipe(output);</span><br></pre></td></tr></table></figure>
+<p>上面的代码可以把网址 <code>http://zju.date</code> 生成如下二维码：</p>
+<p><img src="http://img.react.ren/blog/zju-date-qrcode.svg" width="300" height="300"></p>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/node-qr-image/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/node-qr-image/" data-id="cjhq778qv00ewizq3vf1zdbc6" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-reverse-proxy-nginx" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/reverse-proxy-nginx/" class="article-date">
@@ -102,535 +569,10 @@
 
 
   
-    <article id="post-install-nginx-on-mac" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/install-nginx-on-mac/" class="article-date">
-  <time datetime="2017-08-23T15:07:07.000Z" itemprop="datePublished">2017-08-23</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/install-nginx-on-mac/">Mac安装nginx</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>安装nginx</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install nginx</span><br></pre></td></tr></table></figure>
-<p>查看nginx版本</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nginx -v</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/install-nginx-on-mac/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/install-nginx-on-mac/" data-id="cjhq778mz009wizq3f5lkj2ar" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-focus-not-working" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/focus-not-working/" class="article-date">
-  <time datetime="2017-08-23T02:37:39.000Z" itemprop="datePublished">2017-08-23</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/focus-not-working/">无法对输入框进行聚焦</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>在控制台想对一个输入框进行聚焦，使用：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$(<span class="string">'input[name="q"]'</span>).focus();</span><br></pre></td></tr></table></figure>
-<p>发现没反应，后来在 stackoverflow 找到<a href="https://stackoverflow.com/questions/15859113/focus-not-working" target="_blank" rel="noopener">原因</a>，是因为当时的焦点在控制台而不是网页，可以先设置一个延迟，然后迅速点击一下网页，然后就能看到输入框聚焦了。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">  $(<span class="string">'input[name="q"]'</span>).focus();</span><br><span class="line">&#125;, <span class="number">3000</span>);</span><br></pre></td></tr></table></figure>
-<p>同样的道理，如果一个元素不在 DOM 上面，对其使用 <code>focus</code> 也是无效的，所以当你发现始终无法对一个元素进行聚焦的时候，不妨检查一下该元素是否是动态的、在聚焦的时刻是否已经在 DOM 中了。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/focus-not-working/" data-id="cjhq778kl0078izq3doxc2brt" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-wechat-pay" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/wechat-pay/" class="article-date">
-  <time datetime="2017-08-22T01:06:07.000Z" itemprop="datePublished">2017-08-22</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/wechat-pay/">微信扫码支付</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>信扫码支付，官方提供了两种模式：</p>
-<ol>
-<li>商户根据微信支付规则链接生成二维码，带固定参数productid（订单号）。用户扫码后，微信支付系统将productid和用户唯一标识（openid）回调商户后台系统，商户后台系统根据productid生成支付交易，最后微信支付系统发起用户支付流程。</li>
-<li>商户后台系统调用微信支付预付交易接口，将返回的链接生成二维码，用户扫码后输入密码完成支付交易。</li>
-</ol>
-<p>模式2比较简单，逐一分析。</p>
-<h2 id="模式2"><a href="#模式2" class="headerlink" title="模式2"></a>模式2</h2><p>首先调用统一下单接口地址：<code>https://api.mch.weixin.qq.com/pay/unifiedorder</code>，这个地址需要提供以下参数，放在body里面通过POST请求调用：</p>
-<table>
-<thead>
-<tr>
-<th>参数名</th>
-<th>参数含义</th>
-<th>示例</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>appid</td>
-<td>公众号ID</td>
-<td>wxb77bcb162c53b0f8</td>
-</tr>
-<tr>
-<td>mch_id</td>
-<td>商户号</td>
-<td>1487713882</td>
-</tr>
-<tr>
-<td>nonce_str</td>
-<td>随机字符串</td>
-<td>abc123def</td>
-</tr>
-<tr>
-<td>sign</td>
-<td>签名</td>
-<td>签名</td>
-</tr>
-<tr>
-<td>body</td>
-<td>商品描述</td>
-<td>软件-购买</td>
-</tr>
-<tr>
-<td>out_trade_no</td>
-<td>商户订单号</td>
-<td>20150806125346</td>
-</tr>
-<tr>
-<td>total_fee</td>
-<td>金额</td>
-<td>10</td>
-</tr>
-<tr>
-<td>spbill_create_ip</td>
-<td>终端IP</td>
-<td>192.168.1.1</td>
-</tr>
-<tr>
-<td>notify_url</td>
-<td>支付结果通知地址</td>
-<td><a href="http://api.soft.cn/payment" target="_blank" rel="noopener">http://api.soft.cn/payment</a></td>
-</tr>
-<tr>
-<td>trade_type</td>
-<td>交易类型</td>
-<td>NATIVE</td>
-</tr>
-</tbody>
-</table>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/wechat-pay/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/wechat-pay/" data-id="cjhq778vh00jsizq3h29rqhc7" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-feathersjs-hook" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/feathersjs-hook/" class="article-date">
-  <time datetime="2017-08-20T04:07:12.000Z" itemprop="datePublished">2017-08-20</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/feathersjs-hook/">feathersjs hook</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>feathersjs hook 对象里面究竟都有什么？</p>
-<ol>
-<li><p><code>hook.app</code></p>
-<p> 只读属性，是 feathersjs 对象，可用于获取其他 service，例如：<code>hook.app.service(&#39;name&#39;)</code></p>
-</li>
-</ol>
-<ol>
-<li><p><code>hook.service</code></p>
-<p> 只读属性，当前 hook 执行所在的 service</p>
-</li>
-<li><p><code>hook.path</code></p>
-<p> 只读属性，表示当前 service 的路径</p>
-</li>
-<li><p><code>hook.method</code></p>
-<p> 只读属性，是 <code>find</code>, <code>get</code>, <code>create</code>, <code>update</code>, <code>patch</code>, <code>remove</code> 中的一个</p>
-</li>
-<li><p><code>hook.type</code></p>
-<p> 只读属性，是 <code>before</code>, <code>after</code>, <code>error</code> 中的一个</p>
-</li>
-<li><p><code>hook.params</code></p>
-<p> 可写属性，包含客户端传过来的参数，例如 <code>params.query</code></p>
-</li>
-<li><p><code>hook.id</code></p>
-<p> 可写属性， <code>get</code>, <code>remove</code>, <code>update</code> 和 <code>patch</code> 方法才有</p>
-</li>
-<li><p><code>hook.data</code></p>
-<p> 可写属性，<code>create</code>, <code>update</code> 和 <code>patch</code> 方法才有</p>
-</li>
-<li><p><code>hook.error</code></p>
-<p> 可写属性，只有当 <code>hook.type = error</code> 时才有</p>
-</li>
-<li><p><code>hook.result</code></p>
-<p>可写属性，只有当 <code>hook.type = after</code> 时才有，但是可以在 before 或 error hooks 中设置它。</p>
-</li>
-</ol>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/feathersjs-hook/" data-id="cjhq778ka006uizq3s2kchxbc" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-fast-install" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/fast-install/" class="article-date">
-  <time datetime="2017-08-20T01:06:07.000Z" itemprop="datePublished">2017-08-20</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/fast-install/">快速配置服务器</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <h2 id="Nginx"><a href="#Nginx" class="headerlink" title="Nginx"></a>Nginx</h2><p>添加源：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># nginx 源</span></span><br><span class="line">cat &gt; /etc/yum.repos.d/nginx.repo &lt;&lt;EOF</span><br><span class="line">[nginx]</span><br><span class="line">name=nginx repo</span><br><span class="line">baseurl=http://nginx.org/packages/centos/\<span class="variable">$releasever</span>/\<span class="variable">$basearch</span>/</span><br><span class="line">gpgcheck=0</span><br><span class="line">enabled=1</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
-<p>安装：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install -y nginx</span><br></pre></td></tr></table></figure>
-<p>启动：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo service nginx start</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/fast-install/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/fast-install/" data-id="cjhq778k5006mizq3813q8mlk" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CSS/">CSS</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-gulp-uncss" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/gulp-uncss/" class="article-date">
-  <time datetime="2017-08-20T01:06:07.000Z" itemprop="datePublished">2017-08-20</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/gulp-uncss/">去除无用的CSS</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><code>gulp purifycss</code> 去除无用的 CSS 非常方便，先安装：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install -g uncss</span><br></pre></td></tr></table></figure>
-<p>然后执行：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uncss http://www.***.com &gt; styles.css</span><br></pre></td></tr></table></figure>
-<p>执行输出的结果就是一个你想要的、剔除了所有无用的CSS规则的完整的样式表文件。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/gulp-uncss/" data-id="cjhq778lz0092izq3eyuxotrv" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CSS/">CSS</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-url-in-express" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/url-in-express/" class="article-date">
-  <time datetime="2017-08-18T05:07:07.000Z" itemprop="datePublished">2017-08-18</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/url-in-express/">express 里面的各种 url</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>express 中 <code>req</code> 对象有 <code>baseUrl</code>, <code>originalUrl</code>, <code>url</code> 属性，它们有何区别与联系？</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> express = <span class="built_in">require</span>(<span class="string">'express'</span>)</span><br><span class="line"><span class="keyword">const</span> app = express()</span><br><span class="line"><span class="keyword">const</span> router1 = express.Router()</span><br><span class="line"><span class="keyword">const</span> router2 = express.Router()</span><br><span class="line"></span><br><span class="line">app.use(<span class="string">'/a'</span>, router1)</span><br><span class="line">router1.use(<span class="string">'/b'</span>, router2)</span><br><span class="line">router2.get(<span class="string">'/c'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">req, res</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> obj = &#123;</span><br><span class="line">        path: req.path,</span><br><span class="line">        baseUrl: req.baseUrl,</span><br><span class="line">        originalUrl: req.originalUrl,</span><br><span class="line">        url: req.url</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">console</span>.log(obj)</span><br><span class="line">    res.send(obj)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> server = app.listen(<span class="number">3030</span>, <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> host = server.address().address</span><br><span class="line">    <span class="keyword">const</span> port = server.address().port</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'Example app listening at http://%s:%s'</span>, host, port)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/url-in-express/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/url-in-express/" data-id="cjhq778uq00iqizq3d1r6w14f" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-session-vs-cookie" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/session-vs-cookie/" class="article-date">
-  <time datetime="2017-08-17T06:57:38.000Z" itemprop="datePublished">2017-08-17</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/session-vs-cookie/">session和cookie的区别</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p><code>http</code>是无状态的，只知道响应客户端的请求，即：<code>request——&gt;response</code>。</p>
-<p><img src="http://img.react.ren/blog/http-session.jpg" alt="request --&gt; response"></p>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/session-vs-cookie/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/session-vs-cookie/" data-id="cjhq778sl00gwizq3zth18x02" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/HTTP/">HTTP</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-redirect-in-feathersjs" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/redirect-in-feathersjs/" class="article-date">
-  <time datetime="2017-08-17T06:57:38.000Z" itemprop="datePublished">2017-08-17</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/redirect-in-feathersjs/">feathersjs重定向</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>重定向在express里面就是简单的<code>res.redirect</code>，但是在feathersjs的rest service里面却找不到实现办法。本质上feathersjs是基于express的框架，在其基础上进行了封装，而rest service也是一个中间件，因此我们可以在service前后自定义中间件来处理<code>req</code>和<code>res</code>。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> app = feathers()</span><br><span class="line">  .use(<span class="string">'/todos'</span>, beforeTodo, todoService, afterTodo)</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/redirect-in-feathersjs/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/redirect-in-feathersjs/" data-id="cjhq778s800giizq3oqtvpoq7" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
 
 
   <nav id="page-nav">
-    <a class="extend prev" rel="prev" href="/page/19/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/18/">18</a><a class="page-number" href="/page/19/">19</a><span class="page-number current">20</span><a class="page-number" href="/page/21/">21</a><a class="page-number" href="/page/22/">22</a><span class="space">&hellip;</span><a class="page-number" href="/page/47/">47</a><a class="extend next" rel="next" href="/page/21/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/19/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/18/">18</a><a class="page-number" href="/page/19/">19</a><span class="page-number current">20</span><a class="page-number" href="/page/21/">21</a><a class="page-number" href="/page/22/">22</a><span class="space">&hellip;</span><a class="page-number" href="/page/48/">48</a><a class="extend next" rel="next" href="/page/21/">Next &raquo;</a>
   </nav>
 </section>
 
