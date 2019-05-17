@@ -8,14 +8,14 @@
   <meta name="description" content="如果两个页面拥有相同的协议（protocol）、端口（如果指定）和主机，那么这两个页面就属于同一个源（origin）。 下表给出了相对http://sub.domain.com/dir1/page.html同源检测的示例:    URL 结果 原因     http://sub.domain.com/dir2/other.html 成功    http://sub.domain.com/dir/i">
 <meta name="keywords" content="JavaScript">
 <meta property="og:type" content="article">
-<meta property="og:title" content="JavaScript中的jsonp技术">
+<meta property="og:title" content="JavaScript 中的 jsonp 技术">
 <meta property="og:url" content="https://zju.date/what-is-jsonp/index.html">
 <meta property="og:site_name" content=".">
 <meta property="og:description" content="如果两个页面拥有相同的协议（protocol）、端口（如果指定）和主机，那么这两个页面就属于同一个源（origin）。 下表给出了相对http://sub.domain.com/dir1/page.html同源检测的示例:    URL 结果 原因     http://sub.domain.com/dir2/other.html 成功    http://sub.domain.com/dir/i">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2017-08-16T02:25:40.000Z">
+<meta property="og:updated_time" content="2019-04-07T13:14:37.742Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="JavaScript中的jsonp技术">
+<meta name="twitter:title" content="JavaScript 中的 jsonp 技术">
 <meta name="twitter:description" content="如果两个页面拥有相同的协议（protocol）、端口（如果指定）和主机，那么这两个页面就属于同一个源（origin）。 下表给出了相对http://sub.domain.com/dir1/page.html同源检测的示例:    URL 结果 原因     http://sub.domain.com/dir2/other.html 成功    http://sub.domain.com/dir/i">
   
     <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
@@ -60,7 +60,7 @@
         <section id="main"><article id="post-what-is-jsonp" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/what-is-jsonp/" class="article-date">
-  <time datetime="2016-01-17T14:45:05.000Z" itemprop="datePublished">2016-01-17</time>
+  <time datetime="2017-08-16T02:25:05.000Z" itemprop="datePublished">2017-08-16</time>
 </a>
     
   </div>
@@ -71,7 +71,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      JavaScript中的jsonp技术
+      JavaScript 中的 jsonp 技术
     </h1>
   
 
@@ -121,15 +121,17 @@
 </tbody>
 </table>
 <p>同源策略是指基于安全考虑，当前域不能访问其他域的东西。可使用<a href="https://developer.mozilla.org/zh-CN/docs/HTTP/Access_control_CORS" title="HTTP/Access_control_CORS" target="_blank" rel="noopener">CORS</a>来实现跨域访问。</p>
-<p>所谓同源是指：域名、协议、端口相同的两个域才能访问数据。但是<code>&lt;script&gt;</code>的<code>src</code>可以避开同源策略，跨域获取数据。</p>
-<p>给<code>&lt;script&gt;</code>的<code>src</code>属性添加一个地址，浏览器就会发送一个http请求下载src属性指向的url，如果返回的来的格式是<code>text/javascript</code>，那么就会立即执行。</p>
-<p>因此，使用script元素进行ajax传输的两个主要原因是：</p>
+<p>所谓同源是指：域名、协议、端口相同的两个域才能访问数据。但是 <code>&lt;script&gt;</code> 的 <code>src</code> 可以避开同源策略，跨域获取数据。</p>
+<p>给 <code>&lt;script&gt;</code> 的 <code>src</code> 属性添加一个地址，浏览器就会发送一个 http 请求下载 src 属性指向的 url，如果返回的来的格式是 <code>text/javascript</code>，那么就会立即执行。</p>
+<p>因此，使用 script 元素进行 ajax 传输的两个主要原因是：</p>
 <ol>
 <li>它不受同源策略的影响；</li>
 <li>包含json编码的数据响应体会自动解码执行。</li>
 </ol>
 <p>如下是一段封装好的jsonp请求代码，需要两个参数，url是支持jsonp的服务器地址，第二个参数是本地定义的回调函数，改函数接收一个参数，这个参数就是通过jsonp获取到的json数据。</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getJSONP</span>(<span class="params">url, callback</span>) </span>&#123;</span><br><span class="line">   <span class="keyword">if</span> (!getJSONP.counter) getJSONP.counter = <span class="number">0</span></span><br><span class="line">   <span class="keyword">var</span> cbnum = <span class="string">'cb'</span> + getJSONP.counter++</span><br><span class="line">   <span class="keyword">var</span> cbname = <span class="string">'getJSONP.'</span> + cbnum</span><br><span class="line">   <span class="keyword">var</span> cb = <span class="string">'callback'</span> <span class="comment">// 或者jsonp，根据服务器定</span></span><br><span class="line">   <span class="keyword">if</span> (url.indexOf(<span class="string">'?'</span>) === <span class="number">-1</span>) &#123;</span><br><span class="line">       url += <span class="string">'?'</span> + cb + <span class="string">'='</span> + cbname</span><br><span class="line">   &#125; <span class="keyword">else</span> url += <span class="string">'&amp;'</span> + cb + <span class="string">'='</span> + cbname</span><br><span class="line">   <span class="keyword">var</span> script = <span class="built_in">document</span>.createElement(<span class="string">'script'</span>)</span><br><span class="line">   getJSONP[cbnum] = <span class="function"><span class="keyword">function</span> (<span class="params">response</span>) </span>&#123;</span><br><span class="line">       <span class="keyword">try</span> &#123;</span><br><span class="line">           callback(response)</span><br><span class="line">       &#125; <span class="keyword">catch</span> (e) &#123;</span><br><span class="line">           <span class="built_in">console</span>.log(e)</span><br><span class="line">       &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">           <span class="keyword">delete</span> getJSONP[cbnum]</span><br><span class="line">           script.parentNode.removeChild(script)</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br><span class="line">   script.src = url</span><br><span class="line">   <span class="built_in">document</span>.body.appendChild(script)</span><br><span class="line"> &#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">handleResponse</span>(<span class="params">data</span>) </span>&#123;</span><br><span class="line">   <span class="built_in">console</span>.log(data)</span><br><span class="line">&#125;</span><br><span class="line">getJSONP(<span class="string">'http://ipinfo.io'</span>, handleResponse)</span><br></pre></td></tr></table></figure>
+<p>下面的写法更简洁：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">jsonp</span>(<span class="params">url, callback</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> ref = <span class="built_in">document</span>.getElementsByTagName(<span class="string">'script'</span>)[<span class="number">0</span>]</span><br><span class="line">  <span class="keyword">const</span> script = <span class="built_in">document</span>.createElement(<span class="string">'script'</span>)</span><br><span class="line">  <span class="built_in">window</span>.jsonpCallback = callback</span><br><span class="line">  script.src = url + (url.indexOf(<span class="string">'?'</span>) + <span class="number">1</span> ? <span class="string">'&amp;'</span> : <span class="string">'?'</span>) + <span class="string">'callback=jsonpCallback'</span></span><br><span class="line">  ref.parentNode.insertBefore(script, ref)</span><br><span class="line">  script.onload = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.remove()</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
       
     </div>
@@ -144,19 +146,19 @@
     
 <nav id="article-nav">
   
-    <a href="/angular1-$resource/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/react-notes/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
-          AngularJS使用$resource进行增删改查
+          React学习笔记
         
       </div>
     </a>
   
   
-    <a href="/install-nginx-on-ubuntu/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/flex-wrap-in-safari/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">Ubuntu安装nginx</div>
+      <div class="article-nav-title">Safari浏览器中的flex-wrap</div>
     </a>
   
 </nav>

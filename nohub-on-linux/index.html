@@ -13,7 +13,7 @@
 <meta property="og:site_name" content=".">
 <meta property="og:description" content="将Linux命令放到后台运行有两种方式：  command &amp;amp; ： 后台运行，但关掉终端会停止运行 nohup command &amp;amp; ： 后台运行，但关掉终端也会继续运行  如果命令行正在执行一个命令，需要很长的等待时间，但你不想干等着，而是需要干其他的事情，这时候可以用 Ctrl-Z 挂起这个程序，例如：">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2017-08-16T02:11:01.000Z">
+<meta property="og:updated_time" content="2019-04-28T11:58:57.357Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Linux命令后台运行">
 <meta name="twitter:description" content="将Linux命令放到后台运行有两种方式：  command &amp;amp; ： 后台运行，但关掉终端会停止运行 nohup command &amp;amp; ： 后台运行，但关掉终端也会继续运行  如果命令行正在执行一个命令，需要很长的等待时间，但你不想干等着，而是需要干其他的事情，这时候可以用 Ctrl-Z 挂起这个程序，例如：">
@@ -99,7 +99,7 @@
 <p>这个时候如果关闭shell作业也停止了：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">disown</span> %1</span><br></pre></td></tr></table></figure>
 <p>当使用过 disown 之后，会将把目标作业从作业列表中移除，我们将不能再使用jobs来查看它，但是依然能够用ps -ef查找到它。不过，作业在后台运行一样会将结果输出到屏幕上，干扰你的工作。因此最好在启动的时候就使用nohup把输出重定向到nohup.out文件中，并放在后台运行：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@iZ94woglhdoZ js] (nohup node server.js &amp;)</span><br><span class="line">(nohup node server.js &amp;)</span><br><span class="line">appending output to nohup.out</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@iZ94woglhdoZ js] (nohup node server.js &amp;)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">(nohup node server.js &amp;)</span><br><span class="line">appending output to nohup.out</span><br></pre></td></tr></table></figure>
 <p>注意那个括号一定要加，如果不加的后果是这样的：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@iZ94woglhdoZ js] nohup node server.js &amp;</span><br><span class="line">[1] 59288</span><br><span class="line">appending output to nohup.out</span><br></pre></td></tr></table></figure>
 <p>没有摆脱当前shell，如果shell关闭依然会终止任务，因为它在jobs里面：</p>

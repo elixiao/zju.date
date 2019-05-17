@@ -54,6 +54,330 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-common-rxjs-error" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/common-rxjs-error/" class="article-date">
+  <time datetime="2018-04-13T07:22:28.000Z" itemprop="datePublished">2018-04-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/common-rxjs-error/">rxjs 中常见的错误</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <ol>
+<li><p>把异步订阅当做同步处理</p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">init() &#123;</span><br><span class="line">  <span class="keyword">let</span> id;</span><br><span class="line">  <span class="keyword">this</span>.router.subscribe(<span class="function"><span class="params">params</span> =&gt;</span> id = params[<span class="string">'id'</span>]);</span><br><span class="line">  <span class="keyword">if</span> (id) &#123;</span><br><span class="line">    <span class="keyword">this</span>.getUser(id).subscribe(<span class="function"><span class="params">user</span> =&gt;</span> <span class="keyword">this</span>.user = user);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/common-rxjs-error/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/common-rxjs-error/" data-id="cjhq778in004mizq37tepkx29" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-angular-multi-http-requests" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/angular-multi-http-requests/" class="article-date">
+  <time datetime="2018-04-13T07:00:00.000Z" itemprop="datePublished">2018-04-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/angular-multi-http-requests/">Angular 中处理多个 http 请求</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>由于 Angular 的 HTTPClient 使用 RxJS，之前大家用 promise 很熟练，但换成 RxJS 之后对操作符不了解，只会基本的订阅，很多原来 promise 的写法换成 RxJS 该怎么写，例如：<code>promise.all</code> 处理并行的场景，在 RxJS 中的等价写法是这样的：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; Component &#125; <span class="keyword">from</span> <span class="string">'@angular/core'</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; HttpClient &#125; <span class="keyword">from</span> <span class="string">'@angular/common/http'</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; Observable &#125; <span class="keyword">from</span> <span class="string">'rxjs/Observable'</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; forkJoin &#125; <span class="keyword">from</span> <span class="string">"rxjs/observable/forkJoin"</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span>(&#123;</span><br><span class="line">  selector: <span class="string">'app-root'</span>,</span><br><span class="line">  templateUrl: <span class="string">'app/app.component.html'</span></span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> AppComponent &#123;</span><br><span class="line">  <span class="keyword">constructor</span>(<span class="params"><span class="keyword">private</span> http: HttpClient</span>) &#123; &#125;</span><br><span class="line">  </span><br><span class="line">  ngOnInit() &#123;</span><br><span class="line">    <span class="keyword">const</span> employeeRequest = <span class="keyword">this</span>.http.get(<span class="string">'/api/employee/1'</span>);</span><br><span class="line">    <span class="keyword">const</span> companyRequest = <span class="keyword">this</span>.http.get(<span class="string">'/api/company/1'</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// Promise 的写法</span></span><br><span class="line">    <span class="built_in">Promise</span>.all([employeeRequest, companyRequest]).then([employee, company] =&gt; &#123;</span><br><span class="line">    &#125;);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// RxJS 的写法</span></span><br><span class="line">    forkJoin([employeeRequest, companyRequest]).subscribe([employee,company] =&gt; &#123;</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/angular-multi-http-requests/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/angular-multi-http-requests/" data-id="cjssqvcro000f8uq49pvjpgoe" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Angular/">Angular</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-angular-route" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/angular-route/" class="article-date">
+  <time datetime="2018-04-13T06:24:56.000Z" itemprop="datePublished">2018-04-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/angular-route/">Angular 中的路由</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>路由就是根据不同 url 路径展示不同的视图，呈现出来的页面可能是完全不一样的，也可能局部相同。</p>
+<h3 id="基础路由"><a href="#基础路由" class="headerlink" title="基础路由"></a>基础路由</h3><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; Component &#125; <span class="keyword">from</span> <span class="string">'@angular/core'</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span>(&#123;</span><br><span class="line">  selector: <span class="string">'app-home'</span>,</span><br><span class="line">  template: <span class="string">`&lt;h2&gt;Home&lt;/h2&gt;`</span></span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> Home &#123; &#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span>(&#123;</span><br><span class="line">  selector: <span class="string">'app-about'</span>,</span><br><span class="line">  template: <span class="string">`&lt;h2&gt;About&lt;/h2&gt;`</span></span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> About &#123; &#125;</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/angular-route/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/angular-route/" data-id="cjssqvcrp000h8uq48y61pdrk" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Angular/">Angular</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-git-get-current-branch" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/git-get-current-branch/" class="article-date">
+  <time datetime="2018-04-13T06:24:56.000Z" itemprop="datePublished">2018-04-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/git-get-current-branch/">获取当前分支</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>下面的命令可以查看当前仓库下的所有分支，打星号的是当前分支：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ git branch</span><br><span class="line">* develop</span><br><span class="line">  master</span><br><span class="line">  release/es</span><br><span class="line">  star</span><br><span class="line">(END)</span><br></pre></td></tr></table></figure>
+<p>如果想获取当前分支字符串，可以用下面的方法：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git branch | grep \* | cut -d <span class="string">' '</span> -f2</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/git-get-current-branch/" data-id="cjssqvcsn001r8uq4iocfya3i" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/">Git</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-css-white-space" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/css-white-space/" class="article-date">
+  <time datetime="2018-04-13T06:04:56.000Z" itemprop="datePublished">2018-04-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/css-white-space/">CSS white-space 用法</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <ul>
+<li>pre：保留空格，不自动换行，直到遇到换行符</li>
+<li>pre-wrap：自动换行</li>
+<li>pre-line：自动换行，并把多个空格合并成一个</li>
+</ul>
+<p><code>normal</code>：连续的空白符会被合并，换行符会被当作空白符来处理。填充line盒子时，必要的话会换行。<br><code>nowrap</code>：和 normal 一样，连续的空白符会被合并。但文本内的换行无效。<br><code>pre</code>：连续的空白符会被保留。在遇到换行符或者 <code>&lt;br&gt;</code> 元素时才会换行。<br><code>pre-wrap</code>：连续的空白符会被保留。在遇到换行符或者 <code>&lt;br&gt;</code> 元素，或者需要为了填充line盒子时才会换行。<br><code>pre-line</code>：连续的空白符会被合并。在遇到换行符或者 <code>&lt;br&gt;</code> 元素，或者需要为了填充line盒子时会换行。</p>
+<table>
+<thead>
+<tr>
+<th>换行符</th>
+<th>空格和制表符</th>
+<th>文字转行</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>normal</code></td>
+<td>合并</td>
+<td>合并</td>
+<td>转行</td>
+</tr>
+<tr>
+<td><code>nowrap</code></td>
+<td>合并</td>
+<td>合并</td>
+<td>不转行</td>
+</tr>
+<tr>
+<td><code>pre</code></td>
+<td>保留</td>
+<td>保留</td>
+<td>不转行</td>
+</tr>
+<tr>
+<td><code>pre-wrap</code></td>
+<td>保留</td>
+<td>保留</td>
+<td>转行</td>
+</tr>
+<tr>
+<td><code>pre-line</code></td>
+<td>保留</td>
+<td>合并</td>
+<td>转行</td>
+</tr>
+</tbody>
+</table>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/css-white-space/" data-id="cjvrpwbjx0007ofq4skag1n8a" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CSS/">CSS</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-URLSearchParams-notes" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/URLSearchParams-notes/" class="article-date">
+  <time datetime="2018-04-12T01:26:07.000Z" itemprop="datePublished">2018-04-12</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/URLSearchParams-notes/">URLSearchParams 使用说明</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>可以用 URLSearchParams 解析查询参数，例如：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> params = <span class="keyword">new</span> URLSearchParams(location.search)</span><br><span class="line"><span class="keyword">const</span> sign = params.get(<span class="string">'sign'</span>)</span><br><span class="line"><span class="built_in">console</span>.log(sign)</span><br></pre></td></tr></table></figure>
+<p>也可以用来组装参数：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> params = <span class="keyword">new</span> URLSearchParams()</span><br><span class="line">params.append(<span class="string">'param1'</span>, <span class="string">'value1'</span>)</span><br><span class="line">params.append(<span class="string">'param2'</span>, <span class="string">'value2'</span>)</span><br><span class="line">axios.post(<span class="string">'/foo'</span>, params)</span><br></pre></td></tr></table></figure>
+<p>但遗憾的是，并非所有浏览器都支持 URLSearchParams，不过可以使用 <a href="https://github.com/jerrybendy/url-search-params-polyfill" target="_blank" rel="noopener">url-search-params-polyfill</a> 垫片。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/URLSearchParams-notes/" data-id="cju5m2z5q0000qqq4t1e827pf" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-jwt-notes" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/jwt-notes/" class="article-date">
@@ -277,314 +601,10 @@
 
 
   
-    <article id="post-nc-notes" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/nc-notes/" class="article-date">
-  <time datetime="2018-04-08T02:26:07.000Z" itemprop="datePublished">2018-04-08</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/nc-notes/">nc 查看端口是否打开</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>安装：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install nc</span><br></pre></td></tr></table></figure>
-<p>使用：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$ nc -v k8s.xyz 33333</span><br><span class="line">found 0 associations</span><br><span class="line">found 1 connections:</span><br><span class="line">     1:	flags=82&lt;CONNECTED,PREFERRED&gt;</span><br><span class="line">	outif en7</span><br><span class="line">	src 192.168.3.15 port 54113</span><br><span class="line">	dst 101.36.136.90 port 33333</span><br><span class="line">	rank info not available</span><br><span class="line">	TCP aux info available</span><br><span class="line"></span><br><span class="line">Connection to k8s.xyz port 33333 [tcp/*] succeeded!</span><br></pre></td></tr></table></figure>
-<p>如果：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ nc -v k8s.xyz 34343</span><br><span class="line">nc: connectx to k8s.xyz port 34343 (tcp) failed: Connection refused</span><br></pre></td></tr></table></figure>
-<p>查看 udp 端口是否打开：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ nc -u 127.0.0.1 61005</span><br></pre></td></tr></table></figure>
-<p>输入文字测试即可。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/nc-notes/" data-id="cjssqvcul003c8uq49g5w8y5n" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-docker-container-static-ip" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/docker-container-static-ip/" class="article-date">
-  <time datetime="2018-04-05T14:18:23.000Z" itemprop="datePublished">2018-04-05</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/docker-container-static-ip/">Linux 上安装 rar 和 unrar</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>Docker 每次重启后，容器的IP地址会变化，如何设置固定IP呢？Docker 安装后，默认会创建下面三种网络类型：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ docker network ls</span><br><span class="line">NETWORK ID          NAME                DRIVER              SCOPE</span><br><span class="line">9781b1f585ae        bridge              bridge              local</span><br><span class="line">1252da701e55        host                host                local</span><br><span class="line">237ea3d5cfbf        none                null                local</span><br></pre></td></tr></table></figure>
-<p>启动 Docker的时候，用 <code>--network</code> 参数，可以指定网络类型，如：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ docker run -itd --name test1 --network bridge --ip 172.17.0.10 centos:latest /bin/bash</span><br></pre></td></tr></table></figure>
-<p>可以定义如下几种网络类型：</p>
-<ul>
-<li><p>桥接网络（bridge）</p>
-<p>  默认都是使用 bridge，每次 Docker 容器重启时，会按照顺序获取对应的 IP 地址，于是 IP 地址就变了。</p>
-</li>
-<li><p>无指定网络（none）</p>
-<p>  使用 <code>--network=none</code> ，docker 容器就不会分配局域网的IP。</p>
-</li>
-<li><p>宿主机网络（host）</p>
-<p>  使用 <code>--network=host</code>，此时，Docker 容器的网络会附属在主机上，两者互通。</p>
-</li>
-<li><p>创建自定义网络</p>
-<p>  指定网段和每个容器在这个网段中的具体IP。</p>
-</li>
-</ul>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/docker-container-static-ip/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/docker-container-static-ip/" data-id="cjssqvcs6000z8uq4l73vd5wt" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-install-rar-on-linux" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/install-rar-on-linux/" class="article-date">
-  <time datetime="2018-04-05T14:18:23.000Z" itemprop="datePublished">2018-04-05</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/install-rar-on-linux/">Linux 上安装 rar 和 unrar</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <h2 id="32-位机器"><a href="#32-位机器" class="headerlink" title="32 位机器"></a>32 位机器</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">wget https://www.rarlab.com/rar/rarlinux-5.5.0.tar.gz</span><br><span class="line">tar -zxvf rarlinux-5.5.0.tar.gz</span><br><span class="line"><span class="built_in">cd</span> rar</span><br><span class="line">sudo cp -v rar unrar /usr/<span class="built_in">local</span>/bin/</span><br></pre></td></tr></table></figure>
-<h2 id="64-位机器"><a href="#64-位机器" class="headerlink" title="64 位机器"></a>64 位机器</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">wget https://www.rarlab.com/rar/rarlinux-x64-5.5.0.tar.gz</span><br><span class="line">tar -zxvf rarlinux-x64-5.5.0.tar.gz</span><br><span class="line"><span class="built_in">cd</span> rar</span><br><span class="line">sudo cp -v rar unrar /usr/<span class="built_in">local</span>/bin/</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/install-rar-on-linux/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/install-rar-on-linux/" data-id="cjiom0g4l0005rbq3413rezoq" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-max_old_space_size" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/max_old_space_size/" class="article-date">
-  <time datetime="2018-03-30T09:19:23.000Z" itemprop="datePublished">2018-03-30</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/max_old_space_size/">指定 nodejs 可使用的内存</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>webpack 在打包的时候很占用内存，如果超出了默认 64 位 1.4G 内存限制或 32 位机器 0.7G 内存限制，就会打包失败，这个时候需要指定打包时 nodejs 可使用的内存：</p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"scripts"</span>: &#123;</span><br><span class="line">    <span class="attr">"build"</span>: <span class="string">"node --max_old_space_size=4096 node_modules/.bin/webpack-dev-server --progress --color --config config/webpack/development.js"</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/max_old_space_size/" data-id="cjkajvcqw000i4eq3dx5l06ad" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-alias-package-using-yarn" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/alias-package-using-yarn/" class="article-date">
-  <time datetime="2018-03-30T09:19:23.000Z" itemprop="datePublished">2018-03-30</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/alias-package-using-yarn/">用 yarn 来安装依赖的不同版本</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn add fake-name@npm:left-pad</span><br></pre></td></tr></table></figure>
-<p>可以用 <code>require(&quot;fake-name&quot;)</code> 来引用 left-pad。这个命令特别适用于当你在项目中引用某个库的不同版本时：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn add lodash3@npm:lodash@^3 lodash4@npm:lodash@^4</span><br></pre></td></tr></table></figure>
-<p>注意这个用法只有 yarn 支持，并不适用于 npm。</p>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/alias-package-using-yarn/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/alias-package-using-yarn/" data-id="cjkajvcq700004eq3h0iu34oj" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-angular-ngif" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/angular-ngif/" class="article-date">
-  <time datetime="2018-03-28T07:37:07.000Z" itemprop="datePublished">2018-03-28</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/angular-ngif/">Angular 中的 NgIf</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>在 Angular 中，使用 NgIf 可以在 html 里面通过变量来控制显示的内容：</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> *<span class="attr">ngIf</span>=<span class="string">"condition; else elseBlock"</span>&gt;</span>条件成立<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">ng-template</span> #<span class="attr">elseBlock</span>&gt;</span>条件不成立<span class="tag">&lt;/<span class="name">ng-template</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>这种写法还是很直观的，其实还有一种更直观的写法：</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> *<span class="attr">ngIf</span>=<span class="string">"condition; then thenBlock else elseBlock"</span>&gt;</span> ... <span class="tag">&lt;/<span class="name">div</span>&gt;</span> </span><br><span class="line"><span class="tag">&lt;<span class="name">ng-template</span> #<span class="attr">thenBlock</span>&gt;</span>条件成立<span class="tag">&lt;/<span class="name">ng-template</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">ng-template</span> #<span class="attr">elseBlock</span>&gt;</span>条件不成立<span class="tag">&lt;/<span class="name">ng-template</span>&gt;</span></span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/angular-ngif/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/angular-ngif/" data-id="cjhq778hj0035izq3fzjd8b77" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
 
 
   <nav id="page-nav">
-    <a class="extend prev" rel="prev" href="/page/8/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="page-number" href="/page/8/">8</a><span class="page-number current">9</span><a class="page-number" href="/page/10/">10</a><a class="page-number" href="/page/11/">11</a><span class="space">&hellip;</span><a class="page-number" href="/page/48/">48</a><a class="extend next" rel="next" href="/page/10/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/8/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="page-number" href="/page/8/">8</a><span class="page-number current">9</span><a class="page-number" href="/page/10/">10</a><a class="page-number" href="/page/11/">11</a><span class="space">&hellip;</span><a class="page-number" href="/page/49/">49</a><a class="extend next" rel="next" href="/page/10/">Next &raquo;</a>
   </nav>
 </section>
 
