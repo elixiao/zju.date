@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="访问公司的内网服务器，一般会设置一个跳板机，先从跳板机做一个ssh跳转，这个跳板机是部署在外网的服务器，而且需要通过证书登录。 1本机ssh-&amp;gt;跳板机-&amp;gt;目标机器 举个例子：iptables 限制了 SSH 端口白名单， 例如指定 IP 才能登陆，或者没有开通VPN权限，无法直接登录到服务器。这个时候可以用一台机器做为跳板登陆到指定的机器去处理问题： 12345+-----+">
+<meta name="keywords" content="Linux">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ssh 跳板机">
+<meta property="og:url" content="https://zju.date/ssh-jump-agent/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="访问公司的内网服务器，一般会设置一个跳板机，先从跳板机做一个ssh跳转，这个跳板机是部署在外网的服务器，而且需要通过证书登录。 1本机ssh-&amp;gt;跳板机-&amp;gt;目标机器 举个例子：iptables 限制了 SSH 端口白名单， 例如指定 IP 才能登陆，或者没有开通VPN权限，无法直接登录到服务器。这个时候可以用一台机器做为跳板登陆到指定的机器去处理问题： 12345+-----+">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-05-20T03:31:07.257Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ssh 跳板机">
+<meta name="twitter:description" content="访问公司的内网服务器，一般会设置一个跳板机，先从跳板机做一个ssh跳转，这个跳板机是部署在外网的服务器，而且需要通过证书登录。 1本机ssh-&amp;gt;跳板机-&amp;gt;目标机器 举个例子：iptables 限制了 SSH 端口白名单， 例如指定 IP 才能登陆，或者没有开通VPN权限，无法直接登录到服务器。这个时候可以用一台机器做为跳板登陆到指定的机器去处理问题： 12345+-----+">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-ssh-jump-agent" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/ssh-jump-agent/" class="article-date">
+  <time datetime="2018-01-11T14:50:03.000Z" itemprop="datePublished">2018-01-11</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      ssh 跳板机
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>访问公司的内网服务器，一般会设置一个跳板机，先从跳板机做一个ssh跳转，这个跳板机是部署在外网的服务器，而且需要通过证书登录。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">本机ssh-&gt;跳板机-&gt;目标机器</span><br></pre></td></tr></table></figure>
+<p>举个例子：iptables 限制了 SSH 端口白名单， 例如指定 IP 才能登陆，或者没有开通VPN权限，无法直接登录到服务器。这个时候可以用一台机器做为跳板登陆到指定的机器去处理问题：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">+-----+             +-----+             +-----+</span><br><span class="line">|     |             |     |             |     |</span><br><span class="line">|  A  +-----------&gt; |  B  +-----------&gt; |  C  |</span><br><span class="line">|     |             |     |             |     |</span><br><span class="line">+-----+             +-----+             +-----+</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<p>私钥只需要存在 A 上，B 和 C 都只存放公钥，然后就可以先登录 B，再登录 C。为了方便登录，一般会通过 B 跳板机将 C 服务器的 22 端口暴露到 A 的 11818 端口：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh -NL 11818:100.35.135.89:22 root@110.66.129.116</span><br></pre></td></tr></table></figure>
+<p>然后就可以用下面的命令来登录了：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh -i kbs.pem -p 11818 centos@localhost</span><br></pre></td></tr></table></figure>
+<p>或者修改 <code>~/.ssh/config</code></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Host 100.35.135.89</span><br><span class="line">    IdentityFile ~/work/kbs.pem</span><br><span class="line">    User urcentos</span><br><span class="line">    Port 22</span><br><span class="line">    ForwardAgent yes</span><br><span class="line">    ProxyCommand ssh root@110.66.129.116 -W %h:%p 2&gt; /dev/null</span><br></pre></td></tr></table></figure>
+<p>直接编辑~/.ssh/config文件，增加ProxyCommand选项，像下面这样：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Host target.machine</span><br><span class="line">    User          targetuser</span><br><span class="line">    HostName      target.machine</span><br><span class="line">    ProxyCommand  ssh proxyuser@proxy.machine nc %h %p 2&gt; /dev/null</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/ssh-jump-agent/" data-id="cjw53wyb4000um5q4x49zxn1e" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/docker-mount-volume/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          docker mount 和 volume
+        
+      </div>
+    </a>
+  
+  
+    <a href="/docker-compose-yaml-override/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">docker compose 覆盖</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

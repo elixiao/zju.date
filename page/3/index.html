@@ -54,6 +54,159 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-git-rename-and-delete-branch" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/git-rename-and-delete-branch/" class="article-date">
+  <time datetime="2018-09-30T06:08:23.000Z" itemprop="datePublished">2018-09-30</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/git-rename-and-delete-branch/">git 删除和重命名分支</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>本地分支重命名</strong></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git branch -m old new</span><br></pre></td></tr></table></figure>
+<p><strong>删除本地分支</strong></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git branch -D 本地分支名</span><br></pre></td></tr></table></figure>
+<p><strong>远程分支重命名</strong></p>
+<ul>
+<li><p>删除远程分支</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git push origin  :远程分支名(你要删除的远程分支名)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>将本地分支推送到远程分支上，如果远程分支不存在，则创建此远程分支</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git push origin  本地分支名:远程分支名</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>如果其他开发者已经删除了远程分支，但本地 <code>git branch -a</code> 依然显示，用 <code>git fetch -p</code> 即可</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/git-rename-and-delete-branch/" data-id="cjssqvcso001t8uq4hao2w0hs" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/">Git</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-not-a-constructor" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/not-a-constructor/" class="article-date">
+  <time datetime="2018-09-30T05:35:07.000Z" itemprop="datePublished">2018-09-30</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/not-a-constructor/">require 时报错 not a constructor</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>当引用第三方库的时候，经常会遇到下面的错误：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xxx is not a constructor</span><br></pre></td></tr></table></figure>
+<p>原因是该第三方库使用 es6 语法暴露出来一个类，但是在项目中使用了 require 来引用导致的。这是 babel 在转换 <code>import</code> 和 <code>export</code> 到 <code>require</code> 和 <code>exports</code> 时存在的差异，举个例子，用 es6 写 processor.js 暴露一个类：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// processor.js</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Processor</span> </span>&#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> Processor</span><br></pre></td></tr></table></figure>
+<p>如果用 require 来引用：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// require.js</span></span><br><span class="line"><span class="keyword">const</span> Processor = <span class="built_in">require</span>(<span class="string">'./processor'</span>);</span><br><span class="line"><span class="keyword">const</span> processor = <span class="keyword">new</span> Processor() <span class="comment">// 会报错</span></span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/not-a-constructor/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/not-a-constructor/" data-id="cjssqvcur003i8uq4gflmeynz" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-sudo-keep-env" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/sudo-keep-env/" class="article-date">
+  <time datetime="2018-09-28T01:06:07.000Z" itemprop="datePublished">2018-09-28</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/sudo-keep-env/">sudo 保持环境变量</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>sudo 之后环境变量就没了，但有个 <code>-E</code> 选项能够保持环境变量：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ export HTTP_PROXY=foof</span><br><span class="line">$ sudo -E bash -c &apos;echo $HTTP_PROXY&apos;</span><br></pre></td></tr></table></figure>
+<p>帮助页面解释如下:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-E, --preserve-env</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>Indicates to the security policy that the user wishes to preserve their existing environment variables.  The security policy may return an error if the user does not have permission to preserve the environment.</p>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/sudo-keep-env/" data-id="cjssqvcv900448uq4zkm2okf2" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-linux-route" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/linux-route/" class="article-date">
@@ -278,56 +431,6 @@
 
 
   
-    <article id="post-portainer-notes" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/portainer-notes/" class="article-date">
-  <time datetime="2018-09-26T00:11:47.000Z" itemprop="datePublished">2018-09-26</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/portainer-notes/">Portainer 管理容器</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>如果想管理 docker 容器，portainer 是非常好的管理工具：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d -p 9000:9000 --name portainer --restart always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer</span><br></pre></td></tr></table></figure>
-<p>指定网络：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">docker run -d \</span><br><span class="line">-p 9000:9000 \</span><br><span class="line">--network=myportainers \</span><br><span class="line">--restart=always \</span><br><span class="line">--name my-portainer \</span><br><span class="line">-v /var/run/docker.sock:/var/run/docker.sock \</span><br><span class="line">-v portainer_data:/data \</span><br><span class="line">portainer/portainer</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/portainer-notes/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/portainer-notes/" data-id="cjssqvcuu003m8uq4npvm7xq1" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
     <article id="post-react-native-android-debug" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/react-native-android-debug/" class="article-date">
@@ -376,6 +479,56 @@
     </div>
     <footer class="article-footer">
      <a data-url="https://zju.date/react-native-android-debug/" data-id="cjssqvcuw003o8uq4p3g59cp5" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-portainer-notes" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/portainer-notes/" class="article-date">
+  <time datetime="2018-09-26T00:11:47.000Z" itemprop="datePublished">2018-09-26</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/portainer-notes/">Portainer 管理容器</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>如果想管理 docker 容器，portainer 是非常好的管理工具：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d -p 9000:9000 --name portainer --restart always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer</span><br></pre></td></tr></table></figure>
+<p>指定网络：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">docker run -d \</span><br><span class="line">-p 9000:9000 \</span><br><span class="line">--network=myportainers \</span><br><span class="line">--restart=always \</span><br><span class="line">--name my-portainer \</span><br><span class="line">-v /var/run/docker.sock:/var/run/docker.sock \</span><br><span class="line">-v portainer_data:/data \</span><br><span class="line">portainer/portainer</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/portainer-notes/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/portainer-notes/" data-id="cjssqvcuu003m8uq4npvm7xq1" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
 
@@ -441,259 +594,10 @@
 
 
   
-    <article id="post-es-head" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/es-head/" class="article-date">
-  <time datetime="2018-09-21T07:25:07.000Z" itemprop="datePublished">2018-09-21</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/es-head/">es-head 安装</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>用 docker 启动 es-head 服务：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker run -d -p 9100:9100 --name es-head mobz/elasticsearch-head:5-alpine</span><br><span class="line">docker run -d -p 9100:9100 --net elk --add-host es_host:<span class="variable">$ES_HOST</span> --name es-head mobz/elasticsearch-head:5-alpine</span><br></pre></td></tr></table></figure>
-<p>记得在 <code>elasticsearch.yml</code> 里面配置开启跨域支持：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">network.host: 0.0.0.0</span><br><span class="line">http.cors.enabled: <span class="literal">true</span></span><br><span class="line">http.cors.allow-origin: <span class="string">"*"</span></span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/es-head/" data-id="cjssqvcse001d8uq4ex3gdet5" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ELK/">ELK</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-count-cpu" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/count-cpu/" class="article-date">
-  <time datetime="2018-09-20T09:13:20.000Z" itemprop="datePublished">2018-09-20</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/count-cpu/">查看服务器CPU个数</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <ol>
-<li><p>查看物理CPU的个数</p>
- <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat /proc/cpuinfo | grep <span class="string">"physical id"</span> | sort | uniq | wc -l</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<ol>
-<li><p>查看逻辑CPU的个数</p>
- <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat /proc/cpuinfo | grep <span class="string">"processor"</span> | wc -l</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<ol>
-<li><p>查看CPU是几核</p>
- <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat /proc/cpuinfo | grep <span class="string">"cores"</span> | uniq</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<ol>
-<li><p>查看CPU的主频</p>
- <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat /proc/cpuinfo | grep MHz | uniq</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/count-cpu/" data-id="cjssqvcs2000v8uq4cvsgg5n3" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-mask-subnet" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/mask-subnet/" class="article-date">
-  <time datetime="2018-09-17T03:12:23.000Z" itemprop="datePublished">2018-09-17</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/mask-subnet/">子网掩码计算</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>查看路由表：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ ip route list</span><br><span class="line">169.254.0.0/16 dev eth0 scope link metric 1002</span><br></pre></td></tr></table></figure>
-<p>IP 后面的数字 16 是用于计算子网网段的，其与子网掩码的映射关系表为：</p>
-<table>
-<thead>
-<tr>
-<th>/数字</th>
-<th>IP总数</th>
-<th>子网掩码</th>
-<th>C段个数</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>/30</td>
-<td>4</td>
-<td>255.255.255.252</td>
-<td>1/64</td>
-</tr>
-<tr>
-<td>/29</td>
-<td>8</td>
-<td>255.255.255.248</td>
-<td>1/32</td>
-</tr>
-<tr>
-<td>/28</td>
-<td>16</td>
-<td>255.255.255.240</td>
-<td>1/16</td>
-</tr>
-<tr>
-<td>/27</td>
-<td>32</td>
-<td>255.255.255.224</td>
-<td>1/8</td>
-</tr>
-<tr>
-<td>/26</td>
-<td>64</td>
-<td>255.255.255.192</td>
-<td>1/4</td>
-</tr>
-<tr>
-<td>/24</td>
-<td>256</td>
-<td>255.255.255.0</td>
-<td>1</td>
-</tr>
-<tr>
-<td>/23</td>
-<td>512</td>
-<td>255.255.254.0</td>
-<td>2</td>
-</tr>
-<tr>
-<td>/22</td>
-<td>1024</td>
-<td>255.255.252.0</td>
-<td>4</td>
-</tr>
-<tr>
-<td>/21</td>
-<td>2048</td>
-<td>255.255.248.0</td>
-<td>8</td>
-</tr>
-<tr>
-<td>/20</td>
-<td>4096</td>
-<td>255.255.240.0</td>
-<td>16</td>
-</tr>
-<tr>
-<td>/19</td>
-<td>8192</td>
-<td>255.255.224.0</td>
-<td>32</td>
-</tr>
-<tr>
-<td>/18</td>
-<td>16384</td>
-<td>255.255.192.0</td>
-<td>64</td>
-</tr>
-<tr>
-<td>/17</td>
-<td>32768</td>
-<td>255.255.128.0</td>
-<td>128</td>
-</tr>
-<tr>
-<td>/16</td>
-<td>65536</td>
-<td>255.255.0.0</td>
-<td>256</td>
-</tr>
-</tbody>
-</table>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/mask-subnet/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/mask-subnet/" data-id="cjssqvcu7002w8uq4fs55cip6" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
 
 
   <nav id="page-nav">
-    <a class="extend prev" rel="prev" href="/page/2/">&laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/49/">49</a><a class="extend next" rel="next" href="/page/4/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/2/">&laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/52/">52</a><a class="extend next" rel="next" href="/page/4/">Next &raquo;</a>
   </nav>
 </section>
 

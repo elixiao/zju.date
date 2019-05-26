@@ -54,10 +54,10 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-nginx-alias-vs-root" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-tar" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/nginx-alias-vs-root/" class="article-date">
-  <time datetime="2018-02-02T14:04:07.000Z" itemprop="datePublished">2018-02-02</time>
+    <a href="/tar/" class="article-date">
+  <time datetime="2018-03-01T02:16:03.000Z" itemprop="datePublished">2018-03-01</time>
 </a>
     
   </div>
@@ -68,7 +68,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/nginx-alias-vs-root/">nginx alias 和 root</a>
+      <a class="article-title" href="/tar/">tar 命令</a>
     </h1>
   
 
@@ -79,112 +79,29 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <p>alias 语法：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">location /abc/ &#123;</span><br><span class="line">    alias /home/html/abc/;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><code>/abc/a.html</code> 就指的是 <code>/home/html/abc/a.html</code>，与下面的配置相同：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">location /abc/ &#123;</span><br><span class="line">    root /home/html/;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>使用 root 设置目录的绝对路径时，少了 /abc,也就是说，使用 root 来设置前端非根目录时，nginx 会组合 root 和 location 的路径。例如：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">location /static/ &#123;</span><br><span class="line">	root /var/www/app/static/;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>表示 <code>/var/www/app/static/static</code>，而：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">location /static/ &#123;</span><br><span class="line"> alias /var/www/app/static/;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>表示 <code>/var/www/app/static</code></p>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/nginx-alias-vs-root/" data-id="cjhq778qh00eeizq3g3rs9ldq" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Nginx/">Nginx</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-mongoose-create-if-not-exists" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/mongoose-create-if-not-exists/" class="article-date">
-  <time datetime="2018-02-02T14:04:07.000Z" itemprop="datePublished">2018-02-02</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
+        <div class="article-preview">
+            <p>打包备份文件的时候，使用绝对路径会有相关提醒，例如：tar从成员名中删除开头的“/”。</p>
+<ol>
+<li><p>在 /tmp 下新建文件 a.txt 和 b.txt 并添加内容：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">cat &lt;&lt; EOF &gt;&gt; /tmp/a.txt</span><br><span class="line">hello, a.txt!</span><br><span class="line">EOF</span><br><span class="line">cat &lt;&lt; EOF &gt;&gt; /tmp/b.txt</span><br><span class="line">hello, b.txt!</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用绝对路径压缩 a.txt</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">tar czf a.tar.gz /tmp/a.txt</span><br><span class="line">tar: Removing leading <span class="string">'/'</span> from member names</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>解压缩 a.tar.gz</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar xzf a.tar.gz</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>经过解压后会在当前目录下，自动创建tmp目录，压缩之前的目录是绝对路径 <code>/tmp/a.txt</code>，但是解压之后变成了当前目录下了，这其实可以可上面的报错对上了（<strong>tar: 从成员名中删除开头的“/”</strong>）</p>
+        </div>
         
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/mongoose-create-if-not-exists/">mongoose “没有则创建”语法</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>如果没有就创建：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> query = &#123;&#125;,</span><br><span class="line">  update = &#123; <span class="attr">expire</span>: <span class="keyword">new</span> <span class="built_in">Date</span>() &#125;,</span><br><span class="line">  options = &#123; <span class="attr">upsert</span>: <span class="literal">true</span>, <span class="attr">new</span>: <span class="literal">true</span>, <span class="attr">setDefaultsOnInsert</span>: <span class="literal">true</span> &#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Find the document</span></span><br><span class="line">Model.findOneAndUpdate(query, update, options, <span class="function"><span class="keyword">function</span>(<span class="params">error, result</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (error) <span class="keyword">return</span>;</span><br><span class="line">  <span class="comment">// do something with the document</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-<p>注意这些参数：</p>
-<ul>
-<li><code>new</code> 代表返回更新后的值</li>
-<li><code>upsert</code> 代表如果没有就创建</li>
-<li><code>setDefaultsOnInsert</code> 设置默认值。</li>
-</ul>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/mongoose-create-if-not-exists/" data-id="cjhq778q700e0izq30rmm4v89" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-zsh" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/zsh/" class="article-date">
-  <time datetime="2018-02-02T08:01:11.000Z" itemprop="datePublished">2018-02-02</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
+          <p class="article-more-link">
+            <a href="/tar/#more">Read More</a>
+          </p>
         
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/zsh/">zsh kill</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>如果你的电脑安装了 oh my zsh，那么只需要在终端输入</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">kill</span> xxx</span><br></pre></td></tr></table></figure>
-<p>按 tab，会自动替换成 xxx 对应的 pid，例如：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">kill</span> redis</span><br></pre></td></tr></table></figure>
-
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/zsh/" data-id="cjhq778vu00k8izq34utzz72v" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/tar/" data-id="cjssqvcvc00488uq4j8bz19x7" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
 
@@ -195,10 +112,10 @@
 
 
   
-    <article id="post-git-branch" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-echo" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/git-branch/" class="article-date">
-  <time datetime="2018-02-02T05:10:13.000Z" itemprop="datePublished">2018-02-02</time>
+    <a href="/echo/" class="article-date">
+  <time datetime="2018-03-01T02:11:03.000Z" itemprop="datePublished">2018-03-01</time>
 </a>
     
   </div>
@@ -209,7 +126,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/git-branch/">git 分支</a>
+      <a class="article-title" href="/echo/">echo 命令</a>
     </h1>
   
 
@@ -221,24 +138,22 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <p>刚 clone 下来的仓库，执行 git branch 会看到</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">* master</span><br></pre></td></tr></table></figure>
-<p>并不会看到其他分支，即便远程仓库上有其他分支，使用</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git branch -va</span><br></pre></td></tr></table></figure>
-<p>可以查看本地和远程分支列表</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">* master              0840594 merge master and 1.0.0</span><br><span class="line">remotes/origin/hello  743012a update</span><br><span class="line">remotes/origin/HEAD   -&gt; origin/master</span><br><span class="line">remotes/origin/master 0840594 merge master and 1.0.0</span><br></pre></td></tr></table></figure>
+            <p>echo 默认会换行，例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ echo 123;echo 456</span><br><span class="line">123</span><br><span class="line">456</span><br></pre></td></tr></table></figure>
+<p>使用 echo -n 可以不换行输出</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ echo -n 123;echo 456</span><br><span class="line">123456</span><br></pre></td></tr></table></figure>
         </div>
         
           <p class="article-more-link">
-            <a href="/git-branch/#more">Read More</a>
+            <a href="/echo/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/git-branch/" data-id="cjhq778ku007mizq3h98tzo1y" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/echo/" data-id="cjhq778jv0065izq308f8k0yv" class="article-share-link">Share</a>
      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/">Git</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
 
     </footer>
   </div>
@@ -247,10 +162,10 @@
 
 
   
-    <article id="post-debounce-vs-throttle" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-ssh-auto-password" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/debounce-vs-throttle/" class="article-date">
-  <time datetime="2018-02-01T09:23:13.000Z" itemprop="datePublished">2018-02-01</time>
+    <a href="/ssh-auto-password/" class="article-date">
+  <time datetime="2018-02-28T11:31:23.000Z" itemprop="datePublished">2018-02-28</time>
 </a>
     
   </div>
@@ -261,7 +176,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/debounce-vs-throttle/">在 Angular 中使用 debounce 和 throttle</a>
+      <a class="article-title" href="/ssh-auto-password/">ssh自动输入密码</a>
     </h1>
   
 
@@ -273,301 +188,400 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <h2 id="debounce"><a href="#debounce" class="headerlink" title="debounce"></a>debounce</h2><ol>
-<li><p>名词释义</p>
-<p> 对于某事件流，自触发时刻开始，若持续指定时间内未有事件发生，则触发最后的事件；否则只更新最后事件，并不触发事件，直到满足持续指定时间未有事件发生的条件。</p>
+            <p>假设管理员密码为 “12345”，要执行的 <code>sudo vi test.txt</code>，那我们就写一个 test.sh 档，里面的内容是：<code>echo 12345 | sudo -S vi test.txt</code>，主要就是把密码利用 echo 打在前面，后样 sudo 加上 <code>-S</code>，然后中间用 pipe 串起来即可。这个 <code>-S</code> 的意思是从 stdin 读取密码。</p>
+<p>但是对于 ssh，却没有这个选项，不过可以安装 sshpass 来实现：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">brew install sshpass</span><br><span class="line">Error: No available formula with the name <span class="string">"sshpass"</span> </span><br><span class="line">We won<span class="string">'t add sshpass because it makes it too easy for novice SSH users to</span></span><br><span class="line"><span class="string">ruin SSH'</span>s security.</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/ssh-auto-password/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/ssh-auto-password/" data-id="cjhq778su00h8izq3b7xgvonm" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-wordpress-backup" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/wordpress-backup/" class="article-date">
+  <time datetime="2018-02-24T09:09:03.000Z" itemprop="datePublished">2018-02-24</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/wordpress-backup/">docker wordpress 备份</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>数据库在 mysql 容器里面，用户上传的文件在 wordpress 容器里面。</p>
+<h2 id="备份-MySQL-数据库"><a href="#备份-MySQL-数据库" class="headerlink" title="备份 MySQL 数据库"></a>备份 MySQL 数据库</h2><p><code>ssh</code> 到服务器，然后使用 <code>docker exec</code> 或 <code>docker-compose exec</code> 进入 MySQL 容器内查看数据库结构：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql -uwordpress -pwordpress</span><br></pre></td></tr></table></figure>
+<p>在 mysql 命令行：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show databases;</span><br><span class="line">+--------------------+</span><br><span class="line">| Database           |</span><br><span class="line">+--------------------+</span><br><span class="line">| information_schema |</span><br><span class="line">| wordpress          |</span><br><span class="line">+--------------------+</span><br><span class="line">2 rows <span class="keyword">in</span> <span class="built_in">set</span> (0.01 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; use wordpress;</span><br><span class="line">Reading table information <span class="keyword">for</span> completion of table and column names</span><br><span class="line">You can turn off this feature to get a quicker startup with -A</span><br><span class="line"></span><br><span class="line">Database changed</span><br><span class="line"></span><br><span class="line">mysql&gt; show tables;</span><br><span class="line">+-----------------------+</span><br><span class="line">| Tables_in_wordpress   |</span><br><span class="line">+-----------------------+</span><br><span class="line">| wp_commentmeta        |</span><br><span class="line">| wp_comments           |</span><br><span class="line">| wp_hfcm_scripts       |</span><br><span class="line">| wp_links              |</span><br><span class="line">| wp_options            |</span><br><span class="line">| wp_postmeta           |</span><br><span class="line">| wp_posts              |</span><br><span class="line">| wp_term_relationships |</span><br><span class="line">| wp_term_taxonomy      |</span><br><span class="line">| wp_termmeta           |</span><br><span class="line">| wp_terms              |</span><br><span class="line">| wp_usermeta           |</span><br><span class="line">| wp_users              |</span><br><span class="line">+-----------------------+</span><br><span class="line">13 rows <span class="keyword">in</span> <span class="built_in">set</span> (0.00 sec)</span><br></pre></td></tr></table></figure>
+<p>备份的时候可以在容器内备份完毕后拷贝到宿主机，也可以直接备份到宿主机。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 进入容器内备份</span></span><br><span class="line">docker-compose <span class="built_in">exec</span> mysql sh</span><br><span class="line">mysqldump -uwordpress -pwordpress wordpress &gt; /var/backups/db.sql</span><br><span class="line">docker cp mysql:/var/backups/db.sql /ali/bak/wordpress/db.sql</span><br><span class="line"></span><br><span class="line"><span class="comment"># 直接备份出来</span></span><br><span class="line">docker-compose <span class="built_in">exec</span> mysql \</span><br><span class="line">    mysqldump -uwordpress -pwordpress wordpress &gt; /ali/bak/wordpress/db.sql</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/wordpress-backup/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/wordpress-backup/" data-id="cjhq778vo00k0izq376wlf0j9" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-ssh-broken-pipe" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/ssh-broken-pipe/" class="article-date">
+  <time datetime="2018-02-09T06:05:03.000Z" itemprop="datePublished">2018-02-09</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/ssh-broken-pipe/">ssh broken pipe</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>使用ssh，如果很长一段时间不登录，会出现：</p>
+<blockquote>
+<p>  Write failed: Broken pipe<br>  <a href="https://www.logcg.com/archives/tag/write-failed-broken-pipe" target="_blank" rel="noopener"></a></p>
+</blockquote>
+<p>因为空闲时间太长了，可以修改SSH默认配置来让它自动关闭链接。</p>
+<blockquote>
+<p>ServerAliveInterval</p>
+<p>Sets a timeout interval in seconds after which if no data has been received from the server, ssh(1) will send a message through the encrypted channel to request a response from the server.  The default is 0, indicating that these messages will not be sent to the server.  This option applies to protocol version 2 only.</p>
+<p>ClientAliveInterval</p>
+<p>Sets a timeout interval in seconds after which if no data has  been received from the client, sshd(8) will send a message  through the encrypted channel to request a response from the  client.  The default is 0, indicating that these messages will not be sent to the client.  This option applies to protocol version 2 only.</p>
+</blockquote>
+<p>开启发送keep-alive包的功能，允许客户端/服务器在一定时间内发送一个特定的包给对方，这样就避免了链接长时间挂着导致报错。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/ssh-broken-pipe/" data-id="cjhq778sx00hcizq3pmxyaifv" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-docker-ssh" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/docker-ssh/" class="article-date">
+  <time datetime="2018-02-09T05:51:23.000Z" itemprop="datePublished">2018-02-09</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/docker-ssh/">通过 docker ssh 到另一个容器</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>通过 docker-compose 建立的应用，如果没有把某个服务的端口暴露在宿主机上，那么只能在容器内部访问，例如 mongodb，如果我们想通过 ssh 远程连接这个数据库应该怎么办呢？解决办法是再建立一个 ssh 容器，使用 mongodb 容器所在的网络，然后建立反向通道，将 mongodb 的 27017 端口映射到本地的 28018 端口。</p>
+<h2 id="创建-ssh-镜像"><a href="#创建-ssh-镜像" class="headerlink" title="创建 ssh 镜像"></a>创建 ssh 镜像</h2><p>随便创建一个 centos 容器，然后进入其内部：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -itd --name ssh centos sh</span><br></pre></td></tr></table></figure>
+<p>安装 ssh ：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">RUN yum install -y openssh-server openssh-clients</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/docker-ssh/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/docker-ssh/" data-id="cjhq778jo005vizq3v896fwl5" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-mac-install-unknown" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/mac-install-unknown/" class="article-date">
+  <time datetime="2018-02-08T02:12:55.000Z" itemprop="datePublished">2018-02-08</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/mac-install-unknown/">mac 允许任意应用</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Mac 升级之后只有：</p>
+<ul>
+<li>App Store</li>
+<li>App Store 和被认可的开发者</li>
+</ul>
+<p>运行下面的命令：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo spctl --master-disable</span><br></pre></td></tr></table></figure>
+<p>会变成：</p>
+<ul>
+<li>App Store</li>
+<li>App Store 和被认可的开发者</li>
+<li>任何来源</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/mac-install-unknown/" data-id="cjhq778pd00cuizq35kcsouoc" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-mongodb-readwrite-without-drop" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/mongodb-readwrite-without-drop/" class="article-date">
+  <time datetime="2018-02-07T06:16:23.000Z" itemprop="datePublished">2018-02-07</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/mongodb-readwrite-without-drop/">MongoDB 创建能读写但不能drop的用户</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>在 MongoDB 中，有两类用户角色：</p>
+<ol>
+<li><p>普通用户角色：</p>
+<ul>
+<li>read</li>
+<li>readWrite</li>
+</ul>
 </li>
-<li><p>应用场景</p>
-<p> 搜索手牌或商品的时候，keyup事件并不需要每次都触发请求，而是当用户某两次keyup中间的间隔超过指定时间才去请求，否则用户噼里啪啦打字，你发了几十个请求，浪费资源。</p>
-</li>
-<li><p>代码：</p>
- <figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123;Directive, EventEmitter, HostListener, Input, OnInit, Output&#125; <span class="keyword">from</span> <span class="string">'@angular/core'</span></span><br><span class="line"><span class="keyword">import</span> &#123;Subject&#125; <span class="keyword">from</span> <span class="string">'rxjs/Subject'</span></span><br><span class="line"><span class="keyword">import</span> &#123;debounceTime&#125; <span class="keyword">from</span> <span class="string">'rxjs/operators'</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@Directive</span>(&#123;</span><br><span class="line">  selector: <span class="string">'[debounce]'</span></span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> DebounceDirective <span class="keyword">implements</span> OnInit &#123;</span><br><span class="line">  <span class="meta">@Input</span>() debounce</span><br><span class="line">  <span class="meta">@Output</span>() debounceKeyup = <span class="keyword">new</span> EventEmitter()</span><br><span class="line">  <span class="keyword">private</span> keyupSubject = <span class="keyword">new</span> Subject()</span><br><span class="line"></span><br><span class="line">  <span class="keyword">constructor</span>(<span class="params"></span>) &#123;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  ngOnInit() &#123;</span><br><span class="line">    <span class="keyword">this</span>.keyupSubject</span><br><span class="line">      .pipe(debounceTime(<span class="keyword">this</span>.debounce || <span class="number">500</span>))</span><br><span class="line">      .subscribe(<span class="function"><span class="params">e</span> =&gt;</span> <span class="keyword">this</span>.debounceKeyup.emit(e))</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@HostListener</span>(<span class="string">'keyup'</span>, [<span class="string">'$event'</span>])</span><br><span class="line">  keyupEvent(event) &#123;</span><br><span class="line">    event.preventDefault()</span><br><span class="line">    event.stopPropagation()</span><br><span class="line">    <span class="keyword">this</span>.keyupSubject.next(event)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<li><p>管理员角色：</p>
+<ul>
+<li>dbAdmin</li>
+<li>userAdmin</li>
+<li>dbOwner</li>
+</ul>
 </li>
 </ol>
+<h3 id="创建只读用户"><a href="#创建只读用户" class="headerlink" title="创建只读用户"></a>创建只读用户</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">db.createUser(&#123;user: <span class="string">'readonly'</span>, <span class="built_in">pwd</span>: <span class="string">'pwd'</span>, roles:[&#123;role:<span class="string">'read'</span>, db:<span class="string">'test'</span>&#125;]&#125;)</span><br><span class="line">Successfully added user: &#123;</span><br><span class="line">	<span class="string">"user"</span> : <span class="string">"readonly"</span>,</span><br><span class="line">	<span class="string">"roles"</span> : [</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="string">"role"</span> : <span class="string">"read"</span>,</span><br><span class="line">			<span class="string">"db"</span> : <span class="string">"test"</span></span><br><span class="line">		&#125;</span><br><span class="line">	]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>只读用户可以执行的命令有：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">collStats</span><br><span class="line">dbHash</span><br><span class="line">dbStats</span><br><span class="line">find</span><br><span class="line">killCursors</span><br><span class="line">listIndexes</span><br><span class="line">listCollections</span><br></pre></td></tr></table></figure>
         </div>
         
           <p class="article-more-link">
-            <a href="/debounce-vs-throttle/#more">Read More</a>
+            <a href="/mongodb-readwrite-without-drop/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/debounce-vs-throttle/" data-id="cjkajvcql00084eq3033qy33m" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/mongodb-readwrite-without-drop/" data-id="cjssqvcue00368uq41ylu99be" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-disk-full" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/disk-full/" class="article-date">
+  <time datetime="2018-02-07T06:16:23.000Z" itemprop="datePublished">2018-02-07</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/disk-full/">磁盘空间检查</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在服务器上安装了 gitlab，有一天突然发现挂了，重启也没用，输入命令 <code>df -h</code> 看到：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ df -h</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">文件系统	      容量   已用  可用   已用%% 挂载点</span><br><span class="line">/dev/vda1        20G   19G   0G     100%   /</span><br><span class="line">tmpfs            3.9G  4.0K  3.9G   1%     /dev/shm</span><br><span class="line">/dev/vdb1        99G   16G   79G    17%    /mnt</span><br></pre></td></tr></table></figure>
+<p>磁盘空间不够，进入跟目录，使用命令：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">du -sh *</span><br></pre></td></tr></table></figure>
+<p>逐步定位大文件，删除了一些无用的文件，特别是 tomcat 日志，3.5G，删掉之后系统恢复正常。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/disk-full/" data-id="cjssqvcs700118uq4aiw9nba4" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-npm-link" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/npm-link/" class="article-date">
+  <time datetime="2018-02-05T01:45:23.000Z" itemprop="datePublished">2018-02-05</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/npm-link/">npm link</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <blockquote>
+<p><code>npm link</code>命令可以将一个任意位置的<code>npm包</code>链接到全局执行环境，从而在任意位置使用命令行都可以直接运行该npm包。</p>
+</blockquote>
+<p>当运行<code>npm link</code>时发生了两件事：</p>
+<ul>
+<li>为npm包目录创建软链接，将其链到<code>{prefix}/lib/node_modules/&lt;package&gt;</code></li>
+<li>为可执行文件(bin)创建软链接，将其链到<code>{prefix}/bin/{name}</code></li>
+</ul>
+<p>在 windows 中：</p>
+<ul>
+<li>目录: <code>C:\Users\{Username}\AppData\Roaming\npm\node_modules\&lt;package&gt;</code></li>
+<li>文件: <code>C:\Users\{Username}\AppData\Roaming\npm\&lt;name&gt;</code></li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm init -f</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/npm-link/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/npm-link/" data-id="cjssqvcut003k8uq4w6i36hsa" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-git-branch-manage" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/git-branch-manage/" class="article-date">
-  <time datetime="2018-02-01T07:50:13.000Z" itemprop="datePublished">2018-02-01</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/git-branch-manage/">git 分支管理</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <h2 id="Git-分支管理"><a href="#Git-分支管理" class="headerlink" title="Git 分支管理"></a>Git 分支管理</h2><p>首先要明确下面两个分支的概念：</p>
-<table>
-<thead>
-<tr>
-<th>分支</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>develop</td>
-<td>包含的是下个版本需要发布的内容</td>
-</tr>
-<tr>
-<td>master</td>
-<td>包含的是可以部署到生产环境中的代码</td>
-</tr>
-</tbody>
-</table>
-<p>意思是说：</p>
-<ul>
-<li>develop 分支，是用于随时可以发布到 <code>develop</code> 的代码，便于线上测试；</li>
-<li>master 分支，是用于随时可以发布到 <code>master.com</code> 生产环境的代码。</li>
-</ul>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/git-branch-manage/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/git-branch-manage/" data-id="cjhq778kv007oizq3p4z1rf4l" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/">Git</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-load-balance" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/load-balance/" class="article-date">
-  <time datetime="2018-01-27T01:57:07.000Z" itemprop="datePublished">2018-01-27</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/load-balance/">负载均衡配置</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>负载均衡，单从字面上的意思来理解就可以解释N台服务器平均分担负载，不会因为某台服务器负载高宕机和某台服务器闲置的情况，那么负载均衡的前提就是要2台以上服务器才能实现。假设我现在有三个 server，分别是：</p>
-<ul>
-<li>master（192.168.120.7）</li>
-<li>minion1 （192.168.120.8）</li>
-<li>minion2（192.168.120.9）</li>
-</ul>
-<p>我们把域名解析到 master 服务器的 80 端口，然后由 master 服务器的 80 端口转发到 minion1 服务器的 8080 端口和 minion2 服务器的 8081 端口。如果没有多台服务器，也可以用一台进行测试，使用不同端口即可。下面使用 nginx 和 haproxy 来实现负载均衡。</p>
-<h2 id="nginx"><a href="#nginx" class="headerlink" title="nginx"></a>nginx</h2><p>单配置：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">upstream anyname &#123;</span><br><span class="line">      server minion1:8080;</span><br><span class="line">      server minion2:8081;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">server&#123; </span><br><span class="line">    listen 80; </span><br><span class="line">    server_name 192.168.120.7; </span><br><span class="line">    location / &#123; </span><br><span class="line">        proxy_pass         http://anyname; </span><br><span class="line">        proxy_set_header   Host             $host; </span><br><span class="line">        proxy_set_header   X-Real-IP        $remote_addr; </span><br><span class="line">        proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for; </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/load-balance/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/load-balance/" data-id="cjhq778p500ckizq3y1j8cfb5" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-angular-ie9" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/angular-ie9/" class="article-date">
-  <time datetime="2018-01-25T13:10:23.000Z" itemprop="datePublished">2018-01-25</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/angular-ie9/">Angular 兼容 IE9</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>使用官网的 quickstart 是不兼容 IE9 的，我们需要另外配置使其兼容IE9，在 index.html 中引入 polyfill：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- Polyfill(s) for older browsers --&gt;</span><br><span class="line">&lt;script src=&quot;node_modules/core-js/client/shim.min.js&quot;&gt;&lt;/script&gt;</span><br><span class="line">&lt;script src=&quot;//cdnjs.cloudflare.com/ajax/libs/classlist/2014.01.31/classList.min.js&quot;&gt;&lt;/script&gt;</span><br></pre></td></tr></table></figure>
-<p>另外可能还要配置路由为 HashLocationStrategy，即在 RouterModule.forRoot 中设置 useHash 属性：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">imports: [</span><br><span class="line">       RouterModule.forRoot(appRoutes,&#123;useHash:true&#125;)</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/angular-ie9/" data-id="cjssqvcrh00098uq42p1rku9n" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Angular/">Angular</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-private-docker-registery" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/private-docker-registery/" class="article-date">
-  <time datetime="2018-01-25T06:58:23.000Z" itemprop="datePublished">2018-01-25</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/private-docker-registery/">搭建 docker 私有仓库</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>有时候需要在多个环境部署 docker 应用，在每一台机器上从头开始构建 image 比较耗时，我们可以搭建私有仓库，从 docker 官方公开仓库拉取镜像，在本地进行加工处理成私有镜像后，直接上传到私有仓库，这样每个主机就可以从私有仓库拉取制作好的私有镜像了，如下图所示：</p>
-<p><img src="http://img.react.ren/blog/private-docker-registry.png" alt="private-docker-registry"></p>
-<p>可以通过下面的命令启动官方的 registry ：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d -p 5000:5000 --restart=always --name registry registry</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/private-docker-registery/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/private-docker-registery/" data-id="cjkajvcr3000n4eq3qfcfrs1u" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-nfs-notes" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/nfs-notes/" class="article-date">
-  <time datetime="2018-01-23T08:04:07.000Z" itemprop="datePublished">2018-01-23</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/nfs-notes/">NFS笔记</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>NFS (network file system) 网络文件系统，类似 Windows 中的文件夹共享，多台机器可以访问同一个目录。</p>
-<h2 id="服务端"><a href="#服务端" class="headerlink" title="服务端"></a>服务端</h2><p>NFS 其实可以被视为一个 RPC 服务，可以通过下面的命令开启：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">systemctl start rpcbind <span class="comment"># 开启 rpcbind</span></span><br><span class="line">systemctl start nfs <span class="comment"># 开启 nfs</span></span><br></pre></td></tr></table></figure>
-<p>如果系统没安装的话，使用下面的命令安装：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">yum install nfs-utils</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加开启启动</span></span><br><span class="line">systemctl <span class="built_in">enable</span> rpcbind.service</span><br><span class="line">systemctl <span class="built_in">enable</span> nfs-server.service</span><br></pre></td></tr></table></figure>
-<p>然后就可以添加从机了，假如我们想共享本地文件夹 /home/nfs：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">vim  /etc/exports</span><br><span class="line">/home/nfs 192.168.120.8(rw,all_squash,anonuid=1000,anongid=1000) 192.168.120.9(rw,all_squash,anonuid=1000,anongid=1000) </span><br><span class="line"><span class="comment"># 或者</span></span><br><span class="line">/home/nfs 192.168.120.8(rw,sync,fsid=0,anonuid=0,anongid=0) 192.168.120.9(rw,sync,fsid=0,anonuid=0,anongid=0)</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/nfs-notes/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/nfs-notes/" data-id="cjhq778qj00egizq33h62dfti" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
 
     </footer>
   </div>
@@ -579,7 +593,7 @@
 
 
   <nav id="page-nav">
-    <a class="extend prev" rel="prev" href="/page/13/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/12/">12</a><a class="page-number" href="/page/13/">13</a><span class="page-number current">14</span><a class="page-number" href="/page/15/">15</a><a class="page-number" href="/page/16/">16</a><span class="space">&hellip;</span><a class="page-number" href="/page/49/">49</a><a class="extend next" rel="next" href="/page/15/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/13/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/12/">12</a><a class="page-number" href="/page/13/">13</a><span class="page-number current">14</span><a class="page-number" href="/page/15/">15</a><a class="page-number" href="/page/16/">16</a><span class="space">&hellip;</span><a class="page-number" href="/page/52/">52</a><a class="extend next" rel="next" href="/page/15/">Next &raquo;</a>
   </nav>
 </section>
 

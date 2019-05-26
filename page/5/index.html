@@ -54,6 +54,413 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-mongodb-bulk" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/mongodb-bulk/" class="article-date">
+  <time datetime="2018-09-01T13:52:22.000Z" itemprop="datePublished">2018-09-01</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/mongodb-bulk/">MongoDB 批量操作</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>批量写入的速度比 promise.all 单个写入速度快多了：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">use YOUR_DB</span><br><span class="line">var bulk = db.collection.initializeUnorderedBulkOp()</span><br><span class="line">bulk.find( &#123; _id : 1 &#125; ).upsert().update( &#123; $set: &#123; &quot;text&quot;: &quot;something else&quot; &#125; &#125; )</span><br><span class="line">bulk.find( &#123; _id : 4 &#125; ).upsert().update( &#123; $set: &#123; &quot;text&quot;: &quot;baz&quot; &#125; &#125; )</span><br><span class="line">bulk.find( &#123; _id : 99 &#125; ).upsert().update( &#123; $set: &#123; &quot;text&quot;: &quot;mrga&quot; &#125; &#125; )</span><br><span class="line">bulk.execute()</span><br></pre></td></tr></table></figure>
+<ul>
+<li><strong>Orderred</strong>: 按照添加的顺序执行，如果发生错误将停止批处理，并返回错误。</li>
+<li><strong>UnOrderred</strong>: 并行执行，遇到错误不返回。</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/mongodb-bulk/" data-id="cjw53wyao000em5q4ybk7wpxl" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MongoDB/">MongoDB</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-micro-service-notes" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/micro-service-notes/" class="article-date">
+  <time datetime="2018-08-24T13:51:23.000Z" itemprop="datePublished">2018-08-24</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/micro-service-notes/">微服务学习笔记</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>把传统业务拆分成微服务的时候，要注意下面的要点：</p>
+<ol>
+<li>区分边界服务和内部服务。边界服务是会接受公网流量的服务，比如处理HTTP请求的服务；反之就是内部服务。边界服务和内部服务在安全方面的考虑是不一样的，例如边界服务需要做针对User的鉴权等等。</li>
+<li>区分基础和业务服务。业务服务追求变化，feature，基础服务追求稳定，性能。</li>
+<li>一定要考虑调用失败的场景。微服务的提供方，一定要考虑调用可能会有bug，比如出现死循环。</li>
+<li>没有把握的做到合理拆分的时候可以选择先不拆，等到发现瓶颈了自然就知道怎么拆了。</li>
+</ol>
+<p>从通信类型的角度看，大概有三种类型：</p>
+<ol>
+<li>同步调用</li>
+<li>异步调用</li>
+<li>广播</li>
+</ol>
+<p>在微服务的设计之初要想清楚调用关系以及调用方式，哪些需要同步，哪些可以异步，哪些需要广播，最好团队内部要有统一的认识。然后就是要确定好调用协议了，例如常见的选择有：</p>
+<ul>
+<li>同步调用：HTTP REST, gRPC, thrift, etc.</li>
+<li>异步调用：Sidekiq, Celery, etc. 对应的backend有 Redis, 各类 AMQP 实现, Kafka 等等</li>
+<li>广播：各类 AMQP 实现, Kafka，etc.</li>
+</ul>
+<p>微服务除了是个技术活，更是个管理活。一定得有和微服务相融的团队组织方式和工作流程。首先就是要成立架构组。架构组要负责微服务的基础设施的建设，例如 CI/CD 系统， Kubernetes 集群，Service Mesh 集群，监控报警系统，日志手机系统，基础的工具和库的构建和维护。在我们的实践中，每个微服务团队由2-3人组成，有一个master，负责 DevOps 流程的建设，权限的分配等等一系列工作。例如我们的DevOps是基于 GitLab CI 和 kubernetes 的，所以 master 要负责 .gitlab-ci.yml ，以及所有自己服务相关的 k8s 的 deployment, job, service 等等的编写维护。</p>
+<p>【备注】此笔记中的观点来自网络收集，用于记录微服务最佳实践，学习共勉。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/micro-service-notes/" data-id="cjw53wyal000bm5q467dqyy35" class="article-share-link">Share</a>
+     
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-though2-notes" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/though2-notes/" class="article-date">
+  <time datetime="2018-08-14T02:09:03.000Z" itemprop="datePublished">2018-08-14</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/though2-notes/">though2 快速创建转换流</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>下面几个包是对 nodejs 原生流的封装，有了这些库之后使用起来会更方便。</p>
+<ul>
+<li>through2 用于快速创建转化流</li>
+<li>from2 用于快速创建输入流</li>
+<li>writable2 用于快速创建输出流</li>
+</ul>
+<p>最常用的是 through2，它能够让使用者只关注对流的处理，而不需要每次都要去创建 stream， 例如一个大写化的 stream：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ThroughStream</span> <span class="keyword">extends</span> <span class="title">stream</span>.<span class="title">Transform</span> </span>&#123;</span><br><span class="line">  <span class="keyword">constructor</span>(options) &#123;</span><br><span class="line">    <span class="keyword">super</span>(options);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  _transform(chunk, enc, cb) &#123;</span><br><span class="line">    <span class="keyword">this</span>.push(chunk.toString().replace(<span class="regexp">/\n/</span>, <span class="string">''</span>).toUpperCase());</span><br><span class="line">    cb();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/though2-notes/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/though2-notes/" data-id="cjssqvcvd004a8uq4ueah73gw" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-moment-timezone" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/moment-timezone/" class="article-date">
+  <time datetime="2018-08-13T02:14:07.000Z" itemprop="datePublished">2018-08-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/moment-timezone/">关于 moment-timezone</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p> moment 默认会使用系统时区，如果要重置时区，使用下面的命令：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">moment.tz.setDefault(<span class="built_in">String</span>)</span><br><span class="line">moment.tz.setDefault(<span class="string">"America/New_York"</span>)</span><br></pre></td></tr></table></figure>
+<p>恢复默认：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">moment.tz.setDefault()</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>注意：如果根据某个时区创建了moment对象，后面又改变了时区，那么只会影响改变时区事件发生后的对象，之前的对象时区未变！对之前的对象进行 clone 也不会变为新时区，也就是说对象的时区保存了创建时 moment 时区的快照！</p>
+</blockquote>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/moment-timezone/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/moment-timezone/" data-id="cjssqvcua00308uq4gy602aai" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-docker-ps-format" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/docker-ps-format/" class="article-date">
+  <time datetime="2018-07-31T01:24:23.000Z" itemprop="datePublished">2018-07-31</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/docker-ps-format/">docker ps 指定列</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>通过 <code>--format</code> 参数，可以在 <code>docker ps</code> 的时候指定输出的列：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 输出名称和镜像</span></span><br><span class="line">docker ps --format <span class="string">'&#123;&#123;.Names&#125;&#125;\t&#123;&#123;.Image&#125;&#125;'</span></span><br><span class="line"><span class="comment"># 按照表格展示</span></span><br><span class="line">docker ps --format <span class="string">'table &#123;&#123;.Names&#125;&#125;\t&#123;&#123;.Image&#125;&#125;'</span></span><br></pre></td></tr></table></figure>
+<p>还可以修改默认输出格式，默认配置文件是：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">~/.docker/config.json</span><br></pre></td></tr></table></figure>
+<p>然后添加下面的自定义参数：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"psFormat"</span>: <span class="string">"table &#123;&#123;.Names&#125;&#125;\\t&#123;&#123;.Image&#125;&#125;\\t&#123;&#123;.RunningFor&#125;&#125; ago\\t&#123;&#123;.Status&#125;&#125;\\t&#123;&#123;.Command&#125;&#125;"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/docker-ps-format/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/docker-ps-format/" data-id="cjssqvcsc00198uq44yf7tonb" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-mongoose-schema-default-field" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/mongoose-schema-default-field/" class="article-date">
+  <time datetime="2018-07-26T07:48:22.000Z" itemprop="datePublished">2018-07-26</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/mongoose-schema-default-field/">mongodb default 字段</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>例如模型：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> mongoose = <span class="built_in">require</span>(<span class="string">'mongoose'</span>)</span><br><span class="line"><span class="keyword">const</span> Schema = mongoose.Schema</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> Model = mongoose.model(<span class="string">'holiday'</span>, <span class="keyword">new</span> Schema(&#123;</span><br><span class="line">  name: &#123;<span class="attr">type</span>: <span class="built_in">String</span>&#125;,</span><br><span class="line">  startAt: &#123;<span class="attr">type</span>: <span class="built_in">Date</span>&#125;,</span><br><span class="line">  endAt: &#123;<span class="attr">type</span>: <span class="built_in">Date</span>&#125;</span><br><span class="line">&#125;))</span><br><span class="line"></span><br><span class="line"><span class="built_in">module</span>.exports = Model</span><br></pre></td></tr></table></figure>
+<p>加个 nation 字段，表示国家，默认是中国。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nation: &#123;<span class="attr">type</span>: <span class="built_in">String</span>, <span class="attr">default</span>: <span class="string">'zh-cn'</span>&#125;</span><br></pre></td></tr></table></figure>
+<p>然后再添加 holiday 时，如果未指定 nation，会自动创建。这个时候数据库中的历史数据并没有 nation，需要写个脚本全部加上：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(!it.nation) &#123;</span><br><span class="line">    it.nation = <span class="string">'zh-cn'</span></span><br><span class="line">    it.save()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>但是问题就出在了 it.nation 这里，因为有 default，所以即使数据库中没有存这个字段，也会返回默认值。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/mongoose-schema-default-field/" data-id="cjssqvcug00398uq4p1q0mszt" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MongoDB/">MongoDB</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-auto-increase-field" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/auto-increase-field/" class="article-date">
+  <time datetime="2018-07-24T01:46:09.000Z" itemprop="datePublished">2018-07-24</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/auto-increase-field/">mongodb 自增字段</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>想在 MongoDB 中实现自增的字段，首先定义一个 counter 模型：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> mongoose = <span class="built_in">require</span>(<span class="string">'mongoose'</span>)</span><br><span class="line"><span class="keyword">const</span> Schema = mongoose.Schema</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> Model = mongoose.model(<span class="string">'counter'</span>, <span class="keyword">new</span> Schema(&#123;</span><br><span class="line">  _id: &#123;<span class="attr">type</span>: <span class="built_in">String</span>, <span class="attr">required</span>: <span class="literal">true</span>&#125;,</span><br><span class="line">  seq: &#123;<span class="attr">type</span>: <span class="built_in">Number</span>, <span class="attr">default</span>: <span class="number">0</span>&#125;</span><br><span class="line">&#125;, &#123;<span class="attr">timestamps</span>: <span class="literal">true</span>&#125;))</span><br><span class="line"></span><br><span class="line"><span class="built_in">module</span>.exports = Model</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/auto-increase-field/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/auto-increase-field/" data-id="cjkajvcqf00034eq3euj25isf" class="article-share-link">Share</a>
+     
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-css-first-element-with-class" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/css-first-element-with-class/" class="article-date">
+  <time datetime="2018-07-20T02:06:07.000Z" itemprop="datePublished">2018-07-20</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/css-first-element-with-class/">CSS选择第一个拥有某类的元素</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>现在有如下 HTML 结构：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"home"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">span</span>&gt;</span>blah<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">p</span> <span class="attr">class</span>=<span class="string">"red"</span>&gt;</span>first<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">p</span> <span class="attr">class</span>=<span class="string">"red"</span>&gt;</span>second<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">p</span> <span class="attr">class</span>=<span class="string">"red"</span>&gt;</span>third<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">p</span> <span class="attr">class</span>=<span class="string">"red"</span>&gt;</span>fourth<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>想只给第一个拥有 red 类的元素设置红色边框，应该如何做呢？很多人可能会使用 <code>:first-child</code> 选择器：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-class">.home</span> <span class="selector-class">.red</span><span class="selector-pseudo">:first-child</span> &#123;</span><br><span class="line">    <span class="attribute">border</span>: <span class="number">1px</span> solid red;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/css-first-element-with-class/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/css-first-element-with-class/" data-id="cjw53wyaa0001m5q4mjxrds3j" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CSS/">CSS</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-angular-hmr" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/angular-hmr/" class="article-date">
@@ -147,399 +554,10 @@
 
 
   
-    <article id="post-node-get-parent-file-path" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/node-get-parent-file-path/" class="article-date">
-  <time datetime="2018-07-06T01:54:56.000Z" itemprop="datePublished">2018-07-06</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/node-get-parent-file-path/">js 获取引用自己的那个文件所在的目录</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>如果 <code>a.js</code> 引用了 <code>b.js</code>，如果在 <code>b.js</code> 里面获取到引用它的文件（也就是 <code>a.js</code>）所在的文件夹呢？答案是：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>.parent.filename</span><br></pre></td></tr></table></figure>
-<p>例如：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cosnt path = <span class="built_in">require</span>(<span class="string">'path'</span>)</span><br><span class="line"><span class="built_in">console</span>.log(path.dirname(<span class="built_in">module</span>.parent.filename))</span><br></pre></td></tr></table></figure>
-<p>如果要获取最开始被执行的那个 js 文件，可以用：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">require</span>.main.filename</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/node-get-parent-file-path/" data-id="cjkajvcr1000m4eq3lnmu9iw0" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-git-commit-log" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/git-commit-log/" class="article-date">
-  <time datetime="2018-07-05T02:17:56.000Z" itemprop="datePublished">2018-07-05</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/git-commit-log/">Git 提交规范</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>分为 header 和 body 两个部分：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;type&gt;: &lt;subject&gt;</span><br><span class="line"></span><br><span class="line">&lt;body&gt;</span><br></pre></td></tr></table></figure>
-<h2 id="头部-header"><a href="#头部-header" class="headerlink" title="头部 header"></a>头部 header</h2><p>header 由 type 和 subject 两部分组成：</p>
-<h4 id="type"><a href="#type" class="headerlink" title="type"></a>type</h4><p>表示类型，只能是下几种：</p>
-<ul>
-<li><strong>feat: 新功能</strong></li>
-<li><strong>fix: 修复问题</strong></li>
-<li>docs: 修改文档</li>
-<li>style: 修改代码格式，不影响代码逻辑</li>
-<li>refactor: 重构代码，理论上不影响现有功能</li>
-<li><strong>perf: 提升性能</strong></li>
-<li>test: 增加修改测试用例</li>
-<li>chore: 改变构建流程、或者增加依赖库、工具等</li>
-<li>revert: 回滚到上一个版本</li>
-</ul>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/git-commit-log/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/git-commit-log/" data-id="cjkajvcqr000c4eq3l0drch41" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/">Git</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-find-node_modules-from-any-directory" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/find-node_modules-from-any-directory/" class="article-date">
-  <time datetime="2018-07-04T02:25:15.000Z" itemprop="datePublished">2018-07-04</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/find-node_modules-from-any-directory/">nodejs 加载模块时指定搜索 node_module 的初始目录</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>先看这样的场景，假如某项目的目录结构如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">.</span><br><span class="line">|____A</span><br><span class="line">| |____package.json</span><br><span class="line">| |____node_modules</span><br><span class="line">| |____main.js</span><br><span class="line">| |____a.js</span><br><span class="line">|</span><br><span class="line">|____B</span><br><span class="line">| |____package.json</span><br><span class="line">| |____node_modules</span><br><span class="line">| |____main.js</span><br><span class="line">| |____b.js</span><br></pre></td></tr></table></figure>
-<p>A 和 B 文件夹各有 <code>a.js</code> 和 <code>b.js</code> 文件，都有 <code>main.js</code> 和 <code>node_modules</code> 文件夹，<code>a.js</code> 和 <code>b.js</code> 的内容都是：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> moment = <span class="built_in">require</span>(<span class="string">'moment'</span>)</span><br><span class="line"><span class="built_in">module</span>.exports = moment</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/find-node_modules-from-any-directory/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/find-node_modules-from-any-directory/" data-id="cjssqvcsh001h8uq4at4z2zwz" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-trim-comment" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/trim-comment/" class="article-date">
-  <time datetime="2018-07-03T06:35:03.000Z" itemprop="datePublished">2018-07-03</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/trim-comment/">一句正则去除注释</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> noComments = text.replace(<span class="regexp">/\/\*(.|[\r\n])*?\*\//g</span>, <span class="string">''</span>).replace(<span class="regexp">/\/\/.*/gm</span>, <span class="string">''</span>);</span><br></pre></td></tr></table></figure>
-<p>在普通的场景下是完全适用的，但是并不完全可靠，例如：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a = <span class="string">"/*"</span></span><br><span class="line">someImportantLogicHere()</span><br><span class="line"><span class="keyword">var</span> b = <span class="string">"*/"</span></span><br></pre></td></tr></table></figure>
-<p>就会得到</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a = <span class="string">""</span></span><br></pre></td></tr></table></figure>
-<p>并不是我们想看到的结果，感觉通过正则表达式来去除注释不是很可靠，AST 靠谱一些。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/trim-comment/" data-id="cjssqvcvf004c8uq4geylbyhn" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-alpine-set-timezone" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/alpine-set-timezone/" class="article-date">
-  <time datetime="2018-06-29T01:40:23.000Z" itemprop="datePublished">2018-06-29</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/alpine-set-timezone/">alpine 设置时区</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>在 Linux 中查看服务器时区：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">date -R</span><br><span class="line">Wed, 01 Aug 2017 17:05:44 +0800</span><br></pre></td></tr></table></figure>
-<p>最后的 <code>+0800</code> 表示东八区，在 alpine 中设置时区需要安装 tzdata 这个依赖，可以进入容器内进行安装：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装和更新依赖</span></span><br><span class="line">RUN apk update</span><br><span class="line">RUN apk upgrade</span><br><span class="line">RUN apk add ca-certificates &amp;&amp; update-ca-certificates</span><br><span class="line"><span class="comment"># 修改时区</span></span><br><span class="line">RUN apk add --update tzdata</span><br><span class="line">ENV TZ=Asia/Shanghai</span><br><span class="line"><span class="comment"># 清空缓存包</span></span><br><span class="line">RUN rm -rf /var/cache/apk/*</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/alpine-set-timezone/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/alpine-set-timezone/" data-id="cjkdl4umc00004hq31ytd7ozm" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-http-toolkit" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/http-toolkit/" class="article-date">
-  <time datetime="2018-06-29T01:39:23.000Z" itemprop="datePublished">2018-06-29</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/http-toolkit/">原生网络请求类库</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>用原生 js 封装一些网络请求的方法：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">ajax</span>(<span class="params">options = &#123;&#125;</span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">  options.method = (options.method || <span class="string">'GET'</span>).toUpperCase()</span><br><span class="line">  options.data = options.data || &#123;&#125;</span><br><span class="line">  options.params = formatParams(options.params)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">let</span> xhr</span><br><span class="line">  <span class="keyword">if</span> (<span class="built_in">window</span>.XMLHttpRequest) &#123;</span><br><span class="line">    xhr = <span class="keyword">new</span> XMLHttpRequest()</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    xhr = <span class="keyword">new</span> ActiveXObject(<span class="string">'Microsoft.XMLHTTP'</span>)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  xhr.onreadystatechange = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (xhr.readyState === <span class="number">4</span>) &#123;</span><br><span class="line">      <span class="keyword">const</span> status = xhr.status</span><br><span class="line">      <span class="keyword">const</span> json = <span class="built_in">JSON</span>.parse(xhr.responseText)</span><br><span class="line">      <span class="keyword">if</span> (status &gt;= <span class="number">200</span> &amp;&amp; status &lt; <span class="number">300</span>) &#123;</span><br><span class="line">        options.success &amp;&amp; options.success(json)</span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        options.fail &amp;&amp; options.fail(json)</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (options.method === <span class="string">'GET'</span>) &#123;</span><br><span class="line">    xhr.open(<span class="string">'GET'</span>, options.url + options.params, <span class="literal">true</span>)</span><br><span class="line">    xhr.send(<span class="literal">null</span>)</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (options.method === <span class="string">'POST'</span>) &#123;</span><br><span class="line">    xhr.open(<span class="string">'POST'</span>, options.url + options.params, <span class="literal">true</span>)</span><br><span class="line">    xhr.setRequestHeader(<span class="string">'Content-Type'</span>, <span class="string">'application/json'</span>)</span><br><span class="line">    xhr.send(<span class="built_in">JSON</span>.stringify(options.data))</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">formatParams</span>(<span class="params">params</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (params === <span class="literal">undefined</span> || params === <span class="literal">null</span>) <span class="keyword">return</span> <span class="string">''</span></span><br><span class="line">  <span class="keyword">if</span> (<span class="keyword">typeof</span> params !== <span class="string">'object'</span>) <span class="keyword">return</span> <span class="string">'?'</span> + params.toString()</span><br><span class="line">  <span class="keyword">const</span> arr = []</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">let</span> key <span class="keyword">in</span> params) &#123;</span><br><span class="line">    arr.push(<span class="built_in">encodeURIComponent</span>(key) + <span class="string">'='</span> + <span class="built_in">encodeURIComponent</span>(params[key]))</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (arr.length) <span class="keyword">return</span> <span class="string">'?'</span> + arr.join(<span class="string">'&amp;'</span>)</span><br><span class="line">  <span class="keyword">return</span> <span class="string">''</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">request</span>(<span class="params">options</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> success = <span class="function"><span class="params">res</span> =&gt;</span> resolve(res)</span><br><span class="line">    <span class="keyword">const</span> fail = <span class="function"><span class="params">err</span> =&gt;</span> reject(err)</span><br><span class="line">    ajax(&#123;...options, success, fail&#125;)</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">jsonp</span>(<span class="params">url, callback</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> ref = <span class="built_in">document</span>.getElementsByTagName(<span class="string">'script'</span>)[<span class="number">0</span>]</span><br><span class="line">  <span class="keyword">const</span> script = <span class="built_in">document</span>.createElement(<span class="string">'script'</span>)</span><br><span class="line">  <span class="built_in">window</span>.jsonpCallback = callback</span><br><span class="line">  script.src = url + (url.indexOf(<span class="string">'?'</span>) + <span class="number">1</span> ? <span class="string">'&amp;'</span> : <span class="string">'?'</span>) + <span class="string">'callback=jsonpCallback'</span></span><br><span class="line">  ref.parentNode.insertBefore(script, ref)</span><br><span class="line">  script.onload = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.remove()</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;ajax, request, jsonp&#125;</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/http-toolkit/" data-id="cjvrpwbjz0009ofq47r1qwblw" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/HTTP/">HTTP</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-install-java-on-centos" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/install-java-on-centos/" class="article-date">
-  <time datetime="2018-06-25T12:04:20.000Z" itemprop="datePublished">2018-06-25</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/install-java-on-centos/">Centos 安装 Java</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Centos 安装 Java：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">yum install java-1.8.0-openjdk <span class="comment"># 安装jre</span></span><br><span class="line">yum install java-1.8.0-openjdk-devel <span class="comment"># 安装jdk</span></span><br></pre></td></tr></table></figure>
-<p>但是需要手动配置 JAVA_HOME 的环境变量，openJDK安装好后的目录位于：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.181-3.b13.el7_5.x86_64</span><br></pre></td></tr></table></figure>
-<p>其他版本都在 <code>/usr/lib/jvm</code> 下，包括 jre 和 jdk，<code>vim ~/.bashrc</code>，</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.181-3.b13.el7_5.x86_64</span><br><span class="line"><span class="built_in">export</span> CLASSPATH=.:<span class="variable">$JAVA_HOME</span>/jre/lib/rt.jar:<span class="variable">$JAVA_HOME</span>/lib/dt.jar:<span class="variable">$JAVA_HOME</span>/lib/tools.jar </span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$PATH</span>:<span class="variable">$JAVA_HOME</span>/bin</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/install-java-on-centos/" data-id="cjssqvctq00278uq45xgtmgle" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-mongodb-$cond" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/mongodb-$cond/" class="article-date">
-  <time datetime="2018-06-25T11:27:56.000Z" itemprop="datePublished">2018-06-25</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/mongodb-$cond/">mongodb $cond 运算符</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p><code>$cond</code> 运算符能够在聚合的时候进行条件判断，类似于编程语言中的 if/else，它有两种语法：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&#123; $cond: &#123; if: &lt;判断条件&gt;, then: &lt;真值&gt;, else: &lt;假值&gt; &#125; &#125;</span><br><span class="line">&#123; $cond: [ &lt;判断条件&gt;, &lt;真值&gt;, &lt;假值&gt; ] &#125;</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/mongodb-$cond/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/mongodb-$cond/" data-id="cjkdl4un100034hq3jr6trq99" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
 
 
   <nav id="page-nav">
-    <a class="extend prev" rel="prev" href="/page/4/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/49/">49</a><a class="extend next" rel="next" href="/page/6/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/4/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/52/">52</a><a class="extend next" rel="next" href="/page/6/">Next &raquo;</a>
   </nav>
 </section>
 

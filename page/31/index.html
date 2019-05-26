@@ -54,10 +54,10 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-mongodb-fuzzy-search" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-mongodb-data-migration" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/mongodb-fuzzy-search/" class="article-date">
-  <time datetime="2017-05-07T05:32:07.000Z" itemprop="datePublished">2017-05-07</time>
+    <a href="/mongodb-data-migration/" class="article-date">
+  <time datetime="2017-06-14T00:58:02.000Z" itemprop="datePublished">2017-06-14</time>
 </a>
     
   </div>
@@ -68,143 +68,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/mongodb-fuzzy-search/">mongodb模糊查询</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>mongoose 如何实现类似于SQL中 nick LIKE ‘%keyword%’ or email LIKE ‘%keyword%’ 这种多条件模糊搜索的问题。 用到了 query.$or 和 query.$regex 这两个 find 参数。其中 query.$or 用于实现多条件查询，其值是一个数组。示例代码：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">query.or([&#123; <span class="attr">color</span>: <span class="string">'red'</span> &#125;, &#123; <span class="attr">status</span>: <span class="string">'emergency'</span> &#125;])</span><br></pre></td></tr></table></figure>
-<p>query.$regex用于实现模糊查询。示例代码:</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&#123; &lt;field&gt;: &#123; <span class="attr">$regex</span>: <span class="regexp">/pattern/</span>, <span class="attr">$options</span>: <span class="string">'&lt;options&gt;'</span> &#125; &#125;</span><br><span class="line">&#123; &lt;field&gt;: <span class="regexp">/pattern/</span><span class="xml"><span class="tag">&lt;<span class="name">options</span>&gt;</span> &#125;</span></span><br></pre></td></tr></table></figure>
-<p>通过以上两个参数就可以实现多条件模糊查询了。以User表为例,通过输入一个关键字,来匹配昵称或者邮箱与关键字相近的记录。示例代码:</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> keyword = <span class="keyword">this</span>.params.keyword <span class="comment">//从URL中传来的 keyword参数</span></span><br><span class="line"><span class="keyword">const</span> reg = <span class="keyword">new</span> <span class="built_in">RegExp</span>(keyword, <span class="string">'i'</span>) <span class="comment">//不区分大小写</span></span><br><span class="line"><span class="keyword">const</span> result = <span class="keyword">yield</span> User.find(</span><br><span class="line">    &#123;</span><br><span class="line">        $or : [ <span class="comment">//多条件，数组</span></span><br><span class="line">            &#123;<span class="attr">nick</span> : &#123;<span class="attr">$regex</span> : reg&#125;&#125;,</span><br><span class="line">            &#123;<span class="attr">email</span> : &#123;<span class="attr">$regex</span> : reg&#125;&#125;</span><br><span class="line">        ]</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">        password : <span class="number">0</span></span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">        sort : &#123; <span class="attr">_id</span> : <span class="number">-1</span> &#125;,</span><br><span class="line">        limit : <span class="number">100</span></span><br><span class="line">    &#125;</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/mongodb-fuzzy-search/" data-id="cjhq778pu00diizq3y84erdzv" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-mac-clear-dns" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/mac-clear-dns/" class="article-date">
-  <time datetime="2017-05-06T07:47:07.000Z" itemprop="datePublished">2017-05-06</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/mac-clear-dns/">Mac 清除 DNS 缓存</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="OS-X-Yosemite及更新机型"><a href="#OS-X-Yosemite及更新机型" class="headerlink" title="OS X Yosemite及更新机型"></a>OS X Yosemite及更新机型</h3><p>在 OS X v10.10.4 或更高版本中，请使用以下“终端”命令来还原 DNS 缓存设置：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo killall -HUP mDNSResponder</span><br></pre></td></tr></table></figure>
-<p>在 OS X v10.10 至 v10.10.3 中，请使用以下“终端”命令来还原 DNS 缓存设置：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo discoveryutil mdnsflushcache</span><br></pre></td></tr></table></figure>
-<h3 id="OS-X-Mavericks、Mountain-Lion-和-Lion"><a href="#OS-X-Mavericks、Mountain-Lion-和-Lion" class="headerlink" title="OS X Mavericks、Mountain Lion 和 Lion"></a>OS X Mavericks、Mountain Lion 和 Lion</h3><p>在 OS X v10.9.5 及更低版本中，请使用以下“终端”命令来还原 DNS 缓存设置：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo killall -HUP mDNSResponder</span><br></pre></td></tr></table></figure>
-<h3 id="Mac-OS-X-Snow-Leopard"><a href="#Mac-OS-X-Snow-Leopard" class="headerlink" title="Mac OS X Snow Leopard"></a>Mac OS X Snow Leopard</h3><p>在 OS X v10.6 至 v10.6.8 中，请使用以下“终端”命令来还原 DNS 缓存设置：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo dscacheutil -flushcache</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/mac-clear-dns/" data-id="cjhq778p900cqizq3vszcbepp" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Mac/">Mac</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-mongoose-findByIdAndUpdate" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/mongoose-findByIdAndUpdate/" class="article-date">
-  <time datetime="2017-05-06T03:25:07.000Z" itemprop="datePublished">2017-05-06</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/mongoose-findByIdAndUpdate/">mongoose findByIdAndUpdate 返回新数据</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Mongoose 中 <code>Model.findByIdAndUpdate</code> 操作对象之后，虽然数据库变了，但返回的不是更改之后的值，而是之前的值。如果想让返回结果是新值的话，可以用下面的语法：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Model.findByIdAndUpdate(id, updateObj, &#123;<span class="attr">new</span>: <span class="literal">true</span>&#125;, <span class="function"><span class="keyword">function</span>(<span class="params">err, model</span>) </span>&#123;&#125;)</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/mongoose-findByIdAndUpdate/" data-id="cjhq778q800e2izq39a6058s2" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-feathersjs-notes" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/feathersjs-notes/" class="article-date">
-  <time datetime="2017-05-05T05:31:20.000Z" itemprop="datePublished">2017-05-05</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/feathersjs-notes/">feathersjs学习笔记</a>
+      <a class="article-title" href="/mongodb-data-migration/">mongodb数据迁移</a>
     </h1>
   
 
@@ -216,30 +80,120 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <p>feathersjs是基于express的轻量级node.js框架，借助websocket提供实时通信功能，是面向切片编程（AOP：Aspect Oriented Programming）思想的一种实现。</p>
-<p>在feathersjs中，最核心的概念就是service和hook，hook就是小的中间件函数，能够在应用在service方法的前后。hook和协议无关，无论是http还是websocket都支持，同时hooks和service也没有绑定关系，可以应用于任何service。</p>
-<h2 id="Service"><a href="#Service" class="headerlink" title="Service"></a>Service</h2><p>Service提供了如下方法：</p>
+            <p>MongoDB数据迁移主要用到两个命令，一个是备份命令<code>mongodump</code>，一个是恢复命令<code>mongorestore</code>。</p>
+<h2 id="mongodump"><a href="#mongodump" class="headerlink" title="mongodump"></a>mongodump</h2><p>该命令可以导出所有数据到指定目录中，命令格式：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mongodump -h <span class="string">'dbhost'</span>  -d <span class="string">'dbname'</span> -o <span class="string">'dbdirectory'</span></span><br></pre></td></tr></table></figure>
+<p>参数含义：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">-h: mongodb所在服务器地址，例如127.0.0.1，也可以指定端口:127.0.0.1:27017</span><br><span class="line">-d: 需要备份的数据库名称，例如：test_data</span><br><span class="line">-o: 备份的数据存放的位置，例如：/home/bak(需要提前新建)</span><br><span class="line">-u: 用户名称，使用权限验证的mongodb服务，需要指明导出账号</span><br><span class="line">-p: 用户密码，使用权限验证的mongodb服务，需要指明导出账号密码</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/mongodb-data-migration/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/mongodb-data-migration/" data-id="cjhq778pw00dkizq3k1ojkppk" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-js-mocha-grep" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/js-mocha-grep/" class="article-date">
+  <time datetime="2017-06-10T02:01:58.000Z" itemprop="datePublished">2017-06-10</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/js-mocha-grep/">mocha只执行一个it函数里面的内容</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>mocha 的 <code>--grep</code> 选项:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-g, --grep &lt;pattern&gt;            only run tests matching &lt;pattern&gt;</span><br></pre></td></tr></table></figure>
+<p>还可以使用正则表达式进行匹配，例如 test.js:</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">it(<span class="string">'logs a'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">done</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'a'</span>);</span><br><span class="line">  done();</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">it(<span class="string">'logs b'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">done</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'b'</span>);</span><br><span class="line">  done();</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>Then:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mocha -g <span class="string">'logs a'</span></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/js-mocha-grep/" data-id="cjhq778o800beizq3gjekkjoj" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-NODE_ENV-variable" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/NODE_ENV-variable/" class="article-date">
+  <time datetime="2017-06-06T13:34:47.000Z" itemprop="datePublished">2017-06-06</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/NODE_ENV-variable/">NODE_ENV环境变量</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>通过NODE_ENV可以来设置环境变量（默认值为development），一般我们通过检查这个值来分别对开发环境和生产环境下做不同的处理，可以在命令行中通过下面的方式设置这个值：</p>
 <ul>
-<li>find</li>
-<li>get</li>
-<li>create</li>
-<li>update</li>
-<li>patch</li>
-<li>remove</li>
-<li>setup</li>
+<li>linux &amp; mac: <code>export NODE_ENV=production</code></li>
+<li>windows: <code>set NODE_ENV=production</code></li>
 </ul>
-<p>Service可以作为express中间件，例如：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> messageService = &#123;</span><br><span class="line">  find(params [, callback]) &#123;&#125;, <span class="comment">// GET /messages 获取资源列表</span></span><br><span class="line">  get(id, params [, callback]) &#123;&#125;, <span class="comment">// GET /messages/&lt;id&gt; 获取指定id资源</span></span><br><span class="line">  create(data, params [, callback]) &#123;&#125;, <span class="comment">// POST /messages 创建新资源</span></span><br><span class="line">  update(id, data, params [, callback]) &#123;&#125;, <span class="comment">// PUT /messages[/&lt;id&gt;] 更新指定id资源</span></span><br><span class="line">  patch(id, data, params [, callback]) &#123;&#125;, <span class="comment">// PATCH /messages[/&lt;id&gt;] 为指定id资源增删数据</span></span><br><span class="line">  remove(id, params [, callback]) &#123;&#125;, <span class="comment">// DELETE /messages[/&lt;id&gt;] 删除指定id资源</span></span><br><span class="line">  setup(app, path) &#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">app.use(<span class="string">'/messages'</span>, messageService);</span><br></pre></td></tr></table></figure>
+<p>比方说如果代码中要对生产环境下做一些处理，可以这样写：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (process.env.NODE_ENV === <span class="string">'production'</span>) &#123;</span><br><span class="line">    <span class="comment">// just for production code</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
         </div>
         
           <p class="article-more-link">
-            <a href="/feathersjs-notes/#more">Read More</a>
+            <a href="/NODE_ENV-variable/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/feathersjs-notes/" data-id="cjhq778kh0072izq3cl9n7ymx" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/NODE_ENV-variable/" data-id="cjhq778gg001jizq37hlpap9a" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
@@ -250,10 +204,10 @@
 
 
   
-    <article id="post-typescript-cannot-call-a-namespace" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-encodeURI-vs-encodeURIComponent-1" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/typescript-cannot-call-a-namespace/" class="article-date">
-  <time datetime="2017-04-30T07:45:07.000Z" itemprop="datePublished">2017-04-30</time>
+    <a href="/encodeURI-vs-encodeURIComponent-1/" class="article-date">
+  <time datetime="2017-05-27T07:25:07.000Z" itemprop="datePublished">2017-05-27</time>
 </a>
     
   </div>
@@ -264,7 +218,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/typescript-cannot-call-a-namespace/">cannot call a namespace</a>
+      <a class="article-title" href="/encodeURI-vs-encodeURIComponent-1/">encodeURI 和 encodeURIComponent</a>
     </h1>
   
 
@@ -276,20 +230,27 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <p>使用下面的方式引用moment日期处理包：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> moment <span class="keyword">from</span> <span class="string">'moment'</span></span><br></pre></td></tr></table></figure>
-<p><code>ng serve</code> 编译报错：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">node_modules/moment/moment&quot;&apos; has no default export</span><br></pre></td></tr></table></figure>
+            <p>这两个函数都是用于对 URL 进行编码的，通常如果一样东西需要编码，说明其并不适合传输，例如体积过大、包含隐私数据等。而对于 URL 来说，编码的原因是因为 URL 中有些字符会引起歧义。举两个典型的例子：</p>
+<blockquote>
+<ol>
+<li><p>URL 参数字符串中使用 <code>key=value</code> 键值对来传参，用 <code>&amp;</code> 符号分隔，如 <code>/s?q=abc&amp;ie=utf-8</code>。如果你的 value 字符串中也包含了 <code>=</code> 或者 <code>&amp;</code>，那么就会造成接收 URL 的服务器解析错误，因此必须将引起歧义的 <code>&amp;</code> 和 <code>=</code> 符号进行转义，也就是对其进行编码。</p>
+</li>
+<li><p>URL 的编码格式采用的是 ASCII 码，而不是 Unicode，这也就是说不能在 URL 中包含任何非 ASCII 字符，例如中文、日文、韩文等，否则就会报错：The valid characters are defined in RFC 7230 and RFC 3986。因此需要用 ASCII 码来对 Unicode 进行编码。</p>
+</li>
+</ol>
+</blockquote>
+<p>URL 编码的原则就是使用安全的字符（没有特殊用途或者特殊意义的可打印字符）去表示那些不安全的字符。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">  foo://example.com:8042/over/there?name=ferret#nose</span><br><span class="line"></span><br><span class="line">  \__/ \_______________/\_________/\__________/\__/</span><br><span class="line"></span><br><span class="line">   |           |              |          |       |</span><br><span class="line"></span><br><span class="line">scheme     authority         path       query   fragment</span><br></pre></td></tr></table></figure>
         </div>
         
           <p class="article-more-link">
-            <a href="/typescript-cannot-call-a-namespace/#more">Read More</a>
+            <a href="/encodeURI-vs-encodeURIComponent-1/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/typescript-cannot-call-a-namespace/" data-id="cjhq778ty00i4izq3g8m4e61j" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/encodeURI-vs-encodeURIComponent-1/" data-id="cjkdl4umx00024hq3qzkp72hd" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
@@ -300,10 +261,10 @@
 
 
   
-    <article id="post-javascript-task" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-seneca-fatal-error" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/javascript-task/" class="article-date">
-  <time datetime="2017-04-30T02:45:07.000Z" itemprop="datePublished">2017-04-30</time>
+    <a href="/seneca-fatal-error/" class="article-date">
+  <time datetime="2017-05-23T15:07:07.000Z" itemprop="datePublished">2017-05-23</time>
 </a>
     
   </div>
@@ -314,7 +275,107 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/javascript-task/">JavaScript中的任务</a>
+      <a class="article-title" href="/seneca-fatal-error/">Seneca Fatal Error</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>今天遇到一个错误：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Seneca Fatal Error</span><br><span class="line">==================</span><br><span class="line"></span><br><span class="line">Message: seneca: Action xxxx</span><br></pre></td></tr></table></figure>
+<p>需要加下面的语句才行：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">seneca.fixedargs[<span class="string">'fatal$'</span>] = <span class="literal">false</span>;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/seneca-fatal-error/" data-id="cjssqvcv4003y8uq4eyck3dvk" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-git-cherry-pick" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/git-cherry-pick/" class="article-date">
+  <time datetime="2017-05-23T15:07:07.000Z" itemprop="datePublished">2017-05-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/git-cherry-pick/">将分支 A 上的某些 commit 提交到分支 B</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>cherry-pick 直译为捡樱桃，在 git 里，它的功能是把已经存在的 commit 进行挑选，然后重新提交。比较适合的一个场景是把 A 分支某次提交的功能也提交到 B 分支上，使用方法:</p>
+<ol>
+<li><p>先切换到 A 分支 </p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git checkout A</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>找到这次提交</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ git <span class="built_in">log</span></span><br><span class="line">commit 66cb410ecfe0578ad499669ab78112f3223fa2f8</span><br><span class="line">Author: whl &lt;whl@qq.com&gt;</span><br><span class="line">Date:   Thu Mar 29 17:21:11 2018 +0800</span><br><span class="line"></span><br><span class="line">    bug fixed!</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>再切换到 B 分支</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git checkout B</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>把 A 分支下的这次 commit 重新提交到 B 分支下</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git cherry-pick <span class="string">'66cb410ecfe0578ad499669ab78112f3223fa2f8'</span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>当执行完 cherry-pick 以后，将会生成一个新的提交，这个新的提交的哈希值和原来的不同，但标识名一样。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/git-cherry-pick/" data-id="cjhq778kx007qizq3vc8p02r7" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/">Git</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-javascript-create-object" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/javascript-create-object/" class="article-date">
+  <time datetime="2017-05-23T15:07:07.000Z" itemprop="datePublished">2017-05-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/javascript-create-object/">JavaScript创建对象</a>
     </h1>
   
 
@@ -326,18 +387,29 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <p>题目1：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">setImmediate(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="number">1</span>)</span><br><span class="line">&#125;, <span class="number">0</span>)</span><br><span class="line">setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="number">2</span>)</span><br><span class="line">&#125;, <span class="number">0</span>)</span><br><span class="line"><span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="params">resolve</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="number">3</span>)</span><br><span class="line">    resolve()</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="number">4</span>)</span><br><span class="line">&#125;).then(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="number">5</span>)</span><br><span class="line">&#125;)</span><br><span class="line"><span class="built_in">console</span>.log(<span class="number">6</span>)</span><br><span class="line">process.nextTick(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="number">7</span>)</span><br><span class="line">&#125;)</span><br><span class="line"><span class="built_in">console</span>.log(<span class="number">8</span>)</span><br></pre></td></tr></table></figure>
+            <p>创建对象有很多种方法，例如：</p>
+<ol>
+<li><p>Object 函数</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">var obj = new Object()</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>字面量：</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">var obj = &#123;&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Object.create</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">var obj = Object.create(null)</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>那<code>var obj = {}</code>和<code>var obj = Object.create(null)</code>一样吗？如果不一样，那它们有什么区别？</p>
         </div>
         
           <p class="article-more-link">
-            <a href="/javascript-task/#more">Read More</a>
+            <a href="/javascript-create-object/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/javascript-task/" data-id="cjhq778nl00asizq34pzphzi2" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/javascript-create-object/" data-id="cjhq778n400a4izq3fz27n779" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
@@ -348,10 +420,10 @@
 
 
   
-    <article id="post-nodejs-cookie" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-mongoose-lean" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/nodejs-cookie/" class="article-date">
-  <time datetime="2017-04-29T09:37:07.000Z" itemprop="datePublished">2017-04-29</time>
+    <a href="/mongoose-lean/" class="article-date">
+  <time datetime="2017-05-23T15:07:07.000Z" itemprop="datePublished">2017-05-23</time>
 </a>
     
   </div>
@@ -362,7 +434,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/nodejs-cookie/">nodejs 处理 cookie</a>
+      <a class="article-title" href="/mongoose-lean/">mongoose lean 的作用</a>
     </h1>
   
 
@@ -373,18 +445,24 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <p>实用的包：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install cookie-parser --save</span><br></pre></td></tr></table></figure>
-<p>使用方法：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> express = <span class="built_in">require</span>(<span class="string">'express'</span>)</span><br><span class="line"><span class="keyword">var</span> cookieParser = <span class="built_in">require</span>(<span class="string">'cookie-parser'</span>)</span><br><span class="line"><span class="keyword">var</span> app = express()</span><br><span class="line"></span><br><span class="line"><span class="comment">//不使用签名</span></span><br><span class="line">app.use(cookieParser())</span><br><span class="line"></span><br><span class="line"><span class="comment">//若需要使用签名，需要指定一个secret字符串，否者会报错</span></span><br><span class="line">app.use(cookieParser(<span class="string">'secret'</span>));</span><br></pre></td></tr></table></figure>
-<p>HttpOnly 属性可以阻止通过 js 访问cookie, 从而一定程度上遏制攻击，要带的话，每次返回都要带，不然就会被改变了！</p>
+        <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Model.find(&#123;&#125;).exec()</span><br></pre></td></tr></table></figure>
+<p>平均执行时间 218 毫秒，如果使用 <code>lean()</code></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Model.find(&#123;&#125;).exec().lean()</span><br></pre></td></tr></table></figure>
+<p>执行时间变成 71 毫秒。那 <code>lean()</code> 到底做了什么？</p>
+<blockquote>
+<p>不加 lean 查出来的是 Mongoose 文档，加 lean 查询出来的文档是普通的 JavaScript 对象，从而没有 save 方法，没有 getters 和 setters，因此会有更高的性能。</p>
+</blockquote>
+<p>而创建对象的时候，总是返回 Mongoose 文档，没有 lean() 方法，例如下面的语法是不正确的：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Model.create().lean()</span><br></pre></td></tr></table></figure>
+<p>创建之后如果想返回一个普通的对象，可以用 toObject 方法：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> instance = <span class="keyword">await</span> Model.create()</span><br><span class="line">instance.toObject()</span><br></pre></td></tr></table></figure>
 
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/nodejs-cookie/" data-id="cjssqvcup003g8uq4c7y7w8j0" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/mongoose-lean/" data-id="cjhq778qb00e6izq30rsx40j8" class="article-share-link">Share</a>
      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
 
     </footer>
   </div>
@@ -393,10 +471,10 @@
 
 
   
-    <article id="post-using-brew-on-mac" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-homebrew" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/using-brew-on-mac/" class="article-date">
-  <time datetime="2017-04-26T06:08:25.000Z" itemprop="datePublished">2017-04-26</time>
+    <a href="/homebrew/" class="article-date">
+  <time datetime="2017-05-23T15:07:07.000Z" itemprop="datePublished">2017-05-23</time>
 </a>
     
   </div>
@@ -407,7 +485,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/using-brew-on-mac/">Mac上包管理工具brew的使用</a>
+      <a class="article-title" href="/homebrew/">Homebrew使用记录</a>
     </h1>
   
 
@@ -418,22 +496,44 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <div class="article-preview">
-            <h2 id="查看已安装的包"><a href="#查看已安装的包" class="headerlink" title="查看已安装的包"></a>查看已安装的包</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew list</span><br></pre></td></tr></table></figure>
-<p>输出：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">autoconf	gd		git-flow-avh	httpie ...</span><br></pre></td></tr></table></figure>
-<h2 id="查看可更新的包"><a href="#查看可更新的包" class="headerlink" title="查看可更新的包"></a>查看可更新的包</h2><p>用 <code>brew outdated</code> 查看可以更新的包。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew outdated</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/using-brew-on-mac/#more">Read More</a>
-          </p>
-        
+        <ol>
+<li><p>更新 <code>Homebrew</code> 软件本身</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ brew update</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看已安装软件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ brew list</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看软件详情</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ brew info wget</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>卸载软件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ brew uninstall wget</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看过期的软件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ brew outdated</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>更新过期软件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ brew upgrade</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>不更新指定软件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ brew pin mysql</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>取消不更新指定软件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ brew unpin [package]</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>添加仓库源</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ brew tap homebrew/science</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>取消仓库源</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ brew untap homebrew/dupes</span><br></pre></td></tr></table></figure>
+<p>​</p>
+</li>
+</ol>
+
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/using-brew-on-mac/" data-id="cjhq778ux00j0izq3rx0zv1ej" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/homebrew/" data-id="cjhq778m10094izq37onlnvo0" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Mac/">Mac</a></li></ul>
 
@@ -444,10 +544,10 @@
 
 
   
-    <article id="post-feathers-search" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-15-commonly-used-dom-api" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/feathers-search/" class="article-date">
-  <time datetime="2017-04-11T01:06:07.000Z" itemprop="datePublished">2017-04-11</time>
+    <a href="/15-commonly-used-dom-api/" class="article-date">
+  <time datetime="2017-05-23T15:07:07.000Z" itemprop="datePublished">2017-05-23</time>
 </a>
     
   </div>
@@ -458,7 +558,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/feathers-search/">Feathersjs 客户端查询参数</a>
+      <a class="article-title" href="/15-commonly-used-dom-api/">JavaScript常用DOM接口</a>
     </h1>
   
 
@@ -471,75 +571,22 @@
       
         <div class="article-preview">
             <ol>
-<li><p>指定数量（<code>$limit</code>）</p>
-<p> 查询列表时使用，用于指定服务器一次性返回的数量。</p>
-<p> 【案例】一次返回10条数据：</p>
- <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://xxx.com/books?<span class="variable">$limit</span>=10</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<ol>
-<li><p>起始位置（<code>$skip</code>）</p>
-<p> 查询列表时使用，用于指定服务器忽略前面多少条数据。</p>
-<p> 【案例】忽略前面10条数据：</p>
- <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://xxx.com/books?<span class="variable">$limit</span>=10&amp;<span class="variable">$skip</span>=10</span><br></pre></td></tr></table></figure>
+<li><p><code>querySelector()</code></p>
+<p>返回第一个满足给定CSS选择器的元素，如果没有符合元素则返回空（null）。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> ele = <span class="built_in">document</span>.querySelector(selector);</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>selector</code>：CSS选择器，例如： “#fooId”, “.fooClassName”, “.class1.class2”, “.class1, .class2”</li>
+<li><code>ele</code>：第一个满足条件的元素或null
         </div>
         
           <p class="article-more-link">
-            <a href="/feathers-search/#more">Read More</a>
+            <a href="/15-commonly-used-dom-api/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/feathers-search/" data-id="cjhq778k8006qizq3g3qknbp3" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-self-referencing-literal" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/self-referencing-literal/" class="article-date">
-  <time datetime="2017-04-05T02:00:00.000Z" itemprop="datePublished">2017-04-05</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/self-referencing-literal/">JavaScript对象引用自身属性</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> obj = &#123;</span><br><span class="line">    a: <span class="number">18</span>,</span><br><span class="line">    b: <span class="string">'my age is '</span>,</span><br><span class="line">    c: <span class="keyword">this</span>.b + <span class="keyword">this</span>.a</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">console</span>.log(obj.c)</span><br></pre></td></tr></table></figure>
-<p>希望输出 <code>my age is 18</code> 但是实际上输出 <code>NaN</code>，为什么呢？因为 <code>this</code> 指代的是全局，那怎样得到想要的结果呢？用下面的方法：</p>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/self-referencing-literal/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/self-referencing-literal/" data-id="cjhq778sj00guizq304uejarb" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/15-commonly-used-dom-api/" data-id="cjhq778f50002izq3huskoqlr" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
@@ -553,7 +600,7 @@
 
 
   <nav id="page-nav">
-    <a class="extend prev" rel="prev" href="/page/30/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/29/">29</a><a class="page-number" href="/page/30/">30</a><span class="page-number current">31</span><a class="page-number" href="/page/32/">32</a><a class="page-number" href="/page/33/">33</a><span class="space">&hellip;</span><a class="page-number" href="/page/49/">49</a><a class="extend next" rel="next" href="/page/32/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/30/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/29/">29</a><a class="page-number" href="/page/30/">30</a><span class="page-number current">31</span><a class="page-number" href="/page/32/">32</a><a class="page-number" href="/page/33/">33</a><span class="space">&hellip;</span><a class="page-number" href="/page/52/">52</a><a class="extend next" rel="next" href="/page/32/">Next &raquo;</a>
   </nav>
 </section>
 
