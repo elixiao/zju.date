@@ -54,10 +54,10 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-install-docker-on-centos" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-docker-compose-env" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/install-docker-on-centos/" class="article-date">
-  <time datetime="2018-01-04T01:11:02.000Z" itemprop="datePublished">2018-01-04</time>
+    <a href="/docker-compose-env/" class="article-date">
+  <time datetime="2018-01-11T14:35:23.000Z" itemprop="datePublished">2018-01-11</time>
 </a>
     
   </div>
@@ -68,7 +68,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/install-docker-on-centos/">在centos上安装docker</a>
+      <a class="article-title" href="/docker-compose-env/">docker-compose 环境变量</a>
     </h1>
   
 
@@ -79,392 +79,13 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <div class="article-preview">
-            <h2 id="centos7"><a href="#centos7" class="headerlink" title="centos7"></a>centos7</h2><p>先卸载旧版本：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ yum remove docker docker-client docker-client-latest docker-common \</span><br><span class="line">                  docker-latest docker-latest-logrotate docker-logrotate \</span><br><span class="line">                  docker-selinux docker-engine-selinux docker-engine</span><br></pre></td></tr></table></figure>
-<p>或者：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ yum list installed | grep docker <span class="comment"># 找到所有docker相关</span></span><br><span class="line">docker-ce.x86_64                           17.03.2.ce-1.el7.centos  @/docker-ce-17.03.2.ce-1.el7.centos.x86_64</span><br><span class="line">docker-ce-selinux.noarch                   17.03.2.ce-1.el7.centos  @/docker-ce-selinux-17.03.2.ce-1.el7.centos.noarch</span><br><span class="line"></span><br><span class="line">$ yum remove -y docker-ce.x86_64</span><br><span class="line">$ yum remove -y docker-ce-selinux.noarch</span><br><span class="line">$ rm -rf /var/lib/docker  <span class="comment"># 如果需要完全卸载</span></span><br></pre></td></tr></table></figure>
-<p>安装新版本：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ yum install -y yum-utils device-mapper-persistent-data lvm2</span><br><span class="line">$ yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo</span><br><span class="line">$ yum install -y docker-ce</span><br></pre></td></tr></table></figure>
-<p>启动docker：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ systemctl start docker</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/install-docker-on-centos/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/install-docker-on-centos/" data-id="cjhq778mt009mizq326rmtoaa" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-centos-close-mail" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/centos-close-mail/" class="article-date">
-  <time datetime="2018-01-03T09:16:07.000Z" itemprop="datePublished">2018-01-03</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/centos-close-mail/">centos 关闭邮件提示</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>有时候命令行会突然打印 You have new mail in /var/spool/mail/root，甚是讨厌，LINUX会定时查看LINUX各种状态做汇总，每经过一段时间会把汇总的信息发送的root的邮箱里，以供有需之时查看。</p>
-<p>关闭这个提示只要一条命令：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># echo &quot;unset MAILCHECK&quot;&gt;&gt; /etc/profile1</span><br></pre></td></tr></table></figure>
-<p>然后刷新一下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#source /etc/profile</span><br></pre></td></tr></table></figure>
+        <p>docker-compose 的 yaml 文件里面用环境变量只适用于 value，key 不能用，例如：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">db:</span></span><br><span class="line"><span class="attr">  image:</span> <span class="string">"postgres:$&#123;POSTGRES_VERSION&#125;"</span></span><br></pre></td></tr></table></figure>
 
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/centos-close-mail/" data-id="cjvrpwbjj0000ofq453skuh6d" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-wx-app-common" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/wx-app-common/" class="article-date">
-  <time datetime="2018-01-02T09:32:23.000Z" itemprop="datePublished">2018-01-02</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/wx-app-common/">小程序常见问题</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="Grid-布局"><a href="#Grid-布局" class="headerlink" title="Grid 布局"></a>Grid 布局</h3><p>ios 测试没问题，android 测试不支持。官方来解答一下，三端的脚本执行环境以及用于渲染非原生组件的环境是各不相同的：</p>
-<ul>
-<li><p>在 iOS 上，小程序逻辑层的 javascript 代码运行在 JavaScriptCore 中，视图层是由 WKWebView 来渲染的，环境有 iOS8、iOS9、iOS10；</p>
-</li>
-<li><p>在 Android 上，</p>
-<ul>
-<li>旧版本，小程序逻辑层的 javascript 代码运行中 X5 JSCore 中，视图层是由 X5 基于 Mobile Chrome 53/57 内核来渲染的；</li>
-<li>新版本，小程序逻辑层的 javascript 代码运行在 V8 中，视图层是由自研 XWeb 引擎基于 Mobile Chrome 53 内核来渲染的；</li>
-</ul>
-</li>
-<li><p>在 开发工具上，小程序逻辑层的 javascript 代码是运行在 NW.js 中，视图层是由 Chromium 60 Webview 来渲染的。</p>
-</li>
-</ul>
-<h3 id="LocalStorage-本地存储"><a href="#LocalStorage-本地存储" class="headerlink" title="LocalStorage 本地存储"></a>LocalStorage 本地存储</h3><p>每个微信小程序都可以有自己的本地缓存，可以通过 <code>wx.setStorage</code>、<code>wx.setStorageSync</code>、<code>wx.getStorage</code>、<code>wx.getStorageSync</code>、<code>wx.clearStorage</code>、<code>wx.clearStorageSync</code> 可以对本地缓存进行设置、获取和清理。同一个微信用户，同一个小程序 storage 上限为 10MB。localStorage 以用户维度隔离，同一台设备上，A 用户无法读取到 B 用户的数据。其中 localStorage 是持久存储的，但是我们不建议将关键信息全部存在 localStorage，以防用户换设备的情况。</p>
-<h3 id="关于-setData"><a href="#关于-setData" class="headerlink" title="关于 setData"></a>关于 setData</h3><ol>
-<li>参数接受一个对象，以 key，value 的形式表示；</li>
-<li>参数和变量名称一致，可用一个值代替（es6新语法特性）</li>
-<li>可以设置一个或多个data数据</li>
-<li>key 可以以数据路径的形式给出（路径形式的key必须带引号）</li>
-<li>key 值可以为变量，为变量的时候要用[]引起来</li>
-<li>直接修改 this.data，虽然会改变数据，但是页面不会重新渲染，无法改变页面状态，会造成数据不一致的情况</li>
-<li>单次设置的数据不能超过1024KB，请尽量避免一次设置过多的数据</li>
-<li>不需要在 this.data 中预先定义，使用 setData() 方法会自动创建该数据</li>
-</ol>
-<h3 id="关于转发"><a href="#关于转发" class="headerlink" title="关于转发"></a>关于转发</h3><p>微信小程序的页面 js 文件里有分享函数 <strong>onShareAppMessage</strong>，触发方式有两种，一种时点击小程序右上角的按钮，在底部出现的菜单中选择转发；另外一种使用button实现，设置open-type=”share”。那么携带参数的事情就交给他们来处理了，比如我们要在转发中插入我们自己的用户id，可以这样设置，在path要转发的页面后面拼接自己要传的参。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">onShareAppMessage: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> that = <span class="keyword">this</span></span><br><span class="line">  <span class="keyword">const</span> userId = that.data.userId</span><br><span class="line">  <span class="keyword">return</span> &#123;</span><br><span class="line">    title: <span class="string">'我的分享'</span>,</span><br><span class="line">    path: <span class="string">'/pages/index/index?userId='</span> + userId, <span class="comment">//这里拼接需要携带的参数</span></span><br><span class="line">    imageUrl: <span class="string">'https://ceshi.guirenpu.com/images/banner.png'</span>,</span><br><span class="line">    success: <span class="function"><span class="keyword">function</span> (<span class="params">res</span>) </span>&#123;</span><br><span class="line">      <span class="built_in">console</span>.log(<span class="string">'转发成功'</span> + res)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>注意在这里不能通过异步获取参数，因为这个函数要立即返回一个值，而不能是 promise 等，可以在 onload 里面获取参数：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">onLoad: <span class="function"><span class="keyword">function</span> (<span class="params">res</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> that = <span class="keyword">this</span></span><br><span class="line">  that.setData(&#123;</span><br><span class="line">    shareId: res.userId</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>如果确实有异步行为，建议在交互上做一些处理，通过两个按钮来达到目的。另外，由于组件button的<code>open-type=&quot;share&quot;</code>属性1.2.0版本之上才支持，因此先根据兼容方式–组件进行处理。</p>
-<p> wxml 代码：</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">button</span> <span class="attr">size</span>=<span class="string">"mini"</span> <span class="attr">type</span>=<span class="string">"default"</span> <span class="attr">bindtap</span>=<span class="string">"onClickShare"</span> <span class="attr">open-type</span>=<span class="string">"share"</span>&gt;</span>转发<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>兼容处理方式：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">onClickShare: <span class="function"><span class="keyword">function</span> (<span class="params">e</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span>(wx.canIUse)&#123;</span><br><span class="line">      <span class="keyword">if</span> (wx.canIUse(<span class="string">'button.open-type.share'</span>)) &#123;</span><br><span class="line">          <span class="keyword">return</span>;</span><br><span class="line">      &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  wx.showModal(&#123;</span><br><span class="line">      title: <span class="string">'提示'</span>,</span><br><span class="line">      content: <span class="string">'当前微信版本过低，无法使用该功能，请点击右上角&lt;转发&gt;菜单进行分享。'</span></span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>如果发现分享的时候，都没有执行这个 onShareAppMessage 方法，创建页面的时候，开发工具不是自动创建了page.js文件吗，那个文件里面，默认初始化了很多常用方法，其中就包括 onShareAppMessage，拉下去才看到编辑器自动创建的 onShareAppMessage 方法。</p>
-<h3 id="关于下拉刷新"><a href="#关于下拉刷新" class="headerlink" title="关于下拉刷新"></a>关于下拉刷新</h3><p>首先在全局 <code>config</code> 中的 <code>window</code> 配置 <code>enablePullDownRefresh</code>，然后在 <code>Page</code> 中定义 <code>onPullDownRefresh</code> 钩子函数。到达下拉刷新条件后，该钩子函数执行，发起请求方法。请求返回后，调用 <code>wx.stopPullDownRefresh</code> 停止下拉刷新。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">config = &#123;</span><br><span class="line">    pages: [</span><br><span class="line">      <span class="string">'pages/index'</span></span><br><span class="line">    ],</span><br><span class="line">    <span class="built_in">window</span>: &#123;</span><br><span class="line">      backgroundTextStyle: <span class="string">'light'</span>,</span><br><span class="line">      navigationBarBackgroundColor: <span class="string">'#ccc'</span>,</span><br><span class="line">      navigationBarTitleText: <span class="string">'WeChat'</span>,</span><br><span class="line">      navigationBarTextStyle: <span class="string">'#000'</span>,</span><br><span class="line">      enablePullDownRefresh: <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">onPullDownRefresh() &#123;</span><br><span class="line">  setTimeout(<span class="function"><span class="params">()</span>=&gt;</span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.getData = <span class="string">'数据拿到了'</span></span><br><span class="line">    wx.stopPullDownRefresh()</span><br><span class="line">  &#125;,<span class="number">3000</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/wx-app-common/" data-id="cjssqvcvm004m8uq4p7bkmj56" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/小程序/">小程序</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-brew-vs-brew-cast" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/brew-vs-brew-cast/" class="article-date">
-  <time datetime="2018-01-02T07:13:23.000Z" itemprop="datePublished">2018-01-02</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/brew-vs-brew-cast/">brew 和 brew cast</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>brew 和 brew cast 有什么区别？brew主要用来下载一些不带界面的命令行下的工具，即 command line tool，而 brew cask 是对于 brew 的扩展，可安装图形界面的软件，即有 gui 界面的 app，下载好后会自动安装，并能在 mac 中直接运行。</p>
-<p>使用举个例子，安装 curl ：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install curl</span><br></pre></td></tr></table></figure>
-<p>安装谷歌浏览器应用程序：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew cask install chrome</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/brew-vs-brew-cast/" data-id="cjhq778hy003rizq3f845jvjo" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Mac/">Mac</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-terminal-proxy" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/terminal-proxy/" class="article-date">
-  <time datetime="2018-01-02T06:45:23.000Z" itemprop="datePublished">2018-01-02</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/terminal-proxy/">terminal终端走代理</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>socks5 代理转化成 http 代理给命令行终端使用：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> http_proxy=<span class="string">"http://127.0.0.1:1087"</span></span><br><span class="line"><span class="built_in">export</span> https_proxy=<span class="string">"http://127.0.0.1:1087"</span></span><br></pre></td></tr></table></figure>
-<p>如果不想用了取消即可：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">unset</span> http_proxy</span><br><span class="line"><span class="built_in">unset</span> https_proxy</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/terminal-proxy/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/terminal-proxy/" data-id="cjhq778tm00hwizq3wzwdw1dz" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-typescript-import-json" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/typescript-import-json/" class="article-date">
-  <time datetime="2017-12-25T01:38:09.000Z" itemprop="datePublished">2017-12-25</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/typescript-import-json/">typescript 加载 json 文件</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>在 ES6/ES2015 中可以直接引用 json 文件，例如：</p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"name"</span>: <span class="string">"testing"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>可以用下面的命令：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> * <span class="keyword">as</span> data <span class="keyword">from</span> <span class="string">'./example.json'</span>;</span><br></pre></td></tr></table></figure>
-<p>但在 typescript 中却报错：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Cannot find module &apos;example.json&apos;</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/typescript-import-json/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/typescript-import-json/" data-id="cjkajvcr5000p4eq3o4p9pr5f" class="article-share-link">Share</a>
-     
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-angular-material-with-animations" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/angular-material-with-animations/" class="article-date">
-  <time datetime="2017-12-24T00:48:38.000Z" itemprop="datePublished">2017-12-24</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/angular-material-with-animations/">Angular Material 中的动画</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Angular Material 模块需要动画模块的支持，可以选择 BrowserAnimationsModule 或 NoopAnimationsModule，前者有动画，后者无动画。</p>
-<ol>
-<li><p>BrowserAnimationsModule</p>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">npm install --save @angular/animations</span><br><span class="line">import &#123;BrowserAnimationsModule&#125; from &apos;@angular/platform-browser/animations&apos;</span><br><span class="line">@NgModule(&#123;</span><br><span class="line">  ...</span><br><span class="line">  imports: [BrowserAnimationsModule],</span><br><span class="line">  ...</span><br><span class="line">&#125;)</span><br><span class="line">export class AppModule &#123; &#125;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>NoopAnimationsModule</p>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">import &#123;NoopAnimationsModule&#125; from &apos;@angular/platform-browser/animations&apos;</span><br><span class="line">@NgModule(&#123;</span><br><span class="line">  ...</span><br><span class="line">  imports: [NoopAnimationsModule],</span><br><span class="line">  ...</span><br><span class="line">&#125;)</span><br><span class="line">export class AppModule &#123; &#125;</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/angular-material-with-animations/" data-id="cjssqvcrf00078uq4mm21fvnx" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-mac-docker-disk-usage" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/mac-docker-disk-usage/" class="article-date">
-  <time datetime="2017-12-22T03:31:23.000Z" itemprop="datePublished">2017-12-22</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/mac-docker-disk-usage/">mac docker 空间占用太大</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>解决 mac 系统下 docker 镜像空间占用越来越大的问题</p>
-<ol>
-<li>首先看这个 <a href="https://github.com/docker/for-mac/issues/371" target="_blank" rel="noopener">issue</a></li>
-<li>然后使用这个 <a href="https://gist.github.com/MrTrustor/e690ba75cefe844086f5e7da909b35ce#file-clean-docker-for-mac-sh" target="_blank" rel="noopener">gist</a></li>
-<li><p>使用方法： </p>
- <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">chmod 755 clean-docker-for-mac.sh</span><br><span class="line">./clean-docker-for-mac.sh nginx mysql <span class="comment"># 只保留nginx和mysql镜像</span></span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<blockquote>
-<p>原理：<br>Docker 依赖 Linux 系统的 cgroup 实现，在 mac 系统中运行的时候，Docker 会启动一个虚拟机中的 Linux 内核，并在硬盘上放一个 qcow2 格式的磁盘镜像文件。这个文件会随着 Docker 的使用不断膨胀，即使删除不用的 Docker Image 和 Container 也不会缩小。一个叫 Théo Chamley 的法国人写了一个脚本释放 Docker.qcow2 文件占用的空间。基本原理是用 docker save 命令保存要保留的 image，然后关闭Docker，删除 Docker.qcow2，再启动 Docker，它会自动重建，最后用 docker load 命令恢复保留的image。</p>
-</blockquote>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/mac-docker-disk-usage/" data-id="cjhq778pa00csizq3xx2bj5s7" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/docker-compose-env/" data-id="cjhq778jf005hizq3i3amfjw4" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/">Docker</a></li></ul>
 
@@ -475,10 +96,10 @@
 
 
   
-    <article id="post-force-redirect-to-https" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-host-not-found-in-upstream" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/force-redirect-to-https/" class="article-date">
-  <time datetime="2017-12-20T02:31:23.000Z" itemprop="datePublished">2017-12-20</time>
+    <a href="/host-not-found-in-upstream/" class="article-date">
+  <time datetime="2018-01-11T14:31:07.000Z" itemprop="datePublished">2018-01-11</time>
 </a>
     
   </div>
@@ -489,7 +110,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/force-redirect-to-https/">强制重定向到 https</a>
+      <a class="article-title" href="/host-not-found-in-upstream/">host not found in upstream</a>
     </h1>
   
 
@@ -500,17 +121,20 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <p>现在，你的服务器同时接受 HTTP 和 HTTPS 请求。如果你希望只受理 HTTPS 请求，可以在 <code>nginx.conf</code> 中添加一个 301 跳转规则，告知浏览器将 HTTP 变成 HTTPS.</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">return 301 https://$server_name$request_uri;</span><br></pre></td></tr></table></figure>
-<p>这样写：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line"> listen 80 default_server;</span><br><span class="line"> listen [::]:80 default_server;</span><br><span class="line"> server_name example.com www.example.com;</span><br><span class="line"> return 301 https://$server_name$request_uri;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        <p>利用 nginx 进行反向代理的时候会配置 proxy_pass，如果报错：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nginx: [emerg] host not found in upstream &quot;xxx.com&quot; in /usr/local/nginx/conf/xxx.nginx.com.conf:19 这个错误。</span><br></pre></td></tr></table></figure>
+<p>原因是无法解析这个域名，解决办法就是修改 <code>/etc/hosts</code>，让其能够解析到IP。具体步骤如下：</p>
+<ol>
+<li><code>vim /etc/hosts</code></li>
+<li>添加：<code>127.0.0.1 xxx.com</code></li>
+</ol>
 
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/force-redirect-to-https/" data-id="cjssqvcsl001n8uq4ftbaepjw" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/host-not-found-in-upstream/" data-id="cjiom0g4i0003rbq3b4wegwnm" class="article-share-link">Share</a>
      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Nginx/">Nginx</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
 
     </footer>
   </div>
@@ -519,10 +143,10 @@
 
 
   
-    <article id="post-js-this" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-chrome-full-screenshot" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/js-this/" class="article-date">
-  <time datetime="2017-12-20T02:31:23.000Z" itemprop="datePublished">2017-12-20</time>
+    <a href="/chrome-full-screenshot/" class="article-date">
+  <time datetime="2018-01-11T03:53:05.000Z" itemprop="datePublished">2018-01-11</time>
 </a>
     
   </div>
@@ -533,7 +157,105 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/js-this/">JavaScript 中的 this</a>
+      <a class="article-title" href="/chrome-full-screenshot/">chrome 截取全部网页</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>按 F12 或快捷键：</p>
+<ul>
+<li>Mac：<code>Cmd + Opt + I</code> </li>
+<li>Win：<code>Ctrl + Shift + I</code></li>
+</ul>
+<p>打开开发者工具之后按：</p>
+<ul>
+<li>Mac：<code>Cmd + Shift + P</code></li>
+<li>Win：<code>Ctrl + Shift + P</code></li>
+</ul>
+<p>在弹出的输入框里搜索 full size screenshot，会自动补全，按回车即可。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/chrome-full-screenshot/" data-id="cjkajvcqk00064eq34htc63cu" class="article-share-link">Share</a>
+     
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-activemq-notes" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/activemq-notes/" class="article-date">
+  <time datetime="2018-01-11T03:47:07.000Z" itemprop="datePublished">2018-01-11</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/activemq-notes/">activemq学习笔记</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>近期需要一个消息中间件，之前用过 apollo，网上一查发现这个项目不见了，原官方文档链接也 404，寻找一番之后发现跟 activemq 合并了，名字叫 artemis，它们有很多相似之处，例如之前下载 apollo 压缩包之后，先解压进入 bin 目录，然后创建 broker，再进入到这个 broker 目录运行：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">bin/apollo create /your/path/mybroker</span><br><span class="line"><span class="built_in">cd</span> /your/path/mybroker</span><br><span class="line">apollo-broker run</span><br></pre></td></tr></table></figure>
+<p>现在的写法变成：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">bin/artemis create --user admin --password admin --role admins --allow-anonymous <span class="literal">true</span> /opt/artemis</span><br><span class="line"><span class="comment"># 或者自定义路径</span></span><br><span class="line">bin/artemis create --user admin --password admin --role admins --allow-anonymous <span class="literal">true</span> /your/path/mybroker</span><br></pre></td></tr></table></figure>
+<p>进入到刚才创建的 broker/mybroker 文件夹里面，目录结构如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">|____bin</span><br><span class="line">| |____artemis</span><br><span class="line">| |____artemis-service</span><br><span class="line">|____etc</span><br><span class="line">| |____logging.properties</span><br><span class="line">| |____login.config</span><br><span class="line">| |____artemis.profile</span><br><span class="line">| |____broker.xml</span><br><span class="line">| |____management.xml</span><br><span class="line">| |____bootstrap.xml</span><br><span class="line">| |____artemis-users.properties</span><br><span class="line">| |____jolokia-access.xml</span><br><span class="line">| |____artemis-roles.properties</span><br><span class="line">|____lib</span><br><span class="line">|____log</span><br><span class="line">|____data</span><br><span class="line">|____tmp</span><br></pre></td></tr></table></figure>
+<p>前台运行的话就执行：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">./bin/artemis run</span><br><span class="line"></span><br><span class="line">     _        _               _</span><br><span class="line">    / \  ____| |_  ___ __  __(_) _____</span><br><span class="line">   / _ \|  _ \ __|/ _ \  \/  | |/  __/</span><br><span class="line">  / ___ \ | \/ |_/  __/ |\/| | |\___ \</span><br><span class="line"> /_/   \_\|   \__\____|_|  |_|_|/___ /</span><br><span class="line"> Apache ActiveMQ Artemis 2.7.0</span><br><span class="line"> </span><br><span class="line">INFO  [org.apache.activemq.artemis.integration.bootstrap] AMQ101000: Starting ActiveMQ Artemis Server</span><br><span class="line">...</span><br><span class="line">INFO  [io.hawt.system.ProxyWhitelist] Initial proxy whitelist: [localhost, 127.0.0.1, 192.168.3.8, 10.8.0.2]</span><br><span class="line">INFO  [org.apache.activemq.artemis] AMQ241001: HTTP Server started at http://localhost:8161</span><br><span class="line">INFO  [org.apache.activemq.artemis] AMQ241002: Artemis Jolokia REST API available at http://localhost:8161/console/jolokia</span><br><span class="line">INFO  [org.apache.activemq.artemis] AMQ241004: Artemis Console available at http://localhost:8161/console</span><br></pre></td></tr></table></figure>
+<p>如果要在后台运行，可以执行：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./bin/artemis-service start</span><br></pre></td></tr></table></figure>
+<p>然后打开网址 <a href="http://localhost:8161/console" target="_blank" rel="noopener">http://localhost:8161/console</a> 之后，用 admin 作为用户名和密码登录即可。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/activemq-notes/" data-id="cjw77iixq0002qlq42pome55q" class="article-share-link">Share</a>
+     
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-pm2-log-with-timestamp" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/pm2-log-with-timestamp/" class="article-date">
+  <time datetime="2018-01-11T02:15:07.000Z" itemprop="datePublished">2018-01-11</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/pm2-log-with-timestamp/">pm2 日志加时间戳</a>
     </h1>
   
 
@@ -545,31 +267,255 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <p>需要知道的几点：</p>
-<ul>
-<li>在严格模式和非严格模式下，this 的行为会有变化。</li>
-<li>在浏览器和 node.js 环境下，this 的行为会有变化。</li>
-<li>它是函数运行时自动生成的，只能在函数内部使用。</li>
-</ul>
-<p>下面就是 this 的四种使用场景：</p>
-<ol>
-<li><p>this 指向调用该函数的对象</p>
- <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 对象.函数(); </span></span><br><span class="line"><span class="comment">// 函数内的this指向该对象 </span></span><br><span class="line"><span class="keyword">var</span> obj = &#123;</span><br><span class="line">    x: <span class="number">20</span>,</span><br><span class="line">    f: <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123; <span class="built_in">console</span>.log(<span class="keyword">this</span>.x); &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">obj.f(); <span class="comment">//调用f函数时，点前面对象为obj，所以f内的this指向obj，输出20。</span></span><br><span class="line"></span><br><span class="line">obj.innerobj = &#123;</span><br><span class="line">    x: <span class="number">30</span>,</span><br><span class="line">    f: <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123; <span class="built_in">console</span>.log(<span class="keyword">this</span>.x); &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">obj.innerobj.f(); <span class="comment">//调用f函数时，点前面对象为obj.innerobj，所以f内的this指向obj.innerobj，输出30。</span></span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>Javascript 里的 this 看的是究竟是谁调用该函数，而不是看该函数被定义在哪个对象内。</p>
-</blockquote>
-</li>
-</ol>
+            <p>默认没有时间戳，可以在启动的时候指定：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ pm2 start app.js --<span class="built_in">log</span>-date-format <span class="string">'DD-MM HH:mm:ss.SSS'</span></span><br></pre></td></tr></table></figure>
+<p>其中 <code>DD-MM HH:mm:ss.SSS</code> 是任意 <code>momentjs</code> 有效时间格式.</p>
+<p>或者修改 app.json 文件：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"apps"</span> : [</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">"name"</span>        : <span class="string">"app"</span>,</span><br><span class="line">      <span class="attr">"script"</span>      : <span class="string">"bin/www"</span>,</span><br><span class="line">      <span class="attr">"log_date_format"</span> : <span class="string">"YYYY-MM-DD HH:mm Z"</span></span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
         </div>
         
           <p class="article-more-link">
-            <a href="/js-this/#more">Read More</a>
+            <a href="/pm2-log-with-timestamp/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/js-this/" data-id="cjhq778oe00boizq3klj9uejt" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/pm2-log-with-timestamp/" data-id="cjhq778ra00fgizq3vk5eigck" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-git-config" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/git-config/" class="article-date">
+  <time datetime="2018-01-11T01:57:07.000Z" itemprop="datePublished">2018-01-11</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/git-config/">git config</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>获取或设置各种 git 配置：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">git config --list <span class="comment"># 所有配置（合并本地和全局的）</span></span><br><span class="line">git config --<span class="built_in">local</span> --list <span class="comment"># 本仓库配置</span></span><br><span class="line">git config user.name <span class="comment"># 获取用户名</span></span><br><span class="line">git config user.name <span class="string">"myname"</span> <span class="comment"># 设置用户名</span></span><br><span class="line">git config --global user.name <span class="string">"myname"</span> <span class="comment"># 全局设置用户名</span></span><br><span class="line">git config user.email <span class="string">"myname@gmail.com"</span> <span class="comment"># 设置邮箱</span></span><br><span class="line">git config --global user.email <span class="string">"myname@gmail.com"</span> <span class="comment"># 全局设置邮箱</span></span><br></pre></td></tr></table></figure>
+<p>git 配置文件位置：</p>
+<ul>
+<li>全局：<code>~/.gitconfig</code></li>
+<li>本地：<code>$PWD/.git/config</code></li>
+</ul>
+<p>常用命令：</p>
+<ol>
+<li><p>查看用户名和邮箱</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git config user.name</span><br><span class="line">git config user.email</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>修改用户名和邮箱</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git config --global user.name &quot;your name&quot;</span><br><span class="line">git config --global user.email &quot;your email&quot;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/git-config/" data-id="cjssqvcsm001p8uq4u3ex9nd1" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/">Git</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-git-submodule" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/git-submodule/" class="article-date">
+  <time datetime="2018-01-10T07:53:07.000Z" itemprop="datePublished">2018-01-10</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/git-submodule/">git submodule</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>只 pull 指定子模块：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git submodule foreach &apos;[ &quot;$path&quot; == &quot;submodule-name&quot; ] &amp;&amp; git pull origin master || :;&apos;</span><br></pre></td></tr></table></figure>
+<p>不 pull 指定子模块：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git submodule foreach &apos;[ &quot;$path&quot; == &quot;submodule-to-exclude&quot; ] || git pull origin master&apos;</span><br></pre></td></tr></table></figure>
+<p>使用环境变量：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">export project_name=base</span><br><span class="line">git submodule foreach &apos;[ &quot;$path&quot; == &quot;$project_name&quot; ] &amp;&amp; echo hello || :;&apos;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>$name</code> 是 <code>.gitmodules</code> 里面相关模块的名称</li>
+<li><code>$path</code> 是子模块相对于父模块的路径 </li>
+<li><code>$sha1</code> 是 commit</li>
+<li><code>$toplevel</code> 是父模块的绝对路径</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/git-submodule/" data-id="cjssqvcsr001x8uq44thhakuk" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/">Git</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-gitlab-hook-master-only" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/gitlab-hook-master-only/" class="article-date">
+  <time datetime="2018-01-10T02:38:07.000Z" itemprop="datePublished">2018-01-10</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/gitlab-hook-master-only/">gitlab 只在 master 分支触发 webhooks</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Gitlab 设置 webhooks，可以在我们提交的时候触发向指定服务器发送 POST 请求，但 webhooks 本身是不能对分支做控制的，例如只允许 master 提交等，但我们可以在服务器那边进行控制，因为 POST 的数据里面包含：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">:ref =&gt; &quot;refs/heads/master&quot;,</span><br></pre></td></tr></table></figure>
+<p>能够判断是来自哪个分支，只要在服务器的 API 接口里面添加一个 if 函数就搞定啦！</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/gitlab-hook-master-only/" data-id="cjssqvcss001z8uq4x2qer344" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-webpack-set-env" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/webpack-set-env/" class="article-date">
+  <time datetime="2018-01-10T02:38:07.000Z" itemprop="datePublished">2018-01-10</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/webpack-set-env/">webpack 设置环境变量</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>webpack 打包的时候可以设置环境变量：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> webpack.DefinePlugin(&#123;</span><br><span class="line">  <span class="string">'process.env'</span>: &#123;</span><br><span class="line">  	<span class="string">'NODE_ENV'</span>: <span class="built_in">JSON</span>.stringify(process.env.NODE_ENV)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;),</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/webpack-set-env/" data-id="cjhq778vd00jmizq3y61pa8pn" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-koa-timeout" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/koa-timeout/" class="article-date">
+  <time datetime="2018-01-10T01:06:07.000Z" itemprop="datePublished">2018-01-10</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/koa-timeout/">koa 设置 http 请求超时时间</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">app.listen(<span class="number">8080</span>).setTimeout(<span class="number">1000</span> * <span class="number">60</span> * <span class="number">10</span>)</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/koa-timeout/" data-id="cjhq778om00bwizq36mo3u8ee" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
@@ -583,7 +529,7 @@
 
 
   <nav id="page-nav">
-    <a class="extend prev" rel="prev" href="/page/18/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/17/">17</a><a class="page-number" href="/page/18/">18</a><span class="page-number current">19</span><a class="page-number" href="/page/20/">20</a><a class="page-number" href="/page/21/">21</a><span class="space">&hellip;</span><a class="page-number" href="/page/52/">52</a><a class="extend next" rel="next" href="/page/20/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/18/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/17/">17</a><a class="page-number" href="/page/18/">18</a><span class="page-number current">19</span><a class="page-number" href="/page/20/">20</a><a class="page-number" href="/page/21/">21</a><span class="space">&hellip;</span><a class="page-number" href="/page/54/">54</a><a class="extend next" rel="next" href="/page/20/">Next &raquo;</a>
   </nav>
 </section>
 

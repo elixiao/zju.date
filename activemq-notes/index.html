@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="近期需要一个消息中间件，之前用过 apollo，网上一查发现这个项目不见了，原官方文档链接也 404，寻找一番之后发现跟 activemq 合并了，名字叫 artemis，它们有很多相似之处，例如之前下载 apollo 压缩包之后，先解压进入 bin 目录，然后创建 broker，再进入到这个 broker 目录运行： 123bin/apollo create /your/path/mybroke">
+<meta property="og:type" content="article">
+<meta property="og:title" content="activemq学习笔记">
+<meta property="og:url" content="https://zju.date/activemq-notes/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="近期需要一个消息中间件，之前用过 apollo，网上一查发现这个项目不见了，原官方文档链接也 404，寻找一番之后发现跟 activemq 合并了，名字叫 artemis，它们有很多相似之处，例如之前下载 apollo 压缩包之后，先解压进入 bin 目录，然后创建 broker，再进入到这个 broker 目录运行： 123bin/apollo create /your/path/mybroke">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-05-27T09:54:58.599Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="activemq学习笔记">
+<meta name="twitter:description" content="近期需要一个消息中间件，之前用过 apollo，网上一查发现这个项目不见了，原官方文档链接也 404，寻找一番之后发现跟 activemq 合并了，名字叫 artemis，它们有很多相似之处，例如之前下载 apollo 压缩包之后，先解压进入 bin 目录，然后创建 broker，再进入到这个 broker 目录运行： 123bin/apollo create /your/path/mybroke">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-activemq-notes" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/activemq-notes/" class="article-date">
+  <time datetime="2018-01-11T03:47:07.000Z" itemprop="datePublished">2018-01-11</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      activemq学习笔记
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>近期需要一个消息中间件，之前用过 apollo，网上一查发现这个项目不见了，原官方文档链接也 404，寻找一番之后发现跟 activemq 合并了，名字叫 artemis，它们有很多相似之处，例如之前下载 apollo 压缩包之后，先解压进入 bin 目录，然后创建 broker，再进入到这个 broker 目录运行：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">bin/apollo create /your/path/mybroker</span><br><span class="line"><span class="built_in">cd</span> /your/path/mybroker</span><br><span class="line">apollo-broker run</span><br></pre></td></tr></table></figure>
+<p>现在的写法变成：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">bin/artemis create --user admin --password admin --role admins --allow-anonymous <span class="literal">true</span> /opt/artemis</span><br><span class="line"><span class="comment"># 或者自定义路径</span></span><br><span class="line">bin/artemis create --user admin --password admin --role admins --allow-anonymous <span class="literal">true</span> /your/path/mybroker</span><br></pre></td></tr></table></figure>
+<p>进入到刚才创建的 broker/mybroker 文件夹里面，目录结构如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">|____bin</span><br><span class="line">| |____artemis</span><br><span class="line">| |____artemis-service</span><br><span class="line">|____etc</span><br><span class="line">| |____logging.properties</span><br><span class="line">| |____login.config</span><br><span class="line">| |____artemis.profile</span><br><span class="line">| |____broker.xml</span><br><span class="line">| |____management.xml</span><br><span class="line">| |____bootstrap.xml</span><br><span class="line">| |____artemis-users.properties</span><br><span class="line">| |____jolokia-access.xml</span><br><span class="line">| |____artemis-roles.properties</span><br><span class="line">|____lib</span><br><span class="line">|____log</span><br><span class="line">|____data</span><br><span class="line">|____tmp</span><br></pre></td></tr></table></figure>
+<p>前台运行的话就执行：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">./bin/artemis run</span><br><span class="line"></span><br><span class="line">     _        _               _</span><br><span class="line">    / \  ____| |_  ___ __  __(_) _____</span><br><span class="line">   / _ \|  _ \ __|/ _ \  \/  | |/  __/</span><br><span class="line">  / ___ \ | \/ |_/  __/ |\/| | |\___ \</span><br><span class="line"> /_/   \_\|   \__\____|_|  |_|_|/___ /</span><br><span class="line"> Apache ActiveMQ Artemis 2.7.0</span><br><span class="line"> </span><br><span class="line">INFO  [org.apache.activemq.artemis.integration.bootstrap] AMQ101000: Starting ActiveMQ Artemis Server</span><br><span class="line">...</span><br><span class="line">INFO  [io.hawt.system.ProxyWhitelist] Initial proxy whitelist: [localhost, 127.0.0.1, 192.168.3.8, 10.8.0.2]</span><br><span class="line">INFO  [org.apache.activemq.artemis] AMQ241001: HTTP Server started at http://localhost:8161</span><br><span class="line">INFO  [org.apache.activemq.artemis] AMQ241002: Artemis Jolokia REST API available at http://localhost:8161/console/jolokia</span><br><span class="line">INFO  [org.apache.activemq.artemis] AMQ241004: Artemis Console available at http://localhost:8161/console</span><br></pre></td></tr></table></figure>
+<p>如果要在后台运行，可以执行：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./bin/artemis-service start</span><br></pre></td></tr></table></figure>
+<p>然后打开网址 <a href="http://localhost:8161/console" target="_blank" rel="noopener">http://localhost:8161/console</a> 之后，用 admin 作为用户名和密码登录即可。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/activemq-notes/" data-id="cjw77iixq0002qlq42pome55q" class="article-share-link">Share</a>
+     
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/chrome-full-screenshot/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          chrome 截取全部网页
+        
+      </div>
+    </a>
+  
+  
+    <a href="/pm2-log-with-timestamp/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">pm2 日志加时间戳</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

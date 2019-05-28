@@ -54,6 +54,115 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-change-docker-volume-folder" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/change-docker-volume-folder/" class="article-date">
+  <time datetime="2018-09-23T06:23:23.000Z" itemprop="datePublished">2018-09-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/change-docker-volume-folder/">修改 docker 默认存储位置</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>docker 默认的存储位置是 <code>/var/lib/docker</code>，有三种方式可以实现修改 docker 默认存储位置的目的：</p>
+<ol>
+<li><p>指定启动参数</p>
+<p> 可以通过指定 docker 的启动参数 <code>data-root</code> 来设置 docker 的存储目录，这个文件一般位于 <code>/lib/systemd/system/docker.service</code></p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 旧的写法</span></span><br><span class="line">ExecStart=/usr/bin/dockerd</span><br><span class="line"><span class="comment"># 新的写法</span></span><br><span class="line">ExecStart=/usr/bin/dockerd --data-root /new_location/</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<pre><code>那么当再使用 `docker volume create xxx` 创建新的数据卷时，存储的目录就变成了：`/new_location/volumes/{volume_name}/_data`
+</code></pre>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/change-docker-volume-folder/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/change-docker-volume-folder/" data-id="cju5m2z5z0003qqq4cvh1qieo" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-docker-container-join-multi-network" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/docker-container-join-multi-network/" class="article-date">
+  <time datetime="2018-09-21T09:14:13.000Z" itemprop="datePublished">2018-09-21</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/docker-container-join-multi-network/">docker容器加入多个网络</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>docker 容器默认情况下会加入一个网络，可以在 <code>docker run</code> 命令中指定这个网络：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -itd --net bluenet --name c1 busybox sh</span><br></pre></td></tr></table></figure>
+<p>如果未指定，那就是 docker0 网络，但实际上容器可以加入多个网络的，需要使用 <code>docker network connect</code> 命令，例如现在创建两个网络：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ docker network create bluenet</span><br><span class="line">$ docker network create rednet</span><br></pre></td></tr></table></figure>
+<p>先用其中一个网络创建容器，但是别去运行它：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker create -it --net bluenet --name c1 busybox sh</span><br></pre></td></tr></table></figure>
+<p>这个时候，容器的状态是 <code>Created</code>，表示已创建但尚未运行。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ docker ps -a</span><br><span class="line">CONTAINER ID        IMAGE       COMMAND      CREATED             STATUS     PORTS   NAMES</span><br><span class="line">25b52f0a988a        busybox     <span class="string">"sh"</span>         16 seconds ago      Created            c1</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/docker-container-join-multi-network/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/docker-container-join-multi-network/" data-id="cjw77iixs0004qlq4famq8dok" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/">Docker</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-es-head" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/es-head/" class="article-date">
@@ -490,10 +599,10 @@
 
 
   
-    <article id="post-buffer-vs-stream" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-es-compare" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/buffer-vs-stream/" class="article-date">
-  <time datetime="2018-09-07T09:29:07.000Z" itemprop="datePublished">2018-09-07</time>
+    <a href="/es-compare/" class="article-date">
+  <time datetime="2018-09-11T02:04:05.000Z" itemprop="datePublished">2018-09-11</time>
 </a>
     
   </div>
@@ -504,7 +613,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/buffer-vs-stream/">buffer 和 stream</a>
+      <a class="article-title" href="/es-compare/">ES新老写法的一些对比</a>
     </h1>
   
 
@@ -516,163 +625,25 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <p>nodejs 处理数据有两种模式：buffer 和 stream，前者是取完数据一次性操作, 后者就是边取数据边操作：</p>
+            <p>2.x 版本没有 text 和 keyword 字段，只有 string，5.x 版本引入这两个字段，并且抛弃 string</p>
 <ul>
-<li>buffer：等到所有数据都收集完了才发送给消费者</li>
-<li>stream：实时发送数据到消费者</li>
+<li>keyword：存储数据时候，不会分词建立索引</li>
+<li>text：存储数据时候，会自动分词，并生成索引</li>
 </ul>
-<p>举个例子, 当我们拷贝一个非常大的文件时，不妨假设为 10G，用 buffer 的话就是先分配 10G 的内存，把文件全部读到内存，然后进行处理，代码如下：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> source = fs.readFileSync(<span class="string">'/path/to/source'</span>, &#123;<span class="attr">encoding</span>: <span class="string">'utf8'</span>&#125;);</span><br><span class="line">fs.writeFileSync(<span class="string">'/path/to/dest'</span>, source);</span><br></pre></td></tr></table></figure>
+<p>新老写法对比：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 2.x 写法</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">"foo"</span>: &#123;</span><br><span class="line">        <span class="string">"type"</span>: <span class="string">"string"</span>,</span><br><span class="line">        <span class="string">"index"</span>: <span class="string">"analyzed"</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 5.x 写法</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">"foo"</span>: &#123;</span><br><span class="line">        <span class="string">"type"</span>: <span class="string">"text"</span>,</span><br><span class="line">        <span class="string">"index"</span>: <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 2.x 写法</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">"foo"</span>: &#123;</span><br><span class="line">        <span class="string">"type"</span>: <span class="string">"string"</span>,</span><br><span class="line">        <span class="string">"index"</span>: <span class="string">"not_analyzed"</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 5.x 写法</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">"foo"</span>: &#123;</span><br><span class="line">        <span class="string">"type"</span>: <span class="string">"keyword"</span>,</span><br><span class="line">        <span class="string">"index"</span>: <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
         </div>
         
           <p class="article-more-link">
-            <a href="/buffer-vs-stream/#more">Read More</a>
+            <a href="/es-compare/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/buffer-vs-stream/" data-id="cjssqvcs0000r8uq4v90ftatg" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/es-compare/" data-id="cjw77iixv0005qlq4sw6q1wbo" class="article-share-link">Share</a>
      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-flex-grow-vs-flex-shrink" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/flex-grow-vs-flex-shrink/" class="article-date">
-  <time datetime="2018-09-04T08:26:54.000Z" itemprop="datePublished">2018-09-04</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/flex-grow-vs-flex-shrink/">flex-grow 和 flex-shrink</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>flex-grow 属性的作用：</p>
-<blockquote>
-<p>父元素在主轴方向还有剩余空间时，子元素们如何分配这些剩余空间。</p>
-</blockquote>
-<p>其值为一个权重（也称扩张因子），默认为 0（纯数值，无单位），剩余空间将会按照这个权重来分配。</p>
-<p>比如剩余空间为 x，三个元素的 flex-grow 分别为 a，b，c，求和  <code>sum = a + b + c</code>。那么三个元素权重是 <code>a/sum</code>, <code>b/sum</code>, <code>c/sum</code>，就是按照这个比例分配剩余空间的。</p>
-<p>举个例子：</p>
-<p>父元素宽度 500px，三个子元素的 width 分别为 100px，150px，100px，于是剩余空间为 150px。</p>
-<p>如果三个元素的 flex-grow 分别是 1，2，3，那么 sum 为 6，则三个元素被分到的空间是：</p>
-<ul>
-<li><code>150 * 1 / 6 = 25px</code></li>
-<li><code>150 * 2 / 6 = 50px</code></li>
-<li><code>150 * 3 / 6 = 75px</code></li>
-</ul>
-<p>三个元素最终的宽度分别：</p>
-<ul>
-<li><code>100px + 25px = 125px</code></li>
-<li><code>150px + 50px = 200px</code></li>
-<li><code>100px + 75px = 175px</code></li>
-</ul>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/flex-grow-vs-flex-shrink/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/flex-grow-vs-flex-shrink/" data-id="cjssqvcsk001l8uq444k7csle" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CSS/">CSS</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-mongodb-optimize" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/mongodb-optimize/" class="article-date">
-  <time datetime="2018-09-03T14:45:03.000Z" itemprop="datePublished">2018-09-03</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/mongodb-optimize/">MongoDB 慢查询和性能优化</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>记录超过 1秒 的慢查询：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ db.setProfilingLevel(1, 1000)</span><br></pre></td></tr></table></figure>
-<table>
-<thead>
-<tr>
-<th>Level</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>0</code></td>
-<td>关闭，不记录。默认配置</td>
-</tr>
-<tr>
-<td><code>1</code></td>
-<td>记录超过 <code>slowms</code> 值的操作</td>
-</tr>
-<tr>
-<td><code>2</code></td>
-<td>记录所有操作</td>
-</tr>
-</tbody>
-</table>
-<p>查看刚才的配置是否生效：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ db.getProfilingStatus()</span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">"was"</span> : <span class="number">1</span>,</span><br><span class="line">    <span class="string">"slowms"</span> : <span class="number">1000</span>,</span><br><span class="line">    <span class="string">"sampleRate"</span> : <span class="number">1.0</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/mongodb-optimize/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/mongodb-optimize/" data-id="cjssqvcuc00348uq4dy9sabr6" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MongoDB/">MongoDB</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
 
     </footer>
   </div>
@@ -684,7 +655,7 @@
 
 
   <nav id="page-nav">
-    <a class="extend prev" rel="prev" href="/page/3/">&laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/52/">52</a><a class="extend next" rel="next" href="/page/5/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/3/">&laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/54/">54</a><a class="extend next" rel="next" href="/page/5/">Next &raquo;</a>
   </nav>
 </section>
 

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="docker 容器默认情况下会加入一个网络，可以在 docker run 命令中指定这个网络： 1docker run -itd --net bluenet --name c1 busybox sh 如果未指定，那就是 docker0 网络，但实际上容器可以加入多个网络的，需要使用 docker network connect 命令，例如现在创建两个网络： 12$ docker network c">
+<meta name="keywords" content="Docker">
+<meta property="og:type" content="article">
+<meta property="og:title" content="docker容器加入多个网络">
+<meta property="og:url" content="https://zju.date/docker-container-join-multi-network/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="docker 容器默认情况下会加入一个网络，可以在 docker run 命令中指定这个网络： 1docker run -itd --net bluenet --name c1 busybox sh 如果未指定，那就是 docker0 网络，但实际上容器可以加入多个网络的，需要使用 docker network connect 命令，例如现在创建两个网络： 12$ docker network c">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-05-27T10:21:22.865Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="docker容器加入多个网络">
+<meta name="twitter:description" content="docker 容器默认情况下会加入一个网络，可以在 docker run 命令中指定这个网络： 1docker run -itd --net bluenet --name c1 busybox sh 如果未指定，那就是 docker0 网络，但实际上容器可以加入多个网络的，需要使用 docker network connect 命令，例如现在创建两个网络： 12$ docker network c">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-docker-container-join-multi-network" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/docker-container-join-multi-network/" class="article-date">
+  <time datetime="2018-09-21T09:14:13.000Z" itemprop="datePublished">2018-09-21</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      docker容器加入多个网络
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>docker 容器默认情况下会加入一个网络，可以在 <code>docker run</code> 命令中指定这个网络：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -itd --net bluenet --name c1 busybox sh</span><br></pre></td></tr></table></figure>
+<p>如果未指定，那就是 docker0 网络，但实际上容器可以加入多个网络的，需要使用 <code>docker network connect</code> 命令，例如现在创建两个网络：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ docker network create bluenet</span><br><span class="line">$ docker network create rednet</span><br></pre></td></tr></table></figure>
+<p>先用其中一个网络创建容器，但是别去运行它：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker create -it --net bluenet --name c1 busybox sh</span><br></pre></td></tr></table></figure>
+<p>这个时候，容器的状态是 <code>Created</code>，表示已创建但尚未运行。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ docker ps -a</span><br><span class="line">CONTAINER ID        IMAGE       COMMAND      CREATED             STATUS     PORTS   NAMES</span><br><span class="line">25b52f0a988a        busybox     <span class="string">"sh"</span>         16 seconds ago      Created            c1</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<p>这个时候查看容器详情：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">$ docker inspect c1</span><br><span class="line"><span class="string">"NetworkSettings"</span>: &#123;</span><br><span class="line">    <span class="string">"Networks"</span>: &#123;</span><br><span class="line">        <span class="string">"bluenet"</span>: &#123;</span><br><span class="line">            <span class="string">"IPAMConfig"</span>: null,</span><br><span class="line">            <span class="string">"Links"</span>: null,</span><br><span class="line">            <span class="string">"Aliases"</span>: null,</span><br><span class="line">            <span class="string">"NetworkID"</span>: <span class="string">""</span>,</span><br><span class="line">            <span class="string">"EndpointID"</span>: <span class="string">""</span>,</span><br><span class="line">            <span class="string">"Gateway"</span>: <span class="string">""</span>,</span><br><span class="line">            <span class="string">"IPAddress"</span>: <span class="string">""</span>,</span><br><span class="line">            <span class="string">"IPPrefixLen"</span>: 0,</span><br><span class="line">            <span class="string">"IPv6Gateway"</span>: <span class="string">""</span>,</span><br><span class="line">            <span class="string">"GlobalIPv6Address"</span>: <span class="string">""</span>,</span><br><span class="line">            <span class="string">"GlobalIPv6PrefixLen"</span>: 0,</span><br><span class="line">            <span class="string">"MacAddress"</span>: <span class="string">""</span>,</span><br><span class="line">            <span class="string">"DriverOpts"</span>: null</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后再添加其他的网络：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ docker network connect rednet c1</span><br></pre></td></tr></table></figure>
+<p>再查看的时候，发现它有两个网络了：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">$ docker inspect c1</span><br><span class="line"><span class="string">"NetworkSettings"</span>: &#123;</span><br><span class="line">    <span class="string">"Networks"</span>: &#123;</span><br><span class="line">        <span class="string">"bluenet"</span>: &#123;</span><br><span class="line">            <span class="string">"IPAMConfig"</span>: null,</span><br><span class="line">            <span class="string">"Links"</span>: null,</span><br><span class="line">            <span class="string">"Aliases"</span>: null,</span><br><span class="line">            <span class="string">"NetworkID"</span>: <span class="string">""</span>,</span><br><span class="line">            <span class="string">"EndpointID"</span>: <span class="string">""</span>,</span><br><span class="line">            <span class="string">"Gateway"</span>: <span class="string">""</span>,</span><br><span class="line">            <span class="string">"IPAddress"</span>: <span class="string">""</span>,</span><br><span class="line">            <span class="string">"IPPrefixLen"</span>: 0,</span><br><span class="line">            <span class="string">"IPv6Gateway"</span>: <span class="string">""</span>,</span><br><span class="line">            <span class="string">"GlobalIPv6Address"</span>: <span class="string">""</span>,</span><br><span class="line">            <span class="string">"GlobalIPv6PrefixLen"</span>: 0,</span><br><span class="line">            <span class="string">"MacAddress"</span>: <span class="string">""</span>,</span><br><span class="line">            <span class="string">"DriverOpts"</span>: null</span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="string">"rednet"</span>: &#123;</span><br><span class="line">            <span class="string">"IPAMConfig"</span>: &#123;&#125;,</span><br><span class="line">            <span class="string">"Links"</span>: null,</span><br><span class="line">            <span class="string">"Aliases"</span>: [</span><br><span class="line">                <span class="string">"25b52f0a988a"</span></span><br><span class="line">            ],</span><br><span class="line">            <span class="string">"NetworkID"</span>: <span class="string">""</span>,</span><br><span class="line">            <span class="string">"EndpointID"</span>: <span class="string">""</span>,</span><br><span class="line">            <span class="string">"Gateway"</span>: <span class="string">""</span>,</span><br><span class="line">            <span class="string">"IPAddress"</span>: <span class="string">""</span>,</span><br><span class="line">            <span class="string">"IPPrefixLen"</span>: 0,</span><br><span class="line">            <span class="string">"IPv6Gateway"</span>: <span class="string">""</span>,</span><br><span class="line">            <span class="string">"GlobalIPv6Address"</span>: <span class="string">""</span>,</span><br><span class="line">            <span class="string">"GlobalIPv6PrefixLen"</span>: 0,</span><br><span class="line">            <span class="string">"MacAddress"</span>: <span class="string">""</span>,</span><br><span class="line">            <span class="string">"DriverOpts"</span>: null</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最后启动这个容器：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ docker start c1</span><br></pre></td></tr></table></figure>
+<p>为了证实容器确实加入了两个网络，可以进入容器内部查看网络配置信息：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">$ docker <span class="built_in">exec</span> -it c1 sh</span><br><span class="line"></span><br><span class="line">/ <span class="comment"># ifconfig</span></span><br><span class="line">eth0      Link encap:Ethernet  HWaddr 02:42:AC:12:00:02  </span><br><span class="line">          inet addr:172.18.0.2  Bcast:172.18.255.255  Mask:255.255.0.0</span><br><span class="line">          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1</span><br><span class="line">          RX packets:0 errors:0 dropped:0 overruns:0 frame:0</span><br><span class="line">          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0</span><br><span class="line">          collisions:0 txqueuelen:0 </span><br><span class="line">          RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)</span><br><span class="line"></span><br><span class="line">eth1      Link encap:Ethernet  HWaddr 02:42:AC:13:00:02  </span><br><span class="line">          inet addr:172.19.0.2  Bcast:172.19.255.255  Mask:255.255.0.0</span><br><span class="line">          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1</span><br><span class="line">          RX packets:0 errors:0 dropped:0 overruns:0 frame:0</span><br><span class="line">          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0</span><br><span class="line">          collisions:0 txqueuelen:0 </span><br><span class="line">          RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)</span><br><span class="line"></span><br><span class="line">lo        Link encap:Local Loopback  </span><br><span class="line">          inet addr:127.0.0.1  Mask:255.0.0.0</span><br><span class="line">          UP LOOPBACK RUNNING  MTU:65536  Metric:1</span><br><span class="line">          RX packets:0 errors:0 dropped:0 overruns:0 frame:0</span><br><span class="line">          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0</span><br><span class="line">          collisions:0 txqueuelen:1 </span><br><span class="line">          RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)</span><br><span class="line"></span><br><span class="line">/ <span class="comment"># ip route</span></span><br><span class="line">default via 172.18.0.1 dev eth0 </span><br><span class="line">172.18.0.0/16 dev eth0 scope link  src 172.18.0.2 </span><br><span class="line">172.19.0.0/16 dev eth1 scope link  src 172.19.0.2</span><br></pre></td></tr></table></figure>
+<p>如果想要移除某个网络，可以使用下面的命令：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker network disconnect bluenet c1</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/docker-container-join-multi-network/" data-id="cjw77iixs0004qlq4famq8dok" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/">Docker</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/change-docker-volume-folder/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          修改 docker 默认存储位置
+        
+      </div>
+    </a>
+  
+  
+    <a href="/es-head/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">es-head 安装</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

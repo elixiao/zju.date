@@ -54,6 +54,57 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-docker-log-driver" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/docker-log-driver/" class="article-date">
+  <time datetime="2018-10-01T23:58:23.000Z" itemprop="datePublished">2018-10-02</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/docker-log-driver/">docker 日志收集</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>docker 默认的日志驱动是 json-file，即保存在文件中，路径可以通过下面的命令查看：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker inspect --format=<span class="string">'&#123;&#123;.LogPath&#125;&#125;'</span> NAME|ID</span><br></pre></td></tr></table></figure>
+<p>例如：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ docker inspect --format=<span class="string">'&#123;&#123;.LogPath&#125;&#125;'</span> mysql</span><br><span class="line">/var/lib/docker/containers/54571b675a6b52f70aea806977359d8bcd74543cb09e1aa139853113f835d1c4/54571b675a6b52f70aea806977359d8bcd74543cb09e1aa139853113f835d1c4-json.log</span><br></pre></td></tr></table></figure>
+<p>json-file 驱动会在启动某个容器时自动创建一个 json 文件，用于存储容器 stdout 与 stderr 输出的内容 ，当在宿主机中运行 <code>docker logs -f 容器名</code> 时，就会读取该文件的内容并显示在终端上。</p>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/docker-log-driver/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/docker-log-driver/" data-id="cjssqvcs900158uq464xl4wsf" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/">Docker</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-git-rename-and-delete-branch" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/git-rename-and-delete-branch/" class="article-date">
@@ -539,65 +590,10 @@
 
 
   
-    <article id="post-change-docker-volume-folder" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/change-docker-volume-folder/" class="article-date">
-  <time datetime="2018-09-23T06:23:23.000Z" itemprop="datePublished">2018-09-23</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/change-docker-volume-folder/">修改 docker 默认存储位置</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>docker 默认的存储位置是 <code>/var/lib/docker</code>，有三种方式可以实现修改 docker 默认存储位置的目的：</p>
-<ol>
-<li><p>指定启动参数</p>
-<p> 可以通过指定 docker 的启动参数 <code>data-root</code> 来设置 docker 的存储目录，这个文件一般位于 <code>/lib/systemd/system/docker.service</code></p>
- <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 旧的写法</span></span><br><span class="line">ExecStart=/usr/bin/dockerd</span><br><span class="line"><span class="comment"># 新的写法</span></span><br><span class="line">ExecStart=/usr/bin/dockerd --data-root /new_location/</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<pre><code>那么当再使用 `docker volume create xxx` 创建新的数据卷时，存储的目录就变成了：`/new_location/volumes/{volume_name}/_data`
-</code></pre>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/change-docker-volume-folder/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/change-docker-volume-folder/" data-id="cju5m2z5z0003qqq4cvh1qieo" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
 
 
   <nav id="page-nav">
-    <a class="extend prev" rel="prev" href="/page/2/">&laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/52/">52</a><a class="extend next" rel="next" href="/page/4/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/2/">&laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/54/">54</a><a class="extend next" rel="next" href="/page/4/">Next &raquo;</a>
   </nav>
 </section>
 

@@ -54,10 +54,10 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-typescript-partial" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-debounce-vs-throttle" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/typescript-partial/" class="article-date">
-  <time datetime="2018-01-15T03:20:12.000Z" itemprop="datePublished">2018-01-15</time>
+    <a href="/debounce-vs-throttle/" class="article-date">
+  <time datetime="2018-02-01T09:23:13.000Z" itemprop="datePublished">2018-02-01</time>
 </a>
     
   </div>
@@ -68,7 +68,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/typescript-partial/">typescript 的 partial 语法</a>
+      <a class="article-title" href="/debounce-vs-throttle/">在 Angular 中使用 debounce 和 throttle</a>
     </h1>
   
 
@@ -80,20 +80,27 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <p>定义了用户模型：</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> UserModel &#123;</span><br><span class="line">  email: <span class="built_in">string</span>;</span><br><span class="line">  password: <span class="built_in">string</span>;</span><br><span class="line">  address: <span class="built_in">string</span>;</span><br><span class="line">  phone: <span class="built_in">string</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>假如说用户类有个更新用户的方法：</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> User &#123;</span><br><span class="line">  update( user: UserModel ) &#123;</span><br><span class="line">    <span class="comment">// Update user</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+            <h2 id="debounce"><a href="#debounce" class="headerlink" title="debounce"></a>debounce</h2><ol>
+<li><p>名词释义</p>
+<p> 对于某事件流，自触发时刻开始，若持续指定时间内未有事件发生，则触发最后的事件；否则只更新最后事件，并不触发事件，直到满足持续指定时间未有事件发生的条件。</p>
+</li>
+<li><p>应用场景</p>
+<p> 搜索手牌或商品的时候，keyup事件并不需要每次都触发请求，而是当用户某两次keyup中间的间隔超过指定时间才去请求，否则用户噼里啪啦打字，你发了几十个请求，浪费资源。</p>
+</li>
+<li><p>代码：</p>
+ <figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123;Directive, EventEmitter, HostListener, Input, OnInit, Output&#125; <span class="keyword">from</span> <span class="string">'@angular/core'</span></span><br><span class="line"><span class="keyword">import</span> &#123;Subject&#125; <span class="keyword">from</span> <span class="string">'rxjs/Subject'</span></span><br><span class="line"><span class="keyword">import</span> &#123;debounceTime&#125; <span class="keyword">from</span> <span class="string">'rxjs/operators'</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@Directive</span>(&#123;</span><br><span class="line">  selector: <span class="string">'[debounce]'</span></span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> DebounceDirective <span class="keyword">implements</span> OnInit &#123;</span><br><span class="line">  <span class="meta">@Input</span>() debounce</span><br><span class="line">  <span class="meta">@Output</span>() debounceKeyup = <span class="keyword">new</span> EventEmitter()</span><br><span class="line">  <span class="keyword">private</span> keyupSubject = <span class="keyword">new</span> Subject()</span><br><span class="line"></span><br><span class="line">  <span class="keyword">constructor</span>(<span class="params"></span>) &#123;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  ngOnInit() &#123;</span><br><span class="line">    <span class="keyword">this</span>.keyupSubject</span><br><span class="line">      .pipe(debounceTime(<span class="keyword">this</span>.debounce || <span class="number">500</span>))</span><br><span class="line">      .subscribe(<span class="function"><span class="params">e</span> =&gt;</span> <span class="keyword">this</span>.debounceKeyup.emit(e))</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@HostListener</span>(<span class="string">'keyup'</span>, [<span class="string">'$event'</span>])</span><br><span class="line">  keyupEvent(event) &#123;</span><br><span class="line">    event.preventDefault()</span><br><span class="line">    event.stopPropagation()</span><br><span class="line">    <span class="keyword">this</span>.keyupSubject.next(event)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
         </div>
         
           <p class="article-more-link">
-            <a href="/typescript-partial/#more">Read More</a>
+            <a href="/debounce-vs-throttle/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/typescript-partial/" data-id="cjhq778u700iaizq319xafxg6" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/debounce-vs-throttle/" data-id="cjkajvcql00084eq3033qy33m" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
@@ -104,10 +111,10 @@
 
 
   
-    <article id="post-js-comma" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-git-branch-manage" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/js-comma/" class="article-date">
-  <time datetime="2018-01-12T04:59:12.000Z" itemprop="datePublished">2018-01-12</time>
+    <a href="/git-branch-manage/" class="article-date">
+  <time datetime="2018-02-01T07:50:13.000Z" itemprop="datePublished">2018-02-01</time>
 </a>
     
   </div>
@@ -118,109 +125,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/js-comma/">js 中的逗号</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>JavaScript 中的逗号运算符对它的每个操作数求值（从左到右），并返回最后一个操作数的值。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">expr1, expr2, expr3...</span><br></pre></td></tr></table></figure>
-<p>使用场景：</p>
-<ol>
-<li><p><code>for</code> 循环中提供多个参数</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 打印一个二维数组中斜线方向的元素</span></span><br><span class="line"><span class="keyword">var</span> a = [[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>], [<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>], [<span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>]]</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>, j = <span class="number">2</span>; i &lt;= <span class="number">2</span>; i++, j--) </span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">"a["</span> + i + <span class="string">"]["</span> + j + <span class="string">"] = "</span> + a[i][j]);</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>在返回值前处理一些操作</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">myFunc</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> x = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">return</span> (x += <span class="number">1</span>, x); <span class="comment">// 和 return ++x 一样</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/js-comma/" data-id="cjhq778o300b8izq3qxejtxuh" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-docker-mount-volume" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/docker-mount-volume/" class="article-date">
-  <time datetime="2018-01-11T14:56:07.000Z" itemprop="datePublished">2018-01-11</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/docker-mount-volume/">docker mount 和 volume</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>mount 和 volume 的区别：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ docker run -d -it --name devtest -v myvol2:/app nginx:latest</span><br></pre></td></tr></table></figure>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ docker run -d -it --name devtest --mount <span class="built_in">source</span>=myvol2,target=/app nginx:latest</span><br></pre></td></tr></table></figure>
-<p>最开始的时候 <code>-v</code> 和 <code>--volume</code> 标识用于单独的容器， <code>--mount</code> 标识用于 swarm 服务，从 Docker 17.06 开始也可以将 <code>--mount</code> 用于单独的容器了。总的来说，<code>--mount</code> 语义更加清楚，跟 <code>-v</code> 语法的区别就在于把冒号分离的存储分成了 source 和 target 两部分，除此之外，如果需要指定存储介质选项，则必须使用 <code>--mount</code> 语法。例如：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ docker run -d --name=<span class="built_in">test</span> \</span><br><span class="line">  --mount <span class="built_in">source</span>=nginx-vol,destination=/usr/share/nginx/html,<span class="built_in">readonly</span> \</span><br><span class="line">  nginx:latest</span><br></pre></td></tr></table></figure>
-<p>创建数据卷：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ docker volume create my-vol</span><br></pre></td></tr></table></figure>
-<p>数据卷详情：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$ docker volume inspect my-vol</span><br><span class="line">[</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="string">"Driver"</span>: <span class="string">"local"</span>,</span><br><span class="line">        <span class="string">"Labels"</span>: &#123;&#125;,</span><br><span class="line">        <span class="string">"Mountpoint"</span>: <span class="string">"/var/lib/docker/volumes/my-vol/_data"</span>,</span><br><span class="line">        <span class="string">"Name"</span>: <span class="string">"my-vol"</span>,</span><br><span class="line">        <span class="string">"Options"</span>: &#123;&#125;,</span><br><span class="line">        <span class="string">"Scope"</span>: <span class="string">"local"</span></span><br><span class="line">    &#125;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
-<p>删除数据卷：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ docker volume rm my-vol</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/docker-mount-volume/" data-id="cjiom0g420000rbq3my3iqb2y" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/">Docker</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-ssh-jump-agent" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/ssh-jump-agent/" class="article-date">
-  <time datetime="2018-01-11T14:50:03.000Z" itemprop="datePublished">2018-01-11</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/ssh-jump-agent/">ssh 跳板机</a>
+      <a class="article-title" href="/git-branch-manage/">git 分支管理</a>
     </h1>
   
 
@@ -232,319 +137,40 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <p>访问公司的内网服务器，一般会设置一个跳板机，先从跳板机做一个ssh跳转，这个跳板机是部署在外网的服务器，而且需要通过证书登录。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">本机ssh-&gt;跳板机-&gt;目标机器</span><br></pre></td></tr></table></figure>
-<p>举个例子：iptables 限制了 SSH 端口白名单， 例如指定 IP 才能登陆，或者没有开通VPN权限，无法直接登录到服务器。这个时候可以用一台机器做为跳板登陆到指定的机器去处理问题：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">+-----+             +-----+             +-----+</span><br><span class="line">|     |             |     |             |     |</span><br><span class="line">|  A  +-----------&gt; |  B  +-----------&gt; |  C  |</span><br><span class="line">|     |             |     |             |     |</span><br><span class="line">+-----+             +-----+             +-----+</span><br></pre></td></tr></table></figure>
+            <h2 id="Git-分支管理"><a href="#Git-分支管理" class="headerlink" title="Git 分支管理"></a>Git 分支管理</h2><p>首先要明确下面两个分支的概念：</p>
+<table>
+<thead>
+<tr>
+<th>分支</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>develop</td>
+<td>包含的是下个版本需要发布的内容</td>
+</tr>
+<tr>
+<td>master</td>
+<td>包含的是可以部署到生产环境中的代码</td>
+</tr>
+</tbody>
+</table>
+<p>意思是说：</p>
+<ul>
+<li>develop 分支，是用于随时可以发布到 <code>develop</code> 的代码，便于线上测试；</li>
+<li>master 分支，是用于随时可以发布到 <code>master.com</code> 生产环境的代码。</li>
+</ul>
         </div>
         
           <p class="article-more-link">
-            <a href="/ssh-jump-agent/#more">Read More</a>
+            <a href="/git-branch-manage/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/ssh-jump-agent/" data-id="cjw53wyb4000um5q4x49zxn1e" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-docker-compose-yaml-override" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/docker-compose-yaml-override/" class="article-date">
-  <time datetime="2018-01-11T14:37:07.000Z" itemprop="datePublished">2018-01-11</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/docker-compose-yaml-override/">docker compose 覆盖</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><code>docker-compose.override.yaml</code> 文件可以覆盖 <code>docker-compose.yaml</code>，详细规则如下：</p>
-<ol>
-<li><p><code>build</code> 和 <code>image</code> 是互斥的，以覆盖文件为准。</p>
-</li>
-<li><p>单值的选项，例如 <code>image</code>, <code>command</code> 和 <code>mem_limit</code>, 以覆盖文件为准。</p>
- <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># original service</span></span><br><span class="line"><span class="attr">command:</span> <span class="string">python</span> <span class="string">app.py</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># local service</span></span><br><span class="line"><span class="attr">command:</span> <span class="string">python</span> <span class="string">otherapp.py</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># result</span></span><br><span class="line"><span class="attr">command:</span> <span class="string">python</span> <span class="string">otherapp.py</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>多值的选项，例如： <code>ports</code>, <code>expose</code>, <code>external_links</code>, <code>dns</code>, <code>dns_search</code>, 和 <code>tmpfs</code>, 会将值合并。</p>
- <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># original service</span></span><br><span class="line"><span class="attr">expose:</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">"3000"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># local service</span></span><br><span class="line"><span class="attr">expose:</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">"4000"</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">"5000"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># result</span></span><br><span class="line"><span class="attr">expose:</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">"3000"</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">"4000"</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">"5000"</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>有键值对的 <code>environment</code>, <code>labels</code>, <code>volumes</code> and <code>devices</code>, 也会合并，但是当键相同的时候以覆盖文件为准。</p>
- <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># original service</span></span><br><span class="line"><span class="attr">environment:</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">FOO=original</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">BAR=original</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># local service</span></span><br><span class="line"><span class="attr">environment:</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">BAR=local</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">BAZ=local</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># result</span></span><br><span class="line"><span class="attr">environment:</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">FOO=original</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">BAR=local</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">BAZ=local</span></span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/docker-compose-yaml-override/" data-id="cjhq778jh005mizq3bnqi2zeg" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/">Docker</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-docker-compose-env" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/docker-compose-env/" class="article-date">
-  <time datetime="2018-01-11T14:35:23.000Z" itemprop="datePublished">2018-01-11</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/docker-compose-env/">docker-compose 环境变量</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>docker-compose 的 yaml 文件里面用环境变量只适用于 value，key 不能用，例如：</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">db:</span></span><br><span class="line"><span class="attr">  image:</span> <span class="string">"postgres:$&#123;POSTGRES_VERSION&#125;"</span></span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/docker-compose-env/" data-id="cjhq778jf005hizq3i3amfjw4" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/">Docker</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-host-not-found-in-upstream" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/host-not-found-in-upstream/" class="article-date">
-  <time datetime="2018-01-11T14:31:07.000Z" itemprop="datePublished">2018-01-11</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/host-not-found-in-upstream/">host not found in upstream</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>利用 nginx 进行反向代理的时候会配置 proxy_pass，如果报错：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nginx: [emerg] host not found in upstream &quot;xxx.com&quot; in /usr/local/nginx/conf/xxx.nginx.com.conf:19 这个错误。</span><br></pre></td></tr></table></figure>
-<p>原因是无法解析这个域名，解决办法就是修改 <code>/etc/hosts</code>，让其能够解析到IP。具体步骤如下：</p>
-<ol>
-<li><code>vim /etc/hosts</code></li>
-<li>添加：<code>127.0.0.1 xxx.com</code></li>
-</ol>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/host-not-found-in-upstream/" data-id="cjiom0g4i0003rbq3b4wegwnm" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-chrome-full-screenshot" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/chrome-full-screenshot/" class="article-date">
-  <time datetime="2018-01-11T03:53:05.000Z" itemprop="datePublished">2018-01-11</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/chrome-full-screenshot/">chrome 截取全部网页</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>按 F12 或快捷键：</p>
-<ul>
-<li>Mac：<code>Cmd + Opt + I</code> </li>
-<li>Win：<code>Ctrl + Shift + I</code></li>
-</ul>
-<p>打开开发者工具之后按：</p>
-<ul>
-<li>Mac：<code>Cmd + Shift + P</code></li>
-<li>Win：<code>Ctrl + Shift + P</code></li>
-</ul>
-<p>在弹出的输入框里搜索 full size screenshot，会自动补全，按回车即可。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/chrome-full-screenshot/" data-id="cjkajvcqk00064eq34htc63cu" class="article-share-link">Share</a>
-     
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-pm2-log-with-timestamp" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/pm2-log-with-timestamp/" class="article-date">
-  <time datetime="2018-01-11T02:15:07.000Z" itemprop="datePublished">2018-01-11</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/pm2-log-with-timestamp/">pm2 日志加时间戳</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>默认没有时间戳，可以在启动的时候指定：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ pm2 start app.js --<span class="built_in">log</span>-date-format <span class="string">'DD-MM HH:mm:ss.SSS'</span></span><br></pre></td></tr></table></figure>
-<p>其中 <code>DD-MM HH:mm:ss.SSS</code> 是任意 <code>momentjs</code> 有效时间格式.</p>
-<p>或者修改 app.json 文件：</p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"apps"</span> : [</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">"name"</span>        : <span class="string">"app"</span>,</span><br><span class="line">      <span class="attr">"script"</span>      : <span class="string">"bin/www"</span>,</span><br><span class="line">      <span class="attr">"log_date_format"</span> : <span class="string">"YYYY-MM-DD HH:mm Z"</span></span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/pm2-log-with-timestamp/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/pm2-log-with-timestamp/" data-id="cjhq778ra00fgizq3vk5eigck" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-git-config" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/git-config/" class="article-date">
-  <time datetime="2018-01-11T01:57:07.000Z" itemprop="datePublished">2018-01-11</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/git-config/">git config</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>获取或设置各种 git 配置：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">git config --list <span class="comment"># 所有配置（合并本地和全局的）</span></span><br><span class="line">git config --<span class="built_in">local</span> --list <span class="comment"># 本仓库配置</span></span><br><span class="line">git config user.name <span class="comment"># 获取用户名</span></span><br><span class="line">git config user.name <span class="string">"myname"</span> <span class="comment"># 设置用户名</span></span><br><span class="line">git config --global user.name <span class="string">"myname"</span> <span class="comment"># 全局设置用户名</span></span><br><span class="line">git config user.email <span class="string">"myname@gmail.com"</span> <span class="comment"># 设置邮箱</span></span><br><span class="line">git config --global user.email <span class="string">"myname@gmail.com"</span> <span class="comment"># 全局设置邮箱</span></span><br></pre></td></tr></table></figure>
-<p>git 配置文件位置：</p>
-<ul>
-<li>全局：<code>~/.gitconfig</code></li>
-<li>本地：<code>$PWD/.git/config</code></li>
-</ul>
-<p>常用命令：</p>
-<ol>
-<li><p>查看用户名和邮箱</p>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git config user.name</span><br><span class="line">git config user.email</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>修改用户名和邮箱</p>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git config --global user.name &quot;your name&quot;</span><br><span class="line">git config --global user.email &quot;your email&quot;</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/git-config/" data-id="cjssqvcsm001p8uq4u3ex9nd1" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/git-branch-manage/" data-id="cjhq778kv007oizq3p4z1rf4l" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/">Git</a></li></ul>
 
@@ -555,10 +181,438 @@
 
 
   
+    <article id="post-load-balance" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/load-balance/" class="article-date">
+  <time datetime="2018-01-27T01:57:07.000Z" itemprop="datePublished">2018-01-27</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/load-balance/">负载均衡配置</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>负载均衡，单从字面上的意思来理解就可以解释N台服务器平均分担负载，不会因为某台服务器负载高宕机和某台服务器闲置的情况，那么负载均衡的前提就是要2台以上服务器才能实现。假设我现在有三个 server，分别是：</p>
+<ul>
+<li>master（192.168.120.7）</li>
+<li>minion1 （192.168.120.8）</li>
+<li>minion2（192.168.120.9）</li>
+</ul>
+<p>我们把域名解析到 master 服务器的 80 端口，然后由 master 服务器的 80 端口转发到 minion1 服务器的 8080 端口和 minion2 服务器的 8081 端口。如果没有多台服务器，也可以用一台进行测试，使用不同端口即可。下面使用 nginx 和 haproxy 来实现负载均衡。</p>
+<h2 id="nginx"><a href="#nginx" class="headerlink" title="nginx"></a>nginx</h2><p>单配置：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">upstream anyname &#123;</span><br><span class="line">      server minion1:8080;</span><br><span class="line">      server minion2:8081;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">server&#123; </span><br><span class="line">    listen 80; </span><br><span class="line">    server_name 192.168.120.7; </span><br><span class="line">    location / &#123; </span><br><span class="line">        proxy_pass         http://anyname; </span><br><span class="line">        proxy_set_header   Host             $host; </span><br><span class="line">        proxy_set_header   X-Real-IP        $remote_addr; </span><br><span class="line">        proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for; </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/load-balance/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/load-balance/" data-id="cjhq778p500ckizq3y1j8cfb5" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-angular-ie9" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/angular-ie9/" class="article-date">
+  <time datetime="2018-01-25T13:10:23.000Z" itemprop="datePublished">2018-01-25</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/angular-ie9/">Angular 兼容 IE9</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>使用官网的 quickstart 是不兼容 IE9 的，我们需要另外配置使其兼容IE9，在 index.html 中引入 polyfill：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- Polyfill(s) for older browsers --&gt;</span><br><span class="line">&lt;script src=&quot;node_modules/core-js/client/shim.min.js&quot;&gt;&lt;/script&gt;</span><br><span class="line">&lt;script src=&quot;//cdnjs.cloudflare.com/ajax/libs/classlist/2014.01.31/classList.min.js&quot;&gt;&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+<p>另外可能还要配置路由为 HashLocationStrategy，即在 RouterModule.forRoot 中设置 useHash 属性：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">imports: [</span><br><span class="line">       RouterModule.forRoot(appRoutes,&#123;useHash:true&#125;)</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/angular-ie9/" data-id="cjssqvcrh00098uq42p1rku9n" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Angular/">Angular</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-private-docker-registery" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/private-docker-registery/" class="article-date">
+  <time datetime="2018-01-25T06:58:23.000Z" itemprop="datePublished">2018-01-25</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/private-docker-registery/">搭建 docker 私有仓库</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>有时候需要在多个环境部署 docker 应用，在每一台机器上从头开始构建 image 比较耗时，我们可以搭建私有仓库，从 docker 官方公开仓库拉取镜像，在本地进行加工处理成私有镜像后，直接上传到私有仓库，这样每个主机就可以从私有仓库拉取制作好的私有镜像了，如下图所示：</p>
+<p><img src="http://img.react.ren/blog/private-docker-registry.png" alt="private-docker-registry"></p>
+<p>可以通过下面的命令启动官方的 registry ：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d -p 5000:5000 --restart=always --name registry registry</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/private-docker-registery/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/private-docker-registery/" data-id="cjkajvcr3000n4eq3qfcfrs1u" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-nfs-notes" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/nfs-notes/" class="article-date">
+  <time datetime="2018-01-23T08:04:07.000Z" itemprop="datePublished">2018-01-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/nfs-notes/">NFS笔记</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>NFS (network file system) 网络文件系统，类似 Windows 中的文件夹共享，多台机器可以访问同一个目录。</p>
+<h2 id="服务端"><a href="#服务端" class="headerlink" title="服务端"></a>服务端</h2><p>NFS 其实可以被视为一个 RPC 服务，可以通过下面的命令开启：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">systemctl start rpcbind <span class="comment"># 开启 rpcbind</span></span><br><span class="line">systemctl start nfs <span class="comment"># 开启 nfs</span></span><br></pre></td></tr></table></figure>
+<p>如果系统没安装的话，使用下面的命令安装：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">yum install nfs-utils</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加开启启动</span></span><br><span class="line">systemctl <span class="built_in">enable</span> rpcbind.service</span><br><span class="line">systemctl <span class="built_in">enable</span> nfs-server.service</span><br></pre></td></tr></table></figure>
+<p>然后就可以添加从机了，假如我们想共享本地文件夹 /home/nfs：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">vim  /etc/exports</span><br><span class="line">/home/nfs 192.168.120.8(rw,all_squash,anonuid=1000,anongid=1000) 192.168.120.9(rw,all_squash,anonuid=1000,anongid=1000) </span><br><span class="line"><span class="comment"># 或者</span></span><br><span class="line">/home/nfs 192.168.120.8(rw,sync,fsid=0,anonuid=0,anongid=0) 192.168.120.9(rw,sync,fsid=0,anonuid=0,anongid=0)</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/nfs-notes/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/nfs-notes/" data-id="cjhq778qj00egizq33h62dfti" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-react-redux" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/react-redux/" class="article-date">
+  <time datetime="2018-01-23T01:11:33.000Z" itemprop="datePublished">2018-01-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/react-redux/">在react中使用redux</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>掌握了 redux 的思想之后，尝试在 react 项目使用 redux，首先引入 react-redux 包：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn add react-redux</span><br></pre></td></tr></table></figure>
+<p>这里面最重要的函数是 connect，它连接了 react 组件和 redux 存储。connect 接收四个参数：</p>
+<ul>
+<li>mapStateToProps 函数</li>
+<li>mapDispatchToProps 函数</li>
+<li>mergeProps</li>
+<li>options</li>
+</ul>
+<p>用的最多的就是第一个函数，这个函数允许我们将 store 中的数据作为 props 绑定到组件上：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mapStateToProps(state, ownProps) : stateProps</span><br></pre></td></tr></table></figure>
+<p>connect 的第二个参数是 mapDispatchToProps ，它的功能是将 action 作为 props 绑定到组件上（如果没有传入这个参数，会直接把 dispatch 函数当作 props 传入）：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mapDispatchToProps(dispatch, ownProps): dispatchProps</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/react-redux/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/react-redux/" data-id="cjw77iiye000pqlq43by7438m" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-learn-angular-from-scratch" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/learn-angular-from-scratch/" class="article-date">
+  <time datetime="2018-01-20T01:38:21.000Z" itemprop="datePublished">2018-01-20</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/learn-angular-from-scratch/">从零开始学习Angular</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>创建一个最小化项目：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ng new ws-angular --skipTests --skipInstall --skipGit --minimal --routing --style=less --dryRun --verbose</span><br></pre></td></tr></table></figure>
+<p>几个参数的含义：</p>
+<ul>
+<li><code>skip-tests</code>：不创建测试文件</li>
+<li><code>skip-install</code>：不自动安装依赖</li>
+<li>`skip-git</li>
+</ul>
+<p>得到的项目结构：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">|____.angular-cli.json <span class="comment"># angular-cli 配置</span></span><br><span class="line">|____package.json <span class="comment"># 第三方依赖</span></span><br><span class="line">|____tsconfig.json <span class="comment"># typescript 配置</span></span><br><span class="line">|____src <span class="comment"># 源码目录</span></span><br><span class="line">| |____styles.less <span class="comment"># 全局样式</span></span><br><span class="line">| |____index.html <span class="comment"># 单页面应用主页入口</span></span><br><span class="line">| |____app <span class="comment"># app 跟目录</span></span><br><span class="line">| | |____app-routing.module.ts <span class="comment"># 路由文件</span></span><br><span class="line">| | |____app.module.ts <span class="comment"># 模块</span></span><br><span class="line">| | |____app.component.ts <span class="comment"># 跟组件</span></span><br><span class="line">| |____main.ts <span class="comment"># 应用程序入口</span></span><br><span class="line">| |____tsconfig.app.json <span class="comment"># typescript 配置</span></span><br><span class="line">| |____environments <span class="comment"># 环境</span></span><br><span class="line">| | |____environment.prod.ts <span class="comment"># 生产环境配置</span></span><br><span class="line">| | |____environment.ts <span class="comment"># 开发环境配置</span></span><br><span class="line">| |____typings.d.ts <span class="comment"># typescript 类型定义文件</span></span><br><span class="line">| |____assets</span><br><span class="line">| | |____.gitkeep</span><br><span class="line">| |____polyfills.ts <span class="comment"># 垫片</span></span><br></pre></td></tr></table></figure>
+<p>应用程序入口 main.ts</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; platformBrowserDynamic &#125; <span class="keyword">from</span> <span class="string">'@angular/platform-browser-dynamic'</span></span><br><span class="line"><span class="keyword">import</span> &#123; AppModule &#125; <span class="keyword">from</span> <span class="string">'./app/app.module'</span></span><br><span class="line"><span class="keyword">import</span> &#123; environment &#125; <span class="keyword">from</span> <span class="string">'./environments/environment'</span></span><br><span class="line"><span class="keyword">import</span> &#123; enableProdMode &#125; <span class="keyword">from</span> <span class="string">'@angular/core'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (environment.production) &#123;</span><br><span class="line">  enableProdMode()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">platformBrowserDynamic()</span><br><span class="line">  .bootstrapModule(AppModule)</span><br><span class="line">  .catch(<span class="function"><span class="params">err</span> =&gt;</span> <span class="built_in">console</span>.log(err))</span><br></pre></td></tr></table></figure>
+<p>启动模块 app.module.ts：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; BrowserModule &#125; <span class="keyword">from</span> <span class="string">'@angular/platform-browser'</span></span><br><span class="line"><span class="keyword">import</span> &#123; NgModule &#125; <span class="keyword">from</span> <span class="string">'@angular/core'</span></span><br><span class="line"><span class="keyword">import</span> &#123; AppRoutingModule &#125; <span class="keyword">from</span> <span class="string">'./app-routing.module'</span></span><br><span class="line"><span class="keyword">import</span> &#123; AppComponent &#125; <span class="keyword">from</span> <span class="string">'./app.component'</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@NgModule</span>(&#123;</span><br><span class="line">  declarations: [AppComponent],</span><br><span class="line">  imports: [BrowserModule, AppRoutingModule],</span><br><span class="line">  providers: [],</span><br><span class="line">  bootstrap: [AppComponent]</span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> AppModule &#123;&#125;</span><br></pre></td></tr></table></figure>
+<p>启动组件 app.component.ts：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; Component &#125; <span class="keyword">from</span> <span class="string">'@angular/core'</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span>(&#123;</span><br><span class="line">  selector: <span class="string">'app-root'</span>,</span><br><span class="line">  template: <span class="string">`</span></span><br><span class="line"><span class="string">    Home</span></span><br><span class="line"><span class="string">    &lt;router-outlet&gt;&lt;/router-outlet&gt;</span></span><br><span class="line"><span class="string">  `</span>,</span><br><span class="line">  styles: []</span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> AppComponent &#123;</span><br><span class="line">  title = <span class="string">'app'</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>路由定义文件：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; NgModule &#125; <span class="keyword">from</span> <span class="string">'@angular/core'</span></span><br><span class="line"><span class="keyword">import</span> &#123; Routes, RouterModule &#125; <span class="keyword">from</span> <span class="string">'@angular/router'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> routes: Routes = []</span><br><span class="line"></span><br><span class="line"><span class="meta">@NgModule</span>(&#123;</span><br><span class="line">  imports: [RouterModule.forRoot(routes)],</span><br><span class="line">  exports: [RouterModule]</span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> AppRoutingModule &#123;&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/learn-angular-from-scratch/" data-id="cjw53wyai0008m5q4mrdnos05" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-supervisor-notes" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/supervisor-notes/" class="article-date">
+  <time datetime="2018-01-20T01:35:39.000Z" itemprop="datePublished">2018-01-20</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/supervisor-notes/">使用 supervisor 管理进程</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>supervisor 是 Python 写的进程管理工具，可以很方便的用来启动、重启、关闭多个进程。</p>
+<ul>
+<li>不可以在 Windows 上运行</li>
+<li>可以运行在 Python 2.4 或者更高的 Python版本，但是不可以在任何 Python 3 的版本上运行。</li>
+</ul>
+<p>安装方法有两种：</p>
+<ol>
+<li><p>使用 pip 安装</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo pip install supervisor</span><br></pre></td></tr></table></figure>
+<p> 如果报错：</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">command not found: pip</span><br></pre></td></tr></table></figure>
+<p> 说明电脑里面未安装 pip，可使用下面的命令安装：</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo easy_install pip</span><br></pre></td></tr></table></figure>
+<p> 安装成功之后查看版本：</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pip --version</span><br><span class="line">pip 9.0.1 from /Library/Python/2.7/site-packages/pip-9.0.1-py2.7.egg (python 2.7)</span><br></pre></td></tr></table></figure>
+<p> 然后再运行：</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo pip install supervisor</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/supervisor-notes/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/supervisor-notes/" data-id="cjhq778t500hmizq3xeotrlxy" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-custom-http-header" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/custom-http-header/" class="article-date">
+  <time datetime="2018-01-19T01:36:13.000Z" itemprop="datePublished">2018-01-19</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/custom-http-header/">自定义 http header</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>自定义header往往是以X开头的，后来被规范废弃了，建议以相关字符串开头。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Account-ID</span><br><span class="line">Host-Name</span><br><span class="line">Storage-Policy</span><br></pre></td></tr></table></figure>
+<p>最好能换成带前缀的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">OpenStack-Identity-Account-ID</span><br><span class="line">OpenStack-Networking-Host-Name</span><br><span class="line">OpenStack-Object-Storage-Policy</span><br></pre></td></tr></table></figure>
+<p>带版本字符串的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">OpenStack-Nova-API-Version: 2.1</span><br></pre></td></tr></table></figure>
+<p>最好换成：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">OpenStack-API-Version: Nova 2.1</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/custom-http-header/" data-id="cjhq778j5005bizq3o3e3k2d2" class="article-share-link">Share</a>
+     
+    </footer>
+  </div>
+  
+</article>
+
+
+  
 
 
   <nav id="page-nav">
-    <a class="extend prev" rel="prev" href="/page/16/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/15/">15</a><a class="page-number" href="/page/16/">16</a><span class="page-number current">17</span><a class="page-number" href="/page/18/">18</a><a class="page-number" href="/page/19/">19</a><span class="space">&hellip;</span><a class="page-number" href="/page/52/">52</a><a class="extend next" rel="next" href="/page/18/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/16/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/15/">15</a><a class="page-number" href="/page/16/">16</a><span class="page-number current">17</span><a class="page-number" href="/page/18/">18</a><a class="page-number" href="/page/19/">19</a><span class="space">&hellip;</span><a class="page-number" href="/page/54/">54</a><a class="extend next" rel="next" href="/page/18/">Next &raquo;</a>
   </nav>
 </section>
 

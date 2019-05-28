@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="数据库索引就好比书籍的目录，有了目录就能快速定位章节内容，而不需要翻阅全书，使得查找速度提高几个数量级。因此创建索引能够极大提升查询速度： 12345db.users.createIndex(&amp;#123;createdAt: 1&amp;#125;) // 按创建时间正序db.users.createIndex(&amp;#123;createdAt: -1&amp;#125;) // 按创建时间倒序db.users.c">
+<meta name="keywords" content="MongoDB">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MongoDB索引">
+<meta property="og:url" content="https://zju.date/mongodb-index/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="数据库索引就好比书籍的目录，有了目录就能快速定位章节内容，而不需要翻阅全书，使得查找速度提高几个数量级。因此创建索引能够极大提升查询速度： 12345db.users.createIndex(&amp;#123;createdAt: 1&amp;#125;) // 按创建时间正序db.users.createIndex(&amp;#123;createdAt: -1&amp;#125;) // 按创建时间倒序db.users.c">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-05-27T06:59:29.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="MongoDB索引">
+<meta name="twitter:description" content="数据库索引就好比书籍的目录，有了目录就能快速定位章节内容，而不需要翻阅全书，使得查找速度提高几个数量级。因此创建索引能够极大提升查询速度： 12345db.users.createIndex(&amp;#123;createdAt: 1&amp;#125;) // 按创建时间正序db.users.createIndex(&amp;#123;createdAt: -1&amp;#125;) // 按创建时间倒序db.users.c">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-mongodb-index" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/mongodb-index/" class="article-date">
+  <time datetime="2018-04-23T13:35:23.000Z" itemprop="datePublished">2018-04-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      MongoDB索引
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>数据库索引就好比书籍的目录，有了目录就能快速定位章节内容，而不需要翻阅全书，使得查找速度提高几个数量级。因此创建索引能够极大提升查询速度：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">db.users.createIndex(&#123;<span class="attr">createdAt</span>: <span class="number">1</span>&#125;) <span class="comment">// 按创建时间正序</span></span><br><span class="line">db.users.createIndex(&#123;<span class="attr">createdAt</span>: <span class="number">-1</span>&#125;) <span class="comment">// 按创建时间倒序</span></span><br><span class="line">db.users.createIndex(&#123;<span class="attr">company</span>: <span class="number">1</span>, <span class="attr">createdAt</span>: <span class="number">-1</span>&#125;) <span class="comment">// 组合索引</span></span><br><span class="line">db.users.createIndex(&#123;<span class="attr">createdAt</span>: <span class="number">-1</span>&#125;,&#123;<span class="attr">background</span>: <span class="literal">true</span>&#125;) <span class="comment">// 后台创建索引</span></span><br><span class="line">db.users.createIndex(&#123;<span class="attr">company</span>: NumberInt(<span class="number">1</span>)&#125;,&#123;<span class="attr">background</span>: <span class="literal">true</span>&#125;)</span><br></pre></td></tr></table></figure>
+<p>在前台创建索过程中会锁定数据库，会导致其它操作无法进行数据读写，而在后台创建索引时，会定期释放写锁，从而保证其它操作的运行，但是后台操作会在耗时更长，尤其是在频繁进行写入的服务器上。创建完毕之后可以查看索引：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">db.users.getIndexes() <span class="comment">// 查看索引</span></span><br><span class="line">db.users.getIndexKeys() <span class="comment">// 查看索引字段</span></span><br><span class="line">db.users.totalIndexSize() <span class="comment">// 查看索引大小</span></span><br><span class="line">db.getCollection(<span class="string">'users'</span>).stats() <span class="comment">// 查看表相关信息</span></span><br></pre></td></tr></table></figure>
+<p>索引创建之后可以被删除：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">db.users.dropIndex(<span class="string">"createdAt_-1"</span>) <span class="comment">// 删除指定索引</span></span><br><span class="line">db.users.dropIndexes() <span class="comment">// 删除全部索引（除了_id索引）</span></span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<p>不使用索引的查找叫做<strong>全表扫描</strong>，速度比较慢。但使用索引也是有代价的，虽然查询速度快了，但插入、更新和删除操作会耗费更多时间，因为当数据发生变化时，MongoDB 不仅更新了文档还会更新索引，MongoDB 限制每个集合上最多有 64 个索引，一般情况下不应该拥有三个以上的索引。由于索引的值是按照顺序排列的，因此使用索引键对文档进行排序的时候，查询速度非常快，但是需要注意的是：只有在首先使用索引键进行排序时索引才有用。例如：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">db.users.find().sort(&#123;<span class="attr">age</span>:<span class="number">12</span>, <span class="attr">name</span>: <span class="string">'david'</span>&#125;)</span><br></pre></td></tr></table></figure>
+<p>会先根据 age 排序，再根据 name 排序，如果仅在 name 上建立了索引，那速度提升并不明显。为了优化这个排序，可以在 age 和 name 上建立索引：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">db.users.createIndex(&#123;<span class="attr">age</span>: <span class="number">1</span>, <span class="attr">name</span>: <span class="number">1</span>&#125;)</span><br></pre></td></tr></table></figure>
+<p>这个时候的索引大概长什么样子呢？如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[0, &quot;user100309&quot;] -&gt; 0x0c965148</span><br><span class="line">[0, &quot;user100334&quot;] -&gt; 0xf51f818e</span><br><span class="line">[0, &quot;user100479&quot;] -&gt; 0x00fd7934</span><br><span class="line">...</span><br><span class="line">[0, &quot;user99985&quot; ] -&gt; 0xd246648f</span><br><span class="line">[1, &quot;user100156&quot;] -&gt; 0xf78d5bdd</span><br><span class="line">[1, &quot;user100187&quot;] -&gt; 0x68ab28bd</span><br><span class="line">[1, &quot;user100192&quot;] -&gt; 0x5c7fb621</span><br><span class="line">[1, &quot;user999920&quot;] -&gt; 0x67ded4b7</span><br><span class="line">[2, &quot;user100141&quot;] -&gt; 0x3996dd46</span><br><span class="line">[2, &quot;user100149&quot;] -&gt; 0xfce68412</span><br><span class="line">[2, &quot;user100223&quot;] -&gt; 0x91106e23</span><br></pre></td></tr></table></figure>
+<p>age 严格按照升序排列，假如有下面几条查询：</p>
+<ol>
+<li><code>db.users.find({age: 21}).sort({name: -1})</code></li>
+<li><code>db.users.find({age: {$gt: 21, $lt: 30}})</code></li>
+<li><code>db.users.find({age: {$gt: 21, $lt: 30}}).sort({name: -1})</code></li>
+</ol>
+<p>1 和 2 的查询效率会很高效，但3的查询并非如此，因为此时的 name 是无序的，于是 MongoDB 不得不在内存中根据 name 字段对数据进行排序。如果文档比较多，例如结果集大小超过 32M，MongoDB 就会报错：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">OperationFailed: Sort operation used more than the maximum 33554432 bytes of RAM. Add an index, or specify a smaller limit., state: FAILURE</span><br></pre></td></tr></table></figure>
+<p>可以看到，这里的内存阈值 33554432 = 1024 * 1024。但是如果按照下面的方式建立索引：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">db.users.createIndex(&#123;<span class="attr">user</span>: <span class="number">1</span>, <span class="attr">age</span>: <span class="number">1</span>&#125;)</span><br></pre></td></tr></table></figure>
+<p>会得到下面的索引：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[&quot;user0&quot;, 69]</span><br><span class="line">[&quot;user1&quot;, 50]</span><br><span class="line">[&quot;user10&quot;, 80]</span><br><span class="line">[&quot;user100&quot;, 48]</span><br><span class="line">[&quot;user1000&quot;, 111]</span><br><span class="line">[&quot;user10000&quot;, 98]</span><br><span class="line">[&quot;user100000&quot;, 21] -&gt; 0x73f0b48d</span><br><span class="line">[&quot;user100001&quot;, 60]</span><br><span class="line">[&quot;user100002&quot;, 82]</span><br><span class="line">[&quot;user100003&quot;, 27] -&gt; 0x0078f55f</span><br><span class="line">[&quot;user100004&quot;, 22] -&gt; 0x5f0d3088</span><br><span class="line">[&quot;user100005&quot;, 95]</span><br></pre></td></tr></table></figure>
+<p>使用这个索引进行上面 3 的查询就不需要在内存中进行排序了，但是 MongoDB 不得不扫描整个索引以便找到所有匹配的文档。如果文档比较多，速度甚至比之前的索引更慢。但是实际应用中，我们往往会加限制条件，不会把全部查询结果都返回：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">db.users.find(&#123;<span class="attr">age</span>: &#123;<span class="attr">$gte</span>: <span class="number">21</span>, <span class="attr">$lte</span>: <span class="number">30</span>&#125;&#125;).sort(&#123;<span class="attr">name</span>: <span class="number">1</span>&#125;).limit(<span class="number">1000</span>)</span><br></pre></td></tr></table></figure>
+<p>这个时候，由于只需要得到查询结果最前面的少数结果，而不是所有可能的结果，所以使用这个索引的查询速度会更快一些。</p>
+<p>MongoDB 可以从相反方向读取索引，例如有一个基于 <code>{age: -1}</code> 的排序和一个基于 <code>{age: 1}</code> 的索引，MongoDB 可以从反向读取并使用该索引。另外，复合索引具有双重功能，有一个 <code>{age: 1， username: 1}</code> 索引的同时也有了 <code>{age: 1}</code> 索引。</p>
+<p>只有同时基于多个查询条件进行排序时，索引方向才是重要的，但这种场景比较少见。应用中的大部分表格都是按照某一个字段进行排序的。在设计索引的时候，应该将用于精确匹配的字段，例如：<code>company: &#39;中国移动&#39;</code> 放在前面，将用于范围匹配的字段，例如：<code>age: {$gt: 13, $lt: 40}</code> 放在后面。</p>
+<p>MongoDB 在一次查询中只能使用一个索引。如果你在 x 上有一个索引，在 y 上也有一个索引，在进行 <code>{x: 123，y: 456}</code> 查询时，MongoDB 只会使用其中的一个索引，而不是两个一起用。那你可能会问：MongoDB 究竟选择哪个索引呢？答案是，它会分别用这些索引并行查询的。最早返回 100 个结果的就是胜者，其他的查询计划就会被中止。然后这个查询计划会被缓存，这个查询接下来都会使用它，直到集合数据发生了比较大的变动。如果在最初的计划评估之后集合发生了比较大的数据变动，查询优化器就会重新挑选可行的查询计划。重新建立索引时，或者是每执行1000次查询之后，查询优化器都会重新评估查询计划。</p>
+<p>上面说：一次查询只能使用一个索引，是针对绝大部分查询。但 <code>$or</code> 查询是个例外，因为它对每个子句都使用索引，实际上是执行两次查询然后将结果合并，例如：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">db.foo.find(&#123;<span class="string">"$or"</span> : [&#123;<span class="attr">x</span>: <span class="number">123</span>&#125;, &#123;<span class="attr">y</span>: <span class="number">456</span>&#125;]&#125;)</span><br></pre></td></tr></table></figure>
+<p>如果 x 与 y 都有索引，则两个索引都会用到，分别查询，最后再去重得到结果。如果想查 x 的值为 123 或 456，有人可能会这么写：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">db.foo.find(&#123;<span class="string">"$or"</span> : [&#123;<span class="attr">x</span>: <span class="number">123</span>&#125;, &#123;<span class="attr">x</span>: <span class="number">456</span>&#125;]&#125;)</span><br></pre></td></tr></table></figure>
+<p>这个时候效率会比较低了，因为它是两次查询结果的合并，这种情况下应该使用 <code>$in</code>，但使用 <code>$in</code> 查询时无法控制返回文档的顺序（除非进行排序），也就是说使用 <code>{x: [1， 2， 3]}</code> 和使用 <code>{x: [3， 2， 1]}</code> 得到的文档顺序是相同的。</p>
+<p>有一些查询完全无法使用索引，例如：<code>$where</code> 和 <code>$exists</code>，查询那些不包含”x”键的文档可以使用这样的索引 <code>({&quot;x&quot; : {&quot;$exists&quot; : false}}</code>。然而，在索引中，不存在的字段和 null 字段的存储方式是一样的，查询必须遍历每一个文档检查这个值是否真的为 null 还是根本不存在。如果使用稀疏索引（sparse index），就不能使用<code>{&quot;$exists&quot; : true}</code>，也不能使用<code>{&quot;$exists&quot; : false}</code>。还有一些低效率的操作符：<code>$ne</code>、<code>$not</code>、<code>$nin</code> 等也不能有效地使用索引。例如<code>&quot;$ne&quot;</code>查询可以使用索引，因为必须要查看所有的索引条目，而不只是”$ne”指定的条目，不得不扫描整个索引，所以并不是很有效。</p>
+<p>查询优化器：</p>
+<ul>
+<li>没有索引的时候插入速度最快</li>
+<li>复合索引的插入速度比单值索引快</li>
+<li>复合索引占用空间比单值索引多</li>
+<li>匹配到索引前缀才会使用复合索引</li>
+</ul>
+<p>如果需要快速执行一个这些类型的查询，可以试着找到另一个能够使用索引的语句，将其添加到查询中，这样就可以在MongoDB进行无索引匹配（non-indexed matching）时先将结果集的文档数量减到一个比较小的水平。</p>
+<p>在 mongoose 里面如何建立索引呢？有两种方式：</p>
+<ol>
+<li><p>方式一：在定义schema的时候</p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> studentSchema = <span class="keyword">new</span> Schema(&#123;<span class="attr">name</span>: <span class="built_in">String</span>, <span class="attr">type</span>: <span class="built_in">String</span>, <span class="attr">index</span>: <span class="literal">true</span>&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>方式二：另一种方法是通过 schema 的 index 方法添加</p>
+<p> 比如给 name 和 age 字段添加索引（1表示升序索引，-1表示降序索引）</p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">studentSchema(&#123; <span class="attr">name</span>: <span class="number">1</span>, <span class="attr">age</span>: <span class="number">-1</span> &#125;);</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>就索引效率来说肯定是联合索引效率高，很多时候如果用多个字段查询应该考虑用联合索引。但是事情也没有完全的绝对，也要考虑到索引的开销。以你的条件为例，假设字段A能够唯一确定一条记录，字段B就没有必要加上了，再退一步，即使字段A不能唯一确定一条，如果它能够把结果集确定在一定的小范围内，比如5条记录，10条记录，那字段B无非就是在这10条记录内再扫一遍寻找合适的记录，联合索引带来微小的性能提升比起把它加进索引中造成的写入和存储、内存开销是不值得的。一个条件能过滤掉的记录越多，它的“选择性(selectivity)”越好。一般情况下，在建立索引的时候都要把选择性越好的条件放前面，选择性差的放后面。差到一定程度就别放进来了。这其实是一个时间和空间的平衡。放进索引里的条件省时间（包括CPU时间，查询时间）费空间（包括存储空间，内存空间）；不放进索引里的条件费时间，省空间。</p>
+<p>针对慢查询，我们可以使用下面的命令进行分析：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">db.collection.find().explain()</span><br></pre></td></tr></table></figure>
+<ul>
+<li>queryPlanner</li>
+<li>executionStats</li>
+<li>allPlansExecution</li>
+<li>executionStats.executionTimeMillis: query 的整体查询时间。</li>
+<li>executionStats.nReturned: 查询返回的条目。</li>
+<li>executionStats.totalKeysExamined： 索引扫描条目。</li>
+<li>executionStats.totalDocsExamined： 文档扫描条目。</li>
+<li>executionTimeMillis = 326  query 执行时间</li>
+<li>nReturned=2 返回两条数据</li>
+<li>totalKeysExamined=0 没有用到索引</li>
+<li>totalDocsExamined 全文档扫描</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>stage</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>COLLSCAN</td>
+<td>全表扫描</td>
+</tr>
+<tr>
+<td>IXSCAN</td>
+<td>扫描索引</td>
+</tr>
+<tr>
+<td>FETCH</td>
+<td>根据索引去检索指定document</td>
+</tr>
+<tr>
+<td>SHARD_MERGE</td>
+<td>将各个分片返回数据进行merge</td>
+</tr>
+<tr>
+<td>SORT</td>
+<td>表明在内存中进行了排序</td>
+</tr>
+<tr>
+<td>LIMIT</td>
+<td>使用limit限制返回数</td>
+</tr>
+<tr>
+<td>SKIP</td>
+<td>使用skip进行跳过</td>
+</tr>
+<tr>
+<td>IDHACK</td>
+<td>针对_id进行查询</td>
+</tr>
+<tr>
+<td>SHARDING_FILTER</td>
+<td>通过mongos对分片数据进行查询</td>
+</tr>
+<tr>
+<td>COUNT</td>
+<td>利用db.coll.explain().count()之类进行count运算</td>
+</tr>
+<tr>
+<td>COUNTSCAN</td>
+<td>count不使用Index进行count时的stage返回</td>
+</tr>
+<tr>
+<td>COUNT_SCAN</td>
+<td>count使用了Index进行count时的stage返回</td>
+</tr>
+<tr>
+<td>SUBPLA</td>
+<td>未使用到索引的$or查询的stage返回</td>
+</tr>
+<tr>
+<td>TEXT</td>
+<td>使用全文索引进行查询时候的stage返回</td>
+</tr>
+<tr>
+<td>PROJECTION</td>
+<td>限定返回字段时候stage的返回</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><p>对于普通查询，我希望看到stage的组合(查询的时候尽可能用上索引)：</p>
+<p>Fetch+IDHACK<br>Fetch+ixscan<br>Limit+（Fetch+ixscan）<br>PROJECTION+ixscan<br>SHARDING_FITER+ixscan<br>COUNT_SCAN</p>
+</li>
+<li><p>不希望看到包含如下的stage：</p>
+<p>COLLSCAN(全表扫描),<br>SORT(使用sort但是无index),<br>不合理的SKIP,<br>SUBPLA(未用到index的$or),<br>COUNTSCAN(不使用index进行count)</p>
+</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/mongodb-index/" data-id="cjw77iiyv000wqlq4ct783fog" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MongoDB/">MongoDB</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/yarn-registry/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          更改 yarn 仓库源
+        
+      </div>
+    </a>
+  
+  
+    <a href="/letsencrypt-wildcard-certificate/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">letsencrypt 通配符证书</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

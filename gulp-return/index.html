@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="用 gulp 写了一个简单的任务： 12345var gulp = require(&apos;gulp&apos;)gulp.task(&apos;hello&apos;, function() &amp;#123;  console.log(&quot;Hello World&quot;)&amp;#125;) 发现会报错： 12The following tasks did not complete: helloDid you forget to signal as">
+<meta name="keywords" content="JavaScript">
+<meta property="og:type" content="article">
+<meta property="og:title" content="gulp合法的返回值">
+<meta property="og:url" content="https://zju.date/gulp-return/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="用 gulp 写了一个简单的任务： 12345var gulp = require(&apos;gulp&apos;)gulp.task(&apos;hello&apos;, function() &amp;#123;  console.log(&quot;Hello World&quot;)&amp;#125;) 发现会报错： 12The following tasks did not complete: helloDid you forget to signal as">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-05-28T02:09:26.983Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="gulp合法的返回值">
+<meta name="twitter:description" content="用 gulp 写了一个简单的任务： 12345var gulp = require(&apos;gulp&apos;)gulp.task(&apos;hello&apos;, function() &amp;#123;  console.log(&quot;Hello World&quot;)&amp;#125;) 发现会报错： 12The following tasks did not complete: helloDid you forget to signal as">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-gulp-return" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/gulp-return/" class="article-date">
+  <time datetime="2018-08-10T08:08:52.000Z" itemprop="datePublished">2018-08-10</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      gulp合法的返回值
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>用 gulp 写了一个简单的任务：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> gulp = <span class="built_in">require</span>(<span class="string">'gulp'</span>)</span><br><span class="line"></span><br><span class="line">gulp.task(<span class="string">'hello'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">"Hello World"</span>)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>发现会报错：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">The following tasks did not complete: hello</span><br><span class="line">Did you forget to signal async completion?</span><br></pre></td></tr></table></figure>
+<p>因为没有告诉 gulp 这个任务什么时候处理完了，在 gulp 任务函数中，只有下面 6 种返回值是合法的：</p>
+<ol>
+<li><p>返回 <a href="https://nodejs.org/api/stream.html" target="_blank" rel="noopener">Stream</a></p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> print = <span class="built_in">require</span>(<span class="string">'gulp-print'</span>)</span><br><span class="line"></span><br><span class="line">gulp.task(<span class="string">'hello'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> gulp.src(<span class="string">'package.json'</span>)</span><br><span class="line">    .pipe(print(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123; <span class="keyword">return</span> <span class="string">'Hello World'</span> &#125;))</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<pre><code>&lt;!--more--&gt;
+</code></pre><ol>
+<li><p>返回 <a href="https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Promise" target="_blank" rel="noopener"><code>Promise</code></a></p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">gulp.task(<span class="string">'hello'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123; </span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="keyword">function</span>(<span class="params">resolve, reject</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">"Hello World"</span>)</span><br><span class="line">    resolve()</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<pre><code>使用 [async/await](https://javascript.info/async-await) 语法可以简化成：
+
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">gulp.task(<span class="string">'hello'</span>, <span class="keyword">async</span> <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">"Hello World"</span>)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+</code></pre><ol>
+<li><p>执行回调函数</p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">gulp.task(<span class="string">'hello'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">done</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">"Hello World"</span>);</span><br><span class="line">  done();</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>返回 <a href="https://nodejs.org/api/child_process.html" target="_blank" rel="noopener">child process</a></p>
+</li>
+</ol>
+<pre><code><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> spawn = <span class="built_in">require</span>(<span class="string">'child_process'</span>).spawn</span><br><span class="line"></span><br><span class="line">gulp.task(<span class="string">'hello'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> spawn(<span class="string">'echo'</span>, [<span class="string">'HTTP'</span>, <span class="string">'Server'</span>, <span class="string">'Started'</span>], &#123; <span class="attr">stdio</span>: <span class="string">'inherit'</span> &#125;)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+</code></pre><ol>
+<li><p>返回 <a href="http://reactivex.io/rxjs/class/es6/Observable.js~Observable.html" target="_blank" rel="noopener">RxJS <code>Observable</code></a>.</p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> <span class="keyword">of</span> = <span class="built_in">require</span>(<span class="string">'rxjs'</span>).of</span><br><span class="line"></span><br><span class="line">gulp.task(<span class="string">'hello'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> o = <span class="keyword">of</span>(<span class="string">'Hello World'</span>)</span><br><span class="line">  o.subscribe(<span class="function"><span class="keyword">function</span>(<span class="params">msg</span>) </span>&#123; <span class="built_in">console</span>.log(msg); &#125;);</span><br><span class="line">  <span class="keyword">return</span> o</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>返回 <a href="https://nodejs.org/api/events.html#events_class_eventemitter" target="_blank" rel="noopener"><code>EventEmitter</code></a></p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">gulp.task(<span class="string">'hello'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> e = <span class="keyword">new</span> EventEmitter()</span><br><span class="line">  e.on(<span class="string">'msg'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">msg</span>) </span>&#123; <span class="built_in">console</span>.log(msg); &#125;)</span><br><span class="line">  setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123; e.emit(<span class="string">'msg'</span>, <span class="string">'Hello World'</span>); e.emit(<span class="string">'finish'</span>) &#125;)</span><br><span class="line">  <span class="keyword">return</span> e</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/gulp-return/" data-id="cjw77iixy0009qlq4lkxn3h7v" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/moment-timezone/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          关于 moment-timezone
+        
+      </div>
+    </a>
+  
+  
+    <a href="/docker-ps-format/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">docker ps 指定列</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

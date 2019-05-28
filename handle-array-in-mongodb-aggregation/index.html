@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="js 有很多数组相关函数，如何在 mongodb 聚合语法中使用呢？官方也提供了一些操作符，例如：  $arrayElemAt 根据下标取数组中的元素，语法为： 1&amp;#123; $arrayElemAt: [ &amp;lt;数组&amp;gt;, &amp;lt;下标&amp;gt; ] &amp;#125; 例如数据源为： 1234&amp;#123; &quot;_id&quot; : 1, &quot;name&quot; : &quot;dave123&quot;, favorites: [">
+<meta name="keywords" content="MongoDB">
+<meta property="og:type" content="article">
+<meta property="og:title" content="mongodb 聚合语法中的数组处理">
+<meta property="og:url" content="https://zju.date/handle-array-in-mongodb-aggregation/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="js 有很多数组相关函数，如何在 mongodb 聚合语法中使用呢？官方也提供了一些操作符，例如：  $arrayElemAt 根据下标取数组中的元素，语法为： 1&amp;#123; $arrayElemAt: [ &amp;lt;数组&amp;gt;, &amp;lt;下标&amp;gt; ] &amp;#125; 例如数据源为： 1234&amp;#123; &quot;_id&quot; : 1, &quot;name&quot; : &quot;dave123&quot;, favorites: [">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-05-27T05:49:55.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="mongodb 聚合语法中的数组处理">
+<meta name="twitter:description" content="js 有很多数组相关函数，如何在 mongodb 聚合语法中使用呢？官方也提供了一些操作符，例如：  $arrayElemAt 根据下标取数组中的元素，语法为： 1&amp;#123; $arrayElemAt: [ &amp;lt;数组&amp;gt;, &amp;lt;下标&amp;gt; ] &amp;#125; 例如数据源为： 1234&amp;#123; &quot;_id&quot; : 1, &quot;name&quot; : &quot;dave123&quot;, favorites: [">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-handle-array-in-mongodb-aggregation" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/handle-array-in-mongodb-aggregation/" class="article-date">
+  <time datetime="2018-06-26T05:20:20.000Z" itemprop="datePublished">2018-06-26</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      mongodb 聚合语法中的数组处理
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>js 有很多数组相关函数，如何在 mongodb 聚合语法中使用呢？官方也提供了一些操作符，例如：</p>
+<ol>
+<li><p><code>$arrayElemAt</code></p>
+<p>根据下标取数组中的元素，语法为：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123; <span class="attr">$arrayElemAt</span>: [ &lt;数组&gt;, &lt;下标&gt; ] &#125;</span><br></pre></td></tr></table></figure>
+<p>例如数据源为：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123; "_id" : 1, "name" : "dave123", favorites: [ "chocolate", "cake", "butter", "apples" ] &#125;</span><br><span class="line">&#123; "_id" : 2, "name" : "li", favorites: [ "apples", "pudding", "pie" ] &#125;</span><br><span class="line">&#123; "_id" : 3, "name" : "ahn", favorites: [ "pears", "pecans", "chocolate", "cherries" ] &#125;</span><br><span class="line">&#123; "_id" : 4, "name" : "ty", favorites: [ "ice cream" ] &#125;</span><br></pre></td></tr></table></figure>
+<p>下面的表达式会把 favorites 数组里面第一个和最后一个元素取出来映射到 first 和 last 字段上：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">db.users.aggregate([</span><br><span class="line">   &#123;</span><br><span class="line">     $project:</span><br><span class="line">      &#123;</span><br><span class="line">         name: <span class="number">1</span>,</span><br><span class="line">         first: &#123; <span class="attr">$arrayElemAt</span>: [ <span class="string">"$favorites"</span>, <span class="number">0</span> ] &#125;,</span><br><span class="line">         last: &#123; <span class="attr">$arrayElemAt</span>: [ <span class="string">"$favorites"</span>, <span class="number">-1</span> ] &#125;</span><br><span class="line">      &#125;</span><br><span class="line">   &#125;</span><br><span class="line">])</span><br></pre></td></tr></table></figure>
+ <a id="more"></a>
+</li>
+<li><p><code>$concatArrays</code></p>
+<p> 拼接数组，跟数组的 concat 方法作用一样。假如数据源是：</p>
+ <figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123; "_id" : 1, instock: [ "chocolate" ], ordered: [ "butter", "apples" ] &#125;</span><br><span class="line">&#123; "_id" : 2, instock: [ "apples", "pudding", "pie" ] &#125;</span><br><span class="line">&#123; "_id" : 3, instock: [ "pears", "pecans"], ordered: [ "cherries" ] &#125;</span><br><span class="line">&#123; "_id" : 4, instock: [ "ice cream" ], ordered: [ ] &#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<pre><code>在聚合的时候，可以用下面的语法将 instock 和 ordered 数组拼接在一起：
+
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">db.warehouses.aggregate([</span><br><span class="line">    &#123; <span class="attr">$project</span>: &#123; <span class="attr">items</span>: &#123; <span class="attr">$concatArrays</span>: [ <span class="string">"$instock"</span>, <span class="string">"$ordered"</span> ] &#125; &#125; &#125;</span><br><span class="line">])</span><br></pre></td></tr></table></figure>
+
+
+得到的结果是：
+
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123; <span class="attr">"_id"</span> : <span class="number">1</span>, <span class="attr">"items"</span> : [ <span class="string">"chocolate"</span>, <span class="string">"butter"</span>, <span class="string">"apples"</span> ] &#125;</span><br><span class="line">&#123; <span class="attr">"_id"</span> : <span class="number">2</span>, <span class="attr">"items"</span> : <span class="literal">null</span> &#125;</span><br><span class="line">&#123; <span class="attr">"_id"</span> : <span class="number">3</span>, <span class="attr">"items"</span> : [ <span class="string">"pears"</span>, <span class="string">"pecans"</span>, <span class="string">"cherries"</span> ] &#125;</span><br><span class="line">&#123; <span class="attr">"_id"</span> : <span class="number">4</span>, <span class="attr">"items"</span> : [ <span class="string">"ice cream"</span> ] &#125;</span><br></pre></td></tr></table></figure>
+
+
+注意第二条记录是 null 而不是 [ &quot;apples&quot;, &quot;pudding&quot;, &quot;pie&quot; ]，那是因为如果某个字段不存在，concat 永远返回 null
+</code></pre><ol>
+<li><p><code>$isArray</code></p>
+<p> 判断是否为数组，例如只有当 instock 和 ordered 字段都是数组的时候才合并：</p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">db.warehouses.aggregate([</span><br><span class="line">   &#123; <span class="attr">$project</span>:</span><br><span class="line">      &#123; <span class="attr">items</span>:</span><br><span class="line">          &#123; <span class="attr">$cond</span>:</span><br><span class="line">            &#123;</span><br><span class="line">              <span class="keyword">if</span>: &#123; <span class="attr">$and</span>: [ &#123; <span class="attr">$isArray</span>: <span class="string">"$instock"</span> &#125;, &#123; <span class="attr">$isArray</span>: <span class="string">"$ordered"</span> &#125; ] &#125;,</span><br><span class="line">              then: &#123; <span class="attr">$concatArrays</span>: [ <span class="string">"$instock"</span>, <span class="string">"$ordered"</span> ] &#125;,</span><br><span class="line">              <span class="keyword">else</span>: <span class="string">"One or more fields is not an array."</span></span><br><span class="line">            &#125;</span><br><span class="line">          &#125;</span><br><span class="line">      &#125;</span><br><span class="line">   &#125;</span><br><span class="line">])</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/handle-array-in-mongodb-aggregation/" data-id="cjw77iiy0000bqlq40rbjqa01" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MongoDB/">MongoDB</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/http-toolkit/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          原生网络请求类库
+        
+      </div>
+    </a>
+  
+  
+    <a href="/install-java-on-centos/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Centos 安装 Java</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>
