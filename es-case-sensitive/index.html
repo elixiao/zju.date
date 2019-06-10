@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="今天遇到一个在 ES 中使用 term 关键词进行查询时，大小写不能正确匹配的坑。例如用官方提供的示例库bank，下面的查询竟然查不到任何数据： 12345678escurl -XGET $ES/bank/_search?pretty -d&apos;&amp;#123;  &quot;query&quot;: &amp;#123;    &quot;term&quot;: &amp;#123;        &quot;state&quot;: &quot;ND&quot;    &amp;#125;  &amp;#125">
+<meta name="keywords" content="Elasticsearch">
+<meta property="og:type" content="article">
+<meta property="og:title" content="es查询时匹配大小写">
+<meta property="og:url" content="https://zju.date/es-case-sensitive/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="今天遇到一个在 ES 中使用 term 关键词进行查询时，大小写不能正确匹配的坑。例如用官方提供的示例库bank，下面的查询竟然查不到任何数据： 12345678escurl -XGET $ES/bank/_search?pretty -d&apos;&amp;#123;  &quot;query&quot;: &amp;#123;    &quot;term&quot;: &amp;#123;        &quot;state&quot;: &quot;ND&quot;    &amp;#125;  &amp;#125">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-06-10T09:32:10.034Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="es查询时匹配大小写">
+<meta name="twitter:description" content="今天遇到一个在 ES 中使用 term 关键词进行查询时，大小写不能正确匹配的坑。例如用官方提供的示例库bank，下面的查询竟然查不到任何数据： 12345678escurl -XGET $ES/bank/_search?pretty -d&apos;&amp;#123;  &quot;query&quot;: &amp;#123;    &quot;term&quot;: &amp;#123;        &quot;state&quot;: &quot;ND&quot;    &amp;#125;  &amp;#125">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-es-case-sensitive" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/es-case-sensitive/" class="article-date">
+  <time datetime="2018-09-14T14:34:05.000Z" itemprop="datePublished">2018-09-14</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      es查询时匹配大小写
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>今天遇到一个在 ES 中使用 term 关键词进行查询时，大小写不能正确匹配的坑。例如用官方提供的示例库bank，下面的查询竟然查不到任何数据：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">escurl -XGET <span class="variable">$ES</span>/bank/_search?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "query": &#123;</span></span><br><span class="line"><span class="string">    "term": &#123;</span></span><br><span class="line"><span class="string">        "state": "ND"</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#125;'</span></span><br></pre></td></tr></table></figure>
+<p>如果把 ND 换成小写的话，就能查出来了，而且查出来的结果都是大写的。另外，如果把 term 换成 match 的话，无论 ND 是大小写，都是可以查到的。这是为什么呢？让我们来还原一下具体的场景：</p>
+<a id="more"></a>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 先创建一个普通的索引</span></span><br><span class="line">escurl -XPUT <span class="variable">$ES</span>/<span class="built_in">test</span>?pretty </span><br><span class="line">    </span><br><span class="line"><span class="comment"># 添加一条小写记录</span></span><br><span class="line">escurl -XPUT <span class="variable">$ES</span>/<span class="built_in">test</span>/_doc/1?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "name": "apple"</span></span><br><span class="line"><span class="string">&#125;'</span></span><br><span class="line"><span class="comment"># 添加一条大写记录</span></span><br><span class="line">escurl -XPUT <span class="variable">$ES</span>/<span class="built_in">test</span>/_doc/2?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "name": "Apple"</span></span><br><span class="line"><span class="string">&#125;'</span></span><br><span class="line"><span class="comment"># 使用大写进行查询时返回空数组</span></span><br><span class="line">escurl -XGET <span class="variable">$ES</span>/<span class="built_in">test</span>/_search?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "query": &#123;</span></span><br><span class="line"><span class="string">    "term": &#123;</span></span><br><span class="line"><span class="string">      "name": "Apple"</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#125;'</span></span><br><span class="line"><span class="comment"># 使用小写进行查询时全部返回了</span></span><br><span class="line">escurl -XGET <span class="variable">$ES</span>/<span class="built_in">test</span>/_search?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "query": &#123;</span></span><br><span class="line"><span class="string">    "term": &#123;</span></span><br><span class="line"><span class="string">      "name": "apple"</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#125;'</span></span><br></pre></td></tr></table></figure>
+<p>这个时候我们来看一下索引类型：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">escurl -XGET <span class="variable">$ES</span>/<span class="built_in">test</span>/_mapping?pretty</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">"test"</span> : &#123;</span><br><span class="line">    <span class="string">"mappings"</span> : &#123;</span><br><span class="line">      <span class="string">"_doc"</span> : &#123;</span><br><span class="line">        <span class="string">"properties"</span> : &#123;</span><br><span class="line">          <span class="string">"name"</span> : &#123;</span><br><span class="line">            <span class="string">"type"</span> : <span class="string">"text"</span>,</span><br><span class="line">            <span class="string">"fields"</span> : &#123;</span><br><span class="line">              <span class="string">"keyword"</span> : &#123;</span><br><span class="line">                <span class="string">"type"</span> : <span class="string">"keyword"</span>,</span><br><span class="line">                <span class="string">"ignore_above"</span> : 256</span><br><span class="line">              &#125;</span><br><span class="line">            &#125;</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>也就是说 ES 默认把 type 字段作为 text 类型了，会进行分词，并建立索引。由于 term 是代表完全匹配，也就是精确查询，搜索前不会再对搜索词进行分词，所以搜索词必须是文档分词集合中的一个，而创建索引时，如果 mapping 没有指定某个字段的标准化 normalizer，会使用小写，导致搜索不到。</p>
+<p>到这里，问题就已经找到了，如果项目中确实大小写不敏感的话，在查询时统一转换成小写即可。如果大小写敏感，我们可以指定 keyword 查询：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">escurl -XGET <span class="variable">$ES</span>/<span class="built_in">test</span>/_search?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "query": &#123;</span></span><br><span class="line"><span class="string">    "term": &#123; "name.keyword": "Apple" &#125;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#125;'</span></span><br></pre></td></tr></table></figure>
+<p>这样的话，大写 Apple 查询时就有数据了，小写 apple 查询时也只会匹配小写。或者在建立索引的时候，指定 type 字段的类型是 keyword：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">escurl -XPUT <span class="variable">$ES</span>/<span class="built_in">test</span>?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "mappings": &#123;</span></span><br><span class="line"><span class="string">    "_doc": &#123;</span></span><br><span class="line"><span class="string">      "properties": &#123;</span></span><br><span class="line"><span class="string">        "name": &#123;</span></span><br><span class="line"><span class="string">          "type": "keyword"</span></span><br><span class="line"><span class="string">        &#125;</span></span><br><span class="line"><span class="string">      &#125;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#125;'</span></span><br></pre></td></tr></table></figure>
+<p>这样又会带来一个问题，指定为 keyword 之后，又想不区分大小写的匹配怎么办呢？这个时候就用到 normalizer</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建带有 normalizer 的索引</span></span><br><span class="line">escurl -XPUT <span class="variable">$ES</span>/test_normalizer?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "settings": &#123;</span></span><br><span class="line"><span class="string">    "analysis": &#123;</span></span><br><span class="line"><span class="string">      "normalizer": &#123;</span></span><br><span class="line"><span class="string">        "my_normalizer": &#123;</span></span><br><span class="line"><span class="string">          "type": "custom",</span></span><br><span class="line"><span class="string">          "char_filter": [],</span></span><br><span class="line"><span class="string">          "filter": [</span></span><br><span class="line"><span class="string">            "lowercase",</span></span><br><span class="line"><span class="string">            "asciifolding"</span></span><br><span class="line"><span class="string">          ]</span></span><br><span class="line"><span class="string">        &#125;</span></span><br><span class="line"><span class="string">      &#125;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;,</span></span><br><span class="line"><span class="string">  "mappings": &#123;</span></span><br><span class="line"><span class="string">    "_doc": &#123;</span></span><br><span class="line"><span class="string">      "properties": &#123;</span></span><br><span class="line"><span class="string">        "name": &#123;</span></span><br><span class="line"><span class="string">          "type": "keyword",</span></span><br><span class="line"><span class="string">          "normalizer": "my_normalizer"</span></span><br><span class="line"><span class="string">        &#125;</span></span><br><span class="line"><span class="string">      &#125;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#125;'</span></span><br><span class="line"><span class="comment"># 添加一条小写记录</span></span><br><span class="line">escurl -XPUT <span class="variable">$ES</span>/test_normalizer/_doc/1?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "name": "apple"</span></span><br><span class="line"><span class="string">&#125;'</span></span><br><span class="line"><span class="comment"># 添加一条大写记录</span></span><br><span class="line">escurl -XPUT <span class="variable">$ES</span>/test_normalizer/_doc/2?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "name": "Apple"</span></span><br><span class="line"><span class="string">&#125;'</span></span><br></pre></td></tr></table></figure>
+<p>这个时候无论使用 apple 还是 Apple 来查询，都能查到上面两条结果了，因为在索引和查询时都将 Apple 转换为 apple。聚合的时候，Apple 和 apple 也会被一视同仁，都认为是 apple。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">escurl -XGET <span class="variable">$ES</span>/test_normalizer/_search?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "size": 0,</span></span><br><span class="line"><span class="string">  "aggs": &#123;</span></span><br><span class="line"><span class="string">    "name_terms": &#123;</span></span><br><span class="line"><span class="string">      "terms": &#123;</span></span><br><span class="line"><span class="string">        "field": "name"</span></span><br><span class="line"><span class="string">      &#125;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#125;'</span></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/es-case-sensitive/" data-id="cjwq89ima0001v7q4jd0tztf6" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Elasticsearch/">Elasticsearch</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/mask-subnet/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          子网掩码计算
+        
+      </div>
+    </a>
+  
+  
+    <a href="/distinct-array/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">数组去重</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Elasticsearch/">Elasticsearch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

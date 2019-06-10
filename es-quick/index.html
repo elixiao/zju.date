@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="参见准备工作，搭建好命令行查询语法，导入示例文件。 基础增删改查创建和删除索引： 12escurl -XPUT $ES/sky?pretty # 创建索引escurl -XDELETE $ES/sky # 删除索引 添加和删除文档： 1234567891011121314# 指定id添加文档(doc名称随意起，但是一旦起名之后就不能换了，推荐使用_doc，这样可以兼容7.x以上的版本)escurl">
+<meta name="keywords" content="Elasticsearch">
+<meta property="og:type" content="article">
+<meta property="og:title" content="elasticsearch快速上手">
+<meta property="og:url" content="https://zju.date/es-quick/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="参见准备工作，搭建好命令行查询语法，导入示例文件。 基础增删改查创建和删除索引： 12escurl -XPUT $ES/sky?pretty # 创建索引escurl -XDELETE $ES/sky # 删除索引 添加和删除文档： 1234567891011121314# 指定id添加文档(doc名称随意起，但是一旦起名之后就不能换了，推荐使用_doc，这样可以兼容7.x以上的版本)escurl">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-06-10T10:22:17.534Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="elasticsearch快速上手">
+<meta name="twitter:description" content="参见准备工作，搭建好命令行查询语法，导入示例文件。 基础增删改查创建和删除索引： 12escurl -XPUT $ES/sky?pretty # 创建索引escurl -XDELETE $ES/sky # 删除索引 添加和删除文档： 1234567891011121314# 指定id添加文档(doc名称随意起，但是一旦起名之后就不能换了，推荐使用_doc，这样可以兼容7.x以上的版本)escurl">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-es-quick" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/es-quick/" class="article-date">
+  <time datetime="2018-09-17T06:05:07.000Z" itemprop="datePublished">2018-09-17</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      elasticsearch快速上手
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>参见<a href="/es-prepare">准备工作</a>，搭建好命令行查询语法，导入示例文件。</p>
+<h2 id="基础增删改查"><a href="#基础增删改查" class="headerlink" title="基础增删改查"></a>基础增删改查</h2><p>创建和删除索引：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">escurl -XPUT <span class="variable">$ES</span>/sky?pretty <span class="comment"># 创建索引</span></span><br><span class="line">escurl -XDELETE <span class="variable">$ES</span>/sky <span class="comment"># 删除索引</span></span><br></pre></td></tr></table></figure>
+<p>添加和删除文档：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 指定id添加文档(doc名称随意起，但是一旦起名之后就不能换了，推荐使用_doc，这样可以兼容7.x以上的版本)</span></span><br><span class="line">escurl -XPUT <span class="variable">$ES</span>/sky/_doc/1?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "name": "Lucy"</span></span><br><span class="line"><span class="string">&#125;'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 未指定id添加文档，会随机生成一个id</span></span><br><span class="line">escurl -XPOST <span class="variable">$ES</span>/sky/_doc?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "name": "David"</span></span><br><span class="line"><span class="string">&#125;'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除文档：</span></span><br><span class="line">escurl -XDELETE <span class="variable">$ES</span>/sky/_doc/1</span><br></pre></td></tr></table></figure>
+<p>查询文档：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">escurl -XGET <span class="variable">$ES</span>/_search?pretty <span class="comment"># 获取所有索引内的全部文档</span></span><br><span class="line">escurl -XGET <span class="variable">$ES</span>/sky/_search?pretty <span class="comment"># 获取指定索引内全部文档</span></span><br><span class="line">escurl -XGET <span class="variable">$ES</span>/sky/_doc/_search?pretty <span class="comment"># 获取指定类型内全部文档</span></span><br><span class="line">escurl -XGET <span class="variable">$ES</span>/sky/_doc/1?pretty <span class="comment"># 根据id查询指定索引内的文档</span></span><br></pre></td></tr></table></figure>
+<p>修改文档：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 替换文档(删除旧文档，索引新文档）</span></span><br><span class="line">escurl -XPUT <span class="variable">$ES</span>/sky/_doc/1?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "age": 12</span></span><br><span class="line"><span class="string">&#125;'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 局部修改文档</span></span><br><span class="line">escurl -XPOST <span class="variable">$ES</span>/sky/_doc/1/_update?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "doc": &#123; "name": "Jane Doe" &#125;</span></span><br><span class="line"><span class="string">&#125;'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 根据旧文档值更新</span></span><br><span class="line">escurl -XPOST <span class="variable">$ES</span>/sky/_doc/1/_update?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "script" : "ctx._source.age += 5"</span></span><br><span class="line"><span class="string">&#125;'</span></span><br></pre></td></tr></table></figure>
+<p>批量操作：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 批量添加文档</span></span><br><span class="line">escurl -XPOST <span class="variable">$ES</span>/sky/_doc/_bulk?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;"index":&#123;"_id":"1"&#125;&#125;</span></span><br><span class="line"><span class="string">&#123;"name": "John Doe" &#125;</span></span><br><span class="line"><span class="string">&#123;"index":&#123;"_id":"2"&#125;&#125;</span></span><br><span class="line"><span class="string">&#123;"name": "Jane Doe" &#125;</span></span><br><span class="line"><span class="string">'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 批量添加或删除文档</span></span><br><span class="line">escurl -XPOST <span class="variable">$ES</span>/sky/_doc/_bulk?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;"update":&#123;"_id":"1"&#125;&#125;</span></span><br><span class="line"><span class="string">&#123;"doc": &#123; "name": "John Doe becomes Jane Doe" &#125; &#125;</span></span><br><span class="line"><span class="string">&#123;"delete":&#123;"_id":"2"&#125;&#125;</span></span><br><span class="line"><span class="string">'</span></span><br></pre></td></tr></table></figure>
+<p>其他：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">escurl -XGET <span class="variable">$ES</span>/_cat/indices?v <span class="comment"># 获取索引列表</span></span><br><span class="line">escurl -XGET <span class="variable">$ES</span>/_cat/nodes?v <span class="comment"># 获取所有节点</span></span><br><span class="line">escurl -XGET <span class="variable">$ES</span>/_cat/health?v <span class="comment"># 获取集群健康值</span></span><br><span class="line">escurl -XGET <span class="variable">$ES</span>/_cat/allocation?v <span class="comment"># 查看磁盘空间</span></span><br><span class="line">escurl -XGET <span class="variable">$ES</span>/_cat/shards?v <span class="comment"># 查询分片 </span></span><br><span class="line">escurl -XGET <span class="variable">$ES</span>/_mapping?pretty <span class="comment"># 查看索引类型</span></span><br></pre></td></tr></table></figure>
+<h2 id="高级查询"><a href="#高级查询" class="headerlink" title="高级查询"></a>高级查询</h2><p>在示例索引 bank 中，把查询条件放在 uri 中进行检索：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">escurl -XGET <span class="string">"<span class="variable">$ES</span>/bank/_search?q=*&amp;sort=account_number:asc&amp;pretty"</span></span><br></pre></td></tr></table></figure>
+<p>把查询条件放在 body 中进行检索：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用 request body 查询</span></span><br><span class="line">escurl -XGET <span class="variable">$ES</span>/bank/_search?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "query": &#123; "match_all": &#123;&#125; &#125;,</span></span><br><span class="line"><span class="string">  "sort": [</span></span><br><span class="line"><span class="string">    &#123; "account_number": "asc" &#125;</span></span><br><span class="line"><span class="string">  ]</span></span><br><span class="line"><span class="string">&#125;'</span></span><br></pre></td></tr></table></figure>
+<p>放在 body 中查询更易读，语法也更强大，例如：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查询所有</span></span><br><span class="line">escurl -XGET <span class="variable">$ES</span>/bank/_search?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123; </span></span><br><span class="line"><span class="string">  "query": &#123; "match_all": &#123;&#125; &#125;</span></span><br><span class="line"><span class="string">&#125;'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 只返回一个10-19的文档</span></span><br><span class="line">escurl -XGET <span class="variable">$ES</span>/bank/_search?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "query": &#123; "match_all": &#123;&#125; &#125;,</span></span><br><span class="line"><span class="string">  "from": 10,</span></span><br><span class="line"><span class="string">  "size": 10</span></span><br><span class="line"><span class="string">&#125;'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 按照 balance 倒序</span></span><br><span class="line">escurl -XGET <span class="variable">$ES</span>/bank/_search?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "query": &#123; "match_all": &#123;&#125; &#125;,</span></span><br><span class="line"><span class="string">  "sort": &#123; "balance": &#123; "order": "desc" &#125; &#125;</span></span><br><span class="line"><span class="string">&#125;'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 只返回指定字段</span></span><br><span class="line">escurl -XGET <span class="variable">$ES</span>/bank/_search?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "query": &#123; "match_all": &#123;&#125; &#125;,</span></span><br><span class="line"><span class="string">  "_source": ["account_number", "balance"]</span></span><br><span class="line"><span class="string">&#125;'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># account_number 等于 20 的文档</span></span><br><span class="line">escurl -XGET <span class="variable">$ES</span>/bank/_search?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "query": &#123; "match": &#123; "account_number": 20 &#125; &#125;</span></span><br><span class="line"><span class="string">&#125;'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># address 中包含 mill 的文档</span></span><br><span class="line">escurl -XGET <span class="variable">$ES</span>/bank/_search?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "query": &#123; "match": &#123; "address": "mill" &#125; &#125;</span></span><br><span class="line"><span class="string">&#125;'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># address 中包含 mill 或 lane 的文档</span></span><br><span class="line">escurl -XGET <span class="variable">$ES</span>/bank/_search?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "query": &#123; "match": &#123; "address": "mill lane" &#125; &#125;</span></span><br><span class="line"><span class="string">&#125;'</span></span><br></pre></td></tr></table></figure>
+<p>ES 中可以用 bool 查询组合出各种复杂的查询条件，在使用 bool 查询的时候，只需要记住下面三点即可：</p>
+<ul>
+<li><code>should</code> 代表或（OR）</li>
+<li><code>must</code> 代表且（AND）</li>
+<li><code>must_not</code> 代表非（NOT）</li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 与上面等价，address 中包含 mill 或 lane 的文档</span></span><br><span class="line">escurl -XGET <span class="variable">$ES</span>/bank/_search?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "query": &#123;</span></span><br><span class="line"><span class="string">    "bool": &#123;</span></span><br><span class="line"><span class="string">      "should": [</span></span><br><span class="line"><span class="string">        &#123; "match": &#123; "address": "mill" &#125; &#125;,</span></span><br><span class="line"><span class="string">        &#123; "match": &#123; "address": "lane" &#125; &#125;</span></span><br><span class="line"><span class="string">      ]</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#125;'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># address 包含 mill 或 age 是 40 的文档</span></span><br><span class="line">escurl -XGET <span class="variable">$ES</span>/bank/_search?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "query": &#123;</span></span><br><span class="line"><span class="string">    "bool": &#123;</span></span><br><span class="line"><span class="string">      "should": [</span></span><br><span class="line"><span class="string">        &#123; "match": &#123; "address": "mill" &#125; &#125;,</span></span><br><span class="line"><span class="string">        &#123; "term": &#123; "age": "40" &#125; &#125;</span></span><br><span class="line"><span class="string">      ]</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#125;'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># address 中包含完整 mill lane 语句的文档</span></span><br><span class="line">escurl -XGET <span class="variable">$ES</span>/bank/_search?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "query": &#123; "match_phrase": &#123; "address": "mill lane" &#125; &#125;</span></span><br><span class="line"><span class="string">&#125;'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># address 中同时包含 mill 和 lane 的文档</span></span><br><span class="line">escurl -XGET <span class="variable">$ES</span>/bank/_search?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "query": &#123;</span></span><br><span class="line"><span class="string">    "bool": &#123;</span></span><br><span class="line"><span class="string">      "must": [</span></span><br><span class="line"><span class="string">        &#123; "match": &#123; "address": "mill" &#125; &#125;,</span></span><br><span class="line"><span class="string">        &#123; "match": &#123; "address": "lane" &#125; &#125;</span></span><br><span class="line"><span class="string">      ]</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#125;'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># address 中既不包含 mill 又不包含 lane 的文档</span></span><br><span class="line">escurl -XGET <span class="variable">$ES</span>/bank/_search?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "query": &#123;</span></span><br><span class="line"><span class="string">    "bool": &#123;</span></span><br><span class="line"><span class="string">      "must_not": [</span></span><br><span class="line"><span class="string">        &#123; "match": &#123; "address": "mill" &#125; &#125;,</span></span><br><span class="line"><span class="string">        &#123; "match": &#123; "address": "lane" &#125; &#125;</span></span><br><span class="line"><span class="string">      ]</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#125;'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 任意组合 bool 条件</span></span><br><span class="line">escurl -XGET <span class="variable">$ES</span>/bank/_search?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "query": &#123;</span></span><br><span class="line"><span class="string">    "bool": &#123;</span></span><br><span class="line"><span class="string">      "must": [</span></span><br><span class="line"><span class="string">        &#123; "match": &#123; "age": "40" &#125; &#125;</span></span><br><span class="line"><span class="string">      ],</span></span><br><span class="line"><span class="string">      "must_not": [</span></span><br><span class="line"><span class="string">        &#123; "match": &#123; "state": "ID" &#125; &#125;</span></span><br><span class="line"><span class="string">      ]</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#125;'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 过滤余额在 20000 ~ 30000 之间的账户</span></span><br><span class="line">escurl -XGET <span class="variable">$ES</span>/bank/_search?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "query": &#123;</span></span><br><span class="line"><span class="string">    "bool": &#123;</span></span><br><span class="line"><span class="string">      "must": &#123; "match_all": &#123;&#125; &#125;,</span></span><br><span class="line"><span class="string">      "filter": &#123;</span></span><br><span class="line"><span class="string">        "range": &#123;</span></span><br><span class="line"><span class="string">          "balance": &#123;</span></span><br><span class="line"><span class="string">            "gte": 20000,</span></span><br><span class="line"><span class="string">            "lte": 30000</span></span><br><span class="line"><span class="string">          &#125;</span></span><br><span class="line"><span class="string">        &#125;</span></span><br><span class="line"><span class="string">      &#125;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#125;'</span></span><br></pre></td></tr></table></figure>
+<p>最后一个 bool 查询语句包含了一个 match_all 查询（查询部分），和一个 range（范围）查询（过滤部分）。我们可以将查询和过滤部分替换成任何其它的查询。</p>
+<p>除了用 bool 组合基本关键词之外，ES 也提供了其他更为便捷的关键词，例如：</p>
+<ul>
+<li><code>multi_match</code>：匹配多个字段，只要其中一个字段包含分词后的文档就能被搜索到</li>
+<li><code>match_phrase</code>：匹配一个短语，例如查询【中国人】，被分词为【中国】和【人】，先在指定字段查找到 “中国”，然后在”中国”后面去查找 “人”，对顺序有要求</li>
+<li><code>_delete_by_query</code>：删除所有匹配的文档</li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 是对 `boolQuery().should(matchQuery(field, keyword))` 的一种简化，匹配方式是全文匹配。</span></span><br><span class="line">escurl -XGET <span class="variable">$ES</span>/bank/_search?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "query": &#123;</span></span><br><span class="line"><span class="string">    "multi_match" : &#123;</span></span><br><span class="line"><span class="string">      "query": "english", </span></span><br><span class="line"><span class="string">      "fields": [ "firstname", "lastname" ] </span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#125;'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 必须先出现 Herkimer 再出现 Place 才行</span></span><br><span class="line">escurl -XGET <span class="variable">$ES</span>/bank/_search?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "query": &#123;</span></span><br><span class="line"><span class="string">    "match_phrase" : &#123;</span></span><br><span class="line"><span class="string">      "address": "Herkimer Place"</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#125;'</span></span><br><span class="line"><span class="comment"># 删除所有 name 字段中包含 david 的文档</span></span><br><span class="line">escurl -XPOST <span class="variable">$ES</span>/sky/_delete_by_query?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "query": &#123; </span></span><br><span class="line"><span class="string">    "match": &#123;</span></span><br><span class="line"><span class="string">      "query": "Jane Doe"</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#125;'</span></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/es-quick/" data-id="cjwpxhb0y0002tjq4346oezzv" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Elasticsearch/">Elasticsearch</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/linux-cmd-route/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          路由命令
+        
+      </div>
+    </a>
+  
+  
+    <a href="/mask-subnet/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">子网掩码计算</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Elasticsearch/">Elasticsearch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

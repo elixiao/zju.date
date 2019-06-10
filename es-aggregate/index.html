@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="参见准备工作，搭建好命令行查询语法。 获取数据的多维度统计值总数量、最大值、最小值、平均值、求和： 1234567891011escurl -XGET $ES/bank/_search?pretty -d&apos;&amp;#123;  &quot;size&quot;: 0,  &quot;aggs&quot;: &amp;#123;    &quot;group_by_balance&quot;: &amp;#123;      &quot;min&quot;: &amp;#123;        &quot;field">
+<meta name="keywords" content="Elasticsearch">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用ES进行聚合操作">
+<meta property="og:url" content="https://zju.date/es-aggregate/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="参见准备工作，搭建好命令行查询语法。 获取数据的多维度统计值总数量、最大值、最小值、平均值、求和： 1234567891011escurl -XGET $ES/bank/_search?pretty -d&apos;&amp;#123;  &quot;size&quot;: 0,  &quot;aggs&quot;: &amp;#123;    &quot;group_by_balance&quot;: &amp;#123;      &quot;min&quot;: &amp;#123;        &quot;field">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-06-10T09:31:47.411Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="使用ES进行聚合操作">
+<meta name="twitter:description" content="参见准备工作，搭建好命令行查询语法。 获取数据的多维度统计值总数量、最大值、最小值、平均值、求和： 1234567891011escurl -XGET $ES/bank/_search?pretty -d&apos;&amp;#123;  &quot;size&quot;: 0,  &quot;aggs&quot;: &amp;#123;    &quot;group_by_balance&quot;: &amp;#123;      &quot;min&quot;: &amp;#123;        &quot;field">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-es-aggregate" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/es-aggregate/" class="article-date">
+  <time datetime="2018-07-19T03:29:36.000Z" itemprop="datePublished">2018-07-19</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      使用ES进行聚合操作
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>参见<a href="/es-prepare">准备工作</a>，搭建好命令行查询语法。</p>
+<h3 id="获取数据的多维度统计值"><a href="#获取数据的多维度统计值" class="headerlink" title="获取数据的多维度统计值"></a>获取数据的多维度统计值</h3><p>总数量、最大值、最小值、平均值、求和：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">escurl -XGET <span class="variable">$ES</span>/bank/_search?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "size": 0,</span></span><br><span class="line"><span class="string">  "aggs": &#123;</span></span><br><span class="line"><span class="string">    "group_by_balance": &#123;</span></span><br><span class="line"><span class="string">      "min": &#123;</span></span><br><span class="line"><span class="string">        "field": "balance"</span></span><br><span class="line"><span class="string">      &#125;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#125;'</span></span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<p>得到结果：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="string">"took"</span> : 5,</span><br><span class="line">  <span class="string">"timed_out"</span> : <span class="literal">false</span>,</span><br><span class="line">  <span class="string">"hits"</span> : &#123;</span><br><span class="line">    <span class="string">"total"</span> : 1000,</span><br><span class="line">    <span class="string">"max_score"</span> : 0.0,</span><br><span class="line">    <span class="string">"hits"</span> : [ ]</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="string">"aggregations"</span> : &#123;</span><br><span class="line">    <span class="string">"group_by_balance"</span> : &#123;</span><br><span class="line">      <span class="string">"count"</span> : 1000,</span><br><span class="line">      <span class="string">"min"</span> : 1011.0,</span><br><span class="line">      <span class="string">"max"</span> : 49989.0,</span><br><span class="line">      <span class="string">"avg"</span> : 25714.837,</span><br><span class="line">      <span class="string">"sum"</span> : 2.5714837E7</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果把 stats 换成 min、max、avg、sum 就能只得到该维度的统计结果。</p>
+<h3 id="按照某个字段进行聚类"><a href="#按照某个字段进行聚类" class="headerlink" title="按照某个字段进行聚类"></a>按照某个字段进行聚类</h3><p>即字段值频次统计：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 根据 state 统计频次</span></span><br><span class="line">escurl -XGET <span class="variable">$ES</span>/bank/_search?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "size": 0,</span></span><br><span class="line"><span class="string">  "aggs": &#123;</span></span><br><span class="line"><span class="string">    "group_by_state": &#123;</span></span><br><span class="line"><span class="string">      "terms": &#123;</span></span><br><span class="line"><span class="string">        "field": "state.keyword"</span></span><br><span class="line"><span class="string">      &#125;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#125;'</span></span><br></pre></td></tr></table></figure>
+<p>聚类和统计值可以结合起来使用，一般情况下都是先进行一次或多次的聚类，最后按照类别计算统计值，例如：</p>
+<h3 id="先聚类再算平均，并倒序排列"><a href="#先聚类再算平均，并倒序排列" class="headerlink" title="先聚类再算平均，并倒序排列"></a>先聚类再算平均，并倒序排列</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">escurl -XGET <span class="variable">$ES</span>/bank/_search?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "size": 0,</span></span><br><span class="line"><span class="string">  "aggs": &#123;</span></span><br><span class="line"><span class="string">    "group_by_state": &#123;</span></span><br><span class="line"><span class="string">      "terms": &#123;</span></span><br><span class="line"><span class="string">        "field": "state.keyword",</span></span><br><span class="line"><span class="string">        "order": &#123;</span></span><br><span class="line"><span class="string">          "average_balance": "desc"</span></span><br><span class="line"><span class="string">        &#125;</span></span><br><span class="line"><span class="string">      &#125;,</span></span><br><span class="line"><span class="string">      "aggs": &#123;</span></span><br><span class="line"><span class="string">        "average_balance": &#123;</span></span><br><span class="line"><span class="string">          "avg": &#123;</span></span><br><span class="line"><span class="string">            "field": "balance"</span></span><br><span class="line"><span class="string">          &#125;</span></span><br><span class="line"><span class="string">        &#125;</span></span><br><span class="line"><span class="string">      &#125;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#125;'</span></span><br></pre></td></tr></table></figure>
+<p>这里用到了两次聚合，第一次根据字段值进行分类，第二次，对归到各类别内的数据计算平均值。</p>
+<h3 id="多次聚类并计算平均值"><a href="#多次聚类并计算平均值" class="headerlink" title="多次聚类并计算平均值"></a>多次聚类并计算平均值</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 按年龄段（20-29岁，30-39岁，和 40-49岁），然后按性别，最后获得每个年龄段，每个性别的平均账户余额</span></span><br><span class="line">escurl -XGET <span class="variable">$ES</span>/bank/_search?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "size": 0,</span></span><br><span class="line"><span class="string">  "aggs": &#123;</span></span><br><span class="line"><span class="string">    "group_by_age": &#123;</span></span><br><span class="line"><span class="string">      "range": &#123;</span></span><br><span class="line"><span class="string">        "field": "age",</span></span><br><span class="line"><span class="string">        "ranges": [</span></span><br><span class="line"><span class="string">          &#123;</span></span><br><span class="line"><span class="string">            "from": 20,</span></span><br><span class="line"><span class="string">            "to": 30</span></span><br><span class="line"><span class="string">          &#125;,</span></span><br><span class="line"><span class="string">          &#123;</span></span><br><span class="line"><span class="string">            "from": 30,</span></span><br><span class="line"><span class="string">            "to": 40</span></span><br><span class="line"><span class="string">          &#125;,</span></span><br><span class="line"><span class="string">          &#123;</span></span><br><span class="line"><span class="string">            "from": 40,</span></span><br><span class="line"><span class="string">            "to": 50</span></span><br><span class="line"><span class="string">          &#125;</span></span><br><span class="line"><span class="string">        ]</span></span><br><span class="line"><span class="string">      &#125;,</span></span><br><span class="line"><span class="string">      "aggs": &#123;</span></span><br><span class="line"><span class="string">        "group_by_gender": &#123;</span></span><br><span class="line"><span class="string">          "terms": &#123;</span></span><br><span class="line"><span class="string">            "field": "gender.keyword"</span></span><br><span class="line"><span class="string">          &#125;,</span></span><br><span class="line"><span class="string">          "aggs": &#123;</span></span><br><span class="line"><span class="string">            "average_balance": &#123;</span></span><br><span class="line"><span class="string">              "avg": &#123;</span></span><br><span class="line"><span class="string">                "field": "balance"</span></span><br><span class="line"><span class="string">              &#125;</span></span><br><span class="line"><span class="string">            &#125;</span></span><br><span class="line"><span class="string">          &#125;</span></span><br><span class="line"><span class="string">        &#125;</span></span><br><span class="line"><span class="string">      &#125;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#125;'</span></span><br></pre></td></tr></table></figure>
+<p>可以看到，除了 term 之外，range 也可以用于聚类。只要掌握了这些关键词就行了。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/es-aggregate/" data-id="cjwq89im40000v7q44hc0mzw1" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Elasticsearch/">Elasticsearch</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/angular-hmr/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          配置 Angular 热加载
+        
+      </div>
+    </a>
+  
+  
+    <a href="/empty-character/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">空白汉字占位符</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Elasticsearch/">Elasticsearch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>
