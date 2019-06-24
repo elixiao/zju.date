@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="路由缓存的典型应用场景是：  用户在列表页通过搜索条件筛选出满足条件的列表，点击列表项的详情，跳转到详情页。当用户从详情页返回到列表页的时候，是希望能够保存之前使用过的筛选条件的。  要想实现自定义的路由缓存策略，首先要实现 RouteReuseStrategy 接口，简单来说，这个接口就做了两件事：  当离开当前路由的时候，将当前路由的快照存起来 当再次进入到该路由时，再取之前存的快照来恢复当前">
+<meta name="keywords" content="JavaScript">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Angular中的路由缓存策略">
+<meta property="og:url" content="https://zju.date/angular-route-reuse-stategy/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="路由缓存的典型应用场景是：  用户在列表页通过搜索条件筛选出满足条件的列表，点击列表项的详情，跳转到详情页。当用户从详情页返回到列表页的时候，是希望能够保存之前使用过的筛选条件的。  要想实现自定义的路由缓存策略，首先要实现 RouteReuseStrategy 接口，简单来说，这个接口就做了两件事：  当离开当前路由的时候，将当前路由的快照存起来 当再次进入到该路由时，再取之前存的快照来恢复当前">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-06-11T01:46:46.599Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Angular中的路由缓存策略">
+<meta name="twitter:description" content="路由缓存的典型应用场景是：  用户在列表页通过搜索条件筛选出满足条件的列表，点击列表项的详情，跳转到详情页。当用户从详情页返回到列表页的时候，是希望能够保存之前使用过的筛选条件的。  要想实现自定义的路由缓存策略，首先要实现 RouteReuseStrategy 接口，简单来说，这个接口就做了两件事：  当离开当前路由的时候，将当前路由的快照存起来 当再次进入到该路由时，再取之前存的快照来恢复当前">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-angular-route-reuse-stategy" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/angular-route-reuse-stategy/" class="article-date">
+  <time datetime="2018-05-12T04:34:36.000Z" itemprop="datePublished">2018-05-12</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Angular中的路由缓存策略
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>路由缓存的典型应用场景是：</p>
+<blockquote>
+<p>用户在列表页通过搜索条件筛选出满足条件的列表，点击列表项的详情，跳转到详情页。当用户从详情页返回到列表页的时候，是希望能够保存之前使用过的筛选条件的。</p>
+</blockquote>
+<p>要想实现自定义的路由缓存策略，首先要实现 RouteReuseStrategy 接口，简单来说，这个接口就做了两件事：</p>
+<ol>
+<li>当离开当前路由的时候，将当前路由的快照存起来</li>
+<li>当再次进入到该路由时，再取之前存的快照来恢复当前路由的一个状态</li>
+</ol>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; Injectable &#125; <span class="keyword">from</span> <span class="string">'@angular/core'</span></span><br><span class="line"><span class="keyword">import</span> &#123; RouteReuseStrategy, ActivatedRouteSnapshot, DetachedRouteHandle &#125; <span class="keyword">from</span> <span class="string">'@angular/router'</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@Injectable</span>()</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> AppRouteReuseStrategyService <span class="keyword">implements</span> RouteReuseStrategy &#123;</span><br><span class="line"></span><br><span class="line">    handles: &#123;[key: <span class="built_in">string</span>]: DetachedRouteHandle&#125; = &#123;&#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">constructor</span>(<span class="params"></span>) &#123; &#125;</span><br><span class="line">    </span><br><span class="line">    shouldDetach(route: ActivatedRouteSnapshot): <span class="built_in">boolean</span> &#123;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    store(route: ActivatedRouteSnapshot, handle: DetachedRouteHandle): <span class="built_in">void</span> &#123;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    shouldAttach(route: ActivatedRouteSnapshot): <span class="built_in">boolean</span> &#123;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    retrieve(route: ActivatedRouteSnapshot): DetachedRouteHandle &#123;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    shouldReuseRoute(future: ActivatedRouteSnapshot, curr: ActivatedRouteSnapshot): <span class="built_in">boolean</span> &#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<p>上面五个方法可以被通俗易懂的解释为：</p>
+<ul>
+<li><code>shouldDetach</code> 是否允许复用路由</li>
+<li><code>store</code> 当路由离开时会触发，存储路由</li>
+<li><code>shouldAttach</code> 是否允许还原路由</li>
+<li><code>retrieve</code> 获取存储的路由</li>
+<li><code>shouldReuseRoute</code> 进入路由触发，是否同一路由时复用路由</li>
+</ul>
+<p>举个例子，我们把路由 <code>/hello</code> 设置为允许复用，即 <code>shouldDetach</code> 方法返回 true，然后将路由快照存在 <code>store</code> 当中；当 <code>shouldReuseRoute</code> 成立时（即再次遇到 <code>/hello</code> 路由）需要复用路由，先判断 <code>shouldAttach</code> 是否允许还原，最后从 <code>retrieve</code> 拿到路由快照并构建组件。策略案例：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> CustomReuseStrategy <span class="keyword">implements</span> RouteReuseStrategy &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 定义一个对象用于存储快照</span></span><br><span class="line">    handlers: &#123;[key: <span class="built_in">string</span>]: DetachedRouteHandle&#125; = &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 决定是否将当前的路由进行分离并暂存</span></span><br><span class="line">    shouldDetach(route: ActivatedRouteSnapshot): <span class="built_in">boolean</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">	</span><br><span class="line">    <span class="comment">// 存储分离出的路由</span></span><br><span class="line">    store(route: ActivatedRouteSnapshot, handle: DetachedRouteHandle): <span class="built_in">void</span> &#123;</span><br><span class="line">        <span class="comment">// 将快照存储到 handlers 对象中</span></span><br><span class="line">        <span class="keyword">this</span>.handlers[route.routeConfig.path] = handle</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 决定当前的路由是否还原</span></span><br><span class="line">    shouldAttach(route: ActivatedRouteSnapshot): <span class="built_in">boolean</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> !!route.routeConfig &amp;&amp; !!<span class="keyword">this</span>.handlers[route.routeConfig.path];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 取得之前暂存的路由</span></span><br><span class="line">    retrieve(route: ActivatedRouteSnapshot): DetachedRouteHandle &#123;</span><br><span class="line">        <span class="comment">//从 handlers 暂存处取回</span></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.handlers[route.routeConfig.path];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 决定是否重用路由</span></span><br><span class="line">    shouldReuseRoute(future: ActivatedRouteSnapshot, curr: ActivatedRouteSnapshot): <span class="built_in">boolean</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> future.routeConfig === curr.routeConfig;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在 NgModule 中激活自定义路由缓存策略：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@NgModule</span>(&#123;</span><br><span class="line">	[...],</span><br><span class="line">	providers: [</span><br><span class="line">	    &#123;provide: RouteReuseStrategy, useClass: CustomReuseStrategy&#125;</span><br><span class="line">	]</span><br><span class="line">)&#125;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> AppModule &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>不过，需要注意的是，<code>RouteReuseStrategy</code> 在懒加载的路由下无效。因为使用<code>route.routeConfig.path</code> 作为 key 来存储/获取 Handles，在 LazyLoaded 模块中, <code>route.routeConfig.path</code> 在执行  <code>shouldAttach</code> 的时候是空的。解决方法是使用自定义的 key：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123; path: <span class="string">'...'</span>, loadChildren: <span class="string">'...module#...Module'</span>, data: &#123; key: <span class="string">'custom_key'</span> &#125; &#125;</span><br></pre></td></tr></table></figure>
+<p>这个 key 可以从  <code>ActivatedRouteSnapshot</code> 里面获取:</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">route.data.key</span><br></pre></td></tr></table></figure>
+<p>下面的策略可适用于懒加载：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123;ActivatedRouteSnapshot, DetachedRouteHandle, RouteReuseStrategy&#125; <span class="keyword">from</span> <span class="string">'@angular/router'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> HomeRouteReuseStrategy <span class="keyword">implements</span> RouteReuseStrategy &#123;</span><br><span class="line"></span><br><span class="line">  handlers: &#123; [key: <span class="built_in">string</span>]: DetachedRouteHandle &#125; = &#123;&#125;</span><br><span class="line"></span><br><span class="line">  shouldDetach(route: ActivatedRouteSnapshot): <span class="built_in">boolean</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  store(route: ActivatedRouteSnapshot, handle: DetachedRouteHandle): <span class="built_in">void</span> &#123;</span><br><span class="line">    <span class="keyword">this</span>.handlers[route.url.join(<span class="string">'/'</span>) || route.parent.url.join(<span class="string">'/'</span>)] = handle</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  shouldAttach(route: ActivatedRouteSnapshot): <span class="built_in">boolean</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> !!<span class="keyword">this</span>.handlers[route.url.join(<span class="string">'/'</span>) || route.parent.url.join(<span class="string">'/'</span>)]</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  retrieve(route: ActivatedRouteSnapshot): DetachedRouteHandle &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>.handlers[route.url.join(<span class="string">'/'</span>) || route.parent.url.join(<span class="string">'/'</span>)]</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  shouldReuseRoute(future: ActivatedRouteSnapshot, curr: ActivatedRouteSnapshot): <span class="built_in">boolean</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> future.routeConfig === curr.routeConfig</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/angular-route-reuse-stategy/" data-id="cjxai2nig0002jkq4w5l04pwb" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/what-is-scaffold/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          什么是脚手架
+        
+      </div>
+    </a>
+  
+  
+    <a href="/angular-upgrade/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">angular 版本升级</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Elasticsearch/">Elasticsearch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>
