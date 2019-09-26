@@ -54,6 +54,61 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-webpack-external" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/webpack-external/" class="article-date">
+  <time datetime="2019-08-27T09:05:09.000Z" itemprop="datePublished">2019-08-27</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/webpack-external/">webpack中的external参数</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>今天用 electron 集成 sqlite3 和 knex 的时候报错了：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Module not found: Error: Cannot resolve module &apos;sqlite3&apos; in xxx/node_modules/knex/lib/dialects/sqlite3</span><br></pre></td></tr></table></figure>
+<p>在官方<a href="https://github.com/tgriesser/knex/issues/1128" target="_blank" rel="noopener">issue</a> 中找到了解决方案：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">externals: &#123;</span><br><span class="line">  knex: <span class="string">'commonjs knex'</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>于是顺便学习一下 webpack externals 参数的含义：</p>
+<blockquote>
+<p>external 配置选项提供了「不从 bundle 中引用依赖」或者说叫做「从输出的 bundle 中排除依赖」的方法。防止将某些 import 包打包到 bundle 中，而是在运行时(runtime)再去从外部获取这些扩展包(external package)。</p>
+</blockquote>
+<p>也就是说可以让打包后的 bundle 依赖于那些存在于用户环境(consumer environment)中的依赖。举个最基本的例子：</p>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/webpack-external/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/webpack-external/" data-id="ck10e5it10009joq4i4gfkjng" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-mongodb-capped-collection" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/mongodb-capped-collection/" class="article-date">
@@ -236,6 +291,54 @@
     </div>
     <footer class="article-footer">
      <a data-url="https://zju.date/react-auth/" data-id="cjw53wyav000lm5q40f7p14on" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-package-json-resolutions" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/package-json-resolutions/" class="article-date">
+  <time datetime="2019-04-04T15:04:37.000Z" itemprop="datePublished">2019-04-04</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/package-json-resolutions/">package.json中的resolution</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>开发过程中经常会遇到下面两个场景：</p>
+<ol>
+<li>项目依赖一个不常更新的包，但这个包又依赖另一个包，而这个包由于各种原因需要立即升级，例如紧急安全更新等。</li>
+<li>项目的直接依赖定义了过于宽泛的子依赖版本范围，恰巧这其中的某个版本有问题，需要把子依赖限制在某些正常工作的版本范围里。</li>
+</ol>
+<p>这个时候就很头疼，因为项目 package.json 不能指定依赖的依赖的版本，它是在依赖的 package.json 中指定的，要么坐等作者升级，要么手动编辑 package-lock.json。如果用 yarn 作为包管理工具的话，就好办了，只需要在 package.json 文件里添加 resolutions 字段，就能覆盖版本定义，例如：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"name"</span>: <span class="string">"project"</span>,</span><br><span class="line">  <span class="attr">"version"</span>: <span class="string">"1.0.0"</span>,</span><br><span class="line">  <span class="attr">"dependencies"</span>: &#123;</span><br><span class="line">    <span class="attr">"left-pad"</span>: <span class="string">"1.0.0"</span>,</span><br><span class="line">    <span class="attr">"c"</span>: <span class="string">"file:../c-1"</span>,</span><br><span class="line">    <span class="attr">"d2"</span>: <span class="string">"file:../d2-1"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">"resolutions"</span>: &#123;</span><br><span class="line">    <span class="attr">"d2/left-pad"</span>: <span class="string">"1.1.1"</span>,</span><br><span class="line">    <span class="attr">"c/**/left-pad"</span>: <span class="string">"1.1.2"</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>意思是说可以直接指定依赖 d2 所依赖的 left-pad 版本为 1.1.1。可惜 npm 官方并不支持这个参数，不过 github 上有一个<a href="https://github.com/rogeriochaves/npm-force-resolutions" target="_blank" rel="noopener">第三方库</a>支持了这个功能。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/package-json-resolutions/" data-id="ck10e5isr0001joq49lmbtfph" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
@@ -440,104 +543,10 @@
 
 
   
-    <article id="post-yarn-node-incompatible" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/yarn-node-incompatible/" class="article-date">
-  <time datetime="2019-01-24T03:15:01.000Z" itemprop="datePublished">2019-01-24</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/yarn-node-incompatible/">yarn 安装时出现 node incompatible</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>今天用 yarn 安装依赖失败，报下面的错：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">The engine <span class="string">"node"</span> is incompatible with this module. Expected version <span class="string">"&gt;=4 &lt;=9"</span>. Got <span class="string">"10.14.2"</span></span><br></pre></td></tr></table></figure>
-<p>网上很多人说用 <code>yarn --ignore-engines</code> 可以解决这个问题，然而这样做是有风险的。这个问题产生的原因是依赖包 upath 导致的，它在 package.json 里面限制 node engine 只能是 4~9 版本的，只要把 upath 给升级就行了，解决方法如下：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">rm -rf node_modules/</span><br><span class="line">rm yarn.lock</span><br><span class="line">yarn install</span><br></pre></td></tr></table></figure>
-<p>这样就会更新 upath 到最新版本。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/yarn-node-incompatible/" data-id="cjssqvcvr004r8uq4zr6fwcxg" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-centos-install-mozjpeg" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/centos-install-mozjpeg/" class="article-date">
-  <time datetime="2019-01-23T01:43:07.000Z" itemprop="datePublished">2019-01-23</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/centos-install-mozjpeg/">centos 安装 mozjpeg</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>首先安装 nasm 环境：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum -y install build-essential nasm libtool</span><br></pre></td></tr></table></figure>
-<p>然后下载源码编译：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">wget https://github.com/mozilla/mozjpeg/archive/v3.3.1.zip</span><br><span class="line">unzip v3.3.1.zip</span><br><span class="line"><span class="built_in">cd</span> mozjpeg-3.3.1</span><br><span class="line">autoreconf -fiv</span><br><span class="line">./configure</span><br><span class="line">make</span><br><span class="line">make install</span><br></pre></td></tr></table></figure>
-<p>安装后的可执行文件所在的目录是 <code>/opt/mozjpeg/bin</code>：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@VM_156_24_centos mozjpeg-3.3.1]<span class="comment"># ls -hl /opt/mozjpeg/bin</span></span><br><span class="line">总用量 268K</span><br><span class="line">-rwxr-xr-x 1 root root 56K 1月  23 10:04 cjpeg</span><br><span class="line">-rwxr-xr-x 1 root root 45K 1月  23 10:04 djpeg</span><br><span class="line">-rwxr-xr-x 1 root root 53K 1月  23 10:04 jpegtran</span><br><span class="line">-rwxr-xr-x 1 root root 14K 1月  23 10:04 rdjpgcom</span><br><span class="line">-rwxr-xr-x 1 root root 63K 1月  23 10:04 tjbench</span><br><span class="line">-rwxr-xr-x 1 root root 14K 1月  23 10:04 wrjpgcom</span><br></pre></td></tr></table></figure>
-<p>将 <code>a.jpg</code> 按照 80% 的压缩率保存到 <code>a1.jpg</code>：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/opt/mozjpeg/bin/cjpeg -quality 80 a.jpg &gt; a1.jpg</span><br></pre></td></tr></table></figure>
-<p>cjpeg 默认的压缩率是 75%，<code>-quality</code> 参数可以自定义压缩率。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/centos-install-mozjpeg/" data-id="cjssqvcry000p8uq4gxyybwh9" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
 
 
   <nav id="page-nav">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/56/">56</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/57/">57</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
   </nav>
 </section>
 

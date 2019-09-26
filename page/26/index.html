@@ -54,6 +54,439 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-url-reserved-characters" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/url-reserved-characters/" class="article-date">
+  <time datetime="2017-11-02T15:07:07.000Z" itemprop="datePublished">2017-11-02</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/url-reserved-characters/">URL中的保留字</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>URL中有很多保留字，但是保留字出现在路径、查询或段的部分时，往往很难完全梳理清楚，例如 <code>+</code> 在路径部分是被允许的并且特指正号而不是空格。其他类似的有：</p>
+<ul>
+<li><code>?</code> 在查询部分允许不被转义</li>
+<li><code>/</code> 在查询部分允许不被转义</li>
+<li><code>=</code> 在作为路径参数或者查询参数值以及在路径部分允许不被转义</li>
+<li><code>:@-._~!$&amp;&#39;()*+,;=</code> 等字符在路径部分允许不被转义</li>
+<li><code>/?:@-._~!$&amp;&#39;()*+,;=</code> 等字符在任何段中允许不被转义</li>
+</ul>
+<p>这样下面的地址虽然看起来有点混乱：</p>
+<p><code>http://example.com/:@-._~!$&amp;&#39;()*+,=;:@-._~!$&amp;&#39;()*+,=:@-._~!$&amp;&#39;()*+,==?/?:@-._~!$&#39;()*+,;=/?:@-._~!$&#39;()*+,;==#/?:@-._~!$&amp;&#39;()*+,;=</code></p>
+<p>按照上面的规则，其实上是一个合法的地址，上面路径可以被解析为：</p>
+<table>
+<thead>
+<tr>
+<th>部分</th>
+<th>值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>协议</td>
+<td>http</td>
+</tr>
+<tr>
+<td>主机</td>
+<td>example.com</td>
+</tr>
+<tr>
+<td>路径</td>
+<td><code>/:@-._~!$&amp;&#39;()*+,=</code></td>
+</tr>
+<tr>
+<td>路径参数名</td>
+<td><code>:@-._~!$&amp;&#39;()*+,</code></td>
+</tr>
+<tr>
+<td>路径参数值</td>
+<td><code>:@-._~!$&amp;&#39;()*+,==</code></td>
+</tr>
+<tr>
+<td>查询参数名</td>
+<td><code>/?:@-._~!$&#39;()* ,;</code></td>
+</tr>
+<tr>
+<td>查询参数值</td>
+<td><code>/?:@-._~!$&#39;()* ,;==</code></td>
+</tr>
+<tr>
+<td>段</td>
+<td><code>/?:@-._~!$&amp;&#39;()*+,;=</code></td>
+</tr>
+</tbody>
+</table>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/url-reserved-characters/" data-id="cjxai2njk000jjkq4b2m1y8kb" class="article-share-link">Share</a>
+     
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-upgrade-mysql" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/upgrade-mysql/" class="article-date">
+  <time datetime="2017-10-23T10:15:23.000Z" itemprop="datePublished">2017-10-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/upgrade-mysql/">mysql 升级指南</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>查看目录中与 mysql 相关的文件：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">➜  ~ ls -al /usr/<span class="built_in">local</span> | grep mysql</span><br><span class="line">lrwxr-xr-x    1 lixiao  admin     27 12 20  2015 mysql -&gt; mysql-5.7.10-osx10.9-x86_64</span><br><span class="line">drwxr-xr-x   14 lixiao  admin    476 10 23 17:54 mysql-5.7.10-osx10.9-x86_64</span><br><span class="line">lrwxr-xr-x    1 root    wheel     36  2 22  2017 mysql-shell -&gt; mysql-shell-1.0.5-osx10.11-x86-64bit</span><br><span class="line">drwxr-xr-x    4 root    wheel    136  8 26  2016 mysql-shell-1.0.5-osx10.11-x86-64bit</span><br></pre></td></tr></table></figure>
+<p>升级步骤：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 进入新版本目录</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> /usr/<span class="built_in">local</span>/mysql-5.7.20-macos10.12-x86_64</span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除新版本的数据目录</span></span><br><span class="line"></span><br><span class="line">sudo rm -rf ./data</span><br><span class="line"></span><br><span class="line"><span class="comment"># 复制老版本的数据目录到新版本目录</span></span><br><span class="line"></span><br><span class="line">sudo cp -R ../mysql-5.7.10-osx10.9-x86_64/data ./</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修复目录权限</span></span><br><span class="line"></span><br><span class="line">sudo chown -R _mysql ./data</span><br><span class="line"></span><br><span class="line"><span class="comment"># 启动MySQL（一定要加 --skip-grant-tables 关闭权限检查）</span></span><br><span class="line"></span><br><span class="line">sudo ./bin/mysqld_safe --skip-grant-tables</span><br><span class="line"></span><br><span class="line"><span class="comment"># 执行升级脚本（升级过程有一大堆升级信息输出, 最关键的是: Upgrade process completed successfully. 看到这个就说明升级成功了.）</span></span><br><span class="line"></span><br><span class="line">sudo ./bin/mysql_upgrade</span><br><span class="line"></span><br><span class="line"><span class="comment"># 停止通过 mysqld_safe 启动的服务器, 正常启动服务器</span></span><br><span class="line"></span><br><span class="line">sudo ./support-files/mysql.server stop</span><br><span class="line">sudo ./support-files/mysql.server start</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/upgrade-mysql/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/upgrade-mysql/" data-id="cjhq778us00isizq36u85c9if" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-matrix-params" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/matrix-params/" class="article-date">
+  <time datetime="2017-10-22T07:53:47.000Z" itemprop="datePublished">2017-10-22</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/matrix-params/">矩阵参数</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>什么是矩阵参数？请看下面的例子：</p>
+<p>带查询参数的 URL：<code>http://some.where/thing?paramA=1&amp;paramB=6542</code><br>带矩阵参数的 URL：<code>http://some.where/thing;paramA=1;paramB=6542</code></p>
+<p>Matrix 参数可以让程序在 GET 请求中传递更多复杂的参数：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://social.yahooapis.com/v1/user/6677/connections;start=0;count=20</span><br></pre></td></tr></table></figure>
+<p>例如查询多级别的资源或子资源：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://example.com/res/categories;name=foo/objects;name=green/?page=1</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/matrix-params/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/matrix-params/" data-id="cjxai2nj6000fjkq44qsfnt0w" class="article-share-link">Share</a>
+     
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-angular-resolve-vs-data" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/angular-resolve-vs-data/" class="article-date">
+  <time datetime="2017-10-21T03:45:12.000Z" itemprop="datePublished">2017-10-21</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/angular-resolve-vs-data/">angular 中的 resolve 和 data</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在 Angular 中，有两种给指定路由对应的组件传递数据的方式：</p>
+<ol>
+<li><p>使用 resolve</p>
+<p> 路由代码：</p>
+ <figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> AppRoutes: Routes = [</span><br><span class="line">  &#123; </span><br><span class="line">    path: <span class="string">'/one'</span>, component: OneComponent, resolve: &#123; foo: <span class="string">'foo'</span> &#125;</span><br><span class="line">  &#125;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<pre><code>组件代码:
+
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span>()</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> OneComponent <span class="keyword">implements</span> OnInit &#123;</span><br><span class="line">    <span class="keyword">constructor</span>(<span class="params"><span class="keyword">private</span> route: ActivatedRoute</span>) &#123;&#125;</span><br><span class="line">    ngOnInit() &#123;</span><br><span class="line">        <span class="keyword">this</span>.foo = <span class="keyword">this</span>.route.snapshot.data[<span class="string">'foo'</span>];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+&lt;!--more--&gt;
+</code></pre><ol>
+<li><p>使用 data</p>
+<p>路由代码：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> routes: RouterConfig = [</span><br><span class="line">    &#123;</span><br><span class="line">      path: <span class="string">'/one'</span>, component: OneComponent, data : &#123;some_data : <span class="string">'some value'</span>&#125;</span><br><span class="line">    &#125;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+<p>组件代码：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span>()</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> OneComponent <span class="keyword">implements</span> OnInit &#123;</span><br><span class="line">    <span class="keyword">constructor</span>(<span class="params"><span class="keyword">private</span> route: ActivatedRoute</span>) &#123;&#125;</span><br><span class="line">    ngOnInit() &#123;</span><br><span class="line">        <span class="keyword">this</span>.obs = <span class="keyword">this</span>.route.data.subscribe(<span class="function"><span class="params">v</span> =&gt;</span> <span class="built_in">console</span>.log(v));</span><br><span class="line">    &#125;</span><br><span class="line">    ngOnDestroy() &#123;</span><br><span class="line">        <span class="keyword">this</span>.obs.unsubscribe();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>案例：</p>
+<p>路由配置是：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">	path: <span class="string">'lairage'</span>, <span class="attr">component</span>: HostComponent,</span><br><span class="line">	children: [</span><br><span class="line">		&#123;<span class="attr">path</span>: <span class="string">''</span>, <span class="attr">component</span>: LairageComponent&#125;,</span><br><span class="line">		&#123;</span><br><span class="line">			path: <span class="string">'livestock/:id'</span>,</span><br><span class="line">			data: &#123;<span class="attr">type</span>: <span class="string">'lairage'</span>&#125;,</span><br><span class="line">			resolve: &#123;<span class="attr">itemDetail</span>: LairageResolver&#125;,</span><br><span class="line">			component: LivestockComponent</span><br><span class="line">		&#125;</span><br><span class="line">	]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在 HTML 页面：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">i</span> [<span class="attr">routerLink</span>]=<span class="string">"['/cultivation/lairage/livestock', target.id, &#123;h:target.herdsman_id,c:target.category&#125;]"</span></span></span><br><span class="line"><span class="tag">	[<span class="attr">queryParams</span>]=<span class="string">"&#123;code:target.code&#125;"</span> &gt;</span><span class="tag">&lt;/<span class="name">i</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>组件中调用：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> snapshot = <span class="keyword">this</span>.route.snapshot</span><br><span class="line"><span class="built_in">console</span>.log(snapshot)</span><br></pre></td></tr></table></figure>
+<p>路由 <code>route.snapshot</code> 参数详解：</p>
+<ol>
+<li><p>params</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="attr">id</span>: <span class="string">"28"</span>, <span class="attr">code</span>: <span class="string">"20171018180028009889"</span>&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>queryParams</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="attr">query</span>: <span class="string">"3"</span>&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>data</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">itemDetail: &#123;<span class="attr">id</span>: <span class="number">28</span>, <span class="attr">code</span>: <span class="string">"20171018180028009889"</span>, <span class="attr">time</span>: <span class="number">1508320828199</span>, <span class="attr">category</span>: <span class="string">"羊"</span>, <span class="attr">info</span>: <span class="string">"发送扥"</span>, …&#125;</span><br><span class="line">type:<span class="string">"lairage"</span></span><br></pre></td></tr></table></figure>
+<p>我们看到，resolve的对象也放到了data里面。</p>
+</li>
+<li><p>routeConfig</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">component:LivestockComponent</span><br><span class="line">data:&#123;<span class="attr">type</span>: <span class="string">"lairage"</span>&#125;</span><br><span class="line">path:<span class="string">"livestock/:id"</span></span><br><span class="line">resolve:&#123;<span class="attr">itemDetail</span>: ƒ&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>parent</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">parent.routeConfig.path</span><br></pre></td></tr></table></figure>
+<p>​</p>
+</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/angular-resolve-vs-data/" data-id="cjssqvcrj000b8uq45nqy8llv" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Angular/">Angular</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-angular-random-color" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/angular-random-color/" class="article-date">
+  <time datetime="2017-10-17T02:42:07.000Z" itemprop="datePublished">2017-10-17</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/angular-random-color/">Angular 随机换颜色</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>使用 <code>[style.property]</code> 来改变 Angular 组件的样式：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> [<span class="attr">style.color</span>]=<span class="string">"color"</span>&gt;</span>我的颜色是动态变化的哦！<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">button</span> (<span class="attr">click</span>)=<span class="string">"setColor()"</span>&gt;</span> 随机生成 <span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>随机颜色：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">color = <span class="keyword">this</span>.getRandomColor();</span><br><span class="line"></span><br><span class="line">getRandomColor() &#123;</span><br><span class="line">    <span class="keyword">let</span> letters = <span class="string">'0123456789ABCDEF'</span>.split(<span class="string">''</span>), color = <span class="string">'#'</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">6</span>; i++)&#123;</span><br><span class="line">        color += letters[<span class="built_in">Math</span>.floor(<span class="built_in">Math</span>.random() * <span class="number">16</span>)];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> color;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">setColor() &#123;</span><br><span class="line">    <span class="keyword">this</span>.color = <span class="keyword">this</span>.getRandomColor();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/angular-random-color/" data-id="cjhq778hi0033izq3pp8w373m" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-mongodb-aggregation-trap" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/mongodb-aggregation-trap/" class="article-date">
+  <time datetime="2017-10-12T03:23:23.000Z" itemprop="datePublished">2017-10-12</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/mongodb-aggregation-trap/">MongoDB 聚合的坑</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>mongodb 聚合的时候几个坑：</p>
+<ol>
+<li><p>_id 必须是 ObjectId 类型</p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$match: &#123; <span class="attr">item</span>: mongoose.Types.ObjectId(item.id) &#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<ol>
+<li><p>日期必须是 Date 类型</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$match: &#123; createdAt: &#123; $gt: new Date(&apos;xxxxx&apos;) &#125; &#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>返回的是一个 cursor ，不能当做数组取值，也没有 toArray 方法</p>
+</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/mongodb-aggregation-trap/" data-id="cju5m2z630007qqq4khtavdm6" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MongoDB/">MongoDB</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-centos-releaserver-and-basearch" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/centos-releaserver-and-basearch/" class="article-date">
+  <time datetime="2017-09-29T05:36:07.000Z" itemprop="datePublished">2017-09-29</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/centos-releaserver-and-basearch/">releasever 和 basearch</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>centos 软件源配置的时候经常见到：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">baseurl=http://mirror.centos.org/centos/<span class="variable">$releasever</span>/os/<span class="variable">$basearch</span>/</span><br></pre></td></tr></table></figure>
+<p>那么 <code>$releasever</code> 和 <code>$basearch</code> 是什么意思呢？</p>
+<ol>
+<li><p><code>$releasever</code></p>
+<p> 表示当前系统的发行版本，可以通过 <code>rpm -qi centos-release</code> 命令查看，结果如下：</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">[root@jdu4e00u53f7 ~]# rpm -qi centos-release</span><br><span class="line">Name        : centos-release</span><br><span class="line">Version     : 7</span><br><span class="line">Release     : 3.1611.el7.centos</span><br><span class="line">Architecture: x86_64</span><br><span class="line">Install Date: Tue 20 Dec 2016 10:39:24 AM CST</span><br><span class="line">Group       : System Environment/Base</span><br><span class="line">Size        : 37000</span><br><span class="line">License     : GPLv2</span><br><span class="line">Signature   : RSA/SHA256, Wed 30 Nov 2016 02:57:12 AM CST, Key ID 24c6a8a7f4a80eb5</span><br><span class="line">Source RPM  : centos-release-7-3.1611.el7.centos.src.rpm</span><br><span class="line">Build Date  : Wed 30 Nov 2016 02:12:59 AM CST</span><br><span class="line">Build Host  : c1bm.rdu2.centos.org</span><br><span class="line">Relocations : (not relocatable)</span><br><span class="line">Packager    : CentOS BuildSystem &lt;http://bugs.centos.org&gt;</span><br><span class="line">Vendor      : CentOS</span><br><span class="line">Summary     : CentOS Linux release file</span><br><span class="line">Description :</span><br><span class="line">CentOS Linux release files</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<pre><code>其中的 Version：7就是我们系统的版本号。
+</code></pre>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/centos-releaserver-and-basearch/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/centos-releaserver-and-basearch/" data-id="cjhq778i90045izq3f1k6ja25" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-angular-cli-notes" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/angular-cli-notes/" class="article-date">
@@ -200,384 +633,10 @@
 
 
   
-    <article id="post-change-system-environment" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/change-system-environment/" class="article-date">
-  <time datetime="2017-09-16T05:17:07.000Z" itemprop="datePublished">2017-09-16</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/change-system-environment/">修改系统环境变量</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>当在 Linux 或 Mac 下的 shell 里面运行命令的时候，shell会去PATH环境变量指定的路径下寻找可执行文件。也就是说如果把可执行文件所在的目录保存在PATH环境变量里面，每次运行这个程序的时候就不需要跑到该程序所在的文件夹了。</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> PATH=/opt/<span class="built_in">local</span>/bin:/opt/<span class="built_in">local</span>/sbin:<span class="variable">$PATH</span></span><br></pre></td></tr></table></figure>
-<p>注意，如果路径里面包含空格（例如文件夹的名字里面出现空格），必须在后面加上引号：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> PATH=<span class="string">"/your path/here"</span></span><br></pre></td></tr></table></figure>
-<p>export关键字很重要，如果定义了一个变量但没有export，那么这个变量只在当前shell下有效，例如：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ A=4</span><br><span class="line">$ <span class="built_in">echo</span> <span class="variable">$A</span></span><br><span class="line">4</span><br></pre></td></tr></table></figure>
-<p>如果再打开一个shell，这个变量就不存在了，也许你觉得这样也行啊，反正我就在当前shell下工作，但是如果你运行一个shell脚本的时候就无法使用该变量。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> PATH=/mightyq/bin:/opt/<span class="built_in">local</span>/bin:/opt/<span class="built_in">local</span>/sbin:<span class="variable">$PATH</span></span><br><span class="line"><span class="built_in">export</span> PATH=/opt/<span class="built_in">local</span>/bin:/mightyq/bin:/opt/<span class="built_in">local</span>/sbin:<span class="variable">$PATH</span></span><br><span class="line"><span class="built_in">export</span> PATH=/opt/<span class="built_in">local</span>/bin:/opt/<span class="built_in">local</span>/sbin:<span class="variable">$PATH</span>:/mightyq/bin</span><br></pre></td></tr></table></figure>
-<p>使用文件中设置的环境变量：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">. ./.profile echo $PATH</span><br></pre></td></tr></table></figure>
-<p>这里的 <code>.</code> 是 <code>source</code> 的简写。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/change-system-environment/" data-id="cjhq778ij004fizq33ytc82ct" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-mongoose-aggregation" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/mongoose-aggregation/" class="article-date">
-  <time datetime="2017-09-16T04:27:07.000Z" itemprop="datePublished">2017-09-16</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/mongoose-aggregation/">mongoose 聚合查询</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>mongoose 聚合查询语法： </p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">db.collection.aggregrate([</span><br><span class="line">   pipe1_operator : &#123;....&#125;,</span><br><span class="line">   pipe2_operator : &#123;....&#125;,</span><br><span class="line">   pipe3_operator : &#123;....&#125;</span><br><span class="line">])</span><br></pre></td></tr></table></figure>
-<h2 id="分组-group"><a href="#分组-group" class="headerlink" title="分组 $group"></a>分组 <code>$group</code></h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  $group: &#123;</span><br><span class="line">    _id: &apos;$region&apos;,</span><br><span class="line">    count: &#123; $sum: 1 &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="匹配-match"><a href="#匹配-match" class="headerlink" title="匹配 $match"></a>匹配 <code>$match</code></h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  $match: &#123;</span><br><span class="line">    created: &#123; $gt: new Date(time) &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/mongoose-aggregation/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/mongoose-aggregation/" data-id="cjhq778q600dyizq3lbpd8qp9" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-linux-sudo-lost" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/linux-sudo-lost/" class="article-date">
-  <time datetime="2017-09-16T04:18:31.000Z" itemprop="datePublished">2017-09-16</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/linux-sudo-lost/">sudo找不到命令</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><code>sudo npm i</code>  报错：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[ec2-user@ip-17-31-41]$ sudo npm i</span><br><span class="line">sudo：npm：找不到命令</span><br></pre></td></tr></table></figure>
-<p>sudo 有时候会出现找不到命令，而明明 PATH 路径下包含该命令，让人非常疑惑。其实出现这种情况的原因是：出于系统安全的考虑，当 sudo 以管理权限执行命令的时候，linux 将 PATH 环境变量进行了重置，因此搜索的路径不是我们想要的PATH变量的路径。两种方法解决该问题：</p>
-<p>首先，都要打开sudo的配置文件：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo visudo</span><br></pre></td></tr></table></figure>
-<ol>
-<li><p>可以使用 secure_path 指令修改 sudoers 中默认的 PATH为你想要的路径。这个指令指定当用户执行 sudo 命令时在什么地方寻找二进制代码和命令。这个选项的目的显然是要限制用户运行 sudo 命令的范围，这是一种好做法。</p>
-</li>
-<li><p>将 <code>Defaults env_reset</code> 改成 <code>Defaults !env_reset</code> 取消掉对 PATH 变量的重置，然后在 .bashrc 中最后 <code>alias sudo=&#39;sudo env PATH=$PATH&#39;</code>，这样sudo执行命令时所搜寻的路径就是系统的PATH变量中的路径，如想添加其他变量也是类似。</p>
-</li>
-</ol>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/linux-sudo-lost/" data-id="cjhq778oz00ccizq3qwde6uyd" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-mongodb-query-empty-array-or-undefined" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/mongodb-query-empty-array-or-undefined/" class="article-date">
-  <time datetime="2017-09-15T14:34:23.000Z" itemprop="datePublished">2017-09-15</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/mongodb-query-empty-array-or-undefined/">mongodb 数组字段相关查询</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>查询的时候，匹配某个数组字段至少包含一个以上元素的方法：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">db.xxx.find(&#123;<span class="attr">field</span>: &#123;<span class="attr">$exists</span>: <span class="literal">true</span>, <span class="attr">$gt</span>: &#123;<span class="attr">$size</span>: <span class="number">0</span>&#125;&#125;&#125;)</span><br><span class="line">db.xxx.find(&#123;<span class="attr">field</span>: &#123;<span class="attr">$exists</span>: <span class="literal">true</span>, <span class="attr">$not</span>: &#123;<span class="attr">$size</span>: <span class="number">0</span>&#125;&#125;&#125;)</span><br><span class="line">db.xxx.find(&#123;<span class="string">'field.0'</span>: &#123;<span class="attr">$exists</span>: <span class="literal">true</span>&#125;&#125;)</span><br></pre></td></tr></table></figure>
-<p>反过来，匹配字段不存在或者为空数组的写法：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">db.xxx.find(&#123;<span class="string">'field.0'</span>: &#123;<span class="attr">$exists</span>: <span class="literal">false</span>&#125;&#125;)</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/mongodb-query-empty-array-or-undefined/" data-id="cju5m2z67000bqqq4zf45bhh3" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MongoDB/">MongoDB</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-node-module-mjs" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/node-module-mjs/" class="article-date">
-  <time datetime="2017-09-13T01:51:07.000Z" itemprop="datePublished">2017-09-13</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/node-module-mjs/">nodejs支持es6模块语法</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>在此之前，node.js中一直不支持es6模块语法，即 <code>import</code> 和 <code>export</code>，如果在命令行编译包含es6模块的文件，就会报下面的错误：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(function (exports, require, module, __filename, __dirname) &#123; import * as utils from &apos;./index.js&apos;</span><br><span class="line">                                                              ^^^^^^</span><br><span class="line">SyntaxError: Unexpected token import</span><br></pre></td></tr></table></figure>
-<p>于是不得不使用类似于 <code>babel</code> 的转换器进行转换，你需要安装 <code>babel-cli</code> 然后用命令 <code>babel-node</code> 来转换：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">babel-node index.js</span><br></pre></td></tr></table></figure>
-<p>而昨天发布的 8.5.0 版本增加了对模块的支持，语法是：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">node --experimental-modules index.mjs</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/node-module-mjs/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/node-module-mjs/" data-id="cjhq778qw00eyizq39qdq3elj" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-js-object-vs-function" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/js-object-vs-function/" class="article-date">
-  <time datetime="2017-09-05T15:30:25.000Z" itemprop="datePublished">2017-09-05</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/js-object-vs-function/">js 中的对象和函数</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>instanceof 操作符可用于判断一个对象是什么类型，如果使用 instanceof 来检测基本类型的值，则始终返回 false，因为基本类型不是对象，而如果变量是给定引用类型的实例，就会返回 true，所有引用类型的值都是 Object 的实例。</p>
-<p>Object 的每个实例都具有下面的属性和方法：</p>
-<ul>
-<li><code>constructor</code>：构造函数（即创建当前对象的函数）</li>
-<li><code>hasOwnProperty(name)</code>：检查属性是否在当前对象而非原型当中</li>
-<li><code>isPrototypeOf(object)</code>：检查当前对象是否是被传入对象object的原型</li>
-<li><code>propertyIsEnumerable(name)</code>：检查属性是否可枚举</li>
-<li><code>toString()</code>：返回对象的字符串表示</li>
-<li><code>toLocaleString()</code>：返回对象的本地字符串表示</li>
-<li><code>valueOf()</code>：返回对象的数值表示</li>
-</ul>
-<p>函数实际上是对象，每个函数都是Function类型的实例，函数名是指向函数对象的指针。</p>
-<p>下面三种写法是等价的：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">sum</span>(<span class="params">a,b</span>) </span>&#123; <span class="keyword">return</span> a+b &#125;</span><br><span class="line"><span class="keyword">var</span> sum = <span class="function"><span class="keyword">function</span>(<span class="params">a,b</span>) </span>&#123; <span class="keyword">return</span> a+b &#125;</span><br><span class="line"><span class="keyword">var</span> sum = <span class="keyword">new</span> <span class="built_in">Function</span>(<span class="string">'a'</span>,<span class="string">'b'</span>,<span class="string">'return a+b'</span>)</span><br></pre></td></tr></table></figure>
-<p>Function 是 javascript 里最常用的一个概念，javascript 里的 function 是最容易入手的一个功能，但它也是 javascript 最难理解最难掌握的一个概念。今天我们来尝试理解 Function 和 Object。因为这个里面有些人前期可能会搞糊涂，他们之间到底是什么关系，官方定义: 在Javascript中，每一个函数实际上都是一个函数对象.</p>
-<p>我们先来看最简单的两个代码,也是最容易理解的.</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">func</span>(<span class="params"></span>)</span>&#123;&#125;</span><br><span class="line"><span class="keyword">var</span> obj = &#123;&#125;</span><br><span class="line"><span class="built_in">console</span>.log(func <span class="keyword">instanceof</span> <span class="built_in">Function</span>) <span class="comment">//true</span></span><br><span class="line"><span class="built_in">console</span>.log(obj <span class="keyword">instanceof</span> <span class="built_in">Object</span>) <span class="comment">//true</span></span><br><span class="line"><span class="built_in">console</span>.log(func <span class="keyword">instanceof</span> <span class="built_in">Object</span>) <span class="comment">//true</span></span><br><span class="line"><span class="built_in">console</span>.log(obj <span class="keyword">instanceof</span> <span class="built_in">Function</span>) <span class="comment">//false</span></span><br></pre></td></tr></table></figure>
-<p>前面两个打印的效果容易理解.后面 fn instanceof Object 是为 true 的原因是: 在javascript中一切函数实际都是函数对象。我们再来看一个代码</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(<span class="built_in">Function</span> <span class="keyword">instanceof</span> <span class="built_in">Object</span>) <span class="comment">// true</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="built_in">Object</span> <span class="keyword">instanceof</span> <span class="built_in">Function</span>) <span class="comment">// true</span></span><br></pre></td></tr></table></figure>
-<p>函数实际也是一个函数对象，所以第一个为true，而 Object 也是函数，因为 Object的 结构是 <code>function Object(){native code}</code>，当然就是函数了，所以两个都是为true.</p>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/js-object-vs-function/" data-id="cjssqvcty002j8uq4z9bgmjy8" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-nginx-gzip" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/nginx-gzip/" class="article-date">
-  <time datetime="2017-09-03T09:58:20.000Z" itemprop="datePublished">2017-09-03</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/nginx-gzip/">nginx 配置 gzip 压缩</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>直接修改 nginx.conf 文件，添加下面内容：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">sendfile            on;</span><br><span class="line">tcp_nopush          on;</span><br><span class="line">tcp_nodelay         on;</span><br><span class="line">keepalive_timeout   65;</span><br><span class="line">types_hash_max_size 2048;</span><br><span class="line">gzip  on;</span><br><span class="line">gzip_min_length 1k;</span><br><span class="line">gzip_buffers 4 16k;</span><br><span class="line">gzip_http_version 1.1;</span><br><span class="line">gzip_comp_level 9;</span><br><span class="line">gzip_types text/plain application/x-javascript application/javascript text/css application/xml text/javascript application/x-httpd-php image/jpeg image/gif image/png;</span><br><span class="line">gzip_disable <span class="string">"MSIE [1-6]\."</span>;</span><br></pre></td></tr></table></figure>
-<p>或者在 <code>/etc/nginx/conf.d</code> 下面创建一个 <code>gzip.conf</code> 文件，然后输入下面的内容</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">gzip on;</span><br><span class="line">gzip_disable &quot;msie6&quot;;</span><br><span class="line"></span><br><span class="line">gzip_vary on;</span><br><span class="line">gzip_proxied any;</span><br><span class="line">gzip_comp_level 6;</span><br><span class="line">gzip_http_version 1.1;</span><br><span class="line">gzip_min_length 256;</span><br><span class="line">gzip_types text/plain text/css application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript application/javascript application/vnd.ms-fontobject application/x-font-ttf font/opentype image/svg+xml image/x-icon;</span><br></pre></td></tr></table></figure>
-<p>配置项的含义：</p>
-<ul>
-<li><code>gzip on</code>  启用gzip</li>
-<li><code>gzip_disable &quot;msie6&quot;</code>  排除IE6浏览器上对文件压缩，因为IE6不再支持gzip压缩的.</li>
-<li><code>gzip_vary</code>  <code>和`</code>gzip_proxied` 是让代理服务器上的浏览器和服务器能正确辨认gzip压缩功能.</li>
-<li><code>gzip_comp_level 6</code> 设置文件压缩的级别，数字越大，压缩越高，一般6是最合适的.</li>
-<li><code>gzip_http_version 1.1</code> 用来限制 <code>gzip</code> 是否支持浏览器HTTP/1.1  协议的 ，一般浏览器不支持的话，gzip很可能就不能支持</li>
-<li><code>gzip_min_length 256</code>  让Nginx对小于256kb的文件不压缩.小的文件一般也不用压缩的.</li>
-<li><code>gzip_types</code>  列出所有的需要压缩的MIME类型文件. 我们配置的就有, HTML 页面, CSS stylesheets, Javascript 和JSON 文件, XML 文件爱你, icons, SVG 镜像, 和web字体.</li>
-</ul>
-<p>重启Nginx让配置生效.</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl restart nginx</span><br></pre></td></tr></table></figure>
-<p>## </p>
-<p>下面就来测试下我们的配置是否生效</p>
-<p>我们还是安装步骤2那样来测试，看看头信息里面有没有 <code>Content-Encoding: gzip</code> .</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -H &quot;Accept-Encoding: gzip&quot; -I http://localhost/test.html</span><br></pre></td></tr></table></figure>
-<p>在相应头信息中我们找下是否有<code>Content-Encoding: gzip</code></p>
-<p>Nginx response headers</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">HTTP/1.1 200 OK</span><br><span class="line">Server: nginx/1.6.3</span><br><span class="line">Date: Fri, 11 Mar 2016 13:19:16 GMT</span><br><span class="line">Content-Type: text/html</span><br><span class="line">Last-Modified: Fri, 11 Mar 2016 12:48:02 GMT</span><br><span class="line">Connection: keep-alive</span><br><span class="line">Vary: Accept-Encoding</span><br><span class="line">Content-Encoding: gzip</span><br></pre></td></tr></table></figure>
-<p>同样测试其他文件:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">curl -H &quot;Accept-Encoding: gzip&quot; -I http://localhost/test.jpg </span><br><span class="line">curl -H &quot;Accept-Encoding: gzip&quot; -I http://localhost/test.css </span><br><span class="line">curl -H &quot;Accept-Encoding: gzip&quot; -I http://localhost/test.js</span><br></pre></td></tr></table></figure>
-<p>当我们找到<code>Content-Encoding: gzip</code> 后就说明gzip功能已开启了</p>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/nginx-gzip/" data-id="cjhq778ql00ejizq3ptk0o812" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Nginx/">Nginx</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
 
 
   <nav id="page-nav">
-    <a class="extend prev" rel="prev" href="/page/25/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/24/">24</a><a class="page-number" href="/page/25/">25</a><span class="page-number current">26</span><a class="page-number" href="/page/27/">27</a><a class="page-number" href="/page/28/">28</a><span class="space">&hellip;</span><a class="page-number" href="/page/56/">56</a><a class="extend next" rel="next" href="/page/27/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/25/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/24/">24</a><a class="page-number" href="/page/25/">25</a><span class="page-number current">26</span><a class="page-number" href="/page/27/">27</a><a class="page-number" href="/page/28/">28</a><span class="space">&hellip;</span><a class="page-number" href="/page/57/">57</a><a class="extend next" rel="next" href="/page/27/">Next &raquo;</a>
   </nav>
 </section>
 

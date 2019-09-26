@@ -54,6 +54,286 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-es-bool" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/es-bool/" class="article-date">
+  <time datetime="2018-06-28T05:59:07.000Z" itemprop="datePublished">2018-06-28</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/es-bool/">ES中的bool查询</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>用 bool 查询可以构建出非常复杂的语句，例如查询：公司是【中国移动】，姓名叫【张三】或者手机号是【18888888888】的用户。可以构建出下面的查询体：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  query: &#123;</span><br><span class="line">    bool: &#123;</span><br><span class="line">      must: [</span><br><span class="line">        &#123;<span class="attr">term</span>: &#123;<span class="attr">company</span>: <span class="string">'中国移动'</span>&#125;&#125;,</span><br><span class="line">        &#123;</span><br><span class="line">          bool: &#123;</span><br><span class="line">            should: [</span><br><span class="line">              &#123;<span class="attr">term</span>: &#123;<span class="attr">name</span>: <span class="string">'张三'</span>&#125;&#125;,</span><br><span class="line">              &#123;<span class="attr">term</span>: &#123;<span class="attr">phone</span>: <span class="string">'18888888888'</span>&#125;&#125;,</span><br><span class="line">            ]</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      ],</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在 ES 中，有四种 bool 操作符，分别是：</p>
+<ol>
+<li>must 相当于【<strong>且</strong>】（计入评分）</li>
+<li>must_not 相当于【<strong>非</strong>】</li>
+<li>should 相当于【<strong>或</strong>】（但比或更强大）</li>
+<li>filter 相当于【<strong>且</strong>】（不计入评分）</li>
+</ol>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/es-bool/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/es-bool/" data-id="cjwn3tbtu00012zq4ywtszyxd" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-handle-array-in-mongodb-aggregation" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/handle-array-in-mongodb-aggregation/" class="article-date">
+  <time datetime="2018-06-26T05:20:20.000Z" itemprop="datePublished">2018-06-26</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/handle-array-in-mongodb-aggregation/">mongodb 聚合语法中的数组处理</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>js 有很多数组相关函数，如何在 mongodb 聚合语法中使用呢？官方也提供了一些操作符，例如：</p>
+<ol>
+<li><p><code>$arrayElemAt</code></p>
+<p>根据下标取数组中的元素，语法为：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123; <span class="attr">$arrayElemAt</span>: [ &lt;数组&gt;, &lt;下标&gt; ] &#125;</span><br></pre></td></tr></table></figure>
+<p>例如数据源为：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123; "_id" : 1, "name" : "dave123", favorites: [ "chocolate", "cake", "butter", "apples" ] &#125;</span><br><span class="line">&#123; "_id" : 2, "name" : "li", favorites: [ "apples", "pudding", "pie" ] &#125;</span><br><span class="line">&#123; "_id" : 3, "name" : "ahn", favorites: [ "pears", "pecans", "chocolate", "cherries" ] &#125;</span><br><span class="line">&#123; "_id" : 4, "name" : "ty", favorites: [ "ice cream" ] &#125;</span><br></pre></td></tr></table></figure>
+<p>下面的表达式会把 favorites 数组里面第一个和最后一个元素取出来映射到 first 和 last 字段上：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">db.users.aggregate([</span><br><span class="line">   &#123;</span><br><span class="line">     $project:</span><br><span class="line">      &#123;</span><br><span class="line">         name: <span class="number">1</span>,</span><br><span class="line">         first: &#123; <span class="attr">$arrayElemAt</span>: [ <span class="string">"$favorites"</span>, <span class="number">0</span> ] &#125;,</span><br><span class="line">         last: &#123; <span class="attr">$arrayElemAt</span>: [ <span class="string">"$favorites"</span>, <span class="number">-1</span> ] &#125;</span><br><span class="line">      &#125;</span><br><span class="line">   &#125;</span><br><span class="line">])</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/handle-array-in-mongodb-aggregation/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/handle-array-in-mongodb-aggregation/" data-id="cjw77iiy0000bqlq40rbjqa01" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MongoDB/">MongoDB</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-handle-string-in-mongodb-aggregation" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/handle-string-in-mongodb-aggregation/" class="article-date">
+  <time datetime="2018-06-26T04:59:49.000Z" itemprop="datePublished">2018-06-26</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/handle-string-in-mongodb-aggregation/">mongodb 聚合语法中的字符串处理</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>js 有很多字符串处理函数，如何在 mongodb 聚合语法中使用呢？官方也提供了一些操作符，例如：</p>
+<ol>
+<li><p><code>$split</code></p>
+<p>同 js 的 split 函数，把字符串按照分隔符转换为数组，语法为：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123; <span class="attr">$split</span>: [ <span class="xml"><span class="tag">&lt;<span class="name">字符串</span>&gt;</span>, <span class="tag">&lt;<span class="name">分隔符</span>&gt;</span> ] &#125;</span></span><br></pre></td></tr></table></figure>
+<p>例如：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123; <span class="attr">$split</span>: [ <span class="string">"June-15-2013"</span>, <span class="string">"-"</span> ] &#125; <span class="comment">// [ "June", "15", "2013" ]</span></span><br></pre></td></tr></table></figure>
+<p>得到数组之后可以配合 <code>$unwind</code> 操作符使用。</p>
+</li>
+<li><p><code>$substr</code></p>
+<p>同 js 的 substr 函数，对字符串进行截取，语法为：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123; <span class="attr">$substr</span>: [ <span class="xml"><span class="tag">&lt;<span class="name">字符串</span>&gt;</span>, <span class="tag">&lt;<span class="name">开始位置</span>&gt;</span>, <span class="tag">&lt;<span class="name">截取长度</span>&gt;</span> ] &#125;</span></span><br></pre></td></tr></table></figure>
+<p>例如：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="attr">firstname</span>: &#123; <span class="attr">$substr</span>: [<span class="string">"$fullname"</span>, <span class="number">0</span>, <span class="number">2</span>]&#125;&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<pre><code>&lt;!--more--&gt;
+</code></pre><ol>
+<li><p><code>$slice</code></p>
+<p>同 js 的 slice 函数</p>
+</li>
+<li><p><code>$concat</code></p>
+<p>同 js 的 concat 函数，能把两个字段拼接成一个：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123; <span class="attr">itemDescription</span>: &#123;<span class="attr">$concat</span>: [<span class="string">"$item"</span>, <span class="string">"-"</span>, <span class="string">"$description"</span>]&#125;&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>toLower</code> 和 <code>toUpper</code></p>
+<p> 转换大小写：</p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="attr">item</span>: &#123; <span class="attr">$toLower</span>: <span class="string">"$item"</span> &#125;&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<ol>
+<li><p><code>dateFromString</code></p>
+<p> 把字符串转换为日期类型：</p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  $dateFromString: &#123;</span><br><span class="line">    dateString: <span class="string">'2017-02-08T12:10:40.787'</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/handle-string-in-mongodb-aggregation/" data-id="cjxai2nj3000cjkq4zdg6r1zv" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-install-java-on-centos" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/install-java-on-centos/" class="article-date">
+  <time datetime="2018-06-25T12:04:20.000Z" itemprop="datePublished">2018-06-25</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/install-java-on-centos/">Centos 安装 Java</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Centos 安装 Java：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">yum install java-1.8.0-openjdk <span class="comment"># 安装jre</span></span><br><span class="line">yum install java-1.8.0-openjdk-devel <span class="comment"># 安装jdk</span></span><br></pre></td></tr></table></figure>
+<p>但是需要手动配置 JAVA_HOME 的环境变量，openJDK安装好后的目录位于：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.181-3.b13.el7_5.x86_64</span><br></pre></td></tr></table></figure>
+<p>其他版本都在 <code>/usr/lib/jvm</code> 下，包括 jre 和 jdk，<code>vim ~/.bashrc</code>，</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.181-3.b13.el7_5.x86_64</span><br><span class="line"><span class="built_in">export</span> CLASSPATH=.:<span class="variable">$JAVA_HOME</span>/jre/lib/rt.jar:<span class="variable">$JAVA_HOME</span>/lib/dt.jar:<span class="variable">$JAVA_HOME</span>/lib/tools.jar </span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$PATH</span>:<span class="variable">$JAVA_HOME</span>/bin</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/install-java-on-centos/" data-id="cjssqvctq00278uq45xgtmgle" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-mongodb-$let" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/mongodb-$let/" class="article-date">
+  <time datetime="2018-06-25T11:42:34.000Z" itemprop="datePublished">2018-06-25</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/mongodb-$let/">mongodb $let 运算符</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p><code>$let</code> 运算符能够在聚合运算的过程中存储计算中间值，并进行二次计算，其语法为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  $let:</span><br><span class="line">     &#123;</span><br><span class="line">       vars: &#123; &lt;变量&gt;: &lt;表达式&gt;, ... &#125;,</span><br><span class="line">       in: &lt;表达式&gt;</span><br><span class="line">     &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/mongodb-$let/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/mongodb-$let/" data-id="cjw53wyan000dm5q4ymu5u2jc" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MongoDB/">MongoDB</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-mongodb-$cond" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/mongodb-$cond/" class="article-date">
@@ -294,275 +574,10 @@
 
 
   
-    <article id="post-mongodb-$lookup" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/mongodb-$lookup/" class="article-date">
-  <time datetime="2018-06-02T03:25:07.000Z" itemprop="datePublished">2018-06-02</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/mongodb-$lookup/">mongodb $lookup 运算符</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>有了 <code>$lookup</code> 之后，MongoDB 也能做关联查询了，典型的案例就是商品和订单，订单里面有商品，模型如下：</p>
-<p><strong>商品模型</strong>：</p>
-<ul>
-<li><code>_id</code>：唯一标识符</li>
-<li><code>name</code>：商品名称</li>
-<li><code>price</code>：商品价格</li>
-</ul>
-<p>创建三条商品数据：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">db.products.insert(&#123;<span class="attr">name</span>:<span class="string">'矿泉水'</span>, <span class="attr">price</span>:<span class="number">1</span>&#125;) <span class="comment">// 5b120c565c5d2ea98f402c06</span></span><br><span class="line">db.products.insert(&#123;<span class="attr">name</span>:<span class="string">'菜园小饼'</span>, <span class="attr">price</span>:<span class="number">4</span>&#125;) <span class="comment">// 5b120c565c5d2ea98f402c07</span></span><br><span class="line">db.products.insert(&#123;<span class="attr">name</span>:<span class="string">'挂面'</span>, <span class="attr">price</span>:<span class="number">5</span>&#125;) <span class="comment">// 5b120f995c5d2ea98f402c0b</span></span><br></pre></td></tr></table></figure>
-<p><strong>订单模型</strong>：</p>
-<ul>
-<li><code>_id</code>：唯一标识符</li>
-<li><code>user</code>：购买人（这里为了演示方便，就用字符串保存姓名）</li>
-<li><code>product</code>：购买的商品（引用类型，存商品模型的 ObjectId）</li>
-<li><code>createdAt</code>：购买时间</li>
-</ul>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/mongodb-$lookup/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/mongodb-$lookup/" data-id="cjkdl4un800074hq3lv279s51" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-yarn-config-list" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/yarn-config-list/" class="article-date">
-  <time datetime="2018-05-30T10:18:18.000Z" itemprop="datePublished">2018-05-30</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/yarn-config-list/">获取 yarn 全部配置</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>下面的命令可以获取 yarn 的所有配置：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">$ yarn config list</span><br><span class="line">yarn config v1.7.0</span><br><span class="line">info yarn config</span><br><span class="line">&#123; <span class="string">'version-tag-prefix'</span>: <span class="string">'v'</span>,</span><br><span class="line">  <span class="string">'version-git-tag'</span>: <span class="literal">true</span>,</span><br><span class="line">  <span class="string">'version-commit-hooks'</span>: <span class="literal">true</span>,</span><br><span class="line">  <span class="string">'version-git-sign'</span>: <span class="literal">false</span>,</span><br><span class="line">  <span class="string">'version-git-message'</span>: <span class="string">'v%s'</span>,</span><br><span class="line">  <span class="string">'init-version'</span>: <span class="string">'1.0.0'</span>,</span><br><span class="line">  <span class="string">'init-license'</span>: <span class="string">'MIT'</span>,</span><br><span class="line">  <span class="string">'save-prefix'</span>: <span class="string">'^'</span>,</span><br><span class="line">  <span class="string">'bin-links'</span>: <span class="literal">true</span>,</span><br><span class="line">  <span class="string">'ignore-scripts'</span>: <span class="literal">false</span>,</span><br><span class="line">  <span class="string">'ignore-optional'</span>: <span class="literal">false</span>,</span><br><span class="line">  registry: <span class="string">'https://registry.yarnpkg.com'</span>,</span><br><span class="line">  <span class="string">'strict-ssl'</span>: <span class="literal">true</span>,</span><br><span class="line">  <span class="string">'user-agent'</span>: <span class="string">'yarn/1.7.0 npm/? node/v8.9.3 darwin x64'</span>,</span><br><span class="line">  lastUpdateCheck: 1527594120804,</span><br><span class="line">  prefix: <span class="string">'/Users/xxx/.yarn'</span> &#125;</span><br><span class="line">info npm config</span><br><span class="line">&#123; <span class="string">'//registry.npmjs.org/:_authToken'</span>: <span class="string">'ks6b7b54-8ba3-4b6c-9fa5-2d350441cdd9'</span>,</span><br><span class="line">  registry: <span class="string">'https://registry.npmjs.org/'</span>,</span><br><span class="line">  python: <span class="string">'/usr/bin/python'</span> &#125;</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/yarn-config-list/" data-id="cjssqvcvo004o8uq4uooo50ko" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-js-date-in-safari" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/js-date-in-safari/" class="article-date">
-  <time datetime="2018-05-29T13:30:12.000Z" itemprop="datePublished">2018-05-29</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/js-date-in-safari/">注意 Safari 浏览器中的 new Date</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>请看下面这行代码：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(<span class="keyword">new</span> <span class="built_in">Date</span>(<span class="string">'2018-05-20 10:00'</span>))</span><br></pre></td></tr></table></figure>
-<p>在 Chrome、Firefox 和 Node.js 中运行都没问题，但是在 Safari 下却是 Invalid Date。这是一个大坑，因为 iPhone 手机浏览器都是 Safari 浏览器。但是下面的代码在所有浏览器上都可以正常执行：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(<span class="keyword">new</span> <span class="built_in">Date</span>(<span class="string">'2018/05/20 10:00'</span>))</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/js-date-in-safari/" data-id="cjhrqabzp00009mq3b1za98ga" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-github-page-https" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/github-page-https/" class="article-date">
-  <time datetime="2018-05-26T07:49:12.000Z" itemprop="datePublished">2018-05-26</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/github-page-https/">github page 添加 https 支持</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>一直用 hexo 写博客，然后发布到 Github Page，现在 GitHub 宣布与 Let’s Encrypt 合作，为 Github Pages 自定义域名提供官方的 HTTPS 支持。配置 https 的方法如下：</p>
-<ol>
-<li><p>先把 Custom domain 清空（假设原来是 zju.date）</p>
-<p>如果不清空的话，下面的 checkbox 是无法点击的：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Enforce HTTPS — Unavailable for your site because a certificate has not yet been issued for your domain (zju.date)</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>如果是 CNAME 记录，请跳过这一步。如果是 A 记录，去域名服务商那里，把原来的域名 A 记录指向的 IP 地址（<code>192.30.252.153</code> 和 <code>192.30.252.154</code>） ，改成下面几个<a href="https://help.github.com/articles/setting-up-an-apex-domain/#configuring-a-records-with-your-dns-provider" target="_blank" rel="noopener">新地址</a>之一：</p>
-<blockquote>
-<ul>
-<li><code>185.199.108.153</code></li>
-<li><code>185.199.109.153</code></li>
-<li><code>185.199.110.153</code></li>
-<li><code>185.199.111.153</code></li>
-</ul>
-</blockquote>
-<p>保存修改后，等待 DNS 记录生效。</p>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/github-page-https/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/github-page-https/" data-id="cjhq778l40082izq3jw94tmop" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/HTTP/">HTTP</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-angular-dirty-touched-changed" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/angular-dirty-touched-changed/" class="article-date">
-  <time datetime="2018-05-24T11:57:12.000Z" itemprop="datePublished">2018-05-24</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/angular-dirty-touched-changed/">Angular 判断表单是否真的 dirty</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>Angular 的动态表单验证，有 dirty 和 touched 属性可以用来判断是否被修改和是否失去焦点等状态，但是遗憾的是即使修改后撤销修改（改回原值），Angular 也认为已经 dirty 了。</p>
-<p>有人认为这样不合理，理由是：</p>
-<blockquote>
-<p>input 中原本是 3，你改成 4 之后自然 dirty，然后你再改回 3，就不应该是 dirty，只有值变化才能算 dirty。</p>
-</blockquote>
-<p>也有人认为这样很合理，给出的理由是：</p>
-<blockquote>
-<p>假如你面前有一杯白开水，你端起来喝了，然后又倒上一杯，虽然新的水跟之前喝掉的一样，但是由于你触碰了杯子，被子上已经粘上了你的指纹，所以 dirty 了，这里的杯子就是 input，水就是 3，当然你可以用洗洁精把指纹抹掉还原为 pristine，这就是 angular 提供的 <code>markAsPristine()</code> 方法。</p>
-</blockquote>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/angular-dirty-touched-changed/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/angular-dirty-touched-changed/" data-id="cjhq778h8002nizq3jpq260su" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
 
 
   <nav id="page-nav">
-    <a class="extend prev" rel="prev" href="/page/8/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="page-number" href="/page/8/">8</a><span class="page-number current">9</span><a class="page-number" href="/page/10/">10</a><a class="page-number" href="/page/11/">11</a><span class="space">&hellip;</span><a class="page-number" href="/page/56/">56</a><a class="extend next" rel="next" href="/page/10/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/8/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="page-number" href="/page/8/">8</a><span class="page-number current">9</span><a class="page-number" href="/page/10/">10</a><a class="page-number" href="/page/11/">11</a><span class="space">&hellip;</span><a class="page-number" href="/page/57/">57</a><a class="extend next" rel="next" href="/page/10/">Next &raquo;</a>
   </nav>
 </section>
 
