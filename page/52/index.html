@@ -54,10 +54,10 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-browser-storage" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-javascript-promise" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/browser-storage/" class="article-date">
-  <time datetime="2016-01-22T05:01:20.000Z" itemprop="datePublished">2016-01-22</time>
+    <a href="/javascript-promise/" class="article-date">
+  <time datetime="2016-02-05T01:10:13.000Z" itemprop="datePublished">2016-02-05</time>
 </a>
     
   </div>
@@ -68,7 +68,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/browser-storage/">浏览器的Storage对象</a>
+      <a class="article-title" href="/javascript-promise/">JavaScript中Promise的使用总结</a>
     </h1>
   
 
@@ -79,140 +79,109 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="Storage对象简介"><a href="#Storage对象简介" class="headerlink" title="Storage对象简介"></a><code>Storage</code>对象简介</h2><p>浏览器的<code>storage</code>对象包含<code>localStorage</code>和<code>sessionStorage</code>，它们的用法是一样的，区别在于：</p>
-<ul>
-<li><code>sessionStorage</code>为每一个给定的源维持一个独立的存储区域，该存储区域在页面会话期间可用（即只要浏览器处于打开状态，包括页面重新加载和恢复）。</li>
-<li><code>localStorage</code>拥有<code>sessionStorage</code>全部的功能，但不一样的是：如果关闭浏览器关闭，然后重新打开后数据仍然存在。</li>
-</ul>
+        <p>JavaScript中的异步操作非常频繁，而Promise就是一把杀手锏，它有如下好处：</p>
+<h3 id="避免回调地狱"><a href="#避免回调地狱" class="headerlink" title="避免回调地狱"></a>避免回调地狱</h3><p>传统的异步更多的是采用回调函数的方式，这在普通的场景下没什么问题，但在嵌套的场景下就会令人头疼，例如按照顺序执行下面嵌套的四个异步操作：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">Model_A.find(&#123;&#125;,(e,a)=&gt;&#123;</span><br><span class="line">	<span class="keyword">if</span>(e) <span class="keyword">return</span> <span class="built_in">console</span>.log(e)</span><br><span class="line">		Model_B.put(&#123;&#125;,(e,b)=&gt;&#123;</span><br><span class="line">			<span class="keyword">if</span>(e) <span class="keyword">return</span> <span class="built_in">console</span>.log(e)</span><br><span class="line">			Model_C.get(&#123;&#125;,(e,c)=&gt;&#123;</span><br><span class="line">				<span class="keyword">if</span>(e) <span class="keyword">return</span> <span class="built_in">console</span>.log(e)</span><br><span class="line">				Model_D.delete(&#123;&#125;,(e,d)=&gt;&#123;</span><br><span class="line">					<span class="keyword">if</span>(e) <span class="keyword">return</span> <span class="built_in">console</span>.log(e)</span><br><span class="line">					<span class="keyword">return</span> d</span><br><span class="line">				&#125;);</span><br><span class="line">			&#125;)</span><br><span class="line">		&#125;)</span><br><span class="line">	&#125;)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>更好的方式是采用Promise的做法，Promise的好处就是可以避免回调地狱：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Model_A.find(&#123;&#125;).then(<span class="function"><span class="params">a</span>=&gt;</span>&#123;</span><br><span class="line">	<span class="keyword">return</span> Model_B.put(&#123;&#125;);</span><br><span class="line">&#125;).then(<span class="function"><span class="params">b</span>=&gt;</span> &#123;</span><br><span class="line">	<span class="keyword">return</span> Model_C.get(&#123;&#125;);</span><br><span class="line">&#125;).then(<span class="function"><span class="params">c</span>=&gt;</span>&#123;</span><br><span class="line">	<span class="keyword">return</span> Model_D.delete(&#123;&#125;);</span><br><span class="line">&#125;).catch(<span class="function"><span class="params">e</span>=&gt;</span>&#123;</span><br><span class="line">	<span class="built_in">console</span>.log(e);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>代码是不是清晰了好多？不过一定要记住：千万不要忘记在代码中添加.catch()方法，因为这会导致任何被抛出的错误都会被吞噬掉。</p>
+<h3 id="使用Promise-all并行操作"><a href="#使用Promise-all并行操作" class="headerlink" title="使用Promise.all并行操作"></a>使用<code>Promise.all</code>并行操作</h3><p>上面的串行场景，对于无关乎顺序的批量操作场景呢？例如想根据Model_A查找之后的结果删除Model_B中的数据，你可能会这么写：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Model_A.find(&#123;&#125;).then(<span class="function"><span class="params">results</span> =&gt;</span> &#123;</span><br><span class="line">  results.forEach(<span class="function"><span class="params">item</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> Model_B.remove(item.b);  </span><br><span class="line">  &#125;);</span><br><span class="line">&#125;).then(<span class="function"><span class="params">arr</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="comment">// Model_B中的数据都被删除了吗？</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>其实并没有！对于Promise而言要用<code>Promise.all()</code>方法：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Model_A.find(&#123;&#125;).then(<span class="function"><span class="params">results</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="built_in">Promise</span>.all(results.map(<span class="function"><span class="params">item</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> Model_B.remove(item.b);  </span><br><span class="line">  &#125;);</span><br><span class="line">&#125;).then(<span class="function"><span class="params">arr</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="comment">// Model_B中的数据都被删除了!</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h3 id="在then里面进行返回或抛出异常"><a href="#在then里面进行返回或抛出异常" class="headerlink" title="在then里面进行返回或抛出异常"></a>在<code>then</code>里面进行返回或抛出异常</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">somePromise().then(<span class="function"><span class="params">data</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="comment">// 在这里能做什么？</span></span><br><span class="line">&#125;）</span><br></pre></td></tr></table></figure>
+<p>其实有三种事可以做：</p>
+<ol>
+<li>返回另一个promise；</li>
+<li>返回一个同步值（或者undefined）；</li>
+<li>抛出一个同步错误。</li>
+</ol>
+<h5 id="返回另一个promise"><a href="#返回另一个promise" class="headerlink" title="返回另一个promise"></a>返回另一个promise</h5><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Model_A.find(&#123;&#125;).then(<span class="function"><span class="params">a</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> Model_B.put(&#123;&#125;);</span><br><span class="line">&#125;).then(<span class="function"><span class="params">b</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="comment">// 能够获取到 Model_B put方法执行的结果</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h5 id="返回一个同步值（或undefined）"><a href="#返回一个同步值（或undefined）" class="headerlink" title="返回一个同步值（或undefined）"></a>返回一个同步值（或undefined）</h5><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Model_A.find(&#123;&#125;).then(<span class="function"><span class="params">a</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">if</span> (a.status) <span class="keyword">return</span> <span class="string">"ok"</span>; <span class="comment">//返回一个同步的值</span></span><br><span class="line">  <span class="keyword">return</span> Model_B.put(&#123;&#125;);</span><br><span class="line">&#125;).then(<span class="function"><span class="params">b</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="comment">// 能够获取到"ok" 或者 Model_B put方法执行的结果</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h5 id="抛出一个同步错误"><a href="#抛出一个同步错误" class="headerlink" title="抛出一个同步错误"></a>抛出一个同步错误</h5><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Model_A.find(&#123;&#125;).then(<span class="function"><span class="params">a</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">if</span> (a.status) <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">'状态异常！'</span>); <span class="comment">//抛出一个错误</span></span><br><span class="line">  <span class="keyword">return</span> Model_B.put(&#123;&#125;);</span><br><span class="line">&#125;).then(<span class="function"><span class="params">b</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="comment">// 能够获取到Model_B put方法执行的结果</span></span><br><span class="line">&#125;).catch(<span class="function"><span class="keyword">function</span> (<span class="params">err</span>) </span>&#123;</span><br><span class="line">  <span class="comment">// 能够捕获状态异常的错误</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h3 id="正确使用Promise-resolve"><a href="#正确使用Promise-resolve" class="headerlink" title="正确使用Promise.resolve"></a>正确使用<code>Promise.resolve</code></h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="keyword">function</span> (<span class="params">resolve, reject</span>) </span>&#123;</span><br><span class="line">  resolve(<span class="string">"ok"</span>);</span><br><span class="line">&#125;).then(<span class="comment">/* ... */</span>);</span><br></pre></td></tr></table></figure>
+<p>这种写法就不如下面的简洁：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Promise</span>.resolve(<span class="string">"ok"</span>).then(<span class="comment">/* ... */</span>);</span><br></pre></td></tr></table></figure>
+<p>你认为下面的代码会打印出什么？</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Promise</span>.resolve(<span class="string">'foo'</span>).then(<span class="built_in">Promise</span>.resolve(<span class="string">'bar'</span>)).then(<span class="function"><span class="params">result</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(result);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>如果你认为打印出bar，那你就大错特错了。它实际上会打印出foo。</p>
+<p>原因是当你给then()传递一个非函数（比如一个promise）值的时候，它实际上会解释为then(null)，这会导致之前的promise的结果丢失。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Promise</span>.resolve(<span class="string">'foo'</span>).then(<span class="literal">null</span>).then(<span class="function"><span class="params">result</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(result);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>你想加多少的then(null)都可以，它始终会打印出foo，then()默认接收一个函数，其实你更多的是想这样做：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Promise</span>.resolve(<span class="string">'foo'</span>).then(() =》 &#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="built_in">Promise</span>.resolve(<span class="string">'bar'</span>);</span><br><span class="line">&#125;).then(<span class="function"><span class="params">result</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(result);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>这次会如我们预期的那样返回bar。所以要提醒你自己：永远给<code>then()</code>传递一个函数参数。</p>
+<!--
+最后看如下四个Promise的执行过程：
+
+
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">doSomething().then(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> doSomethingElse();</span><br><span class="line">&#125;).then(finalHandler);</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">doSomething</span><br><span class="line">|-----------------|</span><br><span class="line">                  doSomethingElse(undefined)</span><br><span class="line">                  |------------------|</span><br><span class="line">                                     finalHandler(resultOfDoSomethingElse)</span><br><span class="line">                                     |------------------|</span><br></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">doSomething().then(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">  doSomethingElse();</span><br><span class="line">&#125;).then(finalHandler);</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">doSomething</span><br><span class="line">|-----------------|</span><br><span class="line">                  doSomethingElse(undefined)</span><br><span class="line">                  |------------------|</span><br><span class="line">                  finalHandler(undefined)</span><br><span class="line">                  |------------------|</span><br></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">doSomething().then(doSomethingElse())</span><br><span class="line">  .then(finalHandler);</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">doSomething</span><br><span class="line">|-----------------|</span><br><span class="line">doSomethingElse(undefined)</span><br><span class="line">|---------------------------------|</span><br><span class="line">                  finalHandler(resultOfDoSomething)</span><br><span class="line">                  |------------------|</span><br></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">doSomething().then(doSomethingElse)</span><br><span class="line">  .then(finalHandler);</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">doSomething</span><br><span class="line">|-----------------|</span><br><span class="line">                  doSomethingElse(resultOfDoSomething)</span><br><span class="line">                  |------------------|</span><br><span class="line">                                     finalHandler(resultOfDoSomethingElse)</span><br><span class="line">                                     |------------------|</span><br></pre></td></tr></table></figure>
+<p>–&gt;</p>
+-->
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/javascript-promise/" data-id="cjhq778nh00amizq3hbsig1kh" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-linux-cmd-source" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/linux-cmd-source/" class="article-date">
+  <time datetime="2016-02-01T01:38:47.000Z" itemprop="datePublished">2016-02-01</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/linux-cmd-source/">Linux命令之source</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>source命令用于在当前环境下执行shell脚本：</p>
 <blockquote>
-<p>也就是说它们的不同之处在于：存储在<code>localStorage</code>里面的数据没有过期时间，而存储在<code>sessionStorage</code>里面的数据会在浏览器会话结束（即浏览器关闭时）时被清除。这里面需要特别注意的是：<code>Storage</code>对象中保存的数据都仅限于该页面的协议。也就是说<code>a.com</code>下的<code>Storage</code>是不能被<code>b.com</code>所取到的，浏览器对于每个源使用不同的<code>Storage</code>对象进行独立运行和控制。</p>
+<ul>
+<li>The source command can be used to load any functions file into the current shell script or a command prompt.</li>
+<li>It read and execute commands from given FILENAME and return.</li>
+<li>The pathnames in $PATH are used to find the directory containing FILENAME. If any ARGUMENTS are supplied, they become the positional parameters when FILENAME is executed.</li>
+</ul>
 </blockquote>
-<h2 id="关于Storage对象的一些API"><a href="#关于Storage对象的一些API" class="headerlink" title="关于Storage对象的一些API"></a>关于<code>Storage</code>对象的一些API</h2><h4 id="属性"><a href="#属性" class="headerlink" title="属性"></a>属性</h4><ul>
-<li><code>Storage.length</code>：获取存储的数据项数量。</li>
-</ul>
-<h4 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h4><ul>
-<li><code>Storage.key(n)</code>：返回存储中的第n个键名。</li>
-<li><code>Storage.getItem(key)</code> ：从存储中获取值</li>
-<li><code>Storage.setItem(key,value)</code>：在存储中设置值</li>
-<li><code>Storage.removeItem(key)</code>：删除某项记录</li>
-<li><code>Storage.clear()</code>：删除全部记录</li>
-</ul>
-<h2 id="以localStorage为例详细介绍"><a href="#以localStorage为例详细介绍" class="headerlink" title="以localStorage为例详细介绍"></a>以<code>localStorage</code>为例详细介绍</h2><h4 id="判断浏览器是否支持本地存储"><a href="#判断浏览器是否支持本地存储" class="headerlink" title="判断浏览器是否支持本地存储"></a>判断浏览器是否支持本地存储</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="built_in">window</span>.localStorage)&#123;</span><br><span class="line">	alert(<span class="string">'This browser supports localStorage'</span>);</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">	alert(<span class="string">'This browser does NOT support localStorage'</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h4 id="本地存储赋值的3种方式："><a href="#本地存储赋值的3种方式：" class="headerlink" title="本地存储赋值的3种方式："></a>本地存储赋值的3种方式：</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">window</span>.localStorage.a = <span class="string">'value'</span></span><br><span class="line"><span class="built_in">window</span>.localStorage[<span class="string">'a'</span>] = <span class="string">'value'</span></span><br><span class="line"><span class="built_in">window</span>.localStorage.setItem(<span class="string">'a'</span>, <span class="string">'value'</span>)</span><br></pre></td></tr></table></figure>
-<h4 id="本地存储获取值的3种方式"><a href="#本地存储获取值的3种方式" class="headerlink" title="本地存储获取值的3种方式:"></a>本地存储获取值的3种方式:</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">window</span>.localStorage.a</span><br><span class="line"><span class="built_in">window</span>.localStorage[<span class="string">'a'</span>]</span><br><span class="line"><span class="built_in">window</span>.localStorage.getItem(<span class="string">'a'</span>)</span><br></pre></td></tr></table></figure>
-<h4 id="获取本地存储一共存储了多少了属性键值对"><a href="#获取本地存储一共存储了多少了属性键值对" class="headerlink" title="获取本地存储一共存储了多少了属性键值对"></a>获取本地存储一共存储了多少了属性键值对</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">window</span>.localStorage.length</span><br></pre></td></tr></table></figure>
-<h4 id="本地存储移除某个键值对"><a href="#本地存储移除某个键值对" class="headerlink" title="本地存储移除某个键值对"></a>本地存储移除某个键值对</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">window</span>.localStorage.removeItem(<span class="string">'a'</span>)</span><br></pre></td></tr></table></figure>
-<h4 id="一次性移除所有的键值对"><a href="#一次性移除所有的键值对" class="headerlink" title="一次性移除所有的键值对"></a>一次性移除所有的键值对</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">window</span>.localStorage.clear()</span><br></pre></td></tr></table></figure>
-<h4 id="有时候在我们不知道有哪些键的情况下，可以通过key-index-的方法来获取键"><a href="#有时候在我们不知道有哪些键的情况下，可以通过key-index-的方法来获取键" class="headerlink" title="有时候在我们不知道有哪些键的情况下，可以通过key(index)的方法来获取键"></a>有时候在我们不知道有哪些键的情况下，可以通过key(index)的方法来获取键</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">var</span> i=<span class="number">0</span>; i&lt;<span class="built_in">window</span>.localStorage.length; i++) &#123;</span><br><span class="line">	<span class="keyword">var</span> propertyName = <span class="built_in">window</span>.localStorage.key(i)</span><br><span class="line">	<span class="built_in">console</span>.log(propertyName + <span class="string">"----"</span> + <span class="built_in">window</span>.localStorage.getItem(propertyName))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h4 id="可以为本地存储添加事件监听器"><a href="#可以为本地存储添加事件监听器" class="headerlink" title="可以为本地存储添加事件监听器"></a>可以为本地存储添加事件监听器</h4><p><code>Storage</code>事件可以被监听，但是当前页面却收不到，只能是其他页面，也就是说同源下的两个不同页面之间可以通过监听<code>Storage</code>事件进行通信。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="built_in">window</span>.addEventListener)&#123;</span><br><span class="line">	<span class="built_in">window</span>.addEventListener(<span class="string">"storage"</span>,funciton()&#123;<span class="built_in">console</span>.log(<span class="string">'处理本地存储变化'</span>)&#125;,<span class="literal">false</span>)</span><br><span class="line">&#125;<span class="keyword">else</span> <span class="keyword">if</span>(<span class="built_in">window</span>.attachEvent)&#123;</span><br><span class="line">	<span class="built_in">window</span>.attachEvent(<span class="string">"onstorage"</span>,funciton()&#123;<span class="built_in">console</span>.log(<span class="string">'处理本地存储变化'</span>)&#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h2><p>The syntax is as follows:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">source filename [arguments]</span><br><span class="line">source functions.sh</span><br><span class="line">source /path/to/functions.sh arg1 arg2</span><br><span class="line">source functions.sh WWWROOT=/apache.jail PHPROOT=/fastcgi.php_jail</span><br></pre></td></tr></table></figure>
+<p>例如：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line">JAIL_ROOT=/www/httpd</span><br><span class="line"><span class="function"><span class="title">is_root</span></span>()&#123;</span><br><span class="line">[ $(id -u) -eq 0 ] &amp;&amp; <span class="built_in">return</span> <span class="variable">$TRUE</span> || <span class="built_in">return</span> <span class="variable">$FALSE</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以这样调用：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span>  ~/test.sh </span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$JAIL_ROOT</span> <span class="comment"># /www/httpd</span></span><br><span class="line">is_root &amp;&amp; <span class="built_in">echo</span> <span class="string">"You are logged in as root."</span> || <span class="built_in">echo</span> <span class="string">"You are not logged in as root."</span></span><br></pre></td></tr></table></figure>
 
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/browser-storage/" data-id="cjhq778i2003wizq3o9xkboo1" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-angular1-$resource" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/angular1-$resource/" class="article-date">
-  <time datetime="2016-01-22T04:40:19.000Z" itemprop="datePublished">2016-01-22</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/angular1-$resource/">AngularJS使用$resource进行增删改查</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p><code>$resource</code>服务是建立在<code>$http</code>服务之上的，对于RESTful接口，使用$resource服务进行增删改查非常容易。</p>
-<p>$resource服务是一个angular插件，需要单独下载，</p>
-<pre><code>bower install angular-resource --save
-</code></pre><p>在调用的时候还需要ngResource模块的支持，也就是说必须在定义模块的时候注入ngResource</p>
-<pre><code>angular.module(&apos;yourApp&apos;, [&apos;ui.router&apos;,&apos;ngResource&apos;])
-</code></pre><p>否则在调用的时候，例如：</p>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/angular1-$resource/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/angular1-$resource/" data-id="cjhq778hr003fizq34sg92y7b" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-install-nginx-on-ubuntu" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/install-nginx-on-ubuntu/" class="article-date">
-  <time datetime="2016-01-17T06:25:32.000Z" itemprop="datePublished">2016-01-17</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/install-nginx-on-ubuntu/">Ubuntu安装nginx</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>修改文件 <code>/etc/apt/sources.list</code>，在底部添加下面两句话。 也可以在文件夹 <code>/etc/apt/sources.list.d/</code>下面添加文件, 例如 <code>/etc/apt/sources.list.d/nginx.list</code>：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">deb http://nginx.org/packages/ubuntu/ xenial nginx</span><br><span class="line">deb-src http://nginx.org/packages/ubuntu/ xenial nginx</span><br></pre></td></tr></table></figure>
-<p>然后更新软件包：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install nginx</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/install-nginx-on-ubuntu/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/install-nginx-on-ubuntu/" data-id="cjhq778n0009yizq3x68my3p1" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/linux-cmd-source/" data-id="cjhq778ou00c4izq3pp3igavs" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
 
@@ -223,10 +192,10 @@
 
 
   
-    <article id="post-linux-cmd-notes" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-systemjs-notes" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/linux-cmd-notes/" class="article-date">
-  <time datetime="2016-01-17T03:35:20.000Z" itemprop="datePublished">2016-01-17</time>
+    <a href="/systemjs-notes/" class="article-date">
+  <time datetime="2016-01-31T05:12:20.000Z" itemprop="datePublished">2016-01-31</time>
 </a>
     
   </div>
@@ -237,7 +206,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/linux-cmd-notes/">常用Linux命令</a>
+      <a class="article-title" href="/systemjs-notes/">SystemJS学习笔记</a>
     </h1>
   
 
@@ -248,223 +217,50 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <div class="article-preview">
-            <p>常用Linux命令</p>
-<h4 id="查找文件"><a href="#查找文件" class="headerlink" title="查找文件"></a>查找文件</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">find / -name filename.txt <span class="comment">#根据名称查找/目录下的filename.txt文件。</span></span><br><span class="line">find . -name <span class="string">"*.xml"</span> <span class="comment">#递归查找所有的xml文件</span></span><br><span class="line">find . -name <span class="string">"*.xml"</span> |xargs grep <span class="string">"hello world"</span> <span class="comment">#递归查找所有文件内容中包含hello world的xml文件</span></span><br><span class="line">grep -H <span class="string">'spring'</span> *.xml <span class="comment">#查找所以有的包含spring的xml文件</span></span><br><span class="line">find ./ -size 0 | xargs rm -f &amp;amp; <span class="comment">#删除文件大小为零的文件</span></span><br><span class="line">ls -l | grep <span class="string">'.jar'</span> <span class="comment">#查找当前目录中的所有jar文件</span></span><br><span class="line">grep <span class="string">'test'</span> d* <span class="comment">#显示所有以d开头的文件中包含test的行。</span></span><br><span class="line">grep <span class="string">'test'</span> aa bb cc <span class="comment">#显示在aa，bb，cc文件中匹配test的行。</span></span><br><span class="line">grep <span class="string">'[a-z]\&#123;5\&#125;'</span> aa <span class="comment">#显示所有包含每个字符串至少有5个连续小写字符的字符串的行。</span></span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/linux-cmd-notes/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/linux-cmd-notes/" data-id="cjhq778oq00c0izq3bph8d3lt" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-domain-notes" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/domain-notes/" class="article-date">
-  <time datetime="2016-01-13T04:44:55.000Z" itemprop="datePublished">2016-01-13</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/domain-notes/">域名解析名词解释</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>域名解析就是从域名到IP的转换过程，由DNS服务器完成。</p>
-<h3 id="A记录"><a href="#A记录" class="headerlink" title="A记录"></a>A记录</h3><p>IP指向，用户可以在此设置子域名并指向目标主机，从而实现通过域名找到服务器。应用场景是：已知主机IP，需要将域名解析到此IP。例如：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">www.a.com -——-&gt; IP：116.255.202.1</span><br><span class="line">web.b.cn -——-&gt; IP：116.255.202.11</span><br><span class="line">mail.c.la -——-&gt; IP：116.255.202.111</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/domain-notes/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/domain-notes/" data-id="cjhq778jp005xizq3d1ulvx5o" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/学习笔记/">学习笔记</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-joke" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/joke/" class="article-date">
-  <time datetime="2016-01-07T14:10:43.000Z" itemprop="datePublished">2016-01-07</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/joke/">开心一刻</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>孔子曰：中午不睡，下午崩溃。孟子曰：孔子说的对！</p>
-<hr>
-
-<p>老子曰：睡可睡，非常睡。</p>
-<hr>
-
-<p>你说…你喜欢我？其实…我一开始…其实我也…唉跟你说了吧，其实我也挺喜欢我自己的。</p>
-<hr>
-
-<p>作为失败的典型，你实在是太成功了。</p>
-<hr>
-
-<p>我这人从不记仇,一般有仇当场我就报了。</p>
-<hr>
-
-<p>是这样的张总，你在家里的电脑上按了CTRL+C，然后在公司的电脑上再按CTRL+V是肯定不行的。即使同一篇文章也不行。不不，多贵的电脑都不行。 </p>
-<hr>
-
-<p>人永远不知道谁哪次不经意的跟你说了再见之后就真的再也不见了。</p>
-<hr>
-
-<p>猜一句英文：「ABABBBAAAAAABBBABAAAABBBBAABBBAAAAA」？〈答案：Long time no C〉</p>
-<hr> 
-
-<p>每当困难的时候我就念藏经：“噢嘛呢哞嘛哄”， 翻译成英文就是：All money go my home! </p>
-<hr>
-
-<p>最简单的长寿秘决——保持呼吸，不要断气。</p>
-<hr>
-
-<p>执子之手，方知子丑，泪流满面，子不走我走。 </p>
-<hr>
-
-<p>人不犯我，我不犯人；人若犯我，礼让三分；人再犯我，我还一针；人还犯我，斩草除根。 </p>
-<hr>
-
-<p>单身并不难，难的是应付那些千方百计想让你结束单身的人 。 </p>
-<hr>
-
-<p>有空学风水去，死后占个好墓也算弥补了生前买不起好房的遗憾。</p>
-<hr>
-
-<p>自己好点，因为一辈子不长；对身边的人好点，因为下辈子不一定能够遇见。</p>
-<hr>
-
-<p>万事开头难，然后中间难，最后结尾难。</p>
-<hr>
-
-<p>世上无难事，只要肯放弃。</p>
-<hr>
-
-<p>等忙完这一阵，就可以忙下一阵了。</p>
-<hr>
-
-<p>有时候你不努力一下，你都不知道什么叫绝望。</p>
-<hr>
-
-<p>当你觉得自己又丑又穷的时候，不要悲伤，至少你的判断还是对的。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/joke/" data-id="cjhq778nt00b2izq3cu4b3a1x" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-angular2-ui-router" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/angular2-ui-router/" class="article-date">
-  <time datetime="2016-01-04T05:19:20.000Z" itemprop="datePublished">2016-01-04</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/angular2-ui-router/">AngularJS-ui-router学习笔记</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <h2 id="config"><a href="#config" class="headerlink" title="config"></a><code>config</code></h2><p>config函数就是用于各种provider的初始化配置，会在controller和service等之前运行。使用方法是：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">angular.module(<span class="string">'myApp'</span>)</span><br><span class="line">	.config(<span class="function"><span class="keyword">function</span>(<span class="params">FirstProvider,SecondProvider</span>)</span>&#123;</span><br><span class="line">		<span class="comment">//FirstProvider和SecondProvider都是依赖注入进来的，可在此进行配置</span></span><br><span class="line">	&#125;)</span><br></pre></td></tr></table></figure>
-<h2 id="stateProvider"><a href="#stateProvider" class="headerlink" title="$stateProvider"></a><code>$stateProvider</code></h2><p>系统定义的service、provider等都是以<code>$</code>开头的。<code>$stateProvider</code>的作用是在使用路由之前对其进行配置。</p>
+        <p>从最简单的例子说起：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"system.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="undefined"></span></span><br><span class="line"><span class="javascript">	System.import(<span class="string">'./app.js'</span>); </span></span><br><span class="line"><span class="javascript">	System.import(<span class="string">'https://code.jquery.com/jquery.js'</span>);</span></span><br><span class="line"><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>上面代码的意思是找到当前目录下的app.js文件以及网络服务器上的jquery.js，然后加载并使用它。SystemJS做了哪些事情呢？</p>
 <ol>
-<li><code>$urlRouterProvider</code>(服务提供者) ： 用来配置路由重定向</li>
-<li><code>$stateProvider</code>(服务提供者) ： 用来配置路由</li>
-<li><code>$state</code>(服务) ： 用来显示当前路由状态信息，以及一些路由方法</li>
-<li><code>$stateParams</code>(服务) ： 用来存储路由匹配时的参数</li>
-<li><code>ui-view</code>(指令) ： 路由模板渲染，对应的dom相关联</li>
-<li><code>ui-sref</code>(指令) ： 用于跳转到指定路由</li>
+<li>首先根据字符串里面提供的相对/绝对路径找到对应文件。</li>
+<li>找到之后先不忙加载，而是先看看注册中心里面是否存在，如果存在就直接读取，否则发起ajax请求异步加载。</li>
+<li>得到文件内容之后传到translate方法里面，在此可以对文件内容进行个性化修改。</li>
+<li>最后把最终的文件内容放到一个立即执行函数里面执行改模块，并在注册中心注册，返回promise。</li>
 </ol>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/angular2-ui-router/#more">Read More</a>
-          </p>
-        
+<p>加载ES6模块：</p>
+<p>假设<code>app/hello.js</code>里面有如下代码：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="class"><span class="keyword">class</span> <span class="title">hello</span> </span>&#123;</span><br><span class="line">	<span class="keyword">constructor</span>() &#123;</span><br><span class="line">		<span class="keyword">this</span>.es6 = <span class="string">'good'</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;</span><br><span class="line">	System.import(<span class="string">'./app/hello.js'</span>).then(<span class="function"><span class="keyword">function</span>(<span class="params">m</span>) </span>&#123;</span><br><span class="line">		<span class="built_in">console</span>.log(<span class="keyword">new</span> m.hello().es6); <span class="comment">// good</span></span><br><span class="line">	&#125;);</span><br><span class="line">&lt;<span class="regexp">/script&gt;</span></span><br></pre></td></tr></table></figure>
+<h2 id="baseURL"><a href="#baseURL" class="headerlink" title="baseURL"></a>baseURL</h2><p>路径前缀</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">System.config(&#123;</span><br><span class="line">	baseURL: <span class="string">'/modules'</span></span><br><span class="line">&#125;);</span><br><span class="line">System.import(<span class="string">'jquery.js'</span>);</span><br></pre></td></tr></table></figure>
+<p>加载的是<code>/modules/jquery.js</code>。假设modules文件夹下面有很多js文件，这样import的时候就不用每次都加modules前缀了！</p>
+<h2 id="paths"><a href="#paths" class="headerlink" title="paths"></a>paths</h2><p><code>baseURL</code>是针对整个项目的路径前缀，具体到资源的时候，我们通常用<code>paths</code>定义路径名称映射：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">System.paths[<span class="string">"subfolder/*"</span>] = <span class="string">"./src/app/subfolder/*"</span>;</span><br><span class="line">System.import(<span class="string">'subfolder/codeFile.js'</span>);</span><br></pre></td></tr></table></figure>
+<p>这个时候加载的<code>subfolder/codeFile.js</code>文件路径实际上是：<code>http://localhost:8080/src/app/subfolder/codeFile.js</code>. </p>
+<p>虽说SystemJS支持通配符，但如果有比通配符更精确的路径，会使用这个路径，例如：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">System.paths[<span class="string">"subfolder/*"</span>] = <span class="string">"./src/app/subfolder/*"</span>;</span><br><span class="line">System.paths[<span class="string">"subfolder/codeFile2.js"</span>] = <span class="string">"./src/app/secondFolder/codeFile2.js"</span>;</span><br><span class="line">System.import(<span class="string">'subfolder/codeFile2.js'</span>);</span><br></pre></td></tr></table></figure>
+<p>这个时候加载的是<code>http://localhost:8080/src/app/secondFolder/codeFile2.js</code></p>
+<h2 id="map"><a href="#map" class="headerlink" title="map"></a>map</h2><p>除此之外还可以在模块内部定义名称映射：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">map: &#123;</span><br><span class="line">    <span class="string">"codeFile1.js"</span>: &#123;</span><br><span class="line">        <span class="string">"jquery"</span>: <span class="string">"vendor/jquery2.0.12/jquery.min.js"</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>那么在<code>codeFile1.js</code>里面可以这么写：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> $ <span class="keyword">from</span> <span class="string">'jquery'</span>;</span><br></pre></td></tr></table></figure>
+<p>这有什么好处呢？想想看如果两个文件都依赖jQuery，但却是不同的版本，可以这么写：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> $ <span class="keyword">from</span> <span class="string">'jquery'</span>; <span class="comment">// codeFile.js 依赖 jQuery 2， codeFile2.js 依赖 jQuery 1.10</span></span><br><span class="line"></span><br><span class="line">map: &#123;</span><br><span class="line">    <span class="string">"src/app/codeFile.js"</span>: &#123;</span><br><span class="line">        <span class="string">"jquery"</span>: <span class="string">"vendor/jquery/jquery-2.0.2.js"</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">"src/app/codeFile2.js"</span>: &#123;</span><br><span class="line">        <span class="string">"jquery"</span>: <span class="string">"vendor/jquery/jquery-1.10.0.js"</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样在codeFile.js模块引用了2.0.2版本，而在codeFile2.js模块引用了1.10.0版本。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">System.config(&#123;</span><br><span class="line">	map: &#123;</span><br><span class="line">		m: <span class="string">'./modules/'</span>,</span><br><span class="line">		c: <span class="string">'./controllers/'</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;);</span><br><span class="line">System.import(<span class="string">'a/jquery.js'</span>);</span><br><span class="line">System.import(<span class="string">'c/app.js'</span>);</span><br></pre></td></tr></table></figure>
+<p>会加载modules/jquery.js和controllers/app.js。你甚至可以这样：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">System.config(&#123;</span><br><span class="line">	map: &#123;</span><br><span class="line">		jquery: <span class="string">'https://code.jquery.com/jquery.js'</span> <span class="comment">// 或者./modules/</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;);</span><br><span class="line">System.import(<span class="string">'jquery'</span>);</span><br></pre></td></tr></table></figure>
+<h2 id="paths和map混合使用"><a href="#paths和map混合使用" class="headerlink" title="paths和map混合使用"></a>paths和map混合使用</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> $ <span class="keyword">from</span> <span class="string">'jquery'</span>;</span><br><span class="line"></span><br><span class="line">paths: &#123;</span><br><span class="line">    <span class="string">"vendor/*"</span>: <span class="string">"src/vendors/*"</span></span><br><span class="line">&#125;,</span><br><span class="line">map: &#123;</span><br><span class="line">    <span class="string">"src/app/codeFile.js"</span>: &#123;</span><br><span class="line">        <span class="string">"jquery"</span>: <span class="string">"vendor/jquery/jquery-2.0.2.js"</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最终加载的文件路径是<code>http://localhost:8080/src/vendors/jquery/jquery-2.0.2.js</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">System.import(&apos;./src/codeFile.js&apos;).then(function(m) &#123;</span><br><span class="line">    // do something with &apos;m&apos;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h2 id="package"><a href="#package" class="headerlink" title="package"></a>package</h2><p>还可以将别名限制在包/文件夹里面，例如：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">packages: &#123;</span><br><span class="line">    <span class="string">"src"</span>: &#123;</span><br><span class="line">        map: &#123;</span><br><span class="line">            <span class="string">"jquery"</span>: <span class="string">"vendor/jquery/jquery-2.0.2.js"</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>那么在src文件夹下面的模块就可以使用jquery别名了。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 这个文件里面可以使用jquery模块</span></span><br><span class="line">System.import(<span class="string">'src/components/codeFile.js'</span>);</span><br></pre></td></tr></table></figure>
+
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/angular2-ui-router/" data-id="cjhq778hs003hizq356cg0tid" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/systemjs-notes/" data-id="cjhq778te00hsizq333oym07v" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
@@ -475,10 +271,10 @@
 
 
   
-    <article id="post-webpack-dev-server-ip" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-less-notes" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/webpack-dev-server-ip/" class="article-date">
-  <time datetime="2015-12-23T01:36:34.000Z" itemprop="datePublished">2015-12-23</time>
+    <a href="/less-notes/" class="article-date">
+  <time datetime="2016-01-28T06:31:42.000Z" itemprop="datePublished">2016-01-28</time>
 </a>
     
   </div>
@@ -489,7 +285,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/webpack-dev-server-ip/">webpack-dev-server用IP访问</a>
+      <a class="article-title" href="/less-notes/">less</a>
     </h1>
   
 
@@ -500,27 +296,30 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <p>如果运行：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">webpack-dev-server --port 3000 --hot</span><br></pre></td></tr></table></figure>
-<p>可以用localhost进行访问：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:3000</span><br></pre></td></tr></table></figure>
-<p>但是用本地IP却不能访问，例如：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.1.112:3000 (my local IP).</span><br></pre></td></tr></table></figure>
-<p>这个时候，可以用如下的方式进行开启：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">webpack-dev-server --port 3000 --hot --host 0.0.0.0</span><br></pre></td></tr></table></figure>
-<p>也可以修改devServer的host属性：</p>
-<pre><code>devServer: {
-    host: &apos;0.0.0.0&apos;,
-    port: 8080,
-    ...
-  }
+        <div class="article-preview">
+            <p>less是一种动态样式语言，属于CSS预处理语言的一种，它使用类似CSS的语法，为CSS的赋予了动态语言的特性，如变量、继承、运算、函数等，更方便CSS的编写和维护。</p>
+<h2 id="变量："><a href="#变量：" class="headerlink" title="变量："></a>变量：</h2><p>LESS源码：</p>
+<pre><code>@color: #4D926F;
+
+#header {
+    color: @color;
+}
+h2 {
+    color: @color;
+}
 </code></pre>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/less-notes/#more">Read More</a>
+          </p>
+        
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/webpack-dev-server-ip/" data-id="cjhq778v700jeizq3ev4xuei1" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/less-notes/" data-id="cjhq778og00bqizq34l1mos3w" class="article-share-link">Share</a>
      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CSS/">CSS</a></li></ul>
 
     </footer>
   </div>
@@ -529,10 +328,10 @@
 
 
   
-    <article id="post-temporary-images" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-sublime-vscode-config" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/temporary-images/" class="article-date">
-  <time datetime="2015-12-22T01:41:25.000Z" itemprop="datePublished">2015-12-22</time>
+    <a href="/sublime-vscode-config/" class="article-date">
+  <time datetime="2016-01-28T05:59:08.000Z" itemprop="datePublished">2016-01-28</time>
 </a>
     
   </div>
@@ -543,57 +342,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/temporary-images/">临时生成各种图片</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>有时候做项目mock数据的时候，会临时需要一些图片，比如用户头像、背景图等，这个<a href="https://placeimg.com/" target="_blank" rel="noopener">网站</a>提供动态生成指定大小的各种类型的图片，例如：</p>
-<ol>
-<li><p>生成640*480的科技类图片</p>
-<p> <a href="https://placeimg.com/640/480/tech" target="_blank" rel="noopener">https://placeimg.com/640/480/tech</a></p>
-</li>
-<li><p>生成100*100的头像</p>
-<p> <a href="https://placeimg.com/100/100/people" target="_blank" rel="noopener">https://placeimg.com/100/100/people</a></p>
-</li>
-<li><p>生成一张350*500动物的黑白照片</p>
-<p> <a href="https://placeimg.com/350/500/animals/grayscale" target="_blank" rel="noopener">https://placeimg.com/350/500/animals/grayscale</a></p>
-</li>
-</ol>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/temporary-images/" data-id="cjhq778tj00huizq38ijgge15" class="article-share-link">Share</a>
-     
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-create-github-blog" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/create-github-blog/" class="article-date">
-  <time datetime="2015-12-21T06:25:32.000Z" itemprop="datePublished">2015-12-21</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/create-github-blog/">创建github博客步骤</a>
+      <a class="article-title" href="/sublime-vscode-config/">sublime和vscode编译运行各种语言</a>
     </h1>
   
 
@@ -605,28 +354,291 @@
     <div class="article-entry" itemprop="articleBody">
       
         <ol>
-<li><p>创建一个空的git仓库</p>
- <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ git init</span><br><span class="line">Initialized empty Git repository <span class="keyword">in</span> /Users/lixiao/work/<span class="built_in">test</span>/.git/</span><br></pre></td></tr></table></figure>
+<li><p>sublime如何编译运行各种语言？</p>
+<p> 创建一个新的build system，打开下面文件夹：</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">OS X: ~/Library/Application Support/Sublime Text 3/Packages</span><br></pre></td></tr></table></figure>
 </li>
 </ol>
+<pre><code>可以通过菜单:`(Sublime Text -&gt; Preferences -&gt; Browse Packages…)` 在finder中打开该目录的子目录。
+
+![sublime_config](http://img.react.ren/blog/sublime_config.png)
+
+创建一个Javascript的编译环境只要创建一个文件Javascript.sublime-build，输入以下代码：
+
+&lt;!--more--&gt;
+
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">        <span class="attr">"cmd"</span>: [<span class="string">"node"</span>, <span class="string">"$file"</span>],</span><br><span class="line">        <span class="attr">"selector"</span>: <span class="string">"source.js"</span>,</span><br><span class="line">        <span class="attr">"path"</span>: <span class="string">"/usr/local/bin"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</code></pre><ol>
+<li><p>vscode如何编译运行各种语言？</p>
 <ol>
-<li><p>切换到gh-pages分支</p>
- <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ git checkout gh-pages <span class="comment"># 当没有这个分支的时候会报错</span></span><br><span class="line">error: pathspec <span class="string">'gh-pages'</span> did not match any file(s) known to git.</span><br><span class="line">$ git checkout --orphan gh-pages <span class="comment"># 可以用这种方式创建并切换到新分支</span></span><br><span class="line">Switched to a new branch <span class="string">'gh-pages'</span></span><br></pre></td></tr></table></figure>
+<li><p>创建 task.json</p>
+<p> 按F1，输入 configure task runner，按回车，这个时候会自动打开 task.json 文件，这里文件在 .vscode 隐藏目录下面，如果没有的话就自己创建一个。</p>
 </li>
-<li><p>提交到本地</p>
- <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ git add .</span><br><span class="line">$ git commit -m <span class="string">'first commit'</span></span><br><span class="line">[gh-pages (root-commit) 53d2b79] first commit</span><br><span class="line"> 2 files changed, 2 insertions(+)</span><br><span class="line"> create mode 100644 CNAME</span><br><span class="line"> create mode 100644 index.html</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>添加并提交到远程仓库</p>
- <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ git remote add origin git@github.com:your_name/test.git</span><br><span class="line">$ git push origin gh-pages</span><br><span class="line">Counting objects: 4, <span class="keyword">done</span>.</span><br><span class="line">Delta compression using up to 8 threads.</span><br><span class="line">Compressing objects: 100% (2/2), <span class="keyword">done</span>.</span><br><span class="line">Writing objects: 100% (4/4), 265 bytes | 0 bytes/s, <span class="keyword">done</span>.</span><br><span class="line">Total 4 (delta 0), reused 0 (delta 0)</span><br><span class="line">To git@github.com:your_name/test.git</span><br><span class="line"> * [new branch]      gh-pages -&gt; gh-pages</span><br></pre></td></tr></table></figure>
+<li><p>修改 task.json</p>
+ <figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">//javac</span><br><span class="line">&#123;</span><br><span class="line">    <span class="attr">"version"</span>: <span class="string">"0.1.0"</span>,</span><br><span class="line">    <span class="attr">"command"</span>: <span class="string">"javac"</span>,</span><br><span class="line">    <span class="attr">"osx"</span>: &#123;</span><br><span class="line">         <span class="attr">"command"</span>: <span class="string">"/usr/bin/javac"</span></span><br><span class="line">     &#125;,</span><br><span class="line">    <span class="attr">"isShellCommand"</span>: <span class="literal">true</span>,</span><br><span class="line">    <span class="attr">"showOutput"</span>: <span class="string">"always"</span>,</span><br><span class="line">    <span class="attr">"args"</span>: [<span class="string">"$&#123;file&#125;"</span>]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//python</span><br><span class="line">&#123;</span><br><span class="line">    <span class="attr">"version"</span>: <span class="string">"0.1.0"</span>,</span><br><span class="line">    <span class="attr">"command"</span>: <span class="string">"python"</span>,</span><br><span class="line">    <span class="attr">"osx"</span>: &#123;</span><br><span class="line">         <span class="attr">"command"</span>: <span class="string">"/usr/bin/python"</span></span><br><span class="line">     &#125;,</span><br><span class="line">    <span class="attr">"isShellCommand"</span>: <span class="literal">true</span>,</span><br><span class="line">    <span class="attr">"showOutput"</span>: <span class="string">"always"</span>,</span><br><span class="line">    <span class="attr">"args"</span>: [<span class="string">"$&#123;file&#125;"</span>]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//javascript</span><br><span class="line">&#123;</span><br><span class="line">    <span class="attr">"version"</span>: <span class="string">"0.1.0"</span>,</span><br><span class="line">    <span class="attr">"command"</span>: <span class="string">"node"</span>,</span><br><span class="line">    <span class="attr">"osx"</span>: &#123;</span><br><span class="line">         <span class="attr">"command"</span>: <span class="string">"/usr/local/bin/node"</span></span><br><span class="line">     &#125;,</span><br><span class="line">    <span class="attr">"isShellCommand"</span>: <span class="literal">true</span>,</span><br><span class="line">    <span class="attr">"showOutput"</span>: <span class="string">"always"</span>,</span><br><span class="line">    <span class="attr">"args"</span>: [<span class="string">"$&#123;file&#125;"</span>]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 </li>
 </ol>
+</li>
+</ol>
+<pre><code>3. shift+cmd+b是编译运行
+
+    或按F1，run task
+快捷键不好用，可以自定义：
+code&gt;prefernces&gt;keyboard shortcuts
+
+    ![vscode_config](http://img.react.ren/blog/vscode_config.png)
+
+    添加以下代码：
+
+    <figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"key"</span>: <span class="string">"cmd+r"</span>,</span><br><span class="line">    <span class="attr">"command"</span>: <span class="string">"workbench.action.tasks.build"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</code></pre>
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/sublime-vscode-config/" data-id="cjhq778t100hiizq3vmj1tpt7" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-linux-unalias" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/linux-unalias/" class="article-date">
+  <time datetime="2016-01-28T05:10:19.000Z" itemprop="datePublished">2016-01-28</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/linux-unalias/">Mac中取消别名</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>oh_my_zsh取了很多别名，有些是我们不想要的，例如： </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">alias</span> gm</span><br><span class="line">gm=<span class="string">'git merge</span></span><br></pre></td></tr></table></figure>
+<p>但如果你的电脑上安装了graphic magic的话，它的命令也是gm，这个时候就用不了了。 可以用<code>unalias gm</code>临时取消别名：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">which</span> gm </span><br><span class="line">/usr/<span class="built_in">local</span>/bin/gm</span><br></pre></td></tr></table></figure>
+<p>如果重新启动一个terminal的话，gm命令又回归原来的了，这样也挺好，当你想用graphic magic的时候就unalias一下就行了。</p>
 
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/create-github-blog/" data-id="cjhq778iw004yizq3yx49ohxc" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/linux-unalias/" data-id="cjhq778p200cgizq3pzbr7flg" class="article-share-link">Share</a>
      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/">Git</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-mac-switch-shell" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/mac-switch-shell/" class="article-date">
+  <time datetime="2016-01-28T04:51:39.000Z" itemprop="datePublished">2016-01-28</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/mac-switch-shell/">Mac中切换不同的shell</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>查看系统支持的shell： </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ cat /etc/shells</span><br></pre></td></tr></table></figure>
+<p>得到：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># List of acceptable shells for chpass(1).</span></span><br><span class="line"><span class="comment"># Ftpd will not allow users to connect who are not using</span></span><br><span class="line"><span class="comment"># one of these shells.</span></span><br><span class="line">	</span><br><span class="line">/bin/bash</span><br><span class="line">/bin/csh</span><br><span class="line">/bin/ksh</span><br><span class="line">/bin/sh</span><br><span class="line">/bin/tcsh</span><br><span class="line">/bin/zsh</span><br></pre></td></tr></table></figure>
+<p>切换不同的shell： </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ chsh -s /bin/zsh</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/mac-switch-shell/" data-id="cjhq778pl00d4izq3l3fkmfvh" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-shell-&amp;&amp;-||" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/shell-&&-||/" class="article-date">
+  <time datetime="2016-01-28T04:51:39.000Z" itemprop="datePublished">2016-01-28</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/shell-&&-||/">Shell中的&amp;&amp;和||</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>shell脚本执行命令的时候，有时候会依赖于前一个命令是否执行成功。而&amp;&amp;和||就是用来判断前一个命令执行效果的。 </p>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/shell-&&-||/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/shell-&&-||/" data-id="cjhq778sm00gyizq3qfg3e9t6" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-rvm-notes" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/rvm-notes/" class="article-date">
+  <time datetime="2016-01-27T10:16:39.000Z" itemprop="datePublished">2016-01-27</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/rvm-notes/">RVM使用笔记</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>使用RVM来管理Ruby的版本和省级。（<a href="https://rvm.io" target="_blank" rel="noopener">https://rvm.io</a>）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -L https://get.rvm.io | bash -s stable --ruby</span><br></pre></td></tr></table></figure>
+<h3 id="查看各种版本的Ruby"><a href="#查看各种版本的Ruby" class="headerlink" title="查看各种版本的Ruby"></a>查看各种版本的Ruby</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rvm list known</span><br></pre></td></tr></table></figure>
+<h3 id="安装指定版本"><a href="#安装指定版本" class="headerlink" title="安装指定版本"></a>安装指定版本</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rvm install ruby-2.3.1</span><br></pre></td></tr></table></figure>
+<h3 id="使用指定版本"><a href="#使用指定版本" class="headerlink" title="使用指定版本"></a>使用指定版本</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">rvm use ruby-2.3.1</span><br><span class="line">rvm use 2.1.4 --default</span><br></pre></td></tr></table></figure>
+<h3 id="安装并使用最新版本"><a href="#安装并使用最新版本" class="headerlink" title="安装并使用最新版本"></a>安装并使用最新版本</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rvm install current &amp;&amp; rvm use current</span><br></pre></td></tr></table></figure>
+<h3 id="卸载一个已安装ruby版本"><a href="#卸载一个已安装ruby版本" class="headerlink" title="卸载一个已安装ruby版本"></a>卸载一个已安装ruby版本</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rvm remove 2.1.4</span><br></pre></td></tr></table></figure>
+<h3 id="更换源"><a href="#更换源" class="headerlink" title="更换源"></a>更换源</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">gem <span class="built_in">source</span></span><br><span class="line"></span><br><span class="line">*** CURRENT SOURCES ***</span><br><span class="line">http://rubygems.org/</span><br></pre></td></tr></table></figure>
+<p>可以根据需要来修改更换源（由于国内被墙，所以要把源切换至淘宝镜像服务器），在终端执行以下命令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ gem update --system</span><br><span class="line">$ gem uninstall rubygems-update</span><br><span class="line">$ gem sources -r http://rubygems.org/</span><br><span class="line">$ gem sources -a http://ruby.taobao.org</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/rvm-notes/" data-id="cjhq778si00gsizq3wcuq7fhi" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/学习笔记/">学习笔记</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-grails-url-mapping" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/grails-url-mapping/" class="article-date">
+  <time datetime="2016-01-27T09:41:23.000Z" itemprop="datePublished">2016-01-27</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/grails-url-mapping/">Grails-URL映射</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <h4 id="URL映射"><a href="#URL映射" class="headerlink" title="URL映射"></a>URL映射</h4><p>到目前为止，贯穿整个文档用于URLs的规约默认为<code>/controller/action/id</code>。然而，这个规约不是硬性的写入Grails中，实际上，它是通过一个位于<code>grails-app/controllers/UrlMappings.groovy</code>的URL映射类所控制。</p>
+<p>UrlMappings类包含一个名为mappings单一属性，并被赋予一个代码块：</p>
+<pre><code>class UrlMappings {
+    static mappings = {
+    }    
+}
+</code></pre>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/grails-url-mapping/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/grails-url-mapping/" data-id="cjhq778ln008qizq37yzmldgi" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/">Java</a></li></ul>
 
     </footer>
   </div>
@@ -638,7 +650,7 @@
 
 
   <nav id="page-nav">
-    <a class="extend prev" rel="prev" href="/page/51/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/50/">50</a><a class="page-number" href="/page/51/">51</a><span class="page-number current">52</span><a class="page-number" href="/page/53/">53</a><a class="page-number" href="/page/54/">54</a><span class="space">&hellip;</span><a class="page-number" href="/page/57/">57</a><a class="extend next" rel="next" href="/page/53/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/51/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/50/">50</a><a class="page-number" href="/page/51/">51</a><span class="page-number current">52</span><a class="page-number" href="/page/53/">53</a><a class="page-number" href="/page/54/">54</a><span class="space">&hellip;</span><a class="page-number" href="/page/58/">58</a><a class="extend next" rel="next" href="/page/53/">Next &raquo;</a>
   </nav>
 </section>
 

@@ -109,6 +109,205 @@
 
 
   
+    <article id="post-promisify" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/promisify/" class="article-date">
+  <time datetime="2019-08-21T03:07:16.000Z" itemprop="datePublished">2019-08-21</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/promisify/">把回调转换为promise</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>Promise 用起来比回调简单，但 node.js 中还有很多 API 是回调的形式，例如 fs 模块里面 <code>readFile/writeFile</code>：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> fs = <span class="built_in">require</span>(<span class="string">"fs"</span>)</span><br><span class="line"></span><br><span class="line">fs.writeFile(<span class="string">"文件名.txt"</span>, <span class="string">"文件内容"</span>, error =&gt; &#123;</span><br><span class="line">    <span class="keyword">if</span> (error) <span class="built_in">console</span>.error(error)</span><br><span class="line">    <span class="keyword">else</span> <span class="built_in">console</span>.log(<span class="string">"文件创建成功！（来自回调函数）"</span>)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>不过可以很方便转换为 promise，例如自己写一个封装函数：</p>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/promisify/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/promisify/" data-id="ck1k3sokv000h4nq46bm8t2rw" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-angular-cli-custom-builder" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/angular-cli-custom-builder/" class="article-date">
+  <time datetime="2019-07-27T12:54:44.000Z" itemprop="datePublished">2019-07-27</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/angular-cli-custom-builder/">Angular中自定义webpack参数</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>angular-cli 运行起来之后，发现有个 node 进程始终占用 60% 的 CPU，即使什么也没改，如果文件发生变动之后，又会多出来一个 node 进程，CPU 飙升到 100% 以上。第一个 60% 的进程是 watch 进程，监控文件发生变化的，第二个进程是 re-build 进程，用于文件变化之后进行重新构建。于是猜测 CPU 高的原因是不是因为 Angular 把 node_modules 里面的文件全部 watch 了，如果这样的话，可以通过修改 webpack 的 watchOptions 属性来解决。</p>
+<p>很遗憾的是 angular 从 6 版本开始就不支持 eject 了，并没有提供配置 webpack 的 watchOptions 的地方，这就尴尬了。不过好在 angular 开发团队并没有一棒子打死，好歹留了一个解决入口，那就是自定义 angular builder。</p>
+<p>当我们使用 <code>ng new xxx</code> 创建一个新项目之后，会生成一个 angular.json 文件，里面的内容框架是：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"$schema"</span>: <span class="string">"./node_modules/@angular/cli/lib/config/schema.json"</span>,</span><br><span class="line">  <span class="attr">"version"</span>: <span class="number">1</span>,</span><br><span class="line">  <span class="attr">"newProjectRoot"</span>: <span class="string">"projects"</span>,</span><br><span class="line">  <span class="attr">"projects"</span>: &#123;</span><br><span class="line">    "xxx": &#123;...&#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  "defaultProject": "xxx",</span><br><span class="line">  "schematics": &#123;</span><br><span class="line">    "@schematics/angular:component": &#123;</span><br><span class="line">      "prefix": "app",</span><br><span class="line">      "styleext": "scss"</span><br><span class="line">    &#125;,</span><br><span class="line">    "@schematics/angular:directive": &#123;</span><br><span class="line">      "prefix": "app"</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/angular-cli-custom-builder/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/angular-cli-custom-builder/" data-id="ck1k3sok100024nq4777b68se" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-package-json-scripts" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/package-json-scripts/" class="article-date">
+  <time datetime="2019-07-24T01:33:34.000Z" itemprop="datePublished">2019-07-24</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/package-json-scripts/">package.json中的scripts属性</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>npm run 可以执行定义在 package.json 中 scripts 标签里面的命令，例如：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">"scripts": &#123;</span><br><span class="line">    "start": "node ./script.js"</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果运行 <code>npm run start</code> 就是相当于运行 <code>node ./scripts.js</code> 了。从 npm 2.0 版本开始，可以将参数传递给 npm run 命令，语法如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm run &lt;command&gt; [-- &lt;args&gt;]</span><br></pre></td></tr></table></figure>
+<p>也就是说<code>--</code>后面的参数首先会被传递到 npm 命令本身，然后将其转发给脚本。例如：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">"scripts": &#123;</span><br><span class="line">    "gulp": "gulp",</span><br><span class="line">    "server": "node server.js"</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/package-json-scripts/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/package-json-scripts/" data-id="ck1k3sokt000f4nq48wtl8vo6" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-siege-notes" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/siege-notes/" class="article-date">
+  <time datetime="2019-05-23T08:27:23.000Z" itemprop="datePublished">2019-05-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/siege-notes/">siege模拟并发</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>今天遇到一个并发的场景，因为代码不严谨，座位被重复预定了。为了模拟并发请求，学习了一下 siege 这个工具:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">$ siege --<span class="built_in">help</span></span><br><span class="line">SIEGE 4.0.4</span><br><span class="line">Usage: siege [options]</span><br><span class="line">       siege [options] URL</span><br><span class="line">       siege -g URL</span><br><span class="line">Options:</span><br><span class="line">  -V, --version             版本号</span><br><span class="line">  -h, --<span class="built_in">help</span>                帮助文档</span><br><span class="line">  -C, --config              在屏幕上打印显示出当前的配置,配置是包括在他的配置文件<span class="variable">$HOME</span>/.siegerc中,</span><br><span class="line">                            可以编辑里面的参数,这样每次siege 都会按照它运行</span><br><span class="line">  -v, --verbose             运行时能看到详细的运行信息</span><br><span class="line">  -q, --quiet               关闭输出运行信息</span><br><span class="line">  -g, --get                 获取请求的headers信息并打印出来，debug专用</span><br><span class="line">  -c, --concurrent=NUM      模拟有n个用户在同时访问,默认是10,不要设得太大,因为越大,siege 消耗本地机器的资源越多</span><br><span class="line">  -i, --internet            随机访问urls.txt中的url列表项</span><br><span class="line">  -b, --benchmark           BENCHMARK: no delays between requests.</span><br><span class="line">  -t, --time=NUMm           持续运行siege n秒(如10S),分钟(10M),小时(10H)</span><br><span class="line">  -r, --reps=NUM            重复运行测试n次,不能与-t同时存在</span><br><span class="line">  -f, --file=FILE           指定用urls文件,默认为siege安装目录下的etc/urls.txt</span><br><span class="line">                            urls.txt文件：是很多行待测试URL的列表以换行符断开,格式为:</span><br><span class="line">                            [protocol://]host.domain.com[:port][path/to/file]</span><br><span class="line">  -R, --rc=FILE             指定用特定的siege配置文件来运行,默认的为<span class="variable">$HOME</span>/.siegerc</span><br><span class="line">  -l, --<span class="built_in">log</span>[=FILE]          运行结束,将统计数据保存到日志文件siege.log中,可在.siegerc中自定义日志文件</span><br><span class="line">                            默认位置是: PREFIX/var/siege.log</span><br><span class="line">  -m, --mark=<span class="string">"text"</span>         MARK, mark the <span class="built_in">log</span> file with a string.</span><br><span class="line">  -d, --delay=NUM           每个url在0-n之间进行的延迟</span><br><span class="line">  -H, --header=<span class="string">"text"</span>       添加header，可以添加多个</span><br><span class="line">  -A, --user-agent=<span class="string">"text"</span>   设置User-Agent</span><br><span class="line">  -T, --content-type=<span class="string">"text"</span> 设置Content-Type</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/siege-notes/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/siege-notes/" data-id="ck1k3sokx000j4nq45d7qs0oc" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-mongodb-capped-collection" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/mongodb-capped-collection/" class="article-date">
@@ -349,204 +548,10 @@
 
 
   
-    <article id="post-docker-letsencrypt" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/docker-letsencrypt/" class="article-date">
-  <time datetime="2019-04-04T08:47:23.000Z" itemprop="datePublished">2019-04-04</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/docker-letsencrypt/">用docker申请letsencrypt通配符证书</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>用 docker 申请 letsencrypt 证书的好处就是不需要在宿主机上安装依赖，只要用下面的命令即可：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">docker run -it --rm \</span><br><span class="line">--name certbot \</span><br><span class="line">-v /mnt/letsencrypt:/etc/letsencrypt \</span><br><span class="line">-v /mnt/bak/letsencrypt:/var/lib/letsencrypt \</span><br><span class="line">certbot/certbot \</span><br><span class="line">certonly --manual --agree-tos --server https://acme-v02.api.letsencrypt.org/directory --preferred-challenges dns -d *.YOUR-DOMAIN.com -d YOUR-DOMAIN.com</span><br></pre></td></tr></table></figure>
-<p>具体的命令释义如下：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">-v /mnt/letsencrypt:/etc/letsencrypt -v /mnt/bak/letsencrypt:/var/lib/letsencrypt <span class="comment"># 挂载目录，certbot申请到的或备份的证书会放在这两个目录</span></span><br><span class="line">--manual <span class="comment"># 交互模式</span></span><br><span class="line">--agree-tos <span class="comment"># 同意服务协议</span></span><br><span class="line">--server https://acme-v02.api.letsencrypt.org/directory <span class="comment"># 指定使用acmev2协议的服务器，因为通配符证书的申请需要这个协议</span></span><br><span class="line">–preferred-challenges dns <span class="comment"># 使用dns检验来证明你拥有这个域名</span></span><br><span class="line">-d *.YOUR-DOMAIN.com -d YOUR-DOMAIN.com <span class="comment"># 指定了需要申请证书的通配符域名，根域名要额外再写一次</span></span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/docker-letsencrypt/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/docker-letsencrypt/" data-id="cjvrpwbjq0001ofq4ofq91f4a" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-thermal-printer" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/thermal-printer/" class="article-date">
-  <time datetime="2019-03-30T10:37:23.000Z" itemprop="datePublished">2019-03-30</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/thermal-printer/">热敏打印机原理及其驱动相关知识</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>【说明】本文内容均来自网络，用于学习热敏打印机相关知识。</p>
-<p>热敏打印机的工作原理是打印头上安装有半导体加热元件，打印头加热并接触热敏打印纸后就可以打印出需要的图案。</p>
-<p>热敏打印机化学反应是在高温下进行的，当温度低于60℃时，纸需要经过相当长，甚至长达几年的时间才能变成深色；而当温度为200℃时，这种反映会在几微秒内完成。</p>
-<p>打印机安装驱动的原因就是打印机厂商千差万别，不同的打印机往往都有各自的驱动，很难实现万能驱动。但是，在 POS 打印机行业却有一条捷径，就是现在市面上的 POS 打印机基本上都支持爱普生指令，也就是说，只要将程序和打印机联通，直接向端口里面写爱普生指令就可以控制打印机，打印机接受到爱普生指令以后，自行进行解析，然后打印出相应的内容。</p>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/thermal-printer/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/thermal-printer/" data-id="cjw53wybi000ym5q47mi8gwx9" class="article-share-link">Share</a>
-     
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-axios-https-certificate-expired" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/axios-https-certificate-expired/" class="article-date">
-  <time datetime="2019-01-25T01:32:07.000Z" itemprop="datePublished">2019-01-25</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/axios-https-certificate-expired/">axios忽略https证书错误</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>使用 axios 请求 https 网站的数据时，如果证书已过期，会报错：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Error: certificate has expired</span><br></pre></td></tr></table></figure>
-<p>可以使用下面的方法忽略证书错误：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">process.env.NODE_TLS_REJECT_UNAUTHORIZED = <span class="string">'0'</span> <span class="comment">// 不拒绝过期的和无效的证书</span></span><br><span class="line"><span class="keyword">const</span> agent = <span class="keyword">new</span> https.Agent(&#123;  </span><br><span class="line">  rejectUnauthorized: <span class="literal">false</span></span><br><span class="line">&#125;)</span><br><span class="line">axios.get(<span class="string">'https://something.com/foo'</span>, &#123; <span class="attr">httpsAgent</span>: agent &#125;)</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/axios-https-certificate-expired/" data-id="cjssqvcrw000n8uq4tqf16pmq" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-jenkins-notes" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/jenkins-notes/" class="article-date">
-  <time datetime="2019-01-24T10:01:01.000Z" itemprop="datePublished">2019-01-24</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/jenkins-notes/">jenkins 学习笔记</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>这里采用 docker 容器来安装和部署 jenkins，首先下载官方镜像：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker pull jenkins/jenkins:lts</span><br></pre></td></tr></table></figure>
-<p>然后启动：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 临时运行</span></span><br><span class="line">docker run -p 8080:8080 -p 50000:50000 jenkins/jenkins:lts</span><br><span class="line"></span><br><span class="line"><span class="comment"># 长期维护</span></span><br><span class="line">docker volume create jenkins-data <span class="comment"># 创建数据卷</span></span><br><span class="line">docker run -d -p 8080:8080 -p 50000:50000 \</span><br><span class="line">-v jenkins-data:/var/jenkins_home \</span><br><span class="line">--name jenkins \</span><br><span class="line">jenkins/jenkins:lts</span><br></pre></td></tr></table></figure>
-<p>然后命令行会随机生成管理员密码，先记下来，如果忘了，也可以用下面的命令查看：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat /var/jenkins_home/secrets/initialAdminPassword</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/jenkins-notes/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/jenkins-notes/" data-id="cjssqvcts002b8uq4u3dz7sc2" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
 
 
   <nav id="page-nav">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/57/">57</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/58/">58</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
   </nav>
 </section>
 

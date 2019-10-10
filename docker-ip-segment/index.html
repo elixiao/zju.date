@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="一般情况下，容器中可以直接访问的宿主机暴露的端口，今天换了一台机器却发现 docker 容器不能访问宿主机了，经过查阅资料，最终找到了原因，涉及到一些基础概念，这里记录如下： IP 网段IP地址分为五类:  A类保留给政府或大型企业 B类分配给中等规模的公司 C类分配给小公司或个人 D类用于组播 E类用于实验  其中最常见的就是前三类A、B和C，当将 IP 地址写成二进制形式时，他们有如下特征：">
+<meta name="keywords" content="Docker">
+<meta property="og:type" content="article">
+<meta property="og:title" content="docker中的IP网段">
+<meta property="og:url" content="https://zju.date/docker-ip-segment/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="一般情况下，容器中可以直接访问的宿主机暴露的端口，今天换了一台机器却发现 docker 容器不能访问宿主机了，经过查阅资料，最终找到了原因，涉及到一些基础概念，这里记录如下： IP 网段IP地址分为五类:  A类保留给政府或大型企业 B类分配给中等规模的公司 C类分配给小公司或个人 D类用于组播 E类用于实验  其中最常见的就是前三类A、B和C，当将 IP 地址写成二进制形式时，他们有如下特征：">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://img.react.ren/blog/docker0.jpg">
+<meta property="og:updated_time" content="2019-09-27T03:21:38.706Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="docker中的IP网段">
+<meta name="twitter:description" content="一般情况下，容器中可以直接访问的宿主机暴露的端口，今天换了一台机器却发现 docker 容器不能访问宿主机了，经过查阅资料，最终找到了原因，涉及到一些基础概念，这里记录如下： IP 网段IP地址分为五类:  A类保留给政府或大型企业 B类分配给中等规模的公司 C类分配给小公司或个人 D类用于组播 E类用于实验  其中最常见的就是前三类A、B和C，当将 IP 地址写成二进制形式时，他们有如下特征：">
+<meta name="twitter:image" content="http://img.react.ren/blog/docker0.jpg">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-docker-ip-segment" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/docker-ip-segment/" class="article-date">
+  <time datetime="2018-09-15T11:31:48.000Z" itemprop="datePublished">2018-09-15</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      docker中的IP网段
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>一般情况下，容器中可以直接访问的宿主机暴露的端口，今天换了一台机器却发现 docker 容器不能访问宿主机了，经过查阅资料，最终找到了原因，涉及到一些基础概念，这里记录如下：</p>
+<h2 id="IP-网段"><a href="#IP-网段" class="headerlink" title="IP 网段"></a>IP 网段</h2><p>IP地址分为五类:</p>
+<ul>
+<li>A类保留给政府或大型企业</li>
+<li>B类分配给中等规模的公司</li>
+<li>C类分配给小公司或个人</li>
+<li>D类用于组播</li>
+<li>E类用于实验</li>
+</ul>
+<p>其中最常见的就是前三类A、B和C，当将 IP 地址写成二进制形式时，他们有如下特征：</p>
+<ol>
+<li><p>A 类地址</p>
+<ul>
+<li>第一位总是 0，如 <code>10.0.0.1==00001010-00000000-00000000-00000001</code></li>
+<li>范围：<code>1.0.0.0-127.255.255.255</code></li>
+<li>默认子网掩码为 <code>255.0.0.0</code></li>
+<li>最多可容纳 16777215 台计算机</li>
+</ul>
+</li>
+<li><p>B 类地址</p>
+<ul>
+<li>前两位总是 10，如 <code>172.16.0.1==10101100-00010000-00000000-00000001</code></li>
+<li>范围：<code>128.0.0.0-191.255.255.255</code></li>
+<li>默认子网掩码为 255.255.0.0</li>
+<li>最多可容纳 65535 台计算机</li>
+</ul>
+</li>
+<li><p>C 类地址</p>
+<ul>
+<li>前三位总是 110，如 <code>192.168.0.1==11000000-10101000-00000000-00000001</code></li>
+<li>范围：<code>192.0.0.0-223.255.255.255</code></li>
+<li>默认子网掩码是 <code>255.255.255.0</code></li>
+<li>最多可容纳 254 台计算机</li>
+</ul>
+</li>
+</ol>
+<a id="more"></a>
+<p>IP地址中保留地址：主机部分全为 0 的 IP 地址保留用于网络地址，主机部分全为 1 的 IP 地址保留为广播地址，<code>224--255</code> 部分保留作为组播和实验目的。 同时注意 IP 地址分配时不能使用最末位为 0 和 255 的地址，因为这是广播地址，普通计算机上不能使用，但可用于网关和路由器上。</p>
+<h2 id="docker-中的默认网络"><a href="#docker-中的默认网络" class="headerlink" title="docker 中的默认网络"></a>docker 中的默认网络</h2><p>docker 容器网络默认使用 <a href="https://docs.docker.com/network/#network-drivers" target="_blank" rel="noopener">bridge 桥接模式</a>，正常情况下，容器会使用 daemon.json 中定义的虚拟网桥来与宿主机进行通讯。在宿主机上运行 <code>ifconfig</code> 命令查看网卡：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ ifconfig</span><br><span class="line">docker0: flags=4099&lt;UP,BROADCAST,MULTICAST&gt;  mtu 1500</span><br><span class="line">        inet 172.17.0.1  netmask 255.255.0.0  broadcast 172.17.255.255</span><br><span class="line"></span><br><span class="line">eth0: flags=4163&lt;UP,BROADCAST,RUNNING,MULTICAST&gt;  mtu 1500</span><br><span class="line">        inet 172.31.178.48  netmask 255.255.240.0  broadcast 172.31.191.255</span><br></pre></td></tr></table></figure>
+<p>可以看到，有两个网卡 <code>docker0</code> 和 <code>eth0</code>，其中 <code>eth0</code> 是宿主机上的默认网卡，<code>docker0</code> 是 docker 启动时在宿主机上创建的虚拟网桥，宿主机上启动的所有容器都会连接到这个虚拟网桥上。虚拟网桥的工作方式和物理交换机类似，这样主机上的所有容器就通过交换机连在了一个二层网络中。为容器分配IP的时候，会选择一个和宿主机不同的 IP 地址和子网分配给 docker0，连接到 docker0 的容器就从这个子网中选择一个未占用的 IP 使用。一般 docker 会使用 <code>172.17.0.0/16</code> 这个网段，并将 <code>172.17.42.1/16</code> 分配给 docker0 网桥。如下图所示：</p>
+<p><img src="http://img.react.ren/blog/docker0.jpg" alt="docker0"></p>
+<p>通过 <code>route -n</code> 查看宿主机路由：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ route -n</span><br><span class="line">Kernel IP routing table</span><br><span class="line">Destination     Gateway         Genmask         Flags Metric Ref    Use Iface</span><br><span class="line">0.0.0.0         172.31.191.253  0.0.0.0         UG    0      0        0 eth0</span><br><span class="line">169.254.0.0     0.0.0.0         255.255.0.0     U     1002   0        0 eth0</span><br><span class="line">172.17.0.0      0.0.0.0         255.255.0.0     U     0      0        0 docker0</span><br><span class="line">172.31.176.0    0.0.0.0         255.255.240.0   U     0      0        0 eth0</span><br></pre></td></tr></table></figure>
+<p>这里 Flags 中带的 G 是gateway的缩写，代表必须使用外部设备作为网关，这个gateway：172.31.191.253 必须要在我们已经存在的路由环境中。或者也可以通过 <code>ip route list</code> 查看，展现形式不一样，但含义是类似的：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ ip route list</span><br><span class="line">default via 172.31.191.253 dev eth0</span><br><span class="line">169.254.0.0/16 dev eth0 scope link metric 1002</span><br><span class="line">172.17.0.0/16 dev docker0 proto kernel scope link src 172.17.0.1</span><br><span class="line">172.31.176.0/20 dev eth0 proto kernel scope link src 172.31.178.48</span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th>Scope</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>global</td>
+<td>全局合法</td>
+</tr>
+<tr>
+<td>site</td>
+<td>只在这个站点合法 (IPv6)</td>
+</tr>
+<tr>
+<td>link</td>
+<td>只在这个设备合法</td>
+</tr>
+<tr>
+<td>host</td>
+<td>只在这个host（机器）合法</td>
+</tr>
+</tbody>
+</table>
+<p><code>169.254.0.0/16</code> 这一条中，定义了 scope 是 link，代表这个网络是合法的并且是可以通过 eth0 这个口进行网络连接的，也就是说只要这个 eth0 的网卡是正常工作的，我们就可以经过这个口把数据发到 <code>192.168.88.0/24</code> 这个网段的任何 <code>IP</code> 地址；这条路由信息同时也对应主机上面一个实际的网络接口；</p>
+<p>可以看到，宿主机的 ip 是 <code>172.31.178.48</code>。而当 docker 启动的时候，会给 docker0 网卡自动分配一个网段，类似 <code>172.17.0.1/16</code>，这样，docker 容器启动后就会自动在该网段获得一个IP，例如 <code>172.17.0.2</code>，我们可以进入容器查看：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ ifconfig</span><br><span class="line">eth0      Link encap:Ethernet  HWaddr 02:42:AC:13:00:16</span><br><span class="line">          inet addr:172.19.0.22  Bcast:172.19.255.255  Mask:255.255.0.0</span><br><span class="line"></span><br><span class="line">lo        Link encap:Local Loopback</span><br><span class="line">          inet addr:127.0.0.1  Mask:255.0.0.0</span><br></pre></td></tr></table></figure>
+<p>再看 docker 里面的网络地址：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ route -n</span><br><span class="line">Kernel IP routing table</span><br><span class="line">Destination     Gateway         Genmask         Flags Metric Ref    Use Iface</span><br><span class="line">0.0.0.0         172.19.0.1      0.0.0.0         UG    0      0        0 eth0</span><br><span class="line">172.19.0.0      0.0.0.0         255.255.0.0     U     0      0        0 eth0</span><br></pre></td></tr></table></figure>
+<p>先找到 <code>172.31.176.0/20</code> 对应的子网掩码是：<code>255.255.240.0</code>，按照下面的步骤计算，</p>
+<ol>
+<li>把 <code>172.31.176.0</code> 转换为二进制：<code>10101100.00011111.10110000.00000000</code></li>
+<li>把 <code>255.255.240.0</code> 转换为二进制：<code>11111111.11111111.11110000.00000000</code></li>
+<li>上述结果进行与操作得到子网地址为：<code>10101100.00011111.10110000.00000000</code></li>
+<li>对 <code>255.255.240.0</code> 取反得到：<code>00000000.00000000.00001111.11111111</code></li>
+<li>对上述结果进行异或操作得到广播地址：<code>172.31.191.255</code></li>
+<li>因此 <code>172.31.176.0</code> 到 <code>172.31.191.255</code> 都是子网</li>
+</ol>
+<p>用同样的方法计算得到子网范围是：<code>172.19.0.0</code> 到 <code>172.19.255.255</code></p>
+<p>路由的基本流程为：收到数据包之后，解析出目的IP，判断是否是本机IP。如果是本机IP，则交由上层传输层处理。如果不是本机IP，则通过查找路由表找到合适的网络接口将IP数据包转发出去。</p>
+<h2 id="防火墙"><a href="#防火墙" class="headerlink" title="防火墙"></a>防火墙</h2><p>发现很奇怪 <code>172.31.178.84</code> 这个 IP ，跟防火墙有关：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ iptables -A INPUT -i docker0 -j ACCEP</span><br></pre></td></tr></table></figure>
+<p>假如宿主机地址是 <code>172.31.178.84</code>，防火墙开启的时候：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ nc -v 172.31.178.84 9200</span><br><span class="line">nc: 172.31.178.48 (172.31.178.84:9200): Host is unreachable</span><br></pre></td></tr></table></figure>
+<p>防火墙关闭的时候：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ systemctl stop firewalld</span><br><span class="line">$ nc -v 172.31.178.84 9200</span><br><span class="line">izm5ejd7dsj2hb73remwksz [172.31.178.84] 9200 open</span><br></pre></td></tr></table></figure>
+<p>关闭防火墙之后可以访问，开启之后又不能访问了，报 <code>Connection refused</code> 错，说明是防火墙的问题。那如何配置让 docker 容器在开启防火墙的情况下能够访问宿主机上暴露的端口呢？</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ firewall-cmd --permanent --zone=trusted --change-interface=docker0 <span class="comment"># 这句话非常关键，否则防火墙不让docker0通过</span></span><br><span class="line"><span class="comment"># 对于自定义的网络也要执行这个命令，例如：</span></span><br><span class="line">$ docker network create -o <span class="string">"com.docker.network.bridge.name"</span>=<span class="string">"framework"</span> framework</span><br><span class="line">$ firewall-cmd --permanent --zone=trusted --change-interface=framework <span class="comment"># 这句话非常关键，不加的话就不被信任</span></span><br><span class="line">$ firewall-cmd --permanent --zone=trusted --add-port=9200/tcp</span><br><span class="line">$ firewall-cmd --permanent --zone=trusted --add-port=5520/tcp <span class="comment"># 改为你希望的端口号</span></span><br><span class="line">$ firewall-cmd --reload</span><br></pre></td></tr></table></figure>
+<p>如果测试可以的话，使用 <code>runtime-to-permanent</code> 来写入更改：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ firewall-cmd --zone=trusted --remove-port=50520/tcp</span><br><span class="line">$ firewall-cmd --zone=trusted --remove-port=50520/tcp</span><br><span class="line">$ firewall-cmd --runtime-to-permanent </span><br><span class="line">$ firewall-cmd --reload</span><br></pre></td></tr></table></figure>
+<p>最好不要用 <code>--permanent</code>，因为会直接写入配置，如果不小心写错了就麻烦了，还得修改配置。你可以先不写入配置，试用一下，当测试后确保无误了，再用 <code>firewall-cmd --runtime-to-permanent</code> 提交之前设置的规则，如果写错了，重启一下 firewall 就行了。 </p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/docker-ip-segment/" data-id="ck1k3sok800084nq4iwmrcld1" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/">Docker</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/mask-subnet/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          子网掩码计算
+        
+      </div>
+    </a>
+  
+  
+    <a href="/es-case-sensitive/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">es查询时匹配大小写</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Elasticsearch/">Elasticsearch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>
