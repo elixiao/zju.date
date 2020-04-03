@@ -54,6 +54,242 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-js-regex-multiline" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/js-regex-multiline/" class="article-date">
+  <time datetime="2018-05-22T12:25:33.000Z" itemprop="datePublished">2018-05-22</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/js-regex-multiline/">js正则跨行匹配</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>有时候希望用 JavaScript 的正则进行【跨行匹配】，即让 <code>.</code> 也能把换行匹配进去，可能会错误地使用 <code>m</code> 修饰符，因为 <code>m</code> 表示 multiline，但是这里的【多行】跟我们希望的跨行匹配并不是一回事。</p>
+<p><code>m</code> 修饰符改变了 <code>^</code> 和 <code>$</code> 的默认行为，并没有改变 <code>.</code> 的默认行为，加了 <code>m</code> 修饰符之后，字符串中的每一行都被认作为单独的一行，<code>^</code> 和 <code>$</code> 元字符会匹配每一行的开头和结尾，但是如果没有使用 <code>m</code> 修饰符的话，整个字符串只有开头和结尾匹配 <code>^</code> 和 <code>$</code> 元字符。所以可以这样理解 <code>m</code> 修饰符：</p>
+<blockquote>
+<p>未开启多行匹配，字符串无论是否换行只有一个开始 <code>^</code> 和结尾 <code>$</code>；开启多行匹配，那么每一个行都有一个 <code>^</code> 和结尾 <code>$</code>。</p>
+</blockquote>
+<p>实际上我们要找的是 <code>s</code> 修饰符，又被称为 <code>dotAll</code> 修饰符，即能够让 <code>.</code> 匹配换行符。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/js-regex-multiline/" data-id="ck8kdhqnj000ad6q4m0zxb4gv" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-export-html-to-word" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/export-html-to-word/" class="article-date">
+  <time datetime="2018-05-22T01:55:33.000Z" itemprop="datePublished">2018-05-22</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/export-html-to-word/">将 HTML 导出为 word</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <ol>
+<li><p>导出 <code>.doc</code> 文件</p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Export2Doc</span>(<span class="params">element, filename = <span class="string">''</span></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> preHtml = <span class="string">'&lt;html xmlns:o=\'urn:schemas-microsoft-com:office:office\' xmlns:w=\'urn:schemas-microsoft-com:office:word\' xmlns=\'http://www.w3.org/TR/REC-html40\'&gt;&lt;head&gt;&lt;meta charset=\'utf-8\'&gt;&lt;title&gt;Export HTML To Doc&lt;/title&gt;&lt;/head&gt;&lt;body&gt;'</span></span><br><span class="line">  <span class="keyword">var</span> postHtml = <span class="string">'&lt;/body&gt;&lt;/html&gt;'</span></span><br><span class="line">  <span class="keyword">var</span> html = preHtml + <span class="built_in">document</span>.getElementById(element).innerHTML + postHtml</span><br><span class="line">  <span class="keyword">var</span> blob = <span class="keyword">new</span> Blob([<span class="string">'\ufeff'</span>, html], &#123; <span class="attr">type</span>: <span class="string">'application/msword'</span> &#125;)</span><br><span class="line">  <span class="keyword">var</span> url = <span class="string">'data:application/vnd.ms-word;charset=utf-8,'</span> + <span class="built_in">encodeURIComponent</span>(html)</span><br><span class="line">  filename = filename ? filename + <span class="string">'.doc'</span> : <span class="string">'document.doc'</span> <span class="comment">// 指定文件名</span></span><br><span class="line">  <span class="keyword">var</span> downloadLink = <span class="built_in">document</span>.createElement(<span class="string">'a'</span>) <span class="comment">// 创建下载链接</span></span><br><span class="line">  <span class="built_in">document</span>.body.appendChild(downloadLink)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (navigator.msSaveOrOpenBlob) &#123;</span><br><span class="line">    navigator.msSaveOrOpenBlob(blob, filename)</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    downloadLink.href = url <span class="comment">// 链接到文件</span></span><br><span class="line">    downloadLink.download = filename <span class="comment">// 设置文件名</span></span><br><span class="line">    downloadLink.click() <span class="comment">// 触发下载</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">document</span>.body.removeChild(downloadLink)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/export-html-to-word/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/export-html-to-word/" data-id="cjhq778k4006kizq3l0dzovlb" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-angular-component-css-selector" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/angular-component-css-selector/" class="article-date">
+  <time datetime="2018-05-20T04:22:12.000Z" itemprop="datePublished">2018-05-20</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/angular-component-css-selector/">Angular 组件中的 CSS 选择器</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <h3 id="host-选择器"><a href="#host-选择器" class="headerlink" title=":host 选择器"></a>:host 选择器</h3><p>使用 <code>:host</code> 伪类选择器，用来选择组件宿主元素中的元素。</p>
+<p>为宿主元素添加边框</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-pseudo">:host</span> &#123;</span><br><span class="line">  <span class="attribute">display</span>: block;</span><br><span class="line">  <span class="attribute">border</span>: <span class="number">1px</span> solid black;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当宿主元素带 <code>.active</code> 类的时候，边框加粗：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-pseudo">:host(.active)</span> &#123;</span><br><span class="line">  <span class="attribute">border-width</span>: <span class="number">3px</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/angular-component-css-selector/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/angular-component-css-selector/" data-id="cjhq778h4002hizq3tj5lc953" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-angular-get-set" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/angular-get-set/" class="article-date">
+  <time datetime="2018-05-19T03:17:47.000Z" itemprop="datePublished">2018-05-19</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/angular-get-set/">Angular组件中的get和set</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Angular 在变更检测的过程中自动进行数据双向绑定，如果想在通过 @Input 传递数据给子组件的时候能够进行数据处理或清洗的工作，可以使用 <a href="https://angular.io/guide/component-interaction" target="_blank" rel="noopener">get/set</a> 方法</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; Component, Input &#125; <span class="keyword">from</span> <span class="string">'@angular/core'</span>;</span><br><span class="line">@Component(&#123;</span><br><span class="line">  selector: <span class="string">'name-child'</span>,</span><br><span class="line">  template: <span class="string">`</span></span><br><span class="line"><span class="string">    &lt;h3&gt;"&#123;&#123;name&#125;&#125;"&lt;/h3&gt;</span></span><br><span class="line"><span class="string">  `</span></span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="class"><span class="keyword">class</span> <span class="title">NameChildComponent</span> </span>&#123;</span><br><span class="line">  _name: string = <span class="string">'&lt;no name set&gt;'</span>;</span><br><span class="line">  @Input()</span><br><span class="line">  set name(name: string) &#123;</span><br><span class="line">    <span class="keyword">this</span>._name = (name &amp;&amp; name.trim()) || <span class="string">'&lt;no name set&gt;'</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  get name() &#123; <span class="keyword">return</span> <span class="keyword">this</span>._name; &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果想要在属性变化的时候触发某个动作，可以用 <code>ngOnChanges()</code> 方法：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ngOnChanges(changes: &#123;[propertyName: string]: SimpleChange&#125;) &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/angular-get-set/" data-id="cjxai2nie0001jkq4zav9tazz" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Angular/">Angular</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-overflow-auto-vs-scroll" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/overflow-auto-vs-scroll/" class="article-date">
+  <time datetime="2018-05-17T02:49:23.000Z" itemprop="datePublished">2018-05-17</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/overflow-auto-vs-scroll/">overflow 属性设置</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>overflow 取 scroll 和 auto 的值时，都可以让显示不下的内容滚动显示，最重要的区别是：</p>
+<blockquote>
+<p>scroll 始终显示滚动条，auto是按需显示滚动条。</p>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/overflow-auto-vs-scroll/" data-id="cju5m2z68000dqqq46uiw9p22" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CSS/">CSS</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-angular-valueChanges-in-form" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/angular-valueChanges-in-form/" class="article-date">
@@ -299,244 +535,6 @@
 
 
   
-    <article id="post-what-is-scaffold" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/what-is-scaffold/" class="article-date">
-  <time datetime="2018-05-13T01:49:07.000Z" itemprop="datePublished">2018-05-13</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/what-is-scaffold/">什么是脚手架</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>什么是脚手架，百度百科是这样解释的：指施工现场为工人操作并解决垂直和水平运输而搭设的各种支架。在软件工程里面，脚手架的角色就是帮你直接生成项目的部分内容，免去你的重复无聊的工作，比如创建目录构建、新建各种配置文件。 </p>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/what-is-scaffold/" data-id="cjssqvcvl004k8uq4lngj5jv3" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-angular-route-reuse-stategy" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/angular-route-reuse-stategy/" class="article-date">
-  <time datetime="2018-05-12T04:34:36.000Z" itemprop="datePublished">2018-05-12</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/angular-route-reuse-stategy/">Angular中的路由缓存策略</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>路由缓存的典型应用场景是：</p>
-<blockquote>
-<p>用户在列表页通过搜索条件筛选出满足条件的列表，点击列表项的详情，跳转到详情页。当用户从详情页返回到列表页的时候，是希望能够保存之前使用过的筛选条件的。</p>
-</blockquote>
-<p>要想实现自定义的路由缓存策略，首先要实现 RouteReuseStrategy 接口，简单来说，这个接口就做了两件事：</p>
-<ol>
-<li>当离开当前路由的时候，将当前路由的快照存起来</li>
-<li>当再次进入到该路由时，再取之前存的快照来恢复当前路由的一个状态</li>
-</ol>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; Injectable &#125; <span class="keyword">from</span> <span class="string">'@angular/core'</span></span><br><span class="line"><span class="keyword">import</span> &#123; RouteReuseStrategy, ActivatedRouteSnapshot, DetachedRouteHandle &#125; <span class="keyword">from</span> <span class="string">'@angular/router'</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@Injectable</span>()</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> AppRouteReuseStrategyService <span class="keyword">implements</span> RouteReuseStrategy &#123;</span><br><span class="line"></span><br><span class="line">    handles: &#123;[key: <span class="built_in">string</span>]: DetachedRouteHandle&#125; = &#123;&#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">constructor</span>(<span class="params"></span>) &#123; &#125;</span><br><span class="line">    </span><br><span class="line">    shouldDetach(route: ActivatedRouteSnapshot): <span class="built_in">boolean</span> &#123;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    store(route: ActivatedRouteSnapshot, handle: DetachedRouteHandle): <span class="built_in">void</span> &#123;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    shouldAttach(route: ActivatedRouteSnapshot): <span class="built_in">boolean</span> &#123;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    retrieve(route: ActivatedRouteSnapshot): DetachedRouteHandle &#123;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    shouldReuseRoute(future: ActivatedRouteSnapshot, curr: ActivatedRouteSnapshot): <span class="built_in">boolean</span> &#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/angular-route-reuse-stategy/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/angular-route-reuse-stategy/" data-id="cjxai2nig0002jkq4w5l04pwb" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-angular-upgrade" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/angular-upgrade/" class="article-date">
-  <time datetime="2018-05-08T13:24:07.000Z" itemprop="datePublished">2018-05-08</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/angular-upgrade/">angular 版本升级</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>升级 angular 和 angular-cli 的版本到最新</p>
-<p>全局安装：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn global add @angular/cli</span><br></pre></td></tr></table></figure>
-<p>升级：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">yarn upgrade-interactive --latest</span><br><span class="line"><span class="comment"># 或者</span></span><br><span class="line">yarn add @angular/cli</span><br></pre></td></tr></table></figure>
-<p>然后升级 </p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ng update @angular/cli</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/angular-upgrade/" data-id="cjssqvcrs000l8uq4uaulyr99" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-angular-query-params" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/angular-query-params/" class="article-date">
-  <time datetime="2018-05-06T06:45:23.000Z" itemprop="datePublished">2018-05-06</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/angular-query-params/">Angular 路由参数</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>路由跳转的两种办法：</p>
-<ol>
-<li><p>使用 <code>routerLink</code>：</p>
- <figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 相对路径</span></span><br><span class="line">[routerLink]=<span class="string">"['../../parent']"</span></span><br><span class="line">[routerLink]=<span class="string">"['../sibling']"</span></span><br><span class="line">[routerLink]=<span class="string">"['./child']"</span>  <span class="comment">// 或者</span></span><br><span class="line">[routerLink]=<span class="string">"['child']"</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 绝对路径</span></span><br><span class="line">[routerLink]=<span class="string">"['/absolute']"</span> </span><br><span class="line"></span><br><span class="line"><span class="comment">// 带路由参数  ../../parent;abc=xyz</span></span><br><span class="line">[routerLink]=<span class="string">"['../../parent', &#123;abc: 'xyz'&#125;]"</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 带查询参数和片段   ../../parent?p1=value1&amp;p2=v2#frag</span></span><br><span class="line">[routerLink]=<span class="string">"['../../parent']"</span> [queryParams]=<span class="string">"&#123;p1: 'value', p2: 'v2'&#125;"</span> fragment=<span class="string">"frag"</span></span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/angular-query-params/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/angular-query-params/" data-id="cjssqvcrm000d8uq4qioqa2al" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Angular/">Angular</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-upgrade-to-angular6" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/upgrade-to-angular6/" class="article-date">
-  <time datetime="2018-05-04T06:40:07.000Z" itemprop="datePublished">2018-05-04</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/upgrade-to-angular6/">升级到 angular 6</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Angular 6 出来了，改动较 4 比较大，可以通过下面的方式进行升级：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ ng update @angular/cli</span><br><span class="line">            Updating karma configuration</span><br><span class="line">            Updating configuration</span><br><span class="line">            Removing old config file (.angular-cli.json)</span><br><span class="line">            Writing config file (angular.json)</span><br><span class="line">            Some configuration options have been changed, please make sure to update any npm scripts <span class="built_in">which</span> you may have modified.</span><br><span class="line">DELETE .angular-cli.json</span><br><span class="line">CREATE angular.json (4007 bytes)</span><br><span class="line">UPDATE package.json (1125 bytes)</span><br></pre></td></tr></table></figure>
-<p>rxjs 升级：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">$ rxjs-5-to-6-migrate -p src/tsconfig.app.json</span><br><span class="line">Running the automatic migrations. Please, be patient and <span class="built_in">wait</span> until the execution completes.</span><br><span class="line">Found and fixed the following deprecations:</span><br><span class="line"></span><br><span class="line">Fixed 2 error(s) <span class="keyword">in</span> /web/src/app/services/constant.service.ts</span><br><span class="line">Fixed 2 error(s) <span class="keyword">in</span> /web/src/app/services/http.service.ts</span><br><span class="line">Fixed 1 error(s) <span class="keyword">in</span> /web/src/app/services/auth.service.ts</span><br><span class="line">Fixed 1 error(s) <span class="keyword">in</span> /web/src/app/services/auth-guard.service.ts</span><br><span class="line">Fixed 3 error(s) <span class="keyword">in</span> /web/src/app/components/calendar.component.ts</span><br><span class="line">Fixed 3 error(s) <span class="keyword">in</span> /web/src/app/services/interceptors/jwt-interceptor.ts</span><br><span class="line"></span><br><span class="line">WARNING: /web/src/app/components/calendar.component.ts[14, 1]: duplicate RxJS import</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/upgrade-to-angular6/" data-id="cjssqvcvg004e8uq4709t04kl" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
 
 
   <nav id="page-nav">
@@ -555,7 +553,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Elasticsearch/">Elasticsearch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dart/">Dart</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Elasticsearch/">Elasticsearch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
     </div>
   </div>
 
@@ -565,7 +563,7 @@
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2019 zju.date
+      &copy; 2020 zju.date
       &nbsp;&nbsp;&nbsp;
       contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
     </div>

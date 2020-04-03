@@ -54,6 +54,244 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-git-subtree" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/git-subtree/" class="article-date">
+  <time datetime="2018-03-22T01:09:07.000Z" itemprop="datePublished">2018-03-22</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/git-subtree/">git subtree 介绍</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h3><p>git subtree 特别适合那些需要 <strong>双向同步</strong> 的项目，例如：</p>
+<blockquote>
+<p>A 项目中依赖了子项目 B，直接在 A 项目里改 B 子项目对应的目录里的代码，然后提交代码，这个更改也提交到 B 子项目的 Git 仓库里。同时子项目 B 也可以单独提交到 Git 仓库，再在 A 项目里把子项目 B 的代码update。</p>
+</blockquote>
+<h3 id="与-submodule-的区别是"><a href="#与-submodule-的区别是" class="headerlink" title="与 submodule 的区别是"></a>与 submodule 的区别是</h3><table>
+<thead>
+<tr>
+<th>方式</th>
+<th>区别</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>submodule</td>
+<td>允许其他的仓库指定以一个commit嵌入仓库的子目录仓库<br> clone下来需要 init 和 update   <br>.gitmodule 文件记录 submodule 版本信息<br>删除起来比较费劲</td>
+</tr>
+<tr>
+<td>subtree</td>
+<td>避免上述问题<br>管理和更新流程比较方便<br>git subtree合并子仓库到项目中的子目录<br>git v1.5.2以后建议使用git subtree</td>
+</tr>
+</tbody>
+</table>
+<h3 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h3><ol>
+<li><p>添加关联</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git subtree add --prefix=&lt;sub-path&gt; &lt;sub-repo&gt; &lt;branch&gt; --squash</span><br></pre></td></tr></table></figure>
+<p> <code>—squash</code> 意思是把 <code>subtree</code> 的改动合并成一次commit，这样就不用拉取子项目完整的历史记录。<code>—prefix</code> 之后的=等号也可以用空格。</p>
+</li>
+<li><p>提交更改到子项目</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git subtree push --prefix=&lt;sub-path&gt; &lt;sub-repo&gt; &lt;branch&gt;</span><br></pre></td></tr></table></figure>
+<p> 在 main 中各种 commit，其中有些可能涉及 sub 目录的修改也没有任何关系，上面的命令能够遍历所有 commit ，从中找到针对 sub 目录的修改，然后把这些记录提交到 sub 的仓库。</p>
+</li>
+<li><p>更新子目录</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git subtree pull --prefix=&lt;sub-path&gt; &lt;sub-repo&gt; &lt;branch&gt; --squash</span><br></pre></td></tr></table></figure>
+<p> 其他人可以用上面的命令即可同步 sub </p>
+</li>
+<li><p>删除子目录：</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git rm &lt;subtree&gt;</span><br><span class="line">git commit</span><br><span class="line">git subtree add --prefix=&lt;subtree&gt; &lt;repository_url&gt; &lt;branch&gt;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="存在的问题"><a href="#存在的问题" class="headerlink" title="存在的问题"></a>存在的问题</h3><ol>
+<li>切换分支不方便，如果想要把本地某个子项目的代码切换到某个分支，就需要执行 <code>git rm -rf</code> 和 <code>git subtree add</code> 的操作，没有 <code>submodule</code> 中  <code>git checkout branch</code> 来的方便。</li>
+<li>代码提交速度比 <code>submodule</code> 慢，因为 <code>submodule</code> 是提交对子模块某次提交的引用，而 <code>subtree</code> 提交了 <code>subtree</code> 目录下的全部文件。</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/git-subtree/" data-id="cjhq778l80088izq3x61r86bc" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/">Git</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-git-submodule-unadvertised-object" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/git-submodule-unadvertised-object/" class="article-date">
+  <time datetime="2018-03-21T10:12:07.000Z" itemprop="datePublished">2018-03-21</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/git-submodule-unadvertised-object/">git submodule unadvertised object</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>使用 git submodule 进行 update 的时候，出现下面的错误：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ git submodule update</span><br><span class="line">Submodule path <span class="string">'project1'</span>: checked out <span class="string">'f0246e6589fcb0f80e62f99c5ac39cfb397aff9d'</span></span><br><span class="line">error: Server does not allow request <span class="keyword">for</span> unadvertised object 1c82bfd3c5b066f8b47b70330beeef091f990e7e</span><br><span class="line">Fetched <span class="keyword">in</span> submodule path <span class="string">'project2'</span>, but it did not contain 1c82bfd3c5b066f8b47b70330beeef091f990e7e. Direct fetching of that commit failed.</span><br></pre></td></tr></table></figure>
+<p>这种情况是如何产生的呢？请看下面的场景：</p>
+<blockquote>
+<p>现有主仓库 main，里面有子模块对应的仓库 sub。用户修改了 sub 中的文件，但没有提交到 sub 的远程库，然后把 main 提交到了远程库。现在，另外一个人尝试把 main 拉去下来并同步 sub 中的修改时，由于 sub 的改动并未 push 到其对应的远程库，但 update 命令尝试从 sub 的远程库 pull 对应的改动(1c82bfd3c5b066f8b47b70330beeef091f990e7e)，因此也就不存在，就会报错。</p>
+</blockquote>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/git-submodule-unadvertised-object/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/git-submodule-unadvertised-object/" data-id="cjhq778l70086izq38c5onyyn" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/">Git</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-nginx-map" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/nginx-map/" class="article-date">
+  <time datetime="2018-03-14T06:56:07.000Z" itemprop="datePublished">2018-03-14</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/nginx-map/">Nginx中的map指令</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>nginx 中有很多变量，为了方便记忆，可以打印出来看一下：</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">location</span> /hello &#123;</span><br><span class="line">    <span class="attribute">echo</span> <span class="string">'query_string: <span class="variable">$query_string</span>'</span>;</span><br><span class="line">    <span class="attribute">echo</span> <span class="string">'request_method: <span class="variable">$request_method</span>'</span>;</span><br><span class="line">    <span class="attribute">echo</span> <span class="string">'content_type: <span class="variable">$content_type</span>'</span>;</span><br><span class="line">    <span class="attribute">echo</span> <span class="string">'content_length: <span class="variable">$content_length</span>'</span>;</span><br><span class="line">    <span class="attribute">echo</span> <span class="string">'fastcgi_script_name: <span class="variable">$fastcgi_script_name</span>'</span>;</span><br><span class="line">    <span class="attribute">echo</span> <span class="string">'request_uri: <span class="variable">$request_uri</span>'</span>;</span><br><span class="line">    <span class="attribute">echo</span> <span class="string">'document_uri: <span class="variable">$document_uri</span>'</span>;</span><br><span class="line">    <span class="attribute">echo</span> <span class="string">'document_root: <span class="variable">$document_root</span>'</span>;</span><br><span class="line">    <span class="attribute">echo</span> <span class="string">'server_protocol: <span class="variable">$server_protocol</span>'</span>;</span><br><span class="line">    <span class="attribute">echo</span> <span class="string">'https: <span class="variable">$https</span>'</span>;</span><br><span class="line">    <span class="attribute">echo</span> <span class="string">'nginx_version: <span class="variable">$nginx_version</span>'</span>;</span><br><span class="line">    <span class="attribute">echo</span> <span class="string">'remote_addr: <span class="variable">$remote_addr</span>'</span>;</span><br><span class="line">    <span class="attribute">echo</span> <span class="string">'remote_port: <span class="variable">$remote_port</span>'</span>;</span><br><span class="line">    <span class="attribute">echo</span> <span class="string">'server_addr: <span class="variable">$server_addr</span>'</span>;</span><br><span class="line">    <span class="attribute">echo</span> <span class="string">'server_port: <span class="variable">$server_port</span>'</span>;</span><br><span class="line">    <span class="attribute">echo</span> <span class="string">'server_name: <span class="variable">$server_name</span>'</span>;</span><br><span class="line">    <span class="attribute">echo</span> <span class="string">'http_user_agent: <span class="variable">$http_user_agent</span>'</span>;</span><br><span class="line">    <span class="attribute">echo</span> <span class="string">'http_cookie: <span class="variable">$http_cookie</span>'</span>;</span><br><span class="line">    <span class="attribute">echo</span> <span class="string">'uri: <span class="variable">$uri</span>'</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>有了这些变量，可以用 map 指令对其进行加工处理。</p>
+<blockquote>
+<p>  map 指令是 ngx_http_map_module 模块提供的，用来创建变量，但是仅在变量被接受的时候执行视图映射操作，对于处理没有引用变量的请求时，这个模块并没有性能上的缺失。</p>
+</blockquote>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/nginx-map/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/nginx-map/" data-id="cjw77iiy9000kqlq4o9auxdcf" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Nginx/">Nginx</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-docker-crontab-env" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/docker-crontab-env/" class="article-date">
+  <time datetime="2018-03-13T07:07:07.000Z" itemprop="datePublished">2018-03-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/docker-crontab-env/">crontab 中使用环境变量</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>如果遇到 crontab 的定时任务执行失败，但是手动执行却又成功，一般是因为脚本里用了系统的环境变量导致的。由于 crontab 的机制，通过定时任务执行的脚本无法直接使用环境变量，下面的方法可以帮助我们避免上述情况：</p>
+<ol>
+<li>脚本中涉及文件路径时写绝对路径</li>
+<li><p>脚本执行要用到环境变量时，通过 source 命令引入：</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cat restart.sh</span><br><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line"><span class="built_in">source</span> /etc/profile</span><br><span class="line"><span class="built_in">export</span> abc=/home/abc</span><br><span class="line">/usr/<span class="built_in">local</span>/run.sh -c hello &amp;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在crontab中直接引入环境变量：</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0 * * * * . /etc/profile;/bin/sh /path/to/your/shell/restart.sh</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>另外 crontab 最后一定要有换行，否则可能报错！</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/docker-crontab-env/" data-id="cjssqvcs800138uq4mztwqv0w" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-shell-echo-cmd" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/shell-echo-cmd/" class="article-date">
@@ -357,211 +595,6 @@
 
 
   
-    <article id="post-mac-@" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/mac-@/" class="article-date">
-  <time datetime="2018-03-04T15:36:07.000Z" itemprop="datePublished">2018-03-04</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/mac-@/">Mac文件夹后面的@符号</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>mac 权限 <code>drwxr-xr-x@</code> 其中 <code>@</code> 表示什么？</p>
-<p>如果文件或目录有扩展属性,则使用 <code>-l</code> 选项执行 <code>ls</code> 命令时，会在权限许可字段后面附加一个字符 <code>@</code>。<br>如果文件或目录有扩展安全信息，则使用 <code>-l</code> 选项执行 <code>ls</code> 命令时，会在权限许可字段后面附件一个字符 <code>+</code>。</p>
-<blockquote>
-<p>  If the file or directory has extended<br>  attributes, the permissions field printed by the -l option is followed by<br>  a ‘@’ character. Otherwise, if the file or directory has extended secu-<br>  rity information, the permissions field printed by the -l option is fol-<br>  lowed by a ‘+’ character.</p>
-</blockquote>
-<p>使用 <code>xattr -c</code> 文件名 可以去除 <code>@</code></p>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/mac-@/" data-id="cjhq778p800coizq3le8650ds" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-fingerprint-taken" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/fingerprint-taken/" class="article-date">
-  <time datetime="2018-03-02T02:38:03.000Z" itemprop="datePublished">2018-03-02</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/fingerprint-taken/">git 使用不同的 key</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>在使用 <code>git clone</code> 时遇到下列报错：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Key has already been taken</span><br><span class="line">Fingerprint has already been taken</span><br></pre></td></tr></table></figure>
-<p>这是因为已经有其他项目使用了这个公钥，如果需要对不同的 git 仓库（例如 github 和 gitlab）使用不同的 ssh key 时候，可以先创建不同的密钥对：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mkdir ~/.ssh/gitlab</span><br><span class="line">cd ~/.ssh/gitlab</span><br><span class="line">ssh-keygen -f id_rsa</span><br></pre></td></tr></table></figure>
-<p>这样就可以在 <code>~/.ssh/gitlab</code> 目录下创建独立的 <code>id_rsa</code> 和 <code>id_rsa.pub</code> 密钥对，然后配置如下</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Host github.com</span><br><span class="line">    User git</span><br><span class="line">    Hostname github.com</span><br><span class="line">    PreferredAuthentications publickey</span><br><span class="line">    IdentityFile ~/.ssh/git/id_rsa</span><br><span class="line">Host gitlab.com</span><br><span class="line">    Hostname gitlab.com</span><br><span class="line">    PreferredAuthentications publickey</span><br><span class="line">    IdentityFile ~/.ssh/gitlab/id_rsa</span><br></pre></td></tr></table></figure>
-<p>再使用 <code>git clone git@gitlab.com:username/repo.git</code> 就会使用指定的密钥了。或者，更灵活的方式是每次 clone 的时候指定密钥文件：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GIT_SSH_COMMAND=&quot;ssh -i ~/.ssh/id_rsa&quot; git clone example</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>  注意：<code>GIT_SSH_COMMAND</code>环境变量对于低于<code>git 2.3.0</code>版本无效</p>
-</blockquote>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/fingerprint-taken/" data-id="cjssqvcsf001f8uq4kam4ynzx" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/">Git</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-tar" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/tar/" class="article-date">
-  <time datetime="2018-03-01T02:16:03.000Z" itemprop="datePublished">2018-03-01</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/tar/">tar 命令</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>打包备份文件的时候，使用绝对路径会有相关提醒，例如：tar从成员名中删除开头的“/”。</p>
-<ol>
-<li><p>在 /tmp 下新建文件 a.txt 和 b.txt 并添加内容：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">cat &lt;&lt; EOF &gt;&gt; /tmp/a.txt</span><br><span class="line">hello, a.txt!</span><br><span class="line">EOF</span><br><span class="line">cat &lt;&lt; EOF &gt;&gt; /tmp/b.txt</span><br><span class="line">hello, b.txt!</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>使用绝对路径压缩 a.txt</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">tar czf a.tar.gz /tmp/a.txt</span><br><span class="line">tar: Removing leading <span class="string">'/'</span> from member names</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>解压缩 a.tar.gz</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar xzf a.tar.gz</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>经过解压后会在当前目录下，自动创建tmp目录，压缩之前的目录是绝对路径 <code>/tmp/a.txt</code>，但是解压之后变成了当前目录下了，这其实可以可上面的报错对上了（<strong>tar: 从成员名中删除开头的“/”</strong>）</p>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/tar/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/tar/" data-id="cjssqvcvc00488uq4j8bz19x7" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-echo" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/echo/" class="article-date">
-  <time datetime="2018-03-01T02:11:03.000Z" itemprop="datePublished">2018-03-01</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/echo/">echo 命令</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>echo 默认会换行，例如：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ echo 123;echo 456</span><br><span class="line">123</span><br><span class="line">456</span><br></pre></td></tr></table></figure>
-<p>使用 echo -n 可以不换行输出</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ echo -n 123;echo 456</span><br><span class="line">123456</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/echo/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/echo/" data-id="cjhq778jv0065izq308f8k0yv" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
 
 
   <nav id="page-nav">
@@ -580,7 +613,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Elasticsearch/">Elasticsearch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dart/">Dart</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Elasticsearch/">Elasticsearch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
     </div>
   </div>
 
@@ -590,7 +623,7 @@
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2019 zju.date
+      &copy; 2020 zju.date
       &nbsp;&nbsp;&nbsp;
       contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
     </div>
