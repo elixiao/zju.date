@@ -54,10 +54,10 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-es-case-sensitive" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-change-docker-volume-folder" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/es-case-sensitive/" class="article-date">
-  <time datetime="2018-09-14T14:34:05.000Z" itemprop="datePublished">2018-09-14</time>
+    <a href="/change-docker-volume-folder/" class="article-date">
+  <time datetime="2018-09-23T06:23:23.000Z" itemprop="datePublished">2018-09-23</time>
 </a>
     
   </div>
@@ -68,7 +68,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/es-case-sensitive/">es查询时匹配大小写</a>
+      <a class="article-title" href="/change-docker-volume-folder/">修改 docker 默认存储位置</a>
     </h1>
   
 
@@ -80,19 +80,418 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <p>今天遇到一个在 ES 中使用 term 关键词进行查询时，大小写不能正确匹配的坑。例如用官方提供的示例库bank，下面的查询竟然查不到任何数据：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">escurl -XGET <span class="variable">$ES</span>/bank/_search?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "query": &#123;</span></span><br><span class="line"><span class="string">    "term": &#123;</span></span><br><span class="line"><span class="string">        "state": "ND"</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#125;'</span></span><br></pre></td></tr></table></figure>
-<p>如果把 ND 换成小写的话，就能查出来了，而且查出来的结果都是大写的。另外，如果把 term 换成 match 的话，无论 ND 是大小写，都是可以查到的。这是为什么呢？让我们来还原一下具体的场景：</p>
+            <p>docker 默认的存储位置是 <code>/var/lib/docker</code>，有三种方式可以实现修改 docker 默认存储位置的目的：</p>
+<ol>
+<li><p>指定启动参数</p>
+<p> 可以通过指定 docker 的启动参数 <code>data-root</code> 来设置 docker 的存储目录，这个文件一般位于 <code>/lib/systemd/system/docker.service</code></p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 旧的写法</span></span><br><span class="line">ExecStart=/usr/bin/dockerd</span><br><span class="line"><span class="comment"># 新的写法</span></span><br><span class="line">ExecStart=/usr/bin/dockerd --data-root /new_location/</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<pre><code>那么当再使用 `docker volume create xxx` 创建新的数据卷时，存储的目录就变成了：`/new_location/volumes/{volume_name}/_data`
+</code></pre>
         </div>
         
           <p class="article-more-link">
-            <a href="/es-case-sensitive/#more">Read More</a>
+            <a href="/change-docker-volume-folder/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/es-case-sensitive/" data-id="cjwq89ima0001v7q4jd0tztf6" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/change-docker-volume-folder/" data-id="cju5m2z5z0003qqq4cvh1qieo" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-js-lock-object" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/js-lock-object/" class="article-date">
+  <time datetime="2018-09-22T09:42:10.000Z" itemprop="datePublished">2018-09-22</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/js-lock-object/">js锁定对象</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>在 js 当中，有时候需要锁定一个对象，有三个方法可供选择：</p>
+<ol>
+<li><p><code>Object.freeze</code></p>
+<ul>
+<li>不能新增属性</li>
+<li>不能修改属性</li>
+<li>不能修改已有属性的可枚举性、可配置性、可写性</li>
+<li>不能删除属性</li>
+</ul>
+</li>
+<li><p><code>Object.seal</code></p>
+<ul>
+<li>不能新增属性</li>
+<li>不能修改已有属性的可枚举性、可配置性、可写性</li>
+<li>可以修改属性</li>
+<li>不能删除属性</li>
+</ul>
+</li>
+<li><p><code>Object.preventExtensions</code></p>
+<ul>
+<li>不能新增属性</li>
+</ul>
+</li>
+</ol>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/js-lock-object/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/js-lock-object/" data-id="cjxai2nj4000djkq44ol2lf9y" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-docker-container-join-multi-network" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/docker-container-join-multi-network/" class="article-date">
+  <time datetime="2018-09-21T09:14:13.000Z" itemprop="datePublished">2018-09-21</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/docker-container-join-multi-network/">docker容器加入多个网络</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>docker 容器默认情况下会加入一个网络，可以在 <code>docker run</code> 命令中指定这个网络：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -itd --net bluenet --name c1 busybox sh</span><br></pre></td></tr></table></figure>
+<p>如果未指定，那就是 docker0 网络，但实际上容器可以加入多个网络的，需要使用 <code>docker network connect</code> 命令，例如现在创建两个网络：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ docker network create bluenet</span><br><span class="line">$ docker network create rednet</span><br></pre></td></tr></table></figure>
+<p>先用其中一个网络创建容器，但是别去运行它：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker create -it --net bluenet --name c1 busybox sh</span><br></pre></td></tr></table></figure>
+<p>这个时候，容器的状态是 <code>Created</code>，表示已创建但尚未运行。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ docker ps -a</span><br><span class="line">CONTAINER ID        IMAGE       COMMAND      CREATED             STATUS     PORTS   NAMES</span><br><span class="line">25b52f0a988a        busybox     <span class="string">"sh"</span>         16 seconds ago      Created            c1</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/docker-container-join-multi-network/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/docker-container-join-multi-network/" data-id="cjw77iixs0004qlq4famq8dok" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/">Docker</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-es-head" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/es-head/" class="article-date">
+  <time datetime="2018-09-21T07:25:07.000Z" itemprop="datePublished">2018-09-21</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/es-head/">es-head 安装</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>用 docker 启动 es-head 服务：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker run -d -p 9100:9100 --name es-head mobz/elasticsearch-head:5-alpine</span><br><span class="line">docker run -d -p 9100:9100 --net elk --add-host es_host:<span class="variable">$ES_HOST</span> --name es-head mobz/elasticsearch-head:5-alpine</span><br></pre></td></tr></table></figure>
+<p>记得在 <code>elasticsearch.yml</code> 里面配置开启跨域支持：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">network.host: 0.0.0.0</span><br><span class="line">http.cors.enabled: <span class="literal">true</span></span><br><span class="line">http.cors.allow-origin: <span class="string">"*"</span></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/es-head/" data-id="cjssqvcse001d8uq4ex3gdet5" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ELK/">ELK</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-count-cpu" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/count-cpu/" class="article-date">
+  <time datetime="2018-09-20T09:13:20.000Z" itemprop="datePublished">2018-09-20</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/count-cpu/">查看服务器CPU个数</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <ol>
+<li><p>查看物理CPU的个数</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat /proc/cpuinfo | grep <span class="string">"physical id"</span> | sort | uniq | wc -l</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<ol>
+<li><p>查看逻辑CPU的个数</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat /proc/cpuinfo | grep <span class="string">"processor"</span> | wc -l</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<ol>
+<li><p>查看CPU是几核</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat /proc/cpuinfo | grep <span class="string">"cores"</span> | uniq</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<ol>
+<li><p>查看CPU的主频</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat /proc/cpuinfo | grep MHz | uniq</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/count-cpu/" data-id="cjssqvcs2000v8uq4cvsgg5n3" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-hundreds-of-if" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/hundreds-of-if/" class="article-date">
+  <time datetime="2018-09-18T02:30:22.000Z" itemprop="datePublished">2018-09-18</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/hundreds-of-if/">代码放大招</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><img src="https://coolshell.cn/wp-content/uploads/2017/04/IMG_7411.jpg" alt="screenshot"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/hundreds-of-if/" data-id="cjw53wyah0006m5q477ez7f21" class="article-share-link">Share</a>
+     
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-linux-cmd-route" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/linux-cmd-route/" class="article-date">
+  <time datetime="2018-09-18T02:27:08.000Z" itemprop="datePublished">2018-09-18</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/linux-cmd-route/">路由命令</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>添加路由规则：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ip route add TYPE PREFIX via GW [dev IFACE] [src SOURCE_IP]</span><br></pre></td></tr></table></figure>
+<ul>
+<li>ip route show：显示路由表；</li>
+<li>ip route add：添加路由；</li>
+<li>ip route change：修改路由；</li>
+<li>ip route replace：修改路由或添加路由；</li>
+<li>ip route delete：删除路由；</li>
+<li>ip route get：获得单条路由的详细信息；</li>
+<li>ip route flush：清空路由表；</li>
+</ul>
+<p>Route 命令是用于操作 ip 路由表，它创建一个静态路由让指定主机或者网络通过某个网络接口，如 eth0。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/linux-cmd-route/" data-id="cjw53wyaj0009m5q422hitjmt" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-es-quick" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/es-quick/" class="article-date">
+  <time datetime="2018-09-17T06:05:07.000Z" itemprop="datePublished">2018-09-17</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/es-quick/">elasticsearch快速上手</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>参见<a href="/es-prepare">准备工作</a>，搭建好命令行查询语法，导入示例文件。</p>
+<h2 id="基础增删改查"><a href="#基础增删改查" class="headerlink" title="基础增删改查"></a>基础增删改查</h2><p>创建和删除索引：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">escurl -XPUT <span class="variable">$ES</span>/sky?pretty <span class="comment"># 创建索引</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">escurl -XDELETE <span class="variable">$ES</span>/sky <span class="comment"># 删除索引</span></span><br></pre></td></tr></table></figure>
+<p>添加和删除文档：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 指定id添加文档(doc名称随意起，但是一旦起名之后就不能换了，推荐使用_doc，这样可以兼容7.x以上的版本)</span></span><br><span class="line">escurl -XPUT <span class="variable">$ES</span>/sky/_doc/1?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "name": "Lucy"</span></span><br><span class="line"><span class="string">&#125;'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 未指定id添加文档，会随机生成一个id</span></span><br><span class="line">escurl -XPOST <span class="variable">$ES</span>/sky/_doc?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "name": "David"</span></span><br><span class="line"><span class="string">&#125;'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除文档：</span></span><br><span class="line">escurl -XDELETE <span class="variable">$ES</span>/sky/_doc/1</span><br></pre></td></tr></table></figure>
+<p>查询文档：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">escurl -XGET <span class="variable">$ES</span>/_search?pretty <span class="comment"># 获取所有索引内的全部文档</span></span><br><span class="line">escurl -XGET <span class="variable">$ES</span>/sky/_search?pretty <span class="comment"># 获取指定索引内全部文档</span></span><br><span class="line">escurl -XGET <span class="variable">$ES</span>/sky/_doc/_search?pretty <span class="comment"># 获取指定类型内全部文档</span></span><br><span class="line">escurl -XGET <span class="variable">$ES</span>/sky/_doc/1?pretty <span class="comment"># 根据id查询指定索引内的文档</span></span><br></pre></td></tr></table></figure>
+<p>修改文档：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 替换文档(删除旧文档，索引新文档）</span></span><br><span class="line">escurl -XPUT <span class="variable">$ES</span>/sky/_doc/1?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "age": 12</span></span><br><span class="line"><span class="string">&#125;'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 局部修改文档</span></span><br><span class="line">escurl -XPOST <span class="variable">$ES</span>/sky/_doc/1/_update?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "doc": &#123; "name": "Jane Doe" &#125;</span></span><br><span class="line"><span class="string">&#125;'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 根据旧文档值更新</span></span><br><span class="line">escurl -XPOST <span class="variable">$ES</span>/sky/_doc/1/_update?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "script" : "ctx._source.age += 5"</span></span><br><span class="line"><span class="string">&#125;'</span></span><br></pre></td></tr></table></figure>
+<p>批量操作：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 批量添加文档</span></span><br><span class="line">escurl -XPOST <span class="variable">$ES</span>/sky/_doc/_bulk?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;"index":&#123;"_id":"1"&#125;&#125;</span></span><br><span class="line"><span class="string">&#123;"name": "John Doe" &#125;</span></span><br><span class="line"><span class="string">&#123;"index":&#123;"_id":"2"&#125;&#125;</span></span><br><span class="line"><span class="string">&#123;"name": "Jane Doe" &#125;</span></span><br><span class="line"><span class="string">'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 批量添加或删除文档</span></span><br><span class="line">escurl -XPOST <span class="variable">$ES</span>/sky/_doc/_bulk?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;"update":&#123;"_id":"1"&#125;&#125;</span></span><br><span class="line"><span class="string">&#123;"doc": &#123; "name": "John Doe becomes Jane Doe" &#125; &#125;</span></span><br><span class="line"><span class="string">&#123;"delete":&#123;"_id":"2"&#125;&#125;</span></span><br><span class="line"><span class="string">'</span></span><br></pre></td></tr></table></figure>
+<p>其他：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">escurl -XGET <span class="variable">$ES</span>/_cat/indices?v <span class="comment"># 获取索引列表</span></span><br><span class="line">escurl -XGET <span class="variable">$ES</span>/_cat/nodes?v <span class="comment"># 获取所有节点</span></span><br><span class="line">escurl -XGET <span class="variable">$ES</span>/_cat/health?v <span class="comment"># 获取集群健康值</span></span><br><span class="line">escurl -XGET <span class="variable">$ES</span>/_cat/allocation?v <span class="comment"># 查看磁盘空间</span></span><br><span class="line">escurl -XGET <span class="variable">$ES</span>/_cat/shards?v <span class="comment"># 查询分片 </span></span><br><span class="line">escurl -XGET <span class="variable">$ES</span>/_mapping?pretty <span class="comment"># 查看索引类型</span></span><br></pre></td></tr></table></figure>
+<h2 id="高级查询"><a href="#高级查询" class="headerlink" title="高级查询"></a>高级查询</h2><p>在示例索引 bank 中，把查询条件放在 uri 中进行检索：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">escurl -XGET <span class="string">"<span class="variable">$ES</span>/bank/_search?q=*&amp;sort=account_number:asc&amp;pretty"</span></span><br></pre></td></tr></table></figure>
+<p>把查询条件放在 body 中进行检索：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用 request body 查询</span></span><br><span class="line">escurl -XGET <span class="variable">$ES</span>/bank/_search?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "query": &#123; "match_all": &#123;&#125; &#125;,</span></span><br><span class="line"><span class="string">  "sort": [</span></span><br><span class="line"><span class="string">    &#123; "account_number": "asc" &#125;</span></span><br><span class="line"><span class="string">  ]</span></span><br><span class="line"><span class="string">&#125;'</span></span><br></pre></td></tr></table></figure>
+<p>放在 body 中查询更易读，语法也更强大，例如：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查询所有</span></span><br><span class="line">escurl -XGET <span class="variable">$ES</span>/bank/_search?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123; </span></span><br><span class="line"><span class="string">  "query": &#123; "match_all": &#123;&#125; &#125;</span></span><br><span class="line"><span class="string">&#125;'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 只返回一个10-19的文档</span></span><br><span class="line">escurl -XGET <span class="variable">$ES</span>/bank/_search?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "query": &#123; "match_all": &#123;&#125; &#125;,</span></span><br><span class="line"><span class="string">  "from": 10,</span></span><br><span class="line"><span class="string">  "size": 10</span></span><br><span class="line"><span class="string">&#125;'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 按照 balance 倒序</span></span><br><span class="line">escurl -XGET <span class="variable">$ES</span>/bank/_search?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "query": &#123; "match_all": &#123;&#125; &#125;,</span></span><br><span class="line"><span class="string">  "sort": &#123; "balance": &#123; "order": "desc" &#125; &#125;</span></span><br><span class="line"><span class="string">&#125;'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 只返回指定字段</span></span><br><span class="line">escurl -XGET <span class="variable">$ES</span>/bank/_search?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "query": &#123; "match_all": &#123;&#125; &#125;,</span></span><br><span class="line"><span class="string">  "_source": ["account_number", "balance"]</span></span><br><span class="line"><span class="string">&#125;'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># account_number 等于 20 的文档</span></span><br><span class="line">escurl -XGET <span class="variable">$ES</span>/bank/_search?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "query": &#123; "match": &#123; "account_number": 20 &#125; &#125;</span></span><br><span class="line"><span class="string">&#125;'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># address 中包含 mill 的文档</span></span><br><span class="line">escurl -XGET <span class="variable">$ES</span>/bank/_search?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "query": &#123; "match": &#123; "address": "mill" &#125; &#125;</span></span><br><span class="line"><span class="string">&#125;'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># address 中包含 mill 或 lane 的文档</span></span><br><span class="line">escurl -XGET <span class="variable">$ES</span>/bank/_search?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "query": &#123; "match": &#123; "address": "mill lane" &#125; &#125;</span></span><br><span class="line"><span class="string">&#125;'</span></span><br></pre></td></tr></table></figure>
+<p>ES 中可以用 bool 查询组合出各种复杂的查询条件，在使用 bool 查询的时候，只需要记住下面三点即可：</p>
+<ul>
+<li><code>should</code> 代表或（OR）</li>
+<li><code>must</code> 代表且（AND）</li>
+<li><code>must_not</code> 代表非（NOT）</li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 与上面等价，address 中包含 mill 或 lane 的文档</span></span><br><span class="line">escurl -XGET <span class="variable">$ES</span>/bank/_search?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "query": &#123;</span></span><br><span class="line"><span class="string">    "bool": &#123;</span></span><br><span class="line"><span class="string">      "should": [</span></span><br><span class="line"><span class="string">        &#123; "match": &#123; "address": "mill" &#125; &#125;,</span></span><br><span class="line"><span class="string">        &#123; "match": &#123; "address": "lane" &#125; &#125;</span></span><br><span class="line"><span class="string">      ]</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#125;'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># address 包含 mill 或 age 是 40 的文档</span></span><br><span class="line">escurl -XGET <span class="variable">$ES</span>/bank/_search?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "query": &#123;</span></span><br><span class="line"><span class="string">    "bool": &#123;</span></span><br><span class="line"><span class="string">      "should": [</span></span><br><span class="line"><span class="string">        &#123; "match": &#123; "address": "mill" &#125; &#125;,</span></span><br><span class="line"><span class="string">        &#123; "term": &#123; "age": "40" &#125; &#125;</span></span><br><span class="line"><span class="string">      ]</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#125;'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># address 中包含完整 mill lane 语句的文档</span></span><br><span class="line">escurl -XGET <span class="variable">$ES</span>/bank/_search?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "query": &#123; "match_phrase": &#123; "address": "mill lane" &#125; &#125;</span></span><br><span class="line"><span class="string">&#125;'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># address 中同时包含 mill 和 lane 的文档</span></span><br><span class="line">escurl -XGET <span class="variable">$ES</span>/bank/_search?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "query": &#123;</span></span><br><span class="line"><span class="string">    "bool": &#123;</span></span><br><span class="line"><span class="string">      "must": [</span></span><br><span class="line"><span class="string">        &#123; "match": &#123; "address": "mill" &#125; &#125;,</span></span><br><span class="line"><span class="string">        &#123; "match": &#123; "address": "lane" &#125; &#125;</span></span><br><span class="line"><span class="string">      ]</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#125;'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># address 中既不包含 mill 又不包含 lane 的文档</span></span><br><span class="line">escurl -XGET <span class="variable">$ES</span>/bank/_search?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "query": &#123;</span></span><br><span class="line"><span class="string">    "bool": &#123;</span></span><br><span class="line"><span class="string">      "must_not": [</span></span><br><span class="line"><span class="string">        &#123; "match": &#123; "address": "mill" &#125; &#125;,</span></span><br><span class="line"><span class="string">        &#123; "match": &#123; "address": "lane" &#125; &#125;</span></span><br><span class="line"><span class="string">      ]</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#125;'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 任意组合 bool 条件</span></span><br><span class="line">escurl -XGET <span class="variable">$ES</span>/bank/_search?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "query": &#123;</span></span><br><span class="line"><span class="string">    "bool": &#123;</span></span><br><span class="line"><span class="string">      "must": [</span></span><br><span class="line"><span class="string">        &#123; "match": &#123; "age": "40" &#125; &#125;</span></span><br><span class="line"><span class="string">      ],</span></span><br><span class="line"><span class="string">      "must_not": [</span></span><br><span class="line"><span class="string">        &#123; "match": &#123; "state": "ID" &#125; &#125;</span></span><br><span class="line"><span class="string">      ]</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#125;'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 过滤余额在 20000 ~ 30000 之间的账户</span></span><br><span class="line">escurl -XGET <span class="variable">$ES</span>/bank/_search?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "query": &#123;</span></span><br><span class="line"><span class="string">    "bool": &#123;</span></span><br><span class="line"><span class="string">      "must": &#123; "match_all": &#123;&#125; &#125;,</span></span><br><span class="line"><span class="string">      "filter": &#123;</span></span><br><span class="line"><span class="string">        "range": &#123;</span></span><br><span class="line"><span class="string">          "balance": &#123;</span></span><br><span class="line"><span class="string">            "gte": 20000,</span></span><br><span class="line"><span class="string">            "lte": 30000</span></span><br><span class="line"><span class="string">          &#125;</span></span><br><span class="line"><span class="string">        &#125;</span></span><br><span class="line"><span class="string">      &#125;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#125;'</span></span><br></pre></td></tr></table></figure>
+<p>最后一个 bool 查询语句包含了一个 match_all 查询（查询部分），和一个 range（范围）查询（过滤部分）。我们可以将查询和过滤部分替换成任何其它的查询。</p>
+<p>除了用 bool 组合基本关键词之外，ES 也提供了其他更为便捷的关键词，例如：</p>
+<ul>
+<li><code>multi_match</code>：匹配多个字段，只要其中一个字段包含分词后的文档就能被搜索到</li>
+<li><code>match_phrase</code>：匹配一个短语，例如查询【中国人】，被分词为【中国】和【人】，先在指定字段查找到 “中国”，然后在”中国”后面去查找 “人”，对顺序有要求</li>
+<li><code>_delete_by_query</code>：删除所有匹配的文档</li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 是对 `boolQuery().should(matchQuery(field, keyword))` 的一种简化，匹配方式是全文匹配。</span></span><br><span class="line">escurl -XGET <span class="variable">$ES</span>/bank/_search?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "query": &#123;</span></span><br><span class="line"><span class="string">    "multi_match" : &#123;</span></span><br><span class="line"><span class="string">      "query": "english", </span></span><br><span class="line"><span class="string">      "fields": [ "firstname", "lastname" ] </span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#125;'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 必须先出现 Herkimer 再出现 Place 才行</span></span><br><span class="line">escurl -XGET <span class="variable">$ES</span>/bank/_search?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "query": &#123;</span></span><br><span class="line"><span class="string">    "match_phrase" : &#123;</span></span><br><span class="line"><span class="string">      "address": "Herkimer Place"</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#125;'</span></span><br><span class="line"><span class="comment"># 删除所有 name 字段中包含 david 的文档</span></span><br><span class="line">escurl -XPOST <span class="variable">$ES</span>/sky/_delete_by_query?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "query": &#123; </span></span><br><span class="line"><span class="string">    "match": &#123;</span></span><br><span class="line"><span class="string">      "query": "Jane Doe"</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#125;'</span></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/es-quick/" data-id="cjwpxhb0y0002tjq4346oezzv" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Elasticsearch/">Elasticsearch</a></li></ul>
 
@@ -103,10 +502,10 @@
 
 
   
-    <article id="post-distinct-array" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-mask-subnet" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/distinct-array/" class="article-date">
-  <time datetime="2018-09-14T10:11:07.000Z" itemprop="datePublished">2018-09-14</time>
+    <a href="/mask-subnet/" class="article-date">
+  <time datetime="2018-09-17T03:12:23.000Z" itemprop="datePublished">2018-09-17</time>
 </a>
     
   </div>
@@ -117,49 +516,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/distinct-array/">数组去重</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>数组去重的问题经常遇到，下面总结了几个比较实用的方法：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 对数组进行去重，原数组发生改变</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">unique</span>(<span class="params">arr, field</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">let</span> i = arr.length; i; i--) &#123;</span><br><span class="line">    <span class="keyword">const</span> item = arr[i - <span class="number">1</span>]</span><br><span class="line">    <span class="keyword">const</span> dup = arr.slice(<span class="number">0</span>, i - <span class="number">1</span>).find(<span class="function"><span class="params">it</span> =&gt;</span> field ? it[field] === item[field] : it === item)</span><br><span class="line">    <span class="keyword">if</span> (dup) arr.splice(i - <span class="number">1</span>, <span class="number">1</span>)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> arr</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 获取去重后新数组，不影响原数组</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getUnique</span>(<span class="params">arr, field</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (!field) <span class="keyword">return</span> arr.filter(<span class="function">(<span class="params">it, i</span>) =&gt;</span> arr.indexOf(it) === i)</span><br><span class="line">  <span class="keyword">return</span> arr.filter(<span class="function">(<span class="params">it, i</span>) =&gt;</span> arr.map(<span class="function"><span class="params">it</span> =&gt;</span> it[field]).indexOf(it[field]) === i)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 获取数组中的重复值</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getDuplicates</span>(<span class="params">arr, field</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (!field) <span class="keyword">return</span> arr.filter(<span class="function">(<span class="params">it, i</span>) =&gt;</span> arr.indexOf(it) !== i)</span><br><span class="line">  <span class="keyword">return</span> arr.filter(<span class="function">(<span class="params">it, i</span>) =&gt;</span> arr.map(<span class="function"><span class="params">it</span> =&gt;</span> it[field]).indexOf(it[field]) !== i)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// ES6写法</span></span><br><span class="line">[...new <span class="built_in">Set</span>(arr)]</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/distinct-array/" data-id="cjvrpwbjt0003ofq4ljb9gv3b" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-logstash-grok" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/logstash-grok/" class="article-date">
-  <time datetime="2018-09-13T06:59:07.000Z" itemprop="datePublished">2018-09-13</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/logstash-grok/">grok 语法</a>
+      <a class="article-title" href="/mask-subnet/">子网掩码计算</a>
     </h1>
   
 
@@ -171,312 +528,117 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <p>grok 语法：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">%&#123;SYNTAX:SEMANTIC&#125;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>SYNTAX：代表匹配值的类型，例如NUMBER能匹配3.14，IP能匹配127.0.0.1</li>
-<li>SEMANTIC：代表存储该值的变量名</li>
-</ul>
-<p>例如下面的语法表示匹配NUMBER类型的数据，存到 duration 变量中，匹配IP类型的数据，存到 ip 变量中。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">%&#123;NUMBER:duration&#125; %&#123;IP:ip&#125;</span><br></pre></td></tr></table></figure>
-<p>默认情况下，所有语义都保存为字符串，也可以转变数据类型，目前支持的转换只有 int 和 float 两种类型，例如将 duration 从一个字符串转换为一个整数。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">%&#123;NUMBER:duration:int&#125;</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/logstash-grok/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/logstash-grok/" data-id="cjssqvcu3002r8uq4a72i4bru" class="article-share-link">Share</a>
-     
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-es-compare" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/es-compare/" class="article-date">
-  <time datetime="2018-09-11T02:04:05.000Z" itemprop="datePublished">2018-09-11</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/es-compare/">ES新老写法的一些对比</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>2.x 版本只有 string 字段，5.x 版本引入 text 和 keyword 字段，并且抛弃 string。</p>
-<ul>
-<li>keyword：存储数据时候，不会分词建立索引</li>
-<li>text：存储数据时候，会自动分词，并生成索引</li>
-</ul>
-<p>新老写法对比：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 2.x 写法</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">"foo"</span>: &#123;</span><br><span class="line">        <span class="string">"type"</span>: <span class="string">"string"</span>,</span><br><span class="line">        <span class="string">"index"</span>: <span class="string">"analyzed"</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 5.x 写法</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">"foo"</span>: &#123;</span><br><span class="line">        <span class="string">"type"</span>: <span class="string">"text"</span>,</span><br><span class="line">        <span class="string">"index"</span>: <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 2.x 写法</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">"foo"</span>: &#123;</span><br><span class="line">        <span class="string">"type"</span>: <span class="string">"string"</span>,</span><br><span class="line">        <span class="string">"index"</span>: <span class="string">"not_analyzed"</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 5.x 写法</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">"foo"</span>: &#123;</span><br><span class="line">        <span class="string">"type"</span>: <span class="string">"keyword"</span>,</span><br><span class="line">        <span class="string">"index"</span>: <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/es-compare/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/es-compare/" data-id="cjw77iixv0005qlq4sw6q1wbo" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-buffer-vs-stream" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/buffer-vs-stream/" class="article-date">
-  <time datetime="2018-09-07T09:29:07.000Z" itemprop="datePublished">2018-09-07</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/buffer-vs-stream/">buffer 和 stream</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>nodejs 处理数据有两种模式：buffer 和 stream，前者是取完数据一次性操作, 后者就是边取数据边操作：</p>
-<ul>
-<li>buffer：等到所有数据都收集完了才发送给消费者</li>
-<li>stream：实时发送数据到消费者</li>
-</ul>
-<p>举个例子, 当我们拷贝一个非常大的文件时，不妨假设为 10G，用 buffer 的话就是先分配 10G 的内存，把文件全部读到内存，然后进行处理，代码如下：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> source = fs.readFileSync(<span class="string">'/path/to/source'</span>, &#123;<span class="attr">encoding</span>: <span class="string">'utf8'</span>&#125;);</span><br><span class="line">fs.writeFileSync(<span class="string">'/path/to/dest'</span>, source);</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/buffer-vs-stream/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/buffer-vs-stream/" data-id="cjssqvcs0000r8uq4v90ftatg" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-flex-grow-vs-flex-shrink" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/flex-grow-vs-flex-shrink/" class="article-date">
-  <time datetime="2018-09-04T08:26:54.000Z" itemprop="datePublished">2018-09-04</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/flex-grow-vs-flex-shrink/">flex-grow 和 flex-shrink</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>flex-grow 属性的作用：</p>
-<blockquote>
-<p>父元素在主轴方向还有剩余空间时，子元素们如何分配这些剩余空间。</p>
-</blockquote>
-<p>其值为一个权重（也称扩张因子），默认为 0（纯数值，无单位），剩余空间将会按照这个权重来分配。</p>
-<p>比如剩余空间为 x，三个元素的 flex-grow 分别为 a，b，c，求和  <code>sum = a + b + c</code>。那么三个元素权重是 <code>a/sum</code>, <code>b/sum</code>, <code>c/sum</code>，就是按照这个比例分配剩余空间的。</p>
-<p>举个例子：</p>
-<p>父元素宽度 500px，三个子元素的 width 分别为 100px，150px，100px，于是剩余空间为 150px。</p>
-<p>如果三个元素的 flex-grow 分别是 1，2，3，那么 sum 为 6，则三个元素被分到的空间是：</p>
-<ul>
-<li><code>150 * 1 / 6 = 25px</code></li>
-<li><code>150 * 2 / 6 = 50px</code></li>
-<li><code>150 * 3 / 6 = 75px</code></li>
-</ul>
-<p>三个元素最终的宽度分别：</p>
-<ul>
-<li><code>100px + 25px = 125px</code></li>
-<li><code>150px + 50px = 200px</code></li>
-<li><code>100px + 75px = 175px</code></li>
-</ul>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/flex-grow-vs-flex-shrink/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/flex-grow-vs-flex-shrink/" data-id="cjssqvcsk001l8uq444k7csle" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CSS/">CSS</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-bootstrap4-notes" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/bootstrap4-notes/" class="article-date">
-  <time datetime="2018-09-03T15:18:22.000Z" itemprop="datePublished">2018-09-03</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/bootstrap4-notes/">bootstrap4记录</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>把 bootstrap4 中 navbar 的 dropdown 由 click 的方式改成 hover 的方式：</p>
-<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-class">.dropdown</span><span class="selector-pseudo">:hover</span> &gt; <span class="selector-class">.dropdown-menu</span> &#123;</span><br><span class="line">    <span class="attribute">display</span>: block;</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-class">.dropdown</span> &gt; <span class="selector-class">.dropdown-toggle</span><span class="selector-pseudo">:active</span> &#123;</span><br><span class="line">    <span class="comment">/*Without this, clicking will make it sticky*/</span></span><br><span class="line">    <span class="attribute">pointer-events</span>: none;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/bootstrap4-notes/" data-id="cjw77iixm0001qlq4kzgi47io" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CSS/">CSS</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-mongodb-optimize" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/mongodb-optimize/" class="article-date">
-  <time datetime="2018-09-03T14:45:03.000Z" itemprop="datePublished">2018-09-03</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/mongodb-optimize/">MongoDB 慢查询和性能优化</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>记录超过 1秒 的慢查询：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ db.setProfilingLevel(1, 1000)</span><br></pre></td></tr></table></figure>
+            <p>查看路由表：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ ip route list</span><br><span class="line">169.254.0.0/16 dev eth0 scope link metric 1002</span><br></pre></td></tr></table></figure>
+<p>IP 后面的数字 16 是用于计算子网网段的，其与子网掩码的映射关系表为：</p>
 <table>
 <thead>
 <tr>
-<th>Level</th>
-<th>Description</th>
+<th>/数字</th>
+<th>IP总数</th>
+<th>子网掩码</th>
+<th>C段个数</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>0</code></td>
-<td>关闭，不记录。默认配置</td>
+<td>/30</td>
+<td>4</td>
+<td>255.255.255.252</td>
+<td>1/64</td>
 </tr>
 <tr>
-<td><code>1</code></td>
-<td>记录超过 <code>slowms</code> 值的操作</td>
+<td>/29</td>
+<td>8</td>
+<td>255.255.255.248</td>
+<td>1/32</td>
 </tr>
 <tr>
-<td><code>2</code></td>
-<td>记录所有操作</td>
+<td>/28</td>
+<td>16</td>
+<td>255.255.255.240</td>
+<td>1/16</td>
+</tr>
+<tr>
+<td>/27</td>
+<td>32</td>
+<td>255.255.255.224</td>
+<td>1/8</td>
+</tr>
+<tr>
+<td>/26</td>
+<td>64</td>
+<td>255.255.255.192</td>
+<td>1/4</td>
+</tr>
+<tr>
+<td>/24</td>
+<td>256</td>
+<td>255.255.255.0</td>
+<td>1</td>
+</tr>
+<tr>
+<td>/23</td>
+<td>512</td>
+<td>255.255.254.0</td>
+<td>2</td>
+</tr>
+<tr>
+<td>/22</td>
+<td>1024</td>
+<td>255.255.252.0</td>
+<td>4</td>
+</tr>
+<tr>
+<td>/21</td>
+<td>2048</td>
+<td>255.255.248.0</td>
+<td>8</td>
+</tr>
+<tr>
+<td>/20</td>
+<td>4096</td>
+<td>255.255.240.0</td>
+<td>16</td>
+</tr>
+<tr>
+<td>/19</td>
+<td>8192</td>
+<td>255.255.224.0</td>
+<td>32</td>
+</tr>
+<tr>
+<td>/18</td>
+<td>16384</td>
+<td>255.255.192.0</td>
+<td>64</td>
+</tr>
+<tr>
+<td>/17</td>
+<td>32768</td>
+<td>255.255.128.0</td>
+<td>128</td>
+</tr>
+<tr>
+<td>/16</td>
+<td>65536</td>
+<td>255.255.0.0</td>
+<td>256</td>
 </tr>
 </tbody>
 </table>
-<p>查看刚才的配置是否生效：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ db.getProfilingStatus()</span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">"was"</span> : <span class="number">1</span>,</span><br><span class="line">    <span class="string">"slowms"</span> : <span class="number">1000</span>,</span><br><span class="line">    <span class="string">"sampleRate"</span> : <span class="number">1.0</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
         </div>
         
           <p class="article-more-link">
-            <a href="/mongodb-optimize/#more">Read More</a>
+            <a href="/mask-subnet/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/mongodb-optimize/" data-id="cjssqvcuc00348uq4dy9sabr6" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/mask-subnet/" data-id="cjssqvcu7002w8uq4fs55cip6" class="article-share-link">Share</a>
      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MongoDB/">MongoDB</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
 
     </footer>
   </div>
@@ -485,10 +647,10 @@
 
 
   
-    <article id="post-upgrade-bootstrap4" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-docker-ip-segment" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/upgrade-bootstrap4/" class="article-date">
-  <time datetime="2018-09-03T03:46:13.000Z" itemprop="datePublished">2018-09-03</time>
+    <a href="/docker-ip-segment/" class="article-date">
+  <time datetime="2018-09-15T11:31:48.000Z" itemprop="datePublished">2018-09-15</time>
 </a>
     
   </div>
@@ -499,7 +661,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/upgrade-bootstrap4/">bootstrap语义等价表</a>
+      <a class="article-title" href="/docker-ip-segment/">docker中的IP网段</a>
     </h1>
   
 
@@ -510,172 +672,55 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <p>升级到 bootstrap4 之后 <code>hidden-*</code>、<code>visible-*</code> 类以及 <code>-xs</code> 中缀都不存在了，可以使用 <code>d-*</code> 类来代替，下表是等价关系：</p>
-<table>
-<thead>
-<tr>
-<th>语义</th>
-<th>bootstrap3</th>
-<th>bootstrap4</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>xs 以下隐藏</td>
-<td><code>hidden-xs-down</code></td>
-<td><code>d-none d-sm-block</code></td>
-</tr>
-<tr>
-<td>sm 以下隐藏</td>
-<td><code>hidden-sm-down</code></td>
-<td><code>d-none d-md-block</code></td>
-</tr>
-<tr>
-<td>md 以下隐藏</td>
-<td><code>hidden-md-down</code></td>
-<td><code>d-none d-lg-block</code></td>
-</tr>
-<tr>
-<td>lg 以下隐藏</td>
-<td><code>hidden-lg-down</code></td>
-<td><code>d-none d-xl-block</code></td>
-</tr>
-<tr>
-<td>xl 以下隐藏</td>
-<td><code>hidden-xl-down</code></td>
-<td><code>d-none</code></td>
-</tr>
-<tr>
-<td>xs 以上隐藏</td>
-<td><code>hidden-xs-up</code></td>
-<td><code>d-none</code></td>
-</tr>
-<tr>
-<td>sm 以上隐藏</td>
-<td><code>hidden-sm-up</code></td>
-<td><code>d-sm-none</code></td>
-</tr>
-<tr>
-<td>md 以上隐藏</td>
-<td><code>hidden-md-up</code></td>
-<td><code>d-md-none</code></td>
-</tr>
-<tr>
-<td>lg 以上隐藏</td>
-<td><code>hidden-lg-up</code></td>
-<td><code>d-lg-none</code></td>
-</tr>
-<tr>
-<td>xl 以上隐藏</td>
-<td><code>hidden-xl-up</code></td>
-<td><code>d-xl-none</code></td>
-</tr>
-<tr>
-<td>只隐藏 xs</td>
-<td><code>hidden-xs</code></td>
-<td><code>d-none d-sm-block</code></td>
-</tr>
-<tr>
-<td>只隐藏 sm</td>
-<td><code>hidden-sm</code></td>
-<td><code>d-block d-sm-none d-md-block</code></td>
-</tr>
-<tr>
-<td>只隐藏 md</td>
-<td><code>hidden-md</code></td>
-<td><code>d-block d-md-none d-lg-block</code></td>
-</tr>
-<tr>
-<td>只隐藏 lg</td>
-<td><code>hidden-lg</code></td>
-<td><code>d-block d-lg-none d-xl-block</code></td>
-</tr>
-<tr>
-<td>只隐藏 xl</td>
-<td><code>hidden-xl</code></td>
-<td><code>d-block d-xl-none</code></td>
-</tr>
-<tr>
-<td>只显示 xs</td>
-<td><code>visible-xs</code></td>
-<td><code>d-block d-sm-none</code></td>
-</tr>
-<tr>
-<td>只显示 sm</td>
-<td><code>visible-sm</code></td>
-<td><code>d-none d-sm-block d-md-none</code></td>
-</tr>
-<tr>
-<td>只显示 md</td>
-<td><code>visible-md</code></td>
-<td><code>d-none d-md-block d-lg-none</code></td>
-</tr>
-<tr>
-<td>只显示 lg</td>
-<td><code>visible-lg</code></td>
-<td><code>d-none d-lg-block d-xl-none</code></td>
-</tr>
-<tr>
-<td>只显示 xl</td>
-<td><code>visible-xl</code></td>
-<td><code>d-none d-xl-block</code></td>
-</tr>
-</tbody>
-</table>
-<p>col-sm-</p>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/upgrade-bootstrap4/" data-id="ck10e5it00007joq4hec7bngj" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CSS/">CSS</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-mongodb-bulk" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/mongodb-bulk/" class="article-date">
-  <time datetime="2018-09-01T13:52:22.000Z" itemprop="datePublished">2018-09-01</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/mongodb-bulk/">MongoDB 批量操作</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>批量写入的速度比 promise.all 单个写入速度快多了：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">use YOUR_DB</span><br><span class="line">var bulk = db.collection.initializeUnorderedBulkOp()</span><br><span class="line">bulk.find( &#123; _id : 1 &#125; ).upsert().update( &#123; $set: &#123; &quot;text&quot;: &quot;something else&quot; &#125; &#125; )</span><br><span class="line">bulk.find( &#123; _id : 4 &#125; ).upsert().update( &#123; $set: &#123; &quot;text&quot;: &quot;baz&quot; &#125; &#125; )</span><br><span class="line">bulk.find( &#123; _id : 99 &#125; ).upsert().update( &#123; $set: &#123; &quot;text&quot;: &quot;mrga&quot; &#125; &#125; )</span><br><span class="line">bulk.execute()</span><br></pre></td></tr></table></figure>
+        <div class="article-preview">
+            <p>一般情况下，容器中可以直接访问的宿主机暴露的端口，今天换了一台机器却发现 docker 容器不能访问宿主机了，经过查阅资料，最终找到了原因，涉及到一些基础概念，这里记录如下：</p>
+<h2 id="IP-网段"><a href="#IP-网段" class="headerlink" title="IP 网段"></a>IP 网段</h2><p>IP地址分为五类:</p>
 <ul>
-<li><strong>Orderred</strong>: 按照添加的顺序执行，如果发生错误将停止批处理，并返回错误。</li>
-<li><strong>UnOrderred</strong>: 并行执行，遇到错误不返回。</li>
+<li>A类保留给政府或大型企业</li>
+<li>B类分配给中等规模的公司</li>
+<li>C类分配给小公司或个人</li>
+<li>D类用于组播</li>
+<li>E类用于实验</li>
 </ul>
-
+<p>其中最常见的就是前三类A、B和C，当将 IP 地址写成二进制形式时，他们有如下特征：</p>
+<ol>
+<li><p>A 类地址</p>
+<ul>
+<li>第一位总是 0，如 <code>10.0.0.1==00001010-00000000-00000000-00000001</code></li>
+<li>范围：<code>1.0.0.0-127.255.255.255</code></li>
+<li>默认子网掩码为 <code>255.0.0.0</code></li>
+<li>最多可容纳 16777215 台计算机</li>
+</ul>
+</li>
+<li><p>B 类地址</p>
+<ul>
+<li>前两位总是 10，如 <code>172.16.0.1==10101100-00010000-00000000-00000001</code></li>
+<li>范围：<code>128.0.0.0-191.255.255.255</code></li>
+<li>默认子网掩码为 255.255.0.0</li>
+<li>最多可容纳 65535 台计算机</li>
+</ul>
+</li>
+<li><p>C 类地址</p>
+<ul>
+<li>前三位总是 110，如 <code>192.168.0.1==11000000-10101000-00000000-00000001</code></li>
+<li>范围：<code>192.0.0.0-223.255.255.255</code></li>
+<li>默认子网掩码是 <code>255.255.255.0</code></li>
+<li>最多可容纳 254 台计算机</li>
+</ul>
+</li>
+</ol>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/docker-ip-segment/#more">Read More</a>
+          </p>
+        
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/mongodb-bulk/" data-id="cjw53wyao000em5q4ybk7wpxl" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/docker-ip-segment/" data-id="ck1k3sok800084nq4iwmrcld1" class="article-share-link">Share</a>
      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MongoDB/">MongoDB</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/">Docker</a></li></ul>
 
     </footer>
   </div>
@@ -687,7 +732,7 @@
 
 
   <nav id="page-nav">
-    <a class="extend prev" rel="prev" href="/page/6/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/">8</a><a class="page-number" href="/page/9/">9</a><span class="space">&hellip;</span><a class="page-number" href="/page/58/">58</a><a class="extend next" rel="next" href="/page/8/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/6/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/">8</a><a class="page-number" href="/page/9/">9</a><span class="space">&hellip;</span><a class="page-number" href="/page/60/">60</a><a class="extend next" rel="next" href="/page/8/">Next &raquo;</a>
   </nav>
 </section>
 
@@ -702,7 +747,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dart/">Dart</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Elasticsearch/">Elasticsearch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dart/">Dart</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Elasticsearch/">Elasticsearch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Flutter/">Flutter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
     </div>
   </div>
 

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Angular 框架有自己的模块系统，叫做 NgModule，模块是独立的方便复用，也就是说完全可以把一个 Angular 模块抽离出来放到另外一个 Angular 项目中。每个 Angular 应用都至少有一个 NgModule 类，就像树一样，至少有一个根节点，由模块构成的 Angular 应用本身也是一种树状结构，叫做模块树（Module Tree），其中 AppModule 就是根模块，位">
+<meta name="keywords" content="Angular">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Angular中的模块">
+<meta property="og:url" content="https://zju.date/angular-module/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="Angular 框架有自己的模块系统，叫做 NgModule，模块是独立的方便复用，也就是说完全可以把一个 Angular 模块抽离出来放到另外一个 Angular 项目中。每个 Angular 应用都至少有一个 NgModule 类，就像树一样，至少有一个根节点，由模块构成的 Angular 应用本身也是一种树状结构，叫做模块树（Module Tree），其中 AppModule 就是根模块，位">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2020-01-18T04:37:01.677Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Angular中的模块">
+<meta name="twitter:description" content="Angular 框架有自己的模块系统，叫做 NgModule，模块是独立的方便复用，也就是说完全可以把一个 Angular 模块抽离出来放到另外一个 Angular 项目中。每个 Angular 应用都至少有一个 NgModule 类，就像树一样，至少有一个根节点，由模块构成的 Angular 应用本身也是一种树状结构，叫做模块树（Module Tree），其中 AppModule 就是根模块，位">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-angular-module" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/angular-module/" class="article-date">
+  <time datetime="2018-05-15T02:06:21.000Z" itemprop="datePublished">2018-05-15</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Angular中的模块
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Angular 框架有自己的模块系统，叫做 NgModule，模块是独立的方便复用，也就是说完全可以把一个 Angular 模块抽离出来放到另外一个 Angular 项目中。每个 Angular 应用都至少有一个 NgModule 类，就像树一样，至少有一个根节点，由模块构成的 Angular 应用本身也是一种树状结构，叫做模块树（Module Tree），其中 AppModule 就是根模块，位于 app.module.ts 文件中，引导这个根模块就可以启动整个 Angular 应用。</p>
+<h2 id="什么是-NgModule"><a href="#什么是-NgModule" class="headerlink" title="什么是 NgModule"></a>什么是 NgModule</h2><p>本质上来讲，NgModule 就是一个类，和组件Component和服务Service一样，更准确地说，NgModule 是一个带有 <code>@NgModule()</code> 装饰器的类。<code>@NgModule()</code> 装饰器是一个函数，它接受一个元数据对象，这个对象只有几个属性，例如基本的 app.module.ts 的结构如下：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; BrowserModule &#125; <span class="keyword">from</span> <span class="string">'@angular/platform-browser'</span></span><br><span class="line"><span class="keyword">import</span> &#123; NgModule &#125; <span class="keyword">from</span> <span class="string">'@angular/core'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> &#123; AppComponent &#125; <span class="keyword">from</span> <span class="string">'./app.component'</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@NgModule</span>(&#123;</span><br><span class="line">  declarations: [AppComponent], <span class="comment">// 模块内用到的组件、服务和管道等必须在此声明注册，否则Angular找不到</span></span><br><span class="line">  imports: [BrowserModule], <span class="comment">// 引入其他模块</span></span><br><span class="line">  providers: [], <span class="comment">// 应用层面的服务提供商</span></span><br><span class="line">  exports: [], <span class="comment">// 导出的组件、服务、管道等等</span></span><br><span class="line">  bootstrap: [AppComponent], <span class="comment">// 只在根模块中才会用到</span></span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> AppModule &#123;&#125;</span><br></pre></td></tr></table></figure>
+<p>可以通过下面的命令创建一个 NgModule</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ng generate module [name]</span><br></pre></td></tr></table></figure>
+<p>一个 Angular 项目中一般包含三大模块：核心模块（CoreModule）、特性模块（FeatureModule）和共享模块（SharedModule）。</p>
+<h2 id="核心模块（CoreModule）"><a href="#核心模块（CoreModule）" class="headerlink" title="核心模块（CoreModule）"></a>核心模块（CoreModule）</h2><p>CoreModule 用于存储每个应用程序上有且仅有一个的服务，例如用户认证等。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; NgModule, Optional, SkipSelf &#125; <span class="keyword">from</span> <span class="string">'@angular/core'</span></span><br><span class="line"><span class="keyword">import</span> &#123; HttpClientModule &#125; <span class="keyword">from</span> <span class="string">'@angular/common/http'</span></span><br><span class="line"><span class="comment">/* 定制的全局服务  */</span></span><br><span class="line"><span class="keyword">import</span> &#123; UserService &#125; <span class="keyword">from</span> <span class="string">'./user/user.service'</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@NgModule</span>(&#123;</span><br><span class="line">  imports: [</span><br><span class="line">    HttpClientModule</span><br><span class="line">  ],</span><br><span class="line">  providers: [</span><br><span class="line">    UserService</span><br><span class="line">  ]</span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> CoreModule &#123;</span><br><span class="line">  <span class="comment">/* 确保CoreModule只能在AppModule导入 */</span></span><br><span class="line">  constructor (@Optional() @SkipSelf() parentModule: CoreModule) &#123;</span><br><span class="line">    <span class="keyword">if</span> (parentModule) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">'CoreModule is already loaded. Import only in AppModule'</span>);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>CoreModule 应包含单例的 service、单例的 components 和 AppModule 中用到的第三方模块，例如 BrowserAnimationsModule。</p>
+<a id="more"></a>
+<h2 id="特性模块（FeatureModule）"><a href="#特性模块（FeatureModule）" class="headerlink" title="特性模块（FeatureModule）"></a>特性模块（FeatureModule）</h2><p>FeatureModule 是带 <code>@NgModule</code> 装饰器及其元数据的类，其元数据和跟模块的元数据属性相同，且共享相同的执行环境。应用程序应该为每个独立功能创建多个特性模块，只从 CoreModule 导入服务。如果特性模块 A 需要从特性模块 B 导入服务，可考虑将该服务移到 CoreModule。<strong>Angular 通过引导根模块来启动应用，通过导入特性模块来扩展应用</strong>，特性模块可以对其它模块暴露或隐藏自己的实现。</p>
+<h2 id="共享模块（SharedModule）"><a href="#共享模块（SharedModule）" class="headerlink" title="共享模块（SharedModule）"></a>共享模块（SharedModule）</h2><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* Angular核心模块 */</span></span><br><span class="line"><span class="keyword">import</span> &#123; NgModule &#125; <span class="keyword">from</span> <span class="string">'@angular/core'</span></span><br><span class="line"><span class="keyword">import</span> &#123; CommonModule &#125; <span class="keyword">from</span> <span class="string">'@angular/common'</span></span><br><span class="line"><span class="keyword">import</span> &#123; FormsModule  &#125; <span class="keyword">from</span> <span class="string">'@angular/forms'</span></span><br><span class="line"><span class="comment">/* 第三方组件 */</span></span><br><span class="line"><span class="keyword">import</span> &#123; MdButtonModule &#125; <span class="keyword">from</span> <span class="string">'@angular/material'</span></span><br><span class="line"><span class="comment">/* 自定义组件 */</span></span><br><span class="line"><span class="keyword">import</span> &#123; CustomComponent &#125; <span class="keyword">from</span> <span class="string">'./custom.component'</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@NgModule</span>(&#123;</span><br><span class="line">  imports: [</span><br><span class="line">    CommonModule,</span><br><span class="line">    FormsModule,</span><br><span class="line">    MdButtonModule,</span><br><span class="line">  ],</span><br><span class="line">  declarations: [</span><br><span class="line">    CustomComponent</span><br><span class="line">  ],</span><br><span class="line">  exports: [</span><br><span class="line">    CommonModule,</span><br><span class="line">    FormsModule,</span><br><span class="line">    MdButtonModule,</span><br><span class="line">    CustomComponent</span><br><span class="line">  ]</span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> SharedModule &#123; &#125;</span><br></pre></td></tr></table></figure>
+<p>SharedModule 应包含公用的 components/pipes/directives 和公用的第三方模块例如 CommonModule 等。不需要在 AppModule 或 CoreModule 中引入 SharedModule。</p>
+<h3 id="CoreModulen-和-SharedModule-区别"><a href="#CoreModulen-和-SharedModule-区别" class="headerlink" title="CoreModulen 和 SharedModule 区别"></a>CoreModulen 和 SharedModule 区别</h3><table>
+<thead>
+<tr>
+<th>Module属性</th>
+<th>CoreModule</th>
+<th>SharedModule</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>imports</td>
+<td>必须</td>
+<td>必须</td>
+</tr>
+<tr>
+<td>providers</td>
+<td>必须</td>
+<td>禁止</td>
+</tr>
+<tr>
+<td>declarations</td>
+<td>禁止</td>
+<td>必须</td>
+</tr>
+<tr>
+<td>exports</td>
+<td>禁止</td>
+<td>必须</td>
+</tr>
+</tbody>
+</table>
+<p>总结：CoreModule 只有导入没有导出，SharedModule有导入导出，但没有服务依赖注入管理，这个需要在 CoreModule 里面操作。</p>
+<p>运行命令 <code>ng generate module core</code> 生成核心模块。然后在 <code>core</code> 文件夹创建 <code>index.ts</code> 文件，再重新导出 <code>CoreModule</code>。我们将重新导出额外的公共服务，这些服务在整个开发过程中都可以使用。</p>
+<p>完成后，我们可以对shared module(共享模块)执行同样的操作。</p>
+<h3 id="Angular-是如何确保单例的？"><a href="#Angular-是如何确保单例的？" class="headerlink" title="Angular 是如何确保单例的？"></a>Angular 是如何确保单例的？</h3><ol>
+<li>在应用的根组件声明服务</li>
+<li>把服务包含在 AppModule 或某个只会被 AppModule 导入的模块</li>
+</ol>
+<p>从 Angular6 开始，首选方式是在该服务的 @Injectable 装饰器上把 providedIn 设置为 root。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/angular-module/" data-id="ck8zn3js80001vtq44ayqzy46" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Angular/">Angular</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/js-module/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          JS 模块化
+        
+      </div>
+    </a>
+  
+  
+    <a href="/es-prepare/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">简化ES命令行查询</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dart/">Dart</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Elasticsearch/">Elasticsearch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Flutter/">Flutter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

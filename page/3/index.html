@@ -54,10 +54,10 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-angular-video-autoPlay" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-react-auth" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/angular-video-autoPlay/" class="article-date">
-  <time datetime="2019-01-08T02:41:47.000Z" itemprop="datePublished">2019-01-08</time>
+    <a href="/react-auth/" class="article-date">
+  <time datetime="2019-04-22T05:30:07.000Z" itemprop="datePublished">2019-04-22</time>
 </a>
     
   </div>
@@ -68,7 +68,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/angular-video-autoPlay/">Angular 中 video 自动静音播放</a>
+      <a class="article-title" href="/react-auth/">react登录认证</a>
     </h1>
   
 
@@ -80,320 +80,18 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <p>在页面里面加了一个 video，想让这个视频在页面加载之后自动播放，用下面的写法：</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"> <span class="tag">&lt;<span class="name">video</span></span></span><br><span class="line"><span class="tag">        <span class="attr">id</span>=<span class="string">"officeVideo"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">preload</span>=<span class="string">"metadata"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">poster</span>=<span class="string">"assets/media/office.jpg"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">playsinline</span></span></span><br><span class="line"><span class="tag">        <span class="attr">autoplay</span></span></span><br><span class="line"><span class="tag">        <span class="attr">muted</span></span></span><br><span class="line"><span class="tag">        <span class="attr">loop</span></span></span><br><span class="line"><span class="tag">      &gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">source</span> <span class="attr">src</span>=<span class="string">"assets/media/office.mp4"</span> <span class="attr">type</span>=<span class="string">"video/mp4"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">video</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>但是在谷歌浏览器下测试，发现第一次可以自动播放，再刷新就暂停了，很奇怪，网上找了一些<a href="https://stackoverflow.com/questions/17994666/video-auto-play-is-not-working-in-safari-and-chrome-desktop-browser" target="_blank" rel="noopener">解决方案</a>开始尝试，例如下面的代码用 jQuery 找到这个 video 元素，手动调用 play 函数：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> el = $(<span class="string">'#officeVideo'</span>)</span><br><span class="line"><span class="keyword">const</span> video = el.get(<span class="number">0</span>)</span><br><span class="line">video.play()</span><br></pre></td></tr></table></figure>
+            <p>用 react 框架做项目时，如何实现登录认证呢？即登录成功加载当前页，否则跳转至登录页。可以写一个高阶函数来实现这个目的：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> React, &#123; Component &#125; <span class="keyword">from</span> <span class="string">'react'</span></span><br><span class="line"><span class="keyword">import</span> &#123; connect &#125; <span class="keyword">from</span> <span class="string">'react-redux'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="function"><span class="keyword">function</span>(<span class="params">ComposedComponent</span>) </span>&#123;</span><br><span class="line">  <span class="class"><span class="keyword">class</span> <span class="title">Auth</span> <span class="keyword">extends</span> <span class="title">Component</span> </span>&#123;</span><br><span class="line">    componentWillMount() &#123;</span><br><span class="line">      <span class="keyword">if</span> (!<span class="keyword">this</span>.props.auth.authorized) &#123;</span><br><span class="line">        <span class="keyword">this</span>.props.history.push(<span class="string">'/login'</span>)</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    componentWillUpdate(nextProps) &#123;</span><br><span class="line">      <span class="keyword">if</span> (!nextProps.auth.authorized) &#123;</span><br><span class="line">        <span class="keyword">this</span>.props.history.push(<span class="string">'/login'</span>)</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    render() &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">ComposedComponent</span> &#123;<span class="attr">...this.props</span>&#125; /&gt;</span></span></span><br><span class="line"><span class="xml">    &#125;</span></span><br><span class="line"><span class="xml">  &#125;</span></span><br><span class="line"><span class="xml"></span></span><br><span class="line"><span class="xml">  const mapStateToProps = state =&gt; (&#123;</span></span><br><span class="line"><span class="xml">    auth: state.auth</span></span><br><span class="line"><span class="xml">  &#125;)</span></span><br><span class="line"><span class="xml"></span></span><br><span class="line"><span class="xml">  return connect(mapStateToProps)(Auth)</span></span><br><span class="line"><span class="xml">&#125;</span></span><br></pre></td></tr></table></figure>
         </div>
         
           <p class="article-more-link">
-            <a href="/angular-video-autoPlay/#more">Read More</a>
+            <a href="/react-auth/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/angular-video-autoPlay/" data-id="cjssqvcrr000j8uq4t5xr2exx" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Angular/">Angular</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-mongodb-query-empty" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/mongodb-query-empty/" class="article-date">
-  <time datetime="2019-01-07T06:08:51.000Z" itemprop="datePublished">2019-01-07</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/mongodb-query-empty/">MongoDB查询空值</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>JavaScript 中有 undefined 和 null 两种表示空的类型，在用 MongoDB 查询的时候，也会遇到这种情况，例如插入下面的文档：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">db.getCollection(<span class="string">'products'</span>).insertMany([</span><br><span class="line">   &#123; <span class="attr">name</span>: <span class="string">"巧克力"</span>, <span class="attr">department</span>: <span class="literal">null</span> &#125;,</span><br><span class="line">   &#123; <span class="attr">name</span>: <span class="string">"牛奶"</span> &#125;,</span><br><span class="line">   &#123; <span class="attr">name</span>: <span class="string">"蛋糕"</span>, <span class="attr">department</span>: <span class="string">"糕点类"</span> &#125;</span><br><span class="line">])</span><br></pre></td></tr></table></figure>
-<p>如果用 <code>$exists</code> 操作符查询 department 不存在的商品：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">db.getCollection(<span class="string">'products'</span>).find(&#123;<span class="attr">department</span>:&#123;<span class="attr">$exists</span>: <span class="literal">false</span>&#125;&#125;)</span><br></pre></td></tr></table></figure>
-<p>我们发现就只会得到牛奶：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="string">"name"</span> : <span class="string">"牛奶"</span></span><br><span class="line">    &#125;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/mongodb-query-empty/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/mongodb-query-empty/" data-id="ck10e5isk0000joq42p6uhj4n" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MongoDB/">MongoDB</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-syslog-notes" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/syslog-notes/" class="article-date">
-  <time datetime="2018-12-29T08:47:23.000Z" itemprop="datePublished">2018-12-29</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/syslog-notes/">syslog 学习笔记</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>syslog 服务器可以用作日志监控中心，这样更容易地查看和获取重要的日志消息。rsyslog 是 syslog 的守护进程，预装在了大多数的Linux发行版中，扮演了两种角色：</p>
-<ol>
-<li>作为服务器收集来自其他设施的日志信息；</li>
-<li>作为客户端将其内部的日志信息传输到远程的 syslog 服务器。</li>
-</ol>
-<p>相关文件的位置如下：</p>
-<ul>
-<li>执行文件： <code>/sbin/rsyslogd</code></li>
-<li>主配置文件: <code>/etc/rsyslog.conf</code></li>
-<li>自定义配置文件: <code>/etc/rsyslog.d/*.conf</code></li>
-</ul>
-<p>通过下面的命令可查看状态和重启服务：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">service rsyslog status <span class="comment"># 查看状态</span></span><br><span class="line">/etc/init.d/rsyslog restart <span class="comment"># 重启服务</span></span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/syslog-notes/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/syslog-notes/" data-id="cjssqvcva00468uq4twhk137m" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-logspout-notes" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/logspout-notes/" class="article-date">
-  <time datetime="2018-12-29T08:37:47.000Z" itemprop="datePublished">2018-12-29</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/logspout-notes/">logspout 集中查看日志</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>logspout 可以把某宿主机上所有 docker 容器的日志集中到一起，方便用户查看，本身也可以用 docker 安装：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">docker run -d --name=<span class="string">"logspout"</span> \</span><br><span class="line">	--volume=/var/run/docker.sock:/var/run/docker.sock \</span><br><span class="line">	--publish=127.0.0.1:8000:80 \</span><br><span class="line">	gliderlabs/logspout</span><br></pre></td></tr></table></figure>
-<p>这样就可以在命令行查看日志了：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看所有日志</span></span><br><span class="line">curl http://127.0.0.1:8000/logs</span><br><span class="line"><span class="comment"># 查看名以 api 开头的容器的日志</span></span><br><span class="line">curl http://127.0.0.1:8000/logs/name:api*</span><br><span class="line"><span class="comment"># 指定返回 json 格式</span></span><br><span class="line">curl http://127.0.0.1:8000/logs/name:api*  -H <span class="string">'Accept: application/json'</span></span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/logspout-notes/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/logspout-notes/" data-id="cjssqvcu5002t8uq46bg7vm46" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-goaccess-notes" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/goaccess-notes/" class="article-date">
-  <time datetime="2018-12-24T01:22:28.000Z" itemprop="datePublished">2018-12-24</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/goaccess-notes/">使用goaccess分析Nginx日志</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>首先安装 goaccess：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">brew install goaccess <span class="comment"># Mac</span></span><br><span class="line">yum -y install goaccess <span class="comment"># centos</span></span><br></pre></td></tr></table></figure>
-<p>安装完成之后，就可以用 goaccess 为 Nginx 的日志生成 html 版本的报告了，首先我们要获取 Nginx 日志，正好有一个正在运行的 Nginx:alpine 容器，进去看一下：</p>
-<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ cat /etc/nginx/nginx.conf</span><br><span class="line"><span class="attribute">error_log</span>  /var/log/nginx/error.log <span class="literal">warn</span>;</span><br><span class="line"></span><br><span class="line"><span class="section">http</span> &#123;</span><br><span class="line">    <span class="attribute">access_log</span> /var/log/nginx/access.log main;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>发现默认情况下被存储在 <code>/var/log/nginx</code> 目录下：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ ls -l /var/<span class="built_in">log</span>/nginx/</span><br><span class="line">total 0</span><br><span class="line">lrwxrwxrwx    1 root     root     access.log -&gt; /dev/stdout</span><br><span class="line">lrwxrwxrwx    1 root     root     error.log -&gt; /dev/stderr</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/goaccess-notes/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/goaccess-notes/" data-id="cjxai2niz000ajkq4kqafmmbk" class="article-share-link">Share</a>
-     
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-gradlew-notes" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/gradlew-notes/" class="article-date">
-  <time datetime="2018-12-18T02:33:30.000Z" itemprop="datePublished">2018-12-18</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/gradlew-notes/">gradlew常用命令</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>查看版本号：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gradlew -v</span><br></pre></td></tr></table></figure>
-<p>清除工程目录下的build文件夹：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gradlew clean</span><br></pre></td></tr></table></figure>
-<p>编译打包：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">gradlew build <span class="comment"># 把debug、release环境的包都打出来</span></span><br><span class="line">gradlew assembleDebug <span class="comment"># 编译并打Debug包</span></span><br><span class="line">gradlew assembleRelease <span class="comment"># 编译并打Release的包</span></span><br><span class="line">gradlew assembleFlavorRelease <span class="comment"># 编译并打指定渠道包</span></span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/gradlew-notes/" data-id="ck8kdhqnh0009d6q48w8tj7mx" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/">Android</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-moment-valid-warning" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/moment-valid-warning/" class="article-date">
-  <time datetime="2018-11-13T01:21:21.000Z" itemprop="datePublished">2018-11-13</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/moment-valid-warning/">去掉moment.isValid的提示</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>moment 判断 isValid 时有恼人的 warning，可以通过下面使用 <code>moment(String, String)</code> 的方式去掉：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> invalid = <span class="string">'2017-03-18 23;00;00'</span>;</span><br><span class="line"><span class="keyword">if</span> (moment(invalid, moment.ISO_8601).isValid()) &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'valid date'</span>);</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'invalid date'</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>其中 moment.ISO_8601 是默认参数。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/moment-valid-warning/" data-id="ck1k3sokr000e4nq4vkizy36m" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/react-auth/" data-id="cjw53wyav000lm5q40f7p14on" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
@@ -404,10 +102,10 @@
 
 
   
-    <article id="post-logstash-json-nested" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-adb-notes" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/logstash-json-nested/" class="article-date">
-  <time datetime="2018-11-09T07:54:23.000Z" itemprop="datePublished">2018-11-09</time>
+    <a href="/adb-notes/" class="article-date">
+  <time datetime="2019-04-10T03:44:45.000Z" itemprop="datePublished">2019-04-10</time>
 </a>
     
   </div>
@@ -418,7 +116,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/logstash-json-nested/">logstash 嵌套 json</a>
+      <a class="article-title" href="/adb-notes/">adb学习笔记</a>
     </h1>
   
 
@@ -430,24 +128,28 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <p>使用 json 插件，数据输入：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="string">"name"</span>:<span class="string">"bob"</span>,<span class="string">"last"</span>:<span class="string">"builder"</span>, <span class="string">"atts"</span>:<span class="string">"&#123;\"a\":111, \"b\":222&#125;"</span>&#125;</span><br></pre></td></tr></table></figure>
-<p>希望得到：</p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"name"</span>: <span class="string">"bob"</span>,</span><br><span class="line">  <span class="attr">"last"</span>: <span class="string">"builder"</span>,</span><br><span class="line">  <span class="attr">"atts"</span>: &#123;</span><br><span class="line">    <span class="attr">"a"</span>: <span class="number">111</span>,</span><br><span class="line">    <span class="attr">"b"</span>: <span class="number">222</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>但实际得到：</p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"name"</span>: <span class="string">"bob"</span>,</span><br><span class="line">  <span class="attr">"last"</span>: <span class="string">"builder"</span>,</span><br><span class="line">  <span class="attr">"atts"</span>: <span class="string">"&#123;\"a\": 111,\"b\": 222&#125;"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+            <p>adb 相关命令可以方便我们在电脑上安装和调试apk，在此学习和记录如下：</p>
+<p>查看所有设备：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">adb devices</span><br></pre></td></tr></table></figure>
+<p>安装apk到设备：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">adb install xxx.apk</span><br><span class="line">adb -s emulator-5555 install xxx.apk <span class="comment"># 指定序列号安装</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>如果有多个可用设备，但只有一个是模拟器，可以使用 <code>-e</code> 选项将命令发送至该模拟器。<br>如果有多个设备，但只连接了一个硬件设备，可以使用 <code>-d</code> 选项将命令发送至该硬件设备。</p>
+</blockquote>
+<p>进入到 shell：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">adb -s emulator-5554 shell</span><br><span class="line">run-as app.package.name <span class="comment"># 例如 com.example.demo</span></span><br></pre></td></tr></table></figure>
         </div>
         
           <p class="article-more-link">
-            <a href="/logstash-json-nested/#more">Read More</a>
+            <a href="/adb-notes/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/logstash-json-nested/" data-id="cjssqvcu0002n8uq48egrerqu" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/adb-notes/" data-id="ck8kdhqkz0001d6q4ce0eztsu" class="article-share-link">Share</a>
      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ELK/">ELK</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/">Android</a></li></ul>
 
     </footer>
   </div>
@@ -456,38 +158,10 @@
 
 
   
-    <article id="post-Untitled 47" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-package-json-resolutions" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/Untitled 47/" class="article-date">
-  <time datetime="2018-11-07T00:51:13.680Z" itemprop="datePublished">2018-11-07</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/Untitled 47/" data-id="cjw77iixg0000qlq4kh1nv679" class="article-share-link">Share</a>
-     
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-redux-form" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/redux-form/" class="article-date">
-  <time datetime="2018-10-31T01:37:12.000Z" itemprop="datePublished">2018-10-31</time>
+    <a href="/package-json-resolutions/" class="article-date">
+  <time datetime="2019-04-04T15:04:37.000Z" itemprop="datePublished">2019-04-04</time>
 </a>
     
   </div>
@@ -498,7 +172,55 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/redux-form/">redux-form学习笔记</a>
+      <a class="article-title" href="/package-json-resolutions/">package.json中的resolution</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>开发过程中经常会遇到下面两个场景：</p>
+<ol>
+<li>项目依赖一个不常更新的包，但这个包又依赖另一个包，而这个包由于各种原因需要立即升级，例如紧急安全更新等。</li>
+<li>项目的直接依赖定义了过于宽泛的子依赖版本范围，恰巧这其中的某个版本有问题，需要把子依赖限制在某些正常工作的版本范围里。</li>
+</ol>
+<p>这个时候就很头疼，因为项目 package.json 不能指定依赖的依赖的版本，它是在依赖的 package.json 中指定的，要么坐等作者升级，要么手动编辑 package-lock.json。如果用 yarn 作为包管理工具的话，就好办了，只需要在 package.json 文件里添加 resolutions 字段，就能覆盖版本定义，例如：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"name"</span>: <span class="string">"project"</span>,</span><br><span class="line">  <span class="attr">"version"</span>: <span class="string">"1.0.0"</span>,</span><br><span class="line">  <span class="attr">"dependencies"</span>: &#123;</span><br><span class="line">    <span class="attr">"left-pad"</span>: <span class="string">"1.0.0"</span>,</span><br><span class="line">    <span class="attr">"c"</span>: <span class="string">"file:../c-1"</span>,</span><br><span class="line">    <span class="attr">"d2"</span>: <span class="string">"file:../d2-1"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">"resolutions"</span>: &#123;</span><br><span class="line">    <span class="attr">"d2/left-pad"</span>: <span class="string">"1.1.1"</span>,</span><br><span class="line">    <span class="attr">"c/**/left-pad"</span>: <span class="string">"1.1.2"</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>意思是说可以直接指定依赖 d2 所依赖的 left-pad 版本为 1.1.1。可惜 npm 官方并不支持这个参数，不过 github 上有一个<a href="https://github.com/rogeriochaves/npm-force-resolutions" target="_blank" rel="noopener">第三方库</a>支持了这个功能。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/package-json-resolutions/" data-id="ck10e5isr0001joq49lmbtfph" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-docker-letsencrypt" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/docker-letsencrypt/" class="article-date">
+  <time datetime="2019-04-04T08:47:23.000Z" itemprop="datePublished">2019-04-04</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/docker-letsencrypt/">用docker申请letsencrypt通配符证书</a>
     </h1>
   
 
@@ -510,19 +232,298 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <p>首先要根据 formReducer 绑定到项目的 store 里面：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; createStore, combineReducers &#125; <span class="keyword">from</span> <span class="string">'redux'</span></span><br><span class="line"><span class="keyword">import</span> &#123; reducer <span class="keyword">as</span> formReducer &#125; <span class="keyword">from</span> <span class="string">'redux-form'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> rootReducer = combineReducers(&#123;</span><br><span class="line">  ..., <span class="comment">// 其他的 reducer</span></span><br><span class="line">  form: formReducer <span class="comment">// 必须把 formReducer对应到 form 键</span></span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> store = createStore(rootReducer)</span><br></pre></td></tr></table></figure>
-<p>然后在组件中引用 redux-form 相关组件：</p>
+            <p>用 docker 申请 letsencrypt 证书的好处就是不需要在宿主机上安装依赖，只要用下面的命令即可：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">docker run -it --rm \</span><br><span class="line">--name certbot \</span><br><span class="line">-v /mnt/letsencrypt:/etc/letsencrypt \</span><br><span class="line">-v /mnt/bak/letsencrypt:/var/lib/letsencrypt \</span><br><span class="line">certbot/certbot \</span><br><span class="line">certonly --manual --agree-tos --server https://acme-v02.api.letsencrypt.org/directory --preferred-challenges dns -d *.YOUR-DOMAIN.com -d YOUR-DOMAIN.com</span><br></pre></td></tr></table></figure>
+<p>具体的命令释义如下：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">-v /mnt/letsencrypt:/etc/letsencrypt -v /mnt/bak/letsencrypt:/var/lib/letsencrypt <span class="comment"># 挂载目录，certbot申请到的或备份的证书会放在这两个目录</span></span><br><span class="line">--manual <span class="comment"># 交互模式</span></span><br><span class="line">--agree-tos <span class="comment"># 同意服务协议</span></span><br><span class="line">--server https://acme-v02.api.letsencrypt.org/directory <span class="comment"># 指定使用acmev2协议的服务器，因为通配符证书的申请需要这个协议</span></span><br><span class="line">–preferred-challenges dns <span class="comment"># 使用dns检验来证明你拥有这个域名</span></span><br><span class="line">-d *.YOUR-DOMAIN.com -d YOUR-DOMAIN.com <span class="comment"># 指定了需要申请证书的通配符域名，根域名要额外再写一次</span></span><br></pre></td></tr></table></figure>
         </div>
         
           <p class="article-more-link">
-            <a href="/redux-form/#more">Read More</a>
+            <a href="/docker-letsencrypt/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/redux-form/" data-id="cjw53wyaz000qm5q4fthpk6nh" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/docker-letsencrypt/" data-id="cjvrpwbjq0001ofq4ofq91f4a" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-thermal-printer" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/thermal-printer/" class="article-date">
+  <time datetime="2019-03-30T10:37:23.000Z" itemprop="datePublished">2019-03-30</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/thermal-printer/">热敏打印机原理及其驱动相关知识</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>【说明】本文内容均来自网络，用于学习热敏打印机相关知识。</p>
+<p>热敏打印机的工作原理是打印头上安装有半导体加热元件，打印头加热并接触热敏打印纸后就可以打印出需要的图案。</p>
+<p>热敏打印机化学反应是在高温下进行的，当温度低于60℃时，纸需要经过相当长，甚至长达几年的时间才能变成深色；而当温度为200℃时，这种反映会在几微秒内完成。</p>
+<p>打印机安装驱动的原因就是打印机厂商千差万别，不同的打印机往往都有各自的驱动，很难实现万能驱动。但是，在 POS 打印机行业却有一条捷径，就是现在市面上的 POS 打印机基本上都支持爱普生指令，也就是说，只要将程序和打印机联通，直接向端口里面写爱普生指令就可以控制打印机，打印机接受到爱普生指令以后，自行进行解析，然后打印出相应的内容。</p>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/thermal-printer/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/thermal-printer/" data-id="cjw53wybi000ym5q47mi8gwx9" class="article-share-link">Share</a>
+     
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-cannot-recover-key" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/cannot-recover-key/" class="article-date">
+  <time datetime="2019-03-27T11:56:28.000Z" itemprop="datePublished">2019-03-27</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/cannot-recover-key/">cannot recover key</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Android studio 运行项目报错 can not recover key，找了半天发现 keystore 和 key password 必须保持一致才行。可以找到刚才生成的 jks 文件，然后用下面两条命令把密码改成一致：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">keytool -storepasswd -new [新的 keystore 密码] -keystore [jks文件路径]</span><br><span class="line">keytool -keypasswd -<span class="built_in">alias</span> [新别名] -new [新密码] -keystore [jks文件路径]</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/cannot-recover-key/" data-id="ck1k3sok600064nq4temxet2s" class="article-share-link">Share</a>
+     
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-axios-https-certificate-expired" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/axios-https-certificate-expired/" class="article-date">
+  <time datetime="2019-01-25T01:32:07.000Z" itemprop="datePublished">2019-01-25</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/axios-https-certificate-expired/">axios忽略https证书错误</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>使用 axios 请求 https 网站的数据时，如果证书已过期，会报错：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Error: certificate has expired</span><br></pre></td></tr></table></figure>
+<p>可以使用下面的方法忽略证书错误：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">process.env.NODE_TLS_REJECT_UNAUTHORIZED = <span class="string">'0'</span> <span class="comment">// 不拒绝过期的和无效的证书</span></span><br><span class="line"><span class="keyword">const</span> agent = <span class="keyword">new</span> https.Agent(&#123;  </span><br><span class="line">  rejectUnauthorized: <span class="literal">false</span></span><br><span class="line">&#125;)</span><br><span class="line">axios.get(<span class="string">'https://something.com/foo'</span>, &#123; <span class="attr">httpsAgent</span>: agent &#125;)</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/axios-https-certificate-expired/" data-id="cjssqvcrw000n8uq4tqf16pmq" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-jenkins-notes" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/jenkins-notes/" class="article-date">
+  <time datetime="2019-01-24T10:01:01.000Z" itemprop="datePublished">2019-01-24</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/jenkins-notes/">jenkins 学习笔记</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>这里采用 docker 容器来安装和部署 jenkins，首先下载官方镜像：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker pull jenkins/jenkins:lts</span><br></pre></td></tr></table></figure>
+<p>然后启动：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 临时运行</span></span><br><span class="line">docker run -p 8080:8080 -p 50000:50000 jenkins/jenkins:lts</span><br><span class="line"></span><br><span class="line"><span class="comment"># 长期维护</span></span><br><span class="line">docker volume create jenkins-data <span class="comment"># 创建数据卷</span></span><br><span class="line">docker run -d -p 8080:8080 -p 50000:50000 \</span><br><span class="line">-v jenkins-data:/var/jenkins_home \</span><br><span class="line">--name jenkins \</span><br><span class="line">jenkins/jenkins:lts</span><br></pre></td></tr></table></figure>
+<p>然后命令行会随机生成管理员密码，先记下来，如果忘了，也可以用下面的命令查看：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat /var/jenkins_home/secrets/initialAdminPassword</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/jenkins-notes/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/jenkins-notes/" data-id="cjssqvcts002b8uq4u3dz7sc2" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-yarn-node-incompatible" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/yarn-node-incompatible/" class="article-date">
+  <time datetime="2019-01-24T03:15:01.000Z" itemprop="datePublished">2019-01-24</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/yarn-node-incompatible/">yarn 安装时出现 node incompatible</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>今天用 yarn 安装依赖失败，报下面的错：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">The engine <span class="string">"node"</span> is incompatible with this module. Expected version <span class="string">"&gt;=4 &lt;=9"</span>. Got <span class="string">"10.14.2"</span></span><br></pre></td></tr></table></figure>
+<p>网上很多人说用 <code>yarn --ignore-engines</code> 可以解决这个问题，然而这样做是有风险的。这个问题产生的原因是依赖包 upath 导致的，它在 package.json 里面限制 node engine 只能是 4~9 版本的，只要把 upath 给升级就行了，解决方法如下：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">rm -rf node_modules/</span><br><span class="line">rm yarn.lock</span><br><span class="line">yarn install</span><br></pre></td></tr></table></figure>
+<p>这样就会更新 upath 到最新版本。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/yarn-node-incompatible/" data-id="cjssqvcvr004r8uq4zr6fwcxg" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-centos-install-mozjpeg" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/centos-install-mozjpeg/" class="article-date">
+  <time datetime="2019-01-23T01:43:07.000Z" itemprop="datePublished">2019-01-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/centos-install-mozjpeg/">centos 安装 mozjpeg</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>首先安装 nasm 环境：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum -y install build-essential nasm libtool</span><br></pre></td></tr></table></figure>
+<p>然后下载源码编译：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">wget https://github.com/mozilla/mozjpeg/archive/v3.3.1.zip</span><br><span class="line">unzip v3.3.1.zip</span><br><span class="line"><span class="built_in">cd</span> mozjpeg-3.3.1</span><br><span class="line">autoreconf -fiv</span><br><span class="line">./configure</span><br><span class="line">make</span><br><span class="line">make install</span><br></pre></td></tr></table></figure>
+<p>安装后的可执行文件所在的目录是 <code>/opt/mozjpeg/bin</code>：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@VM_156_24_centos mozjpeg-3.3.1]<span class="comment"># ls -hl /opt/mozjpeg/bin</span></span><br><span class="line">总用量 268K</span><br><span class="line">-rwxr-xr-x 1 root root 56K 1月  23 10:04 cjpeg</span><br><span class="line">-rwxr-xr-x 1 root root 45K 1月  23 10:04 djpeg</span><br><span class="line">-rwxr-xr-x 1 root root 53K 1月  23 10:04 jpegtran</span><br><span class="line">-rwxr-xr-x 1 root root 14K 1月  23 10:04 rdjpgcom</span><br><span class="line">-rwxr-xr-x 1 root root 63K 1月  23 10:04 tjbench</span><br><span class="line">-rwxr-xr-x 1 root root 14K 1月  23 10:04 wrjpgcom</span><br></pre></td></tr></table></figure>
+<p>将 <code>a.jpg</code> 按照 80% 的压缩率保存到 <code>a1.jpg</code>：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/opt/mozjpeg/bin/cjpeg -quality 80 a.jpg &gt; a1.jpg</span><br></pre></td></tr></table></figure>
+<p>cjpeg 默认的压缩率是 75%，<code>-quality</code> 参数可以自定义压缩率。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/centos-install-mozjpeg/" data-id="cjssqvcry000p8uq4gxyybwh9" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
@@ -536,7 +537,7 @@
 
 
   <nav id="page-nav">
-    <a class="extend prev" rel="prev" href="/page/2/">&laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/58/">58</a><a class="extend next" rel="next" href="/page/4/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/2/">&laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/60/">60</a><a class="extend next" rel="next" href="/page/4/">Next &raquo;</a>
   </nav>
 </section>
 
@@ -551,7 +552,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dart/">Dart</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Elasticsearch/">Elasticsearch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dart/">Dart</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Elasticsearch/">Elasticsearch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Flutter/">Flutter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
     </div>
   </div>
 

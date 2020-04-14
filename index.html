@@ -54,10 +54,10 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-webpack-external" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-slow-tencent-ssh" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/webpack-external/" class="article-date">
-  <time datetime="2019-08-27T09:05:09.000Z" itemprop="datePublished">2019-08-27</time>
+    <a href="/slow-tencent-ssh/" class="article-date">
+  <time datetime="2020-03-15T22:49:50.000Z" itemprop="datePublished">2020-03-16</time>
 </a>
     
   </div>
@@ -68,7 +68,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/webpack-external/">webpack中的external参数</a>
+      <a class="article-title" href="/slow-tencent-ssh/">腾讯云ssh登录超慢</a>
     </h1>
   
 
@@ -79,29 +79,15 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <div class="article-preview">
-            <p>今天用 electron 集成 sqlite3 和 knex 的时候报错了：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Module not found: Error: Cannot resolve module &apos;sqlite3&apos; in xxx/node_modules/knex/lib/dialects/sqlite3</span><br></pre></td></tr></table></figure>
-<p>在官方<a href="https://github.com/tgriesser/knex/issues/1128" target="_blank" rel="noopener">issue</a> 中找到了解决方案：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">externals: &#123;</span><br><span class="line">  knex: <span class="string">'commonjs knex'</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>于是顺便学习一下 webpack externals 参数的含义：</p>
-<blockquote>
-<p>external 配置选项提供了「不从 bundle 中引用依赖」或者说叫做「从输出的 bundle 中排除依赖」的方法。防止将某些 import 包打包到 bundle 中，而是在运行时(runtime)再去从外部获取这些扩展包(external package)。</p>
-</blockquote>
-<p>也就是说可以让打包后的 bundle 依赖于那些存在于用户环境(consumer environment)中的依赖。举个最基本的例子：</p>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/webpack-external/#more">Read More</a>
-          </p>
-        
+        <p>腾讯云 ssh 登录超级缓慢，等了10几秒之后才登陆成功，然后提示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">There were 58431 failed login attempts since the last successful login.</span><br></pre></td></tr></table></figure>
+<p>而阿里云都是秒登，心想腾讯云真垃圾。后来网上查了一下说，上面统计的是上次成功登录之后有多少次失败登录的尝试，统计数据来源于文件 <code>/var/log/btmp</code>，我的这个文件有 5G，于是就把它给删了，登陆瞬间变快，秒登。</p>
+
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/webpack-external/" data-id="ck10e5it10009joq4i4gfkjng" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/slow-tencent-ssh/" data-id="ck8zn3jv9000gvtq4nt9nyoms" class="article-share-link">Share</a>
      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
     </footer>
   </div>
   
@@ -109,10 +95,10 @@
 
 
   
-    <article id="post-promisify" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-dart-extension-method" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/promisify/" class="article-date">
-  <time datetime="2019-08-21T03:07:16.000Z" itemprop="datePublished">2019-08-21</time>
+    <a href="/dart-extension-method/" class="article-date">
+  <time datetime="2020-02-26T01:34:01.000Z" itemprop="datePublished">2020-02-26</time>
 </a>
     
   </div>
@@ -123,7 +109,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/promisify/">把回调转换为promise</a>
+      <a class="article-title" href="/dart-extension-method/">Dart扩展方法</a>
     </h1>
   
 
@@ -134,62 +120,19 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <div class="article-preview">
-            <p>Promise 用起来比回调简单，但 node.js 中还有很多 API 是回调的形式，例如 fs 模块里面 <code>readFile/writeFile</code>：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> fs = <span class="built_in">require</span>(<span class="string">"fs"</span>)</span><br><span class="line"></span><br><span class="line">fs.writeFile(<span class="string">"文件名.txt"</span>, <span class="string">"文件内容"</span>, error =&gt; &#123;</span><br><span class="line">    <span class="keyword">if</span> (error) <span class="built_in">console</span>.error(error)</span><br><span class="line">    <span class="keyword">else</span> <span class="built_in">console</span>.log(<span class="string">"文件创建成功！（来自回调函数）"</span>)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
-<p>不过可以很方便转换为 promise，例如自己写一个封装函数：</p>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/promisify/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/promisify/" data-id="ck1k3sokv000h4nq46bm8t2rw" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-dart-get-http-request-body" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/dart-get-http-request-body/" class="article-date">
-  <time datetime="2019-08-06T14:27:58.000Z" itemprop="datePublished">2019-08-06</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/dart-get-http-request-body/">Dart 服务端获取请求 body</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Dart 服务端获取 http request body 的示例代码：</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">'dart:io'</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="string">'dart:convert'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">void</span> main() &#123;</span><br><span class="line">  HttpServer.bind(InternetAddress.anyIPv4, <span class="number">3000</span>).then((server) &#123;</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">'Listening on localhost:<span class="subst">$&#123;server.port&#125;</span>'</span>);</span><br><span class="line">    server.listen((HttpRequest request) &#123;</span><br><span class="line">      <span class="keyword">if</span> (request.contentLength == <span class="number">-1</span>) &#123;</span><br><span class="line">        _sendResponse(request, <span class="string">''</span>);</span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        utf8.decodeStream(request).then((data) =&gt; _sendResponse(request, data));</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">_sendResponse(HttpRequest request, <span class="built_in">String</span> requestData) &#123;</span><br><span class="line">  request.response</span><br><span class="line">    ..headers.contentType = ContentType.json</span><br><span class="line">    ..write(jsonEncode(&#123;</span><br><span class="line">      <span class="string">'method'</span>: request.method,</span><br><span class="line">      <span class="string">'content length'</span>: request.contentLength,</span><br><span class="line">      <span class="string">'content'</span>: requestData</span><br><span class="line">    &#125;))</span><br><span class="line">    ..close();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        <p>dart 可以向任意类型添加扩展方法，语法如下：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">extension &lt;extension name&gt; on &lt;type&gt; &#123;</span><br><span class="line">  <span class="comment">// 这里定义扩展方法</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>举例：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">extension NumberParsing on <span class="built_in">String</span> &#123;</span><br><span class="line">  <span class="built_in">double</span> parseDouble() &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">double</span>.parse(<span class="keyword">this</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>使用：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> main() &#123;</span><br><span class="line">  <span class="comment">//使用String类的方法</span></span><br><span class="line">  <span class="built_in">print</span>(<span class="string">'3.14'</span>.split(<span class="string">"."</span>));</span><br><span class="line">  <span class="comment">//使用扩展方法</span></span><br><span class="line">  <span class="built_in">print</span>(<span class="string">'3.14'</span>.parseDouble());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>有一点值得注意的是不能使用 dynamic 类型的变量调用扩展方法，但类型推断是可以的：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> v = <span class="string">'3.14'</span>; <span class="comment">// 变量 v 推断为 String 类型</span></span><br><span class="line"><span class="built_in">print</span>(v.parseDouble()); <span class="comment">// 输出 : 3.14</span></span><br><span class="line"><span class="keyword">dynamic</span> d = <span class="string">'3.14'</span>;</span><br><span class="line"><span class="built_in">print</span>(d.parseDouble()); <span class="comment">// 运行时异常 : NoSuchMethodError</span></span><br></pre></td></tr></table></figure>
 
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/dart-get-http-request-body/" data-id="ck8kdhqn30003d6q4d55wp776" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/dart-extension-method/" data-id="ck8zn3jsb0003vtq43s7tvzr0" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Dart/">Dart</a></li></ul>
 
@@ -200,10 +143,10 @@
 
 
   
-    <article id="post-angular-cli-custom-builder" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-flutter-flex-widgets" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/angular-cli-custom-builder/" class="article-date">
-  <time datetime="2019-07-27T12:54:44.000Z" itemprop="datePublished">2019-07-27</time>
+    <a href="/flutter-flex-widgets/" class="article-date">
+  <time datetime="2020-02-11T01:10:20.000Z" itemprop="datePublished">2020-02-11</time>
 </a>
     
   </div>
@@ -214,7 +157,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/angular-cli-custom-builder/">Angular中自定义webpack参数</a>
+      <a class="article-title" href="/flutter-flex-widgets/">Flutter flex布局组件</a>
     </h1>
   
 
@@ -225,219 +168,32 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <div class="article-preview">
-            <p>angular-cli 运行起来之后，发现有个 node 进程始终占用 60% 的 CPU，即使什么也没改，如果文件发生变动之后，又会多出来一个 node 进程，CPU 飙升到 100% 以上。第一个 60% 的进程是 watch 进程，监控文件发生变化的，第二个进程是 re-build 进程，用于文件变化之后进行重新构建。于是猜测 CPU 高的原因是不是因为 Angular 把 node_modules 里面的文件全部 watch 了，如果这样的话，可以通过修改 webpack 的 watchOptions 属性来解决。</p>
-<p>很遗憾的是 angular 从 6 版本开始就不支持 eject 了，并没有提供配置 webpack 的 watchOptions 的地方，这就尴尬了。不过好在 angular 开发团队并没有一棒子打死，好歹留了一个解决入口，那就是自定义 angular builder。</p>
-<p>当我们使用 <code>ng new xxx</code> 创建一个新项目之后，会生成一个 angular.json 文件，里面的内容框架是：</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"$schema"</span>: <span class="string">"./node_modules/@angular/cli/lib/config/schema.json"</span>,</span><br><span class="line">  <span class="attr">"version"</span>: <span class="number">1</span>,</span><br><span class="line">  <span class="attr">"newProjectRoot"</span>: <span class="string">"projects"</span>,</span><br><span class="line">  <span class="attr">"projects"</span>: &#123;</span><br><span class="line">    "xxx": &#123;...&#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  "defaultProject": "xxx",</span><br><span class="line">  "schematics": &#123;</span><br><span class="line">    "@schematics/angular:component": &#123;</span><br><span class="line">      "prefix": "app",</span><br><span class="line">      "styleext": "scss"</span><br><span class="line">    &#125;,</span><br><span class="line">    "@schematics/angular:directive": &#123;</span><br><span class="line">      "prefix": "app"</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/angular-cli-custom-builder/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/angular-cli-custom-builder/" data-id="ck1k3sok100024nq4777b68se" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-package-json-scripts" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/package-json-scripts/" class="article-date">
-  <time datetime="2019-07-24T01:33:34.000Z" itemprop="datePublished">2019-07-24</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/package-json-scripts/">package.json中的scripts属性</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>npm run 可以执行定义在 package.json 中 scripts 标签里面的命令，例如：</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">"scripts": &#123;</span><br><span class="line">    "start": "node ./script.js"</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>如果运行 <code>npm run start</code> 就是相当于运行 <code>node ./scripts.js</code> 了。从 npm 2.0 版本开始，可以将参数传递给 npm run 命令，语法如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm run &lt;command&gt; [-- &lt;args&gt;]</span><br></pre></td></tr></table></figure>
-<p>也就是说<code>--</code>后面的参数首先会被传递到 npm 命令本身，然后将其转发给脚本。例如：</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">"scripts": &#123;</span><br><span class="line">    "gulp": "gulp",</span><br><span class="line">    "server": "node server.js"</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/package-json-scripts/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/package-json-scripts/" data-id="ck1k3sokt000f4nq48wtl8vo6" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-siege-notes" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/siege-notes/" class="article-date">
-  <time datetime="2019-05-23T08:27:23.000Z" itemprop="datePublished">2019-05-23</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/siege-notes/">siege模拟并发</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>今天遇到一个并发的场景，因为代码不严谨，座位被重复预定了。为了模拟并发请求，学习了一下 siege 这个工具:</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">$ siege --<span class="built_in">help</span></span><br><span class="line">SIEGE 4.0.4</span><br><span class="line">Usage: siege [options]</span><br><span class="line">       siege [options] URL</span><br><span class="line">       siege -g URL</span><br><span class="line">Options:</span><br><span class="line">  -V, --version             版本号</span><br><span class="line">  -h, --<span class="built_in">help</span>                帮助文档</span><br><span class="line">  -C, --config              在屏幕上打印显示出当前的配置,配置是包括在他的配置文件<span class="variable">$HOME</span>/.siegerc中,</span><br><span class="line">                            可以编辑里面的参数,这样每次siege 都会按照它运行</span><br><span class="line">  -v, --verbose             运行时能看到详细的运行信息</span><br><span class="line">  -q, --quiet               关闭输出运行信息</span><br><span class="line">  -g, --get                 获取请求的headers信息并打印出来，debug专用</span><br><span class="line">  -c, --concurrent=NUM      模拟有n个用户在同时访问,默认是10,不要设得太大,因为越大,siege 消耗本地机器的资源越多</span><br><span class="line">  -i, --internet            随机访问urls.txt中的url列表项</span><br><span class="line">  -b, --benchmark           BENCHMARK: no delays between requests.</span><br><span class="line">  -t, --time=NUMm           持续运行siege n秒(如10S),分钟(10M),小时(10H)</span><br><span class="line">  -r, --reps=NUM            重复运行测试n次,不能与-t同时存在</span><br><span class="line">  -f, --file=FILE           指定用urls文件,默认为siege安装目录下的etc/urls.txt</span><br><span class="line">                            urls.txt文件：是很多行待测试URL的列表以换行符断开,格式为:</span><br><span class="line">                            [protocol://]host.domain.com[:port][path/to/file]</span><br><span class="line">  -R, --rc=FILE             指定用特定的siege配置文件来运行,默认的为<span class="variable">$HOME</span>/.siegerc</span><br><span class="line">  -l, --<span class="built_in">log</span>[=FILE]          运行结束,将统计数据保存到日志文件siege.log中,可在.siegerc中自定义日志文件</span><br><span class="line">                            默认位置是: PREFIX/var/siege.log</span><br><span class="line">  -m, --mark=<span class="string">"text"</span>         MARK, mark the <span class="built_in">log</span> file with a string.</span><br><span class="line">  -d, --delay=NUM           每个url在0-n之间进行的延迟</span><br><span class="line">  -H, --header=<span class="string">"text"</span>       添加header，可以添加多个</span><br><span class="line">  -A, --user-agent=<span class="string">"text"</span>   设置User-Agent</span><br><span class="line">  -T, --content-type=<span class="string">"text"</span> 设置Content-Type</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/siege-notes/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/siege-notes/" data-id="ck1k3sokx000j4nq45d7qs0oc" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-mongodb-capped-collection" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/mongodb-capped-collection/" class="article-date">
-  <time datetime="2019-05-13T06:49:36.000Z" itemprop="datePublished">2019-05-13</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/mongodb-capped-collection/">MongoDB定容集合</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>MongoDB定容集合（capped collection） 用于定义一个大小固定的集合：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">db.createCollection(<span class="string">"coll_name"</span>, &#123;<span class="attr">capped</span>: <span class="literal">true</span>, <span class="attr">size</span>:<span class="number">100000</span>&#125;)</span><br></pre></td></tr></table></figure>
-<p>当插入新的数据导致存储空间超出预设大小时，旧的数据会被清除。但这个表里面的文档是不能被手动删除的，只有 drop 整个表才行。不许删除的原因是为了保持每个文档在磁盘上的位置不变。另外，文档的更新是有限制的，即必须在不增加文档占用空间的前提下才能生效，比如减少字段或减少值的长度，如果更新后的文档比原文档占据更多的空间，就会更新失败。Capped Collection主要用于存储日志信息和缓存一些少用的文档。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/mongodb-capped-collection/" data-id="cjxai2nj7000hjkq4904x6tty" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MongoDB/">MongoDB</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-unit8array-to-string" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/unit8array-to-string/" class="article-date">
-  <time datetime="2019-05-13T06:28:07.000Z" itemprop="datePublished">2019-05-13</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/unit8array-to-string/">unit8array转换为字符串</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>unit8array 格式是8字节无符号整数数组，如果把它转换为 string 类型呢？</p>
-<ol>
-<li><p>如果不是 utf8 编码的话，可以用下面的方法：</p>
- <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">uint8arrToStr</span>(<span class="params">uint8arr</span>)</span>&#123;</span><br><span class="line">   <span class="keyword">return</span> <span class="built_in">String</span>.fromCharCode.apply(<span class="literal">null</span>, uint8arr)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        <p>Flex 布局是目前 web 和移动端最流行的布局方式，在 Flutter 中，也有对应的组件，它们就是：</p>
+<h2 id="容器组件"><a href="#容器组件" class="headerlink" title="容器组件"></a>容器组件</h2><ul>
+<li>Row：水平方向上创建一个 flex 容器。</li>
+<li>Column：垂直方向上创建一个 flex 容器。</li>
+<li><p>Flex：直接创建一个 flex 容器，不指定方向，它是 Row 和 Column 组件的父类。</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">class Row extends Flex </span><br><span class="line">class Column extends Flex</span><br></pre></td></tr></table></figure>
+<p>  Flex 有个 <code>direction</code> 属性能够控制容器布局主轴方向，例如指定 <code>Axis.horizontal</code> 时跟 Row 一样的效果。</p>
 </li>
-<li><p>如果使用了 utf8 编码，在浏览器上可以用下面的方法：</p>
- <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 把 Uint8Array 转换为 String</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">uint8arrToStr</span>(<span class="params">uint8arr</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> TextDecoder(<span class="string">"utf-8"</span>).decode(uint8arr)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 把 String 转换为 Uint8Array</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">str2Uint8arr</span>(<span class="params">str</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> TextEncoder(<span class="string">"utf-8"</span>).encode(str)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/unit8array-to-string/#more">Read More</a>
-          </p>
-        
+</ul>
+<h2 id="填充组件（必须是容器组件的children）"><a href="#填充组件（必须是容器组件的children）" class="headerlink" title="填充组件（必须是容器组件的children）"></a>填充组件（必须是容器组件的children）</h2><ul>
+<li>Expanded：在主轴方向自动扩展，填充父级 Flex 容器可用的空白区域。</li>
+<li><p>Flexible：是 Expanded 的父类 </p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">class Expanded extends Flexible</span><br></pre></td></tr></table></figure>
+<p>  与 Expanded 组件不同，它不强制子组件填充可用空间。它有个 <code>fit</code> 属性，值可取 <code>FlexFit.loose</code>（不强制扩展） 和 <code>FlexFit.tight</code>（强制扩展）。</p>
+</li>
+<li><p>Spacer：在 Flex 容器内创建一个可以调整的空白区域，可用于调整组件之间的间距。</p>
+<p>  注意：一旦 Flex 容器组件的 children 里面包含了 Spacer。<code>mainAxisAlignment</code> 的属性值将起不到作用，因为 Spacer 已经占据了所有额外的空间，没有剩余的空间可分配了。</p>
+</li>
+</ul>
+
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/unit8array-to-string/" data-id="cjvrpwbk4000dofq43mzqt8j3" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/flutter-flex-widgets/" data-id="ck8zn3jux000bvtq49arw23mt" class="article-share-link">Share</a>
      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flutter/">Flutter</a></li></ul>
 
     </footer>
   </div>
@@ -446,10 +202,10 @@
 
 
   
-    <article id="post-utf16-to-utf8" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-use-env-in-dockerfile" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/utf16-to-utf8/" class="article-date">
-  <time datetime="2019-04-26T02:12:07.000Z" itemprop="datePublished">2019-04-26</time>
+    <a href="/use-env-in-dockerfile/" class="article-date">
+  <time datetime="2020-01-14T08:32:17.000Z" itemprop="datePublished">2020-01-14</time>
 </a>
     
   </div>
@@ -460,7 +216,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/utf16-to-utf8/">utf16转换为utf8</a>
+      <a class="article-title" href="/use-env-in-dockerfile/">在Dockerfile中使用环境变量</a>
     </h1>
   
 
@@ -471,21 +227,24 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <div class="article-preview">
-            <p>如何把 utf16 编码的字符串转换为 utf8 呢？</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">utf16to8</span>(<span class="params">str</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> out, i, len, c;</span><br><span class="line"></span><br><span class="line">    out = <span class="string">""</span>;</span><br><span class="line">    len = str.length;</span><br><span class="line">    <span class="keyword">for</span>(i = <span class="number">0</span>; i &lt; len; i++) &#123;</span><br><span class="line">	c = str.charCodeAt(i);</span><br><span class="line">	<span class="keyword">if</span> ((c &gt;= <span class="number">0x0001</span>) &amp;&amp; (c &lt;= <span class="number">0x007F</span>)) &#123;</span><br><span class="line">	    out += str.charAt(i);</span><br><span class="line">	&#125; <span class="keyword">else</span> <span class="keyword">if</span> (c &gt; <span class="number">0x07FF</span>) &#123;</span><br><span class="line">	    out += <span class="built_in">String</span>.fromCharCode(<span class="number">0xE0</span> | ((c &gt;&gt; <span class="number">12</span>) &amp; <span class="number">0x0F</span>));</span><br><span class="line">	    out += <span class="built_in">String</span>.fromCharCode(<span class="number">0x80</span> | ((c &gt;&gt;  <span class="number">6</span>) &amp; <span class="number">0x3F</span>));</span><br><span class="line">	    out += <span class="built_in">String</span>.fromCharCode(<span class="number">0x80</span> | ((c &gt;&gt;  <span class="number">0</span>) &amp; <span class="number">0x3F</span>));</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">	    out += <span class="built_in">String</span>.fromCharCode(<span class="number">0xC0</span> | ((c &gt;&gt;  <span class="number">6</span>) &amp; <span class="number">0x1F</span>));</span><br><span class="line">	    out += <span class="built_in">String</span>.fromCharCode(<span class="number">0x80</span> | ((c &gt;&gt;  <span class="number">0</span>) &amp; <span class="number">0x3F</span>));</span><br><span class="line">	&#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> out;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/utf16-to-utf8/#more">Read More</a>
-          </p>
-        
+        <p>有时候，在通过 Dockerfile 制作 docker 镜像的时候，需要根据环境变量来选择不同的源，例如指定 centos 的版本、切换网络请求地址等。这个时候，可以在 dockerfile 里面使用 <code>ARG</code> 指令，然后在 build 的时候使用 <code>build-arg</code> 参数即可：</p>
+<ol>
+<li><p>Dockerfile 文件中声明环境变量</p>
+ <figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ARG</span> request_domain <span class="comment"># 定义环境变量</span></span><br><span class="line"><span class="keyword">ARG</span> request_domain=<span class="number">127.0</span>.<span class="number">0.1</span> <span class="comment"># 定义环境变量并赋初始值</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>制作镜像时指定环境变量</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker build --build-arg request_domain=<span class="variable">$&#123;request_domain&#125;</span> -t <span class="variable">$&#123;name&#125;</span> .</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>如果 Dockerfile 中声明了环境变量，但是 build 的时候没有使用 <code>--build-arg &lt;varname&gt;=&lt;value&gt;</code>，那么镜像不会被生成。如果指定了多余的环境变量，会有一个提示：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[Warning] One or more build-args [foo] were not consumed.</span><br></pre></td></tr></table></figure>
+
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/utf16-to-utf8/" data-id="cjvrpwbki000gofq4er4oh0bo" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/use-env-in-dockerfile/" data-id="ck8zn3jv1000dvtq4xj6rrcy8" class="article-share-link">Share</a>
      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/">Docker</a></li></ul>
 
     </footer>
   </div>
@@ -494,10 +253,10 @@
 
 
   
-    <article id="post-react-auth" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-flutter-safe-string" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/react-auth/" class="article-date">
-  <time datetime="2019-04-22T05:30:07.000Z" itemprop="datePublished">2019-04-22</time>
+    <a href="/flutter-safe-string/" class="article-date">
+  <time datetime="2020-01-05T14:44:55.000Z" itemprop="datePublished">2020-01-05</time>
 </a>
     
   </div>
@@ -508,7 +267,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/react-auth/">react登录认证</a>
+      <a class="article-title" href="/flutter-safe-string/">Flutter字符串处理</a>
     </h1>
   
 
@@ -519,21 +278,275 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <div class="article-preview">
-            <p>用 react 框架做项目时，如何实现登录认证呢？即登录成功加载当前页，否则跳转至登录页。可以写一个高阶函数来实现这个目的：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> React, &#123; Component &#125; <span class="keyword">from</span> <span class="string">'react'</span></span><br><span class="line"><span class="keyword">import</span> &#123; connect &#125; <span class="keyword">from</span> <span class="string">'react-redux'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="function"><span class="keyword">function</span>(<span class="params">ComposedComponent</span>) </span>&#123;</span><br><span class="line">  <span class="class"><span class="keyword">class</span> <span class="title">Auth</span> <span class="keyword">extends</span> <span class="title">Component</span> </span>&#123;</span><br><span class="line">    componentWillMount() &#123;</span><br><span class="line">      <span class="keyword">if</span> (!<span class="keyword">this</span>.props.auth.authorized) &#123;</span><br><span class="line">        <span class="keyword">this</span>.props.history.push(<span class="string">'/login'</span>)</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    componentWillUpdate(nextProps) &#123;</span><br><span class="line">      <span class="keyword">if</span> (!nextProps.auth.authorized) &#123;</span><br><span class="line">        <span class="keyword">this</span>.props.history.push(<span class="string">'/login'</span>)</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    render() &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">ComposedComponent</span> &#123;<span class="attr">...this.props</span>&#125; /&gt;</span></span></span><br><span class="line"><span class="xml">    &#125;</span></span><br><span class="line"><span class="xml">  &#125;</span></span><br><span class="line"><span class="xml"></span></span><br><span class="line"><span class="xml">  const mapStateToProps = state =&gt; (&#123;</span></span><br><span class="line"><span class="xml">    auth: state.auth</span></span><br><span class="line"><span class="xml">  &#125;)</span></span><br><span class="line"><span class="xml"></span></span><br><span class="line"><span class="xml">  return connect(mapStateToProps)(Auth)</span></span><br><span class="line"><span class="xml">&#125;</span></span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/react-auth/#more">Read More</a>
-          </p>
-        
+        <p>Dart 的 String 类使用 UTF-16 编码格式，遇到一些特殊语言和表情符号时会处理异常，例如：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">main() &#123;</span><br><span class="line">  <span class="keyword">var</span> input = [<span class="string">'Resume'</span>, <span class="string">'Résumé'</span>, <span class="string">'个人简历'</span>, <span class="string">'💼📃'</span>, <span class="string">'Currículo'</span>];</span><br><span class="line">  input.forEach((it) =&gt; <span class="built_in">print</span>(it.substring(<span class="number">0</span>, <span class="number">3</span>)));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>输出：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Res</span><br><span class="line">Ré</span><br><span class="line">个人简</span><br><span class="line">💼���</span><br><span class="line">Cur</span><br></pre></td></tr></table></figure>
+<p>通过引入字符串处理包 <a href="https://pub.flutter-io.cn/packages/characters" target="_blank" rel="noopener">https://pub.flutter-io.cn/packages/characters</a> ，然后用 <code>it.characters.take(3)</code> 替换 <code>it.substring(0, 3)</code>。</p>
+
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/react-auth/" data-id="cjw53wyav000lm5q40f7p14on" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/flutter-safe-string/" data-id="ck8zn3jsg0007vtq4uujaaduk" class="article-share-link">Share</a>
      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flutter/">Flutter</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-风寒和风热感冒" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/风寒和风热感冒/" class="article-date">
+  <time datetime="2019-11-13T07:42:05.000Z" itemprop="datePublished">2019-11-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/风寒和风热感冒/">风寒与风热感冒</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>感冒分风寒感冒和风热感冒，这两种感冒病因病机、症状、治疗原则及用药差别很大。风寒感冒是风寒之邪外袭、肺气失宣所致。风热感冒是风热之邪犯表、肺气失和所致。</p>
+<ul>
+<li><p>风寒感冒症状和疗法</p>
+<p>  恶寒重、发热轻、无汗、头痛身痛、鼻塞流清涕、咳嗽吐稀白痰、口不渴或渴喜热饮、苔薄白。治疗药物：风寒感冒颗粒、感冒清热颗粒、正柴胡饮冲剂、头痛严重用川芎茶调散、咳嗽严重用通宣理肺丸。风寒感冒要多喝水、盖好被子、热水泡脚、喝姜茶，发汗有助于康复。</p>
+</li>
+<li><p>风热感冒症状和疗法</p>
+<p>  发热重、微恶风、头胀痛、有汗、咽喉红肿疼痛、咳嗽、痰粘或黄、鼻塞黄涕、口渴喜饮、舌尖边红、苔薄白微黄。治疗药物：感冒灵颗粒、连花清瘟胶囊、柴芩清宁胶囊、维C银翘片、双黄连等。</p>
+</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/风寒和风热感冒/" data-id="ck8zn3jvt000pvtq4zy07mlo6" class="article-share-link">Share</a>
+     
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-never-use-flutter-listtile" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/never-use-flutter-listtile/" class="article-date">
+  <time datetime="2019-11-12T13:39:02.000Z" itemprop="datePublished">2019-11-12</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/never-use-flutter-listtile/">千万不要用ListTile组件</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>最初，在 Flutter 项目中用 ListTile 实现了列表项的布局，速度很快，而且代码比较简单，例如：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">ListTile(</span><br><span class="line">  leading: Icon(</span><br><span class="line">    Icons.account_box,</span><br><span class="line">    color: Colors.red,</span><br><span class="line">  ),</span><br><span class="line">  title: Text(</span><br><span class="line">    <span class="string">'账户'</span>,</span><br><span class="line">    textAlign: TextAlign.left,</span><br><span class="line">    style: TextStyle(</span><br><span class="line">      color: Colors.grey,</span><br><span class="line">    ),</span><br><span class="line">  ),</span><br><span class="line">  trailing: Icon(Icons.keyboard_arrow_right),</span><br><span class="line">  onTap: () &#123;</span><br><span class="line">    <span class="comment">// 响应点击事件</span></span><br><span class="line">  &#125;,</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<p>后来需求说要调整一下左边 Icon 和右边文字之间的间距，竟然在网上没找到方法，可能结论就是根本没有方法，ListTile 里面的边距就是定死的，只有一个 dense 能够切换成紧凑模式，也是固定的边距和样式。所以，在任何时候，请不要使用 ListTile，因为这个组件无法定制，而需求时刻在变，可以自己实现一个效果完全一样而且定制起来非常灵活，例如：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">InkWell(</span><br><span class="line">  onTap: () &#123;</span><br><span class="line">    <span class="comment">// 响应点击事件</span></span><br><span class="line">  &#125;,</span><br><span class="line">  child: Container(</span><br><span class="line">    padding: EdgeInsets.fromLTRB(<span class="number">12</span>, <span class="number">15</span>, <span class="number">12</span>, <span class="number">15</span>),</span><br><span class="line">    decoration: BoxDecoration(</span><br><span class="line">      color: Colors.white,</span><br><span class="line">      border: Border(</span><br><span class="line">        bottom: BorderSide(</span><br><span class="line">          width: <span class="number">1</span>,</span><br><span class="line">          color: Colors.grey,</span><br><span class="line">        ),</span><br><span class="line">      ),</span><br><span class="line">    ),</span><br><span class="line">    child: Row(</span><br><span class="line">      children: &lt;Widget&gt;[</span><br><span class="line">        Icon(</span><br><span class="line">          Icons.account_box,</span><br><span class="line">          color: Colors.red,</span><br><span class="line">        ),</span><br><span class="line">        SizedBox(width: <span class="number">10</span>),</span><br><span class="line">        Text(</span><br><span class="line">          <span class="string">'账户'</span>,</span><br><span class="line">          textAlign: TextAlign.left,</span><br><span class="line">          style: TextStyle(</span><br><span class="line">            color: Colors.grey,</span><br><span class="line">            fontSize: <span class="number">16</span>,</span><br><span class="line">          ),</span><br><span class="line">        ),</span><br><span class="line">        Spacer(),</span><br><span class="line">        Icon(Icons.keyboard_arrow_right),</span><br><span class="line">      ],</span><br><span class="line">    ),</span><br><span class="line">  ),</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/never-use-flutter-listtile/" data-id="ck8zn3jv0000cvtq49p72ccg1" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flutter/">Flutter</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-webview-fontsize-too-small" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/webview-fontsize-too-small/" class="article-date">
+  <time datetime="2019-10-29T02:16:37.000Z" itemprop="datePublished">2019-10-29</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/webview-fontsize-too-small/">Flutter Webview手机模式</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在 Flutter 项目中用 webview 里面开了一个网页，发现字体好小，解决方案就是通过 meta 指定 mobile 视图：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> contentBase64 = base64Encode(</span><br><span class="line">  <span class="keyword">const</span> Utf8Encoder().convert(</span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    &lt;!DOCTYPE html&gt;</span></span><br><span class="line"><span class="string">    &lt;html&gt;</span></span><br><span class="line"><span class="string">      &lt;head&gt;&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;&lt;/head&gt;</span></span><br><span class="line"><span class="string">      &lt;body style='"margin: 0; padding: 0;'&gt;</span></span><br><span class="line"><span class="string">        &lt;div&gt;</span></span><br><span class="line"><span class="string">          $htmlString</span></span><br><span class="line"><span class="string">        &lt;/div&gt;</span></span><br><span class="line"><span class="string">      &lt;/body&gt;</span></span><br><span class="line"><span class="string">    &lt;/html&gt;</span></span><br><span class="line"><span class="string">    """</span>,</span><br><span class="line">  ),</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/webview-fontsize-too-small/" data-id="ck8zn3jvc000ivtq4nxik6pxw" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flutter/">Flutter</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-wxss-background" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/wxss-background/" class="article-date">
+  <time datetime="2019-10-09T09:05:19.000Z" itemprop="datePublished">2019-10-09</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/wxss-background/">小程序wxss背景图片</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在 CSS 中我们可以用 background 添加背景图片，但是小程序中的本地资源无法在 wxss 中获取，也就是说不能像 CSS 那样通过 <code>url(/assets/xxx.png)</code> 来引用本地图片来设置背景，不过有两种折中的方案：</p>
+<ol>
+<li><p>把图片转成base64</p>
+ <figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-class">.base64-image</span> &#123;</span><br><span class="line">  <span class="attribute">background</span>: <span class="built_in">url</span>(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA...);</span><br><span class="line">  <span class="attribute">background-size</span>: contain;</span><br><span class="line">  <span class="attribute">background-repeat</span>: no-repeat;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<pre><code>这个[地址](janedan-base64)可以把图片在线转成 base64 格式。
+</code></pre><ol>
+<li><p>把本地资源上传到网络，然后引用网络图片</p>
+ <figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-class">.network-image</span> &#123;</span><br><span class="line">  <span class="attribute">background</span>: <span class="built_in">url</span>(http://xxxxx);</span><br><span class="line">  <span class="attribute">background-size</span>: contain;</span><br><span class="line">  <span class="attribute">background-repeat</span>: no-repeat;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>但是上面两种方式都不尽如人意，因为转成 base64 会导致文件体积会增大，且 base64 是一大串字符，无法本地直观地看到图片；用网络图片的话，页面渲染上又会有延迟，用户体验不好。所以只能采用 <code>&lt;image&gt;</code> 组件加绝对定位的方式来模拟背景图：</p>
+<p><code>&lt;image&gt;</code> 组件中的 mode 取值有：</p>
+<ol>
+<li><code>scaleToFill</code>：拉伸图片填满 image 元素</li>
+<li><code>aspectFit</code>：保持纵横比缩放图片，长边能完全显示出来，短边有空白</li>
+<li><code>aspectFill</code>：保持纵横比缩放图片，短边能完全显示出来，长边有截断</li>
+<li><code>widthFix</code>：宽度不变，高度自动变化，保持原图宽高比不变</li>
+</ol>
+<p>但是注意上面的选项并不能达到与CSS background 属性中完全相同的效果，对应的 <code>background-size</code> 的属性有：</p>
+<ol>
+<li><code>auto</code>：默认值，不改变原始图片的大小。</li>
+<li>px：自定义设置图片的大小，一般为成对出现例如 100px,50px,当设置一个值的时候，将其作为图片的宽度只进行等比缩放。</li>
+<li>百分比：0%-100%的任意值，一般也是成对出现，当设置一个值的时候，就成了正方形了。</li>
+<li><code>cover</code>：覆盖，用背景图等比例缩放填满整个容器。（推荐使用）</li>
+<li><code>contain</code>：容纳，即将背景图片等比缩放至<strong>某一边紧贴容器边缘为止。</strong></li>
+</ol>
+<p><code>mode=aspectFill</code> 和 <code>background-size:cover</code> 的区别是前者保证图片中心位置跟容器区域重合，后者保证图片的左上角跟容器的左上角重合。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/wxss-background/" data-id="ck8zn3jvr000ovtq4w7btj23v" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flutter/">Flutter</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-flutter-listtile-notes" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/flutter-listtile-notes/" class="article-date">
+  <time datetime="2019-09-12T06:25:53.000Z" itemprop="datePublished">2019-09-12</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/flutter-listtile-notes/">Flutter ListTile组件</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>ListTile 示例代码：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">ListTile(</span><br><span class="line">  title: Text(<span class="string">'Horse'</span>),</span><br><span class="line">  subtitle: Text(<span class="string">'A strong animal'</span>),</span><br><span class="line">  dense: <span class="keyword">true</span>,</span><br><span class="line">  leading: CircleAvatar(</span><br><span class="line">    backgroundImage: NetworkImage(imageUrl),</span><br><span class="line">  ),</span><br><span class="line">  trailing: Icon(Icons.keyboard_arrow_right),</span><br><span class="line">  contentPadding: EdgeInsets.symmetric(horizontal: <span class="number">0.0</span>),</span><br><span class="line">  selected: <span class="keyword">true</span>,</span><br><span class="line">  onTap: ()&#123;&#125;,</span><br><span class="line">  onLongPress: ()&#123;&#125;,</span><br><span class="line">  enabled: <span class="keyword">false</span>,</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<p>可以看到 ListTile 有如下几个属性：</p>
+<ul>
+<li>title：标题</li>
+<li>subtitle：子标题</li>
+<li>dense：紧凑模式</li>
+<li>leading：头部图标</li>
+<li>trailing：尾部图标</li>
+<li>contentPadding：左侧和右侧的内边距（控制不了上面和下面）</li>
+<li>selected：点击之后变色</li>
+<li>onTap：响应点击事件</li>
+<li>onLongPress：响应长按事件</li>
+<li>enabled：是否响应手势</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/flutter-listtile-notes/" data-id="ck8zn3jsj0009vtq4ru120kjd" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flutter/">Flutter</a></li></ul>
 
     </footer>
   </div>
@@ -545,7 +558,7 @@
 
 
   <nav id="page-nav">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/58/">58</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/60/">60</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
   </nav>
 </section>
 
@@ -560,7 +573,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dart/">Dart</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Elasticsearch/">Elasticsearch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dart/">Dart</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Elasticsearch/">Elasticsearch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Flutter/">Flutter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
     </div>
   </div>
 
