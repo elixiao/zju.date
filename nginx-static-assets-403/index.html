@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="上传了一些图片到服务器上，然后用 nginx 来 serve 静态图片，结果总是有一部分图片访问不了，报 403 错，而另外一些又是好的，经过半天的排查终于发现原来是文件权限的问题： 1234567891011121314151617181920-rw------- 1 root root 411K 5月  12 14:56 advantage.png-rw-r--r-- 1 root root">
+<meta property="og:type" content="article">
+<meta property="og:title" content="nginx静态图片403错误排查">
+<meta property="og:url" content="https://zju.date/nginx-static-assets-403/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="上传了一些图片到服务器上，然后用 nginx 来 serve 静态图片，结果总是有一部分图片访问不了，报 403 错，而另外一些又是好的，经过半天的排查终于发现原来是文件权限的问题： 1234567891011121314151617181920-rw------- 1 root root 411K 5月  12 14:56 advantage.png-rw-r--r-- 1 root root">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2020-05-12T07:33:46.932Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="nginx静态图片403错误排查">
+<meta name="twitter:description" content="上传了一些图片到服务器上，然后用 nginx 来 serve 静态图片，结果总是有一部分图片访问不了，报 403 错，而另外一些又是好的，经过半天的排查终于发现原来是文件权限的问题： 1234567891011121314151617181920-rw------- 1 root root 411K 5月  12 14:56 advantage.png-rw-r--r-- 1 root root">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-nginx-static-assets-403" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/nginx-static-assets-403/" class="article-date">
+  <time datetime="2018-03-25T01:54:57.000Z" itemprop="datePublished">2018-03-25</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      nginx静态图片403错误排查
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>上传了一些图片到服务器上，然后用 nginx 来 serve 静态图片，结果总是有一部分图片访问不了，报 403 错，而另外一些又是好的，经过半天的排查终于发现原来是文件权限的问题：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">-rw------- 1 root root 411K 5月  12 14:56 advantage.png</span><br><span class="line">-rw-r--r-- 1 root root 1.3M 5月  12 14:56 agency.png</span><br><span class="line">-rw-r--r-- 1 root root 8.5K 5月  12 14:56 copy_url.png</span><br><span class="line">-rw------- 1 root root 439K 5月  12 14:56 credit_invite.png</span><br><span class="line">-rw-r--r-- 1 root root 266K 5月  12 14:56 download_bg.png</span><br><span class="line">-rw-r--r-- 1 root root  15K 5月  12 14:56 download_logo.png</span><br><span class="line">-rw------- 1 root root  11K 5月  12 14:56 download_shortcut.png</span><br><span class="line">-rw-r--r-- 1 root root 278K 5月  12 14:56 download_top1.png</span><br><span class="line">-rw-r--r-- 1 root root 9.7K 5月  12 14:56 friends_circle.png</span><br><span class="line">-rw-r--r-- 1 root root 1.3M 5月  12 14:56 invite.png</span><br><span class="line">-rw-r--r-- 1 root root  780 5月  12 14:56 ios.png</span><br><span class="line">-rw-r--r-- 1 root root  13K 5月  12 14:56 logo.png</span><br><span class="line">-rw-r--r-- 1 root root  989 5月  12 14:56 message.png</span><br><span class="line">-rw-r--r-- 1 root root  815 5月  12 14:56 open.svg</span><br><span class="line">-rw-r--r-- 1 root root 858K 5月  12 14:56 recruit.png</span><br><span class="line">-rw------- 1 root root 113K 5月  12 14:56 register_cover.jpeg</span><br><span class="line">-rw------- 1 root root 447K 5月  12 14:56 register_cover.png</span><br><span class="line">-rw-r--r-- 1 root root 6.5K 5月  12 14:56 success.png</span><br><span class="line">-rw-r--r-- 1 root root 491K 5月  12 14:56 top2.png</span><br><span class="line">-rw-r--r-- 1 root root 8.6K 5月  12 14:56 wechatpay.png</span><br></pre></td></tr></table></figure>
+<p>可以看到，有些文件是 600 有些是 644，访问不了的图片都是那些 600 的，于是用下面的命令把权限改一下就好了：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod 644 xxx.png</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/nginx-static-assets-403/" data-id="cka4yu226000x8zq4k30j89q4" class="article-share-link">Share</a>
+     
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/mongodb-restrict-ip/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          mongodb 指定 IP 访问
+        
+      </div>
+    </a>
+  
+  
+    <a href="/quickly-setup-node-env/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">快速搭建 node 环境</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dart/">Dart</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Elasticsearch/">Elasticsearch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Flutter/">Flutter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

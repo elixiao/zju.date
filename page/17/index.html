@@ -54,10 +54,10 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-jwt-notes" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-http-client-get-headers" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/jwt-notes/" class="article-date">
-  <time datetime="2018-04-11T12:47:39.000Z" itemprop="datePublished">2018-04-11</time>
+    <a href="/http-client-get-headers/" class="article-date">
+  <time datetime="2018-05-03T06:15:15.000Z" itemprop="datePublished">2018-05-03</time>
 </a>
     
   </div>
@@ -68,7 +68,95 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/jwt-notes/">jwt 学习笔记</a>
+      <a class="article-title" href="/http-client-get-headers/">http client 获取 header</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>获取全部 response：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">http</span><br><span class="line">  .get&lt;MyJsonData&gt;(<span class="string">'/data.json'</span>, &#123;observe: <span class="string">'response'</span>&#125;)</span><br><span class="line">  .subscribe(<span class="function"><span class="params">res</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="comment">// 获取 header</span></span><br><span class="line">    <span class="built_in">console</span>.log(res.headers.get(<span class="string">'X-Custom-Header'</span>))</span><br><span class="line">    <span class="comment">// 获取 body</span></span><br><span class="line">    <span class="built_in">console</span>.log(res.body.someField)</span><br><span class="line">  &#125;)</span><br><span class="line"><span class="string">``</span><span class="string">`  </span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">注意这里的 observe 参数很关键，如果没有这个参数就不会返回全部的 response 对象。</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">`</span><span class="string">``</span>typescript</span><br><span class="line"><span class="keyword">this</span>.http.post(url, body, &#123;responseType: <span class="string">'blob'</span>, observe: <span class="string">'response'</span>&#125;)</span><br><span class="line">  .subscribe(<span class="function"><span class="params">res</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(res.headers.get(<span class="string">'x-total-count'</span>))</span><br><span class="line">  &#125;)</span><br></pre></td></tr></table></figure>
+<p>自定义的 header 只有在后台配置之后，前端才能取到，例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&apos;access-control-expose-headers&apos; : &apos;x-total-count&apos;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/http-client-get-headers/" data-id="cjssqvcto00268uq4qcnbg1x2" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Angular/">Angular</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-npm-publish-auth" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/npm-publish-auth/" class="article-date">
+  <time datetime="2018-05-03T01:23:52.000Z" itemprop="datePublished">2018-05-03</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/npm-publish-auth/">npm publish报错</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>发布包的时候报错：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ npm publish</span><br><span class="line">npm ERR! code ENEEDAUTH</span><br><span class="line">npm ERR! need auth auth required <span class="keyword">for</span> publishing</span><br><span class="line">npm ERR! need auth You need to authorize this machine using `npm adduser`</span><br></pre></td></tr></table></figure>
+<p>找了半天发现 registry 不对，使用的是淘宝的镜像库，需要切换回 npmjs 才行：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">$ npm config list</span><br><span class="line">; cli configs</span><br><span class="line">metrics-registry = <span class="string">"https://registry.npm.taobao.org/"</span></span><br><span class="line">scope = <span class="string">""</span></span><br><span class="line">user-agent = <span class="string">"npm/6.4.1 node/v10.14.2 darwin x64"</span></span><br><span class="line"></span><br><span class="line">; userconfig /Users/xxx/.npmrc</span><br><span class="line">registry = <span class="string">"https://registry.npm.taobao.org/"</span></span><br><span class="line">strict-ssl = <span class="literal">false</span></span><br><span class="line"></span><br><span class="line">; node bin location = /Users/xxx/.nvm/versions/node/v10.14.2/bin/node</span><br><span class="line">; cwd = /Users/xxx/job/webstorm/npm/diff-object</span><br><span class="line">; HOME = /Users/xxx</span><br><span class="line">; <span class="string">"npm config ls -l"</span> to show all defaults.</span><br><span class="line"></span><br><span class="line">$ npm config <span class="built_in">set</span> registry https://registry.npmjs.org/</span><br><span class="line">$ npm adduser</span><br><span class="line">Username: xxx</span><br><span class="line">Password: </span><br><span class="line">Email: (this IS public) xxx@gmail.com</span><br><span class="line">Logged <span class="keyword">in</span> as xxx on https://registry.npmjs.org/.</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/npm-publish-auth/" data-id="cjwn3tbu100052zq4x0ck71ly" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-angular-forRoot-forChild" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/angular-forRoot-forChild/" class="article-date">
+  <time datetime="2018-05-01T09:39:35.000Z" itemprop="datePublished">2018-05-01</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/angular-forRoot-forChild/">Angular 中的 forRoot 和 forChild</a>
     </h1>
   
 
@@ -80,32 +168,74 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <p>一个JWT实际上就是一个字符串，长这样：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xxx.yyy.zzz</span><br></pre></td></tr></table></figure>
-<p>被 <code>.</code> 分隔的三部分是：</p>
+            <p>引入模块我们一般有3个方法:</p>
+<h4 id="直接导入"><a href="#直接导入" class="headerlink" title="直接导入"></a>直接导入</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">import &#123; XXXModule &#125; from &apos;xxx.module&apos;</span><br><span class="line"></span><br><span class="line">@NgModule(&#123;</span><br><span class="line">    imports: [</span><br><span class="line">        XXXModule</span><br><span class="line">    ]</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/angular-forRoot-forChild/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/angular-forRoot-forChild/" data-id="ck8zn3js20000vtq4vs6hlt4l" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Angular/">Angular</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-angular-component-communication" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/angular-component-communication/" class="article-date">
+  <time datetime="2018-04-28T10:17:08.000Z" itemprop="datePublished">2018-04-28</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/angular-component-communication/">Angular 兄弟组件通信</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>在 Angular 中，父子组件可以通过 Input 和 Output 进行通信，从而实现父组件向子组件传递数据和子组件向父组件输出数据，那兄弟组件 A 和组件 B 之间如何进行通信呢？</p>
+<p>例如 sidebar 和 sidebar-toggle 两个并列的组件，点击 sidebar-toggle 的时候希望 sidebar 能够展开。有三种方法可以实现这种效果：</p>
 <ol>
-<li>头部（Header）</li>
-<li>负荷（Payload）</li>
-<li>签名（Signature）</li>
-</ol>
-<p>详细解释：</p>
-<ol>
-<li><p>头部</p>
-<p> 头部用于描述关于该JWT的最基本的信息，例如其类型以及签名所用的算法，例如：</p>
- <figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"typ"</span>: <span class="string">"JWT"</span>,</span><br><span class="line">  <span class="attr">"alg"</span>: <span class="string">"HS256"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p> 这个JSON通过 <strong>Base64Url</strong> 编码为JWT的第一部分。</p>
+<li><p>将 sidebar 的引用传递给 sidebar-toggle</p>
+<p><code>app.component.html</code></p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">app-side-bar-toggle</span> [<span class="attr">sideBar</span>]=<span class="string">"sideBar"</span>&gt;</span><span class="tag">&lt;/<span class="name">app-side-bar-toggle</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">app-side-bar</span> #<span class="attr">sideBar</span>&gt;</span><span class="tag">&lt;/<span class="name">app-side-bar</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p><code>side-bar-toggle.component.ts</code></p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span>(&#123;</span><br><span class="line">  selector: <span class="string">'app-side-bar-toggle'</span>,</span><br><span class="line">  templateUrl: <span class="string">'./side-bar-toggle.component.html'</span>,</span><br><span class="line">  styleUrls: [<span class="string">'./side-bar-toggle.component.css'</span>]</span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> SideBarToggleComponent &#123;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Input</span>() sideBar: SideBarComponent;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@HostListener</span>(<span class="string">'click'</span>)</span><br><span class="line">  click() &#123;</span><br><span class="line">    <span class="keyword">this</span>.sideBar.toggle();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 </li>
 </ol>
         </div>
         
           <p class="article-more-link">
-            <a href="/jwt-notes/#more">Read More</a>
+            <a href="/angular-component-communication/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/jwt-notes/" data-id="cjhq778ok00buizq35ewzbl79" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/angular-component-communication/" data-id="cjhq778h9002pizq31s5jb65e" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
@@ -116,10 +246,10 @@
 
 
   
-    <article id="post-nginx-location" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-batch-chmod" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/nginx-location/" class="article-date">
-  <time datetime="2018-04-09T05:59:56.000Z" itemprop="datePublished">2018-04-09</time>
+    <a href="/batch-chmod/" class="article-date">
+  <time datetime="2018-04-26T01:26:19.000Z" itemprop="datePublished">2018-04-26</time>
 </a>
     
   </div>
@@ -130,7 +260,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/nginx-location/">Nginx 中的 location</a>
+      <a class="article-title" href="/batch-chmod/">批量chmod</a>
     </h1>
   
 
@@ -141,235 +271,22 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <div class="article-preview">
-            <p>语法：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">location [modifier] uri</span><br></pre></td></tr></table></figure>
-<p>修饰符有四种：</p>
+        <p>在 Mac 上把项目移动到 U 盘上的时候，发现文件的读写权限变了，<code>git status</code> 发现一堆文件发生变化，<code>git diff</code> 报：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">old mode 100644</span><br><span class="line">new mode 100755</span><br></pre></td></tr></table></figure>
+<p>后来发现是 U 盘格式跟 Mac 不兼容，于是只能移动回来，再用磁盘工具格式化成 Mac OS 扩展格式。但是怎么把这些目录和文件的读写权限给还原呢，网上找了一个非常有效的<a href="https://stackoverflow.com/questions/3740152/how-do-i-change-permissions-for-a-folder-and-all-of-its-subfolders-and-files-in" target="_blank" rel="noopener">办法</a>：</p>
 <ol>
-<li><code>=</code> ：精确匹配并终止搜索</li>
-<li><code>~</code>：区分大小写的正则表达式匹配</li>
-<li><code>~*</code>：不区分大小写的正则表达式匹配</li>
-<li><code>^~</code>：字符串打头匹配（若是最佳匹配，则不进行正则表达式匹配）</li>
+<li><p>把所有目录改成 755 (drwxr-xr-x):</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find /opt/lampp/htdocs -<span class="built_in">type</span> d -<span class="built_in">exec</span> chmod 755 &#123;&#125; \;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>把所有文件改成 644 (-rw-r–r–):</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find /opt/lampp/htdocs -<span class="built_in">type</span> f -<span class="built_in">exec</span> chmod 644 &#123;&#125; \;</span><br></pre></td></tr></table></figure>
+</li>
 </ol>
-<p>优先级顺序：</p>
-<ol>
-<li>精确匹配(<code>=</code>) </li>
-<li>字符串打头匹配(<code>^~</code>)  </li>
-<li>正则匹配(<code>~</code> 或 <code>~*</code>) </li>
-<li>通用匹配(<code>/</code>)</li>
-</ol>
-<blockquote>
-<p> 两种正则当中，区分大小写的优先级高，也就是不带 <code>*</code> 的优先级高</p>
-</blockquote>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/nginx-location/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/nginx-location/" data-id="cjhq778qm00elizq355e9573x" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Nginx/">Nginx</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-nginx-server-name" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/nginx-server-name/" class="article-date">
-  <time datetime="2018-04-09T05:51:49.000Z" itemprop="datePublished">2018-04-09</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/nginx-server-name/">Nginx 中的 server_name</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p><code>server_name</code> 可以用三种方式定义：</p>
-<ol>
-<li>准确值</li>
-<li>通配符</li>
-<li>正则表达式</li>
-</ol>
-<p>例如：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 准确值</span></span><br><span class="line">server &#123;</span><br><span class="line">    listen       80;</span><br><span class="line">    server_name  example.org  www.example.org;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment"># 开头通配符</span></span><br><span class="line">server &#123;</span><br><span class="line">    listen       80;</span><br><span class="line">    server_name  *.example.org;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment"># 结尾通配符</span></span><br><span class="line">server &#123;</span><br><span class="line">    listen       80;</span><br><span class="line">    server_name  mail.*;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment"># 正则表达式</span></span><br><span class="line">server &#123;</span><br><span class="line">    listen       80;</span><br><span class="line">    server_name  ~^(?&lt;user&gt;.+)\.example\.net$;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/nginx-server-name/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/nginx-server-name/" data-id="cjhq778qs00esizq3wr4w45to" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Nginx/">Nginx</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-nodejs-catch-stream-error" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/nodejs-catch-stream-error/" class="article-date">
-  <time datetime="2018-04-09T05:38:32.000Z" itemprop="datePublished">2018-04-09</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/nodejs-catch-stream-error/">捕获流错误</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>在 nodejs 中，如果想要捕获流操作过程中发生的错误，只在最后监听 error 事件是不够的，例如：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a = createStream()</span><br><span class="line">a.pipe(b).pipe(c).on(<span class="string">'error'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">e</span>)</span>&#123;handleError(e)&#125;)</span><br></pre></td></tr></table></figure>
-<p>上面的代码只会捕获错误 c，a 和 b 上发生的错误不会被传递下来，也得逐个监听错误事件，就像下面这样：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a = createStream()</span><br><span class="line">a.on(<span class="string">'error'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">e</span>)</span>&#123;handleError(e)&#125;)</span><br><span class="line">.pipe(b)</span><br><span class="line">.on(<span class="string">'error'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">e</span>)</span>&#123;handleError(e)&#125;)</span><br><span class="line">.pipe(c)</span><br><span class="line">.on(<span class="string">'error'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">e</span>)</span>&#123;handleError(e)&#125;);</span><br></pre></td></tr></table></figure>
-<p>但是这样写的话太麻烦了，更好的方式是将流包装在一个域，捕获所有错误。</p>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/nodejs-catch-stream-error/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/nodejs-catch-stream-error/" data-id="cjw53wyat000km5q4uh9v534m" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-chrome-kernal" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/chrome-kernal/" class="article-date">
-  <time datetime="2018-04-09T05:36:12.000Z" itemprop="datePublished">2018-04-09</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/chrome-kernal/">强制使用Webkit内核</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>对于国内双核浏览器强制使用Webkit内核渲染页面</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;meta name=<span class="string">"renderer"</span> content=<span class="string">"webkit"</span>&gt;</span><br><span class="line"><span class="comment">//360 6.X 以上可识别</span></span><br><span class="line">&lt;meta name=<span class="string">"force-rendering"</span> content=<span class="string">"webkit"</span>&gt;</span><br><span class="line"><span class="comment">//其他双核可识别</span></span><br><span class="line">&lt;meta http-equiv=<span class="string">"X-UA-Compatible"</span> content=<span class="string">"IE=edge,chrome=1"</span>/&gt;</span><br><span class="line"><span class="comment">//对于没有自带 IE7 内核的浏览器 强制使用用户已安装的最高版本浏览器渲染, 有Chrome框架的优先使用</span></span><br></pre></td></tr></table></figure>
 
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/chrome-kernal/" data-id="cjssqvcs1000t8uq4r6dqdh78" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-nc-notes" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/nc-notes/" class="article-date">
-  <time datetime="2018-04-08T02:26:07.000Z" itemprop="datePublished">2018-04-08</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/nc-notes/">nc查看端口是否打开</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>安装：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install nc</span><br></pre></td></tr></table></figure>
-<p>语法：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ nc -v k8s.xyz 33333</span><br></pre></td></tr></table></figure>
-<p>如果端口打开，则会出现下面的输出：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">found 0 associations</span><br><span class="line">found 1 connections:</span><br><span class="line">     1:	flags=82&lt;CONNECTED,PREFERRED&gt;</span><br><span class="line">	outif en7</span><br><span class="line">	src 192.168.3.15 port 54113</span><br><span class="line">	dst 101.36.136.90 port 33333</span><br><span class="line">	rank info not available</span><br><span class="line">	TCP aux info available</span><br><span class="line"></span><br><span class="line">Connection to k8s.xyz port 33333 [tcp/*] succeeded!</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/nc-notes/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/nc-notes/" data-id="cjssqvcul003c8uq49g5w8y5n" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/batch-chmod/" data-id="cjxwmqcdx0000ftq4se4af9so" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
 
@@ -380,10 +297,10 @@
 
 
   
-    <article id="post-install-rar-on-linux" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-yarn-registry" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/install-rar-on-linux/" class="article-date">
-  <time datetime="2018-04-05T14:18:23.000Z" itemprop="datePublished">2018-04-05</time>
+    <a href="/yarn-registry/" class="article-date">
+  <time datetime="2018-04-23T13:35:23.000Z" itemprop="datePublished">2018-04-23</time>
 </a>
     
   </div>
@@ -394,7 +311,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/install-rar-on-linux/">Linux 上安装 rar 和 unrar</a>
+      <a class="article-title" href="/yarn-registry/">更改 yarn 仓库源</a>
     </h1>
   
 
@@ -406,18 +323,20 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <h2 id="32-位机器"><a href="#32-位机器" class="headerlink" title="32 位机器"></a>32 位机器</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">wget https://www.rarlab.com/rar/rarlinux-5.5.0.tar.gz</span><br><span class="line">tar -zxvf rarlinux-5.5.0.tar.gz</span><br><span class="line"><span class="built_in">cd</span> rar</span><br><span class="line">sudo cp -v rar unrar /usr/<span class="built_in">local</span>/bin/</span><br></pre></td></tr></table></figure>
-<h2 id="64-位机器"><a href="#64-位机器" class="headerlink" title="64 位机器"></a>64 位机器</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">wget https://www.rarlab.com/rar/rarlinux-x64-5.5.0.tar.gz</span><br><span class="line">tar -zxvf rarlinux-x64-5.5.0.tar.gz</span><br><span class="line"><span class="built_in">cd</span> rar</span><br><span class="line">sudo cp -v rar unrar /usr/<span class="built_in">local</span>/bin/</span><br></pre></td></tr></table></figure>
+            <p>有时候在国内安装 nodejs 包真的很慢，可以设置 npm 或 yarn 的源：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ yarn config get registry</span><br><span class="line">https://registry.yarnpkg.com</span><br><span class="line">$ yarn config <span class="built_in">set</span> registry https://registry.npm.taobao.org --global</span><br><span class="line">success Set <span class="string">"registry"</span> to <span class="string">"https://registry.npm.taobao.org"</span>.</span><br><span class="line">Done <span class="keyword">in</span> 0.04s.</span><br><span class="line">$ yarn config get registry</span><br><span class="line">https://registry.npm.taobao.org</span><br></pre></td></tr></table></figure>
+<p>或者全局设置：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">yarn config <span class="built_in">set</span> registry https://registry.npm.taobao.org --global</span><br><span class="line">yarn config <span class="built_in">set</span> disturl https://npm.taobao.org/dist --global</span><br></pre></td></tr></table></figure>
         </div>
         
           <p class="article-more-link">
-            <a href="/install-rar-on-linux/#more">Read More</a>
+            <a href="/yarn-registry/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/install-rar-on-linux/" data-id="cjiom0g4l0005rbq3413rezoq" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/yarn-registry/" data-id="cjssqvcvs004t8uq4xm59e3qm" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
 
@@ -428,10 +347,10 @@
 
 
   
-    <article id="post-docker-container-static-ip" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-mongodb-index" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/docker-container-static-ip/" class="article-date">
-  <time datetime="2018-04-05T14:18:23.000Z" itemprop="datePublished">2018-04-05</time>
+    <a href="/mongodb-index/" class="article-date">
+  <time datetime="2018-04-23T13:35:23.000Z" itemprop="datePublished">2018-04-23</time>
 </a>
     
   </div>
@@ -442,7 +361,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/docker-container-static-ip/">Linux 上安装 rar 和 unrar</a>
+      <a class="article-title" href="/mongodb-index/">MongoDB索引</a>
     </h1>
   
 
@@ -454,35 +373,81 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <p>Docker 每次重启后，容器的IP地址会变化，如何设置固定IP呢？Docker 安装后，默认会创建下面三种网络类型：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ docker network ls</span><br><span class="line">NETWORK ID          NAME                DRIVER              SCOPE</span><br><span class="line">9781b1f585ae        bridge              bridge              local</span><br><span class="line">1252da701e55        host                host                local</span><br><span class="line">237ea3d5cfbf        none                null                local</span><br></pre></td></tr></table></figure>
-<p>启动 Docker的时候，用 <code>--network</code> 参数，可以指定网络类型，如：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ docker run -itd --name test1 --network bridge --ip 172.17.0.10 centos:latest /bin/bash</span><br></pre></td></tr></table></figure>
-<p>可以定义如下几种网络类型：</p>
+            <h2 id="MongoDB索引"><a href="#MongoDB索引" class="headerlink" title="MongoDB索引"></a>MongoDB索引</h2><p>数据库索引就好比书籍的目录，有了目录就能快速定位章节内容，而不需要翻阅全书，使得查找速度提高几个数量级。因此创建索引能够极大提升查询速度：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">db.users.createIndex(&#123;<span class="attr">createdAt</span>: <span class="number">1</span>&#125;) <span class="comment">// 按创建时间正序</span></span><br><span class="line">db.users.createIndex(&#123;<span class="attr">createdAt</span>: <span class="number">-1</span>&#125;) <span class="comment">// 按创建时间倒序</span></span><br><span class="line">db.users.createIndex(&#123;<span class="attr">company</span>: <span class="number">1</span>, <span class="attr">createdAt</span>: <span class="number">-1</span>&#125;) <span class="comment">// 组合索引</span></span><br><span class="line">db.users.createIndex(&#123;<span class="attr">createdAt</span>: <span class="number">-1</span>&#125;,&#123;<span class="attr">background</span>: <span class="literal">true</span>&#125;) <span class="comment">// 后台创建索引</span></span><br><span class="line">db.users.createIndex(&#123;<span class="attr">phone</span>: NumberInt(<span class="number">1</span>)&#125;,&#123;<span class="attr">background</span>: <span class="literal">true</span>&#125;) <span class="comment">// 指定为int类型，默认是double</span></span><br><span class="line">db.users.createIndex(&#123;<span class="attr">draweeId</span>: NumberInt(<span class="number">1</span>)&#125;,&#123;<span class="attr">sparse</span>: <span class="literal">true</span>, <span class="attr">background</span>: <span class="literal">true</span>&#125;) <span class="comment">// 指定为稀疏索引</span></span><br></pre></td></tr></table></figure>
+<p>在前台创建索过程中会锁定数据库，会导致其它操作无法进行数据读写，而在后台创建索引时，会定期释放写锁，从而保证其它操作的运行，但是后台操作会在耗时更长，尤其是在频繁进行写入的服务器上。创建完毕之后可以查看索引：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">db.users.getIndexes() <span class="comment">// 查看索引</span></span><br><span class="line">db.users.getIndexKeys() <span class="comment">// 查看索引字段</span></span><br><span class="line">db.users.totalIndexSize() <span class="comment">// 查看索引大小</span></span><br><span class="line">db.getCollection(<span class="string">'users'</span>).stats() <span class="comment">// 查看表相关信息</span></span><br></pre></td></tr></table></figure>
+<p>索引创建之后可以被删除：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">db.users.dropIndex(<span class="string">"createdAt_-1"</span>) <span class="comment">// 删除指定索引</span></span><br><span class="line">db.users.dropIndexes() <span class="comment">// 删除全部索引（除了_id索引）</span></span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/mongodb-index/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/mongodb-index/" data-id="cjw77iiyv000wqlq4ct783fog" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MongoDB/">MongoDB</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-letsencrypt-wildcard-certificate" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/letsencrypt-wildcard-certificate/" class="article-date">
+  <time datetime="2018-04-23T10:14:23.000Z" itemprop="datePublished">2018-04-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/letsencrypt-wildcard-certificate/">letsencrypt 通配符证书</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>这里记录自己如何通过 certbot 申请 letsencrypt 的通配符证书的。</p>
+<p>首先安装 certbot：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install python2-certbot-nginx</span><br></pre></td></tr></table></figure>
+<p>然后申请：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">certbot certonly --manual --agree-tos --server https://acme-v02.api.letsencrypt.org/directory</span><br></pre></td></tr></table></figure>
+<p>其中：</p>
 <ul>
-<li><p>桥接网络（bridge）</p>
-<p>  默认都是使用 bridge，每次 Docker 容器重启时，会按照顺序获取对应的 IP 地址，于是 IP 地址就变了。</p>
-</li>
-<li><p>无指定网络（none）</p>
-<p>  使用 <code>--network=none</code> ，docker 容器就不会分配局域网的IP。</p>
-</li>
-<li><p>宿主机网络（host）</p>
-<p>  使用 <code>--network=host</code>，此时，Docker 容器的网络会附属在主机上，两者互通。</p>
-</li>
-<li><p>创建自定义网络</p>
-<p>  指定网段和每个容器在这个网段中的具体IP。</p>
-</li>
+<li><code>--manual</code>：交互模式</li>
+<li><code>--agree-tos</code>：同意服务协议</li>
 </ul>
+<p>certbot 命令有很多选项，这里顺便介绍一下用法：</p>
+<p><strong>用法:</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">certbot [子命令] [选项] [-d 域名] [-d 域名]</span><br></pre></td></tr></table></figure>
         </div>
         
           <p class="article-more-link">
-            <a href="/docker-container-static-ip/#more">Read More</a>
+            <a href="/letsencrypt-wildcard-certificate/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/docker-container-static-ip/" data-id="cjssqvcs6000z8uq4l73vd5wt" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/letsencrypt-wildcard-certificate/" data-id="cjkajvcqv000g4eq3w3pgdi64" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
 
@@ -493,10 +458,10 @@
 
 
   
-    <article id="post-nginx-reverse-proxy-mongodb" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-js-generate-sequence" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/nginx-reverse-proxy-mongodb/" class="article-date">
-  <time datetime="2018-04-04T05:27:17.000Z" itemprop="datePublished">2018-04-04</time>
+    <a href="/js-generate-sequence/" class="article-date">
+  <time datetime="2018-04-23T06:06:56.000Z" itemprop="datePublished">2018-04-23</time>
 </a>
     
   </div>
@@ -507,7 +472,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/nginx-reverse-proxy-mongodb/">nginx反向代理mongodb</a>
+      <a class="article-title" href="/js-generate-sequence/">js 中快速生成序列</a>
     </h1>
   
 
@@ -518,22 +483,17 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <div class="article-preview">
-            <p>使用 stream 语法可以让 Nginx 来反向代理 MongoDB：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">stream &#123;</span><br><span class="line">    server &#123;</span><br><span class="line">        listen  &lt;your incoming Mongo TCP port&gt;;</span><br><span class="line">        proxy_connect_timeout 1s;</span><br><span class="line">        proxy_timeout 3s;</span><br><span class="line">        proxy_pass    stream_mongo_backend;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    upstream stream_mongo_backend &#123;</span><br><span class="line">      server &lt;localhost:your <span class="built_in">local</span> Mongo TCP port&gt;;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>注意，不要用 http 反向代理，否则会报错，因为 mongodb 走的是tcp，案例分析：</p>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/nginx-reverse-proxy-mongodb/#more">Read More</a>
-          </p>
-        
+        <p>下面的方法可以快速生成 [0, 2, 3, …, N-1] 的序列：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Array</span>.from(<span class="built_in">Array</span>(N).keys())</span><br></pre></td></tr></table></figure>
+<p>或者更简单的 es6 语法：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[…<span class="built_in">Array</span>(N).keys()]</span><br></pre></td></tr></table></figure>
+
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/nginx-reverse-proxy-mongodb/" data-id="cjw53wyar000gm5q4381y4my2" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/js-generate-sequence/" data-id="cjkajvcqt000e4eq3ms8ehv42" class="article-share-link">Share</a>
      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
     </footer>
   </div>
@@ -542,10 +502,10 @@
 
 
   
-    <article id="post-alias-package-using-yarn" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-hot-and-code-observable" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/alias-package-using-yarn/" class="article-date">
-  <time datetime="2018-03-30T09:19:23.000Z" itemprop="datePublished">2018-03-30</time>
+    <a href="/hot-and-code-observable/" class="article-date">
+  <time datetime="2018-04-22T13:30:03.000Z" itemprop="datePublished">2018-04-22</time>
 </a>
     
   </div>
@@ -556,7 +516,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/alias-package-using-yarn/">用 yarn 来安装依赖的不同版本</a>
+      <a class="article-title" href="/hot-and-code-observable/">hot 和 cold 可观察对象</a>
     </h1>
   
 
@@ -567,23 +527,24 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <div class="article-preview">
-            <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn add fake-name@npm:left-pad</span><br></pre></td></tr></table></figure>
-<p>可以用 <code>require(&quot;fake-name&quot;)</code> 来引用 left-pad。这个命令特别适用于当你在项目中引用某个库的不同版本时：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn add lodash3@npm:lodash@^3 lodash4@npm:lodash@^4</span><br></pre></td></tr></table></figure>
-<p>注意这个用法只有 yarn 支持，并不适用于 npm。</p>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/alias-package-using-yarn/#more">Read More</a>
-          </p>
-        
+        <p>可观察对象有两种：hot和cold。区别在于：</p>
+<ul>
+<li>hot：为每个订阅者创建一个数据提供方。</li>
+<li>cold：先创建一个数据提供方，每个订阅者都从这个数据提供方这里获取数据。</li>
+</ul>
+<p>比较抽象，可以形象的比喻成“网上看电影”和“电影院看电影”的区别：</p>
+<ul>
+<li>网上看电影：当用户点击播放按钮时，网站为每个用户都提供了完整的数据流，彼此互不影响，每个用户可以有不同的观看进度，随时可以从任意位置开始播放。</li>
+<li>电影院看电影：假如电影晚上6点开始，那么6点准时开播，创建了唯一的数据流，观看者的进度是完全一致的，如果有人迟到的话只能从他抵达时刻开始看后续内容。</li>
+</ul>
+<p>这样就不难理解：cold observable 仅在订阅之后开始创建数据流，hot obervable 无论有没有订阅都会产生数据流。</p>
+
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/alias-package-using-yarn/" data-id="cjkajvcq700004eq3h0iu34oj" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/hot-and-code-observable/" data-id="cjhq778m30096izq3rcb82pmw" class="article-share-link">Share</a>
      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
 
     </footer>
   </div>
@@ -595,7 +556,7 @@
 
 
   <nav id="page-nav">
-    <a class="extend prev" rel="prev" href="/page/16/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/15/">15</a><a class="page-number" href="/page/16/">16</a><span class="page-number current">17</span><a class="page-number" href="/page/18/">18</a><a class="page-number" href="/page/19/">19</a><span class="space">&hellip;</span><a class="page-number" href="/page/60/">60</a><a class="extend next" rel="next" href="/page/18/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/16/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/15/">15</a><a class="page-number" href="/page/16/">16</a><span class="page-number current">17</span><a class="page-number" href="/page/18/">18</a><a class="page-number" href="/page/19/">19</a><span class="space">&hellip;</span><a class="page-number" href="/page/62/">62</a><a class="extend next" rel="next" href="/page/18/">Next &raquo;</a>
   </nav>
 </section>
 

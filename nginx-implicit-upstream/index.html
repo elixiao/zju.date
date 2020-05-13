@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="nginx 中 proxy_pass 指令必然对应显示或隐式的 upstream，或者 resolver。  proxy_pass 和显式 upstream  1234567891011upstream bar &amp;#123;    server 127.0.0.1:8001;&amp;#125;server &amp;#123;    listen       80;    server_name  localh">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Nginx中显式和隐式的upstream">
+<meta property="og:url" content="https://zju.date/nginx-implicit-upstream/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="nginx 中 proxy_pass 指令必然对应显示或隐式的 upstream，或者 resolver。  proxy_pass 和显式 upstream  1234567891011upstream bar &amp;#123;    server 127.0.0.1:8001;&amp;#125;server &amp;#123;    listen       80;    server_name  localh">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2020-05-11T06:26:16.428Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Nginx中显式和隐式的upstream">
+<meta name="twitter:description" content="nginx 中 proxy_pass 指令必然对应显示或隐式的 upstream，或者 resolver。  proxy_pass 和显式 upstream  1234567891011upstream bar &amp;#123;    server 127.0.0.1:8001;&amp;#125;server &amp;#123;    listen       80;    server_name  localh">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-nginx-implicit-upstream" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/nginx-implicit-upstream/" class="article-date">
+  <time datetime="2018-09-23T05:07:04.000Z" itemprop="datePublished">2018-09-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Nginx中显式和隐式的upstream
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>nginx 中 proxy_pass 指令必然对应显示或隐式的 upstream，或者 resolver。</p>
+<ol>
+<li><p>proxy_pass 和显式 upstream</p>
+ <figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">upstream</span> bar &#123;</span><br><span class="line">    <span class="attribute">server</span> <span class="number">127.0.0.1:8001</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span>       <span class="number">80</span>;</span><br><span class="line">    <span class="attribute">server_name</span>  localhost;</span><br><span class="line">    <span class="attribute">location</span> /foo &#123;</span><br><span class="line">        <span class="attribute">proxy_pass</span> http://bar;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> 访问 <a href="http://localhost/foo，proxy" target="_blank" rel="noopener">http://localhost/foo，proxy</a> 模块会将请求转发到 127.0.0.1 的8001端口上。</p>
+ <a id="more"></a>
+</li>
+<li><p>proxy_pass 和隐式 upstream</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    listen       80;</span><br><span class="line">    server_name  localhost;</span><br><span class="line">    location /foo &#123;</span><br><span class="line">        proxy_pass http://bar;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> 实际上是隐式创建了upstream，upstream 名字就是 bar。upstream 模块利用本机设置的DNS服务器（或/etc/hosts），将bar 解析成IP，访问 <a href="http://localhost/foo，proxy" target="_blank" rel="noopener">http://localhost/foo，proxy</a> 模块会将请求转发到解析后的IP上。</p>
+<p> 如果本机未设置DNS服务器，或者DNS服务器无法解析域名，则nginx启动时会报类似如下错误：</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nginx: [emerg] host not found in upstream &quot;bar&quot; in /path/nginx/conf/nginx.conf:110</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>proxy_pass 和 resolver</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    listen       80;</span><br><span class="line">    server_name  localhost;</span><br><span class="line">    resolver 114.114.114.114;</span><br><span class="line">    location /foo &#123;</span><br><span class="line">        set $foo bar;</span><br><span class="line">        proxy_pass http://$foo;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<pre><code>访问http://localhost/foo，nginx 会动态利用 resolver 设置的 DNS 服务器（本机设置的 DNS 服务器或 /etc/hosts 无效），将域名解析成 IP，proxy 模块会将请求转发到解析后的 IP 上。
+</code></pre><ol>
+<li><p>proxy_pass、显式 upstream 和 resolver</p>
+ <figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">upstream</span> bar &#123;</span><br><span class="line">    <span class="attribute">server</span> <span class="number">127.0.0.1:8001</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span>       <span class="number">80</span>;</span><br><span class="line">    <span class="attribute">server_name</span>  localhost;</span><br><span class="line">    <span class="attribute">resolver</span> <span class="number">114.114.114.114</span>;</span><br><span class="line">    <span class="attribute">location</span> /foo &#123;</span><br><span class="line">        <span class="attribute">set</span> <span class="variable">$foo</span> bar;</span><br><span class="line">        <span class="attribute">proxy_pass</span> http://<span class="variable">$foo</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<pre><code>访问 http://localhost/foo 时，如果有定义 upstream，后端服务器则直接利用，不再走 DNS 解析，resolver 无用，会将请求转发到 127.0.0.1 的 8001 端口上。
+</code></pre><ol>
+<li>proxy_pass、隐式 upstream 和 resolver</li>
+</ol>
+<pre><code><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span>       <span class="number">80</span>;</span><br><span class="line">    <span class="attribute">server_name</span>  localhost;</span><br><span class="line">    <span class="attribute">resolver</span> <span class="number">114.114.114.114</span>;</span><br><span class="line">    <span class="attribute">location</span> /foo &#123;</span><br><span class="line">        <span class="attribute">set</span> <span class="variable">$foo</span> bar;</span><br><span class="line">        <span class="attribute">proxy_pass</span> http://<span class="variable">$foo</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">location</span> /foo2 &#123;</span><br><span class="line">        <span class="attribute">proxy_pass</span> http://bar;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+这里虽然没有写 upstream，但是注意 location /foo2 实际上是隐式定义了 upstream bar，并由本地 DNS 服务器进行了域名解析，访问 http://localhost/foo 时，upstream 模块会优先查找隐式定义的 bar 不走 resolver。
+</code></pre>
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/nginx-implicit-upstream/" data-id="cka4yu225000v8zq4gchy1foo" class="article-share-link">Share</a>
+     
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/change-docker-volume-folder/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          修改 docker 默认存储位置
+        
+      </div>
+    </a>
+  
+  
+    <a href="/js-lock-object/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">js锁定对象</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dart/">Dart</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Elasticsearch/">Elasticsearch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Flutter/">Flutter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

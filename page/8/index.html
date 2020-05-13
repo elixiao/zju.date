@@ -54,10 +54,10 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-aapt" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-not-a-constructor" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/aapt/" class="article-date">
-  <time datetime="2018-09-15T08:50:51.000Z" itemprop="datePublished">2018-09-15</time>
+    <a href="/not-a-constructor/" class="article-date">
+  <time datetime="2018-09-30T05:35:07.000Z" itemprop="datePublished">2018-09-30</time>
 </a>
     
   </div>
@@ -68,7 +68,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/aapt/">aapt</a>
+      <a class="article-title" href="/not-a-constructor/">require 时报错 not a constructor</a>
     </h1>
   
 
@@ -80,114 +80,22 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <p>AAPT 全称是 Android Asset Packaging Tool，它是 Android SDK 自带的一个命令行工具，有很多用处，但默认情况下并不在系统环境变量里面，命令行直接执行的话是找不到的，会报错：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">appt not found</span><br></pre></td></tr></table></figure>
-<p>我们先找到 ANDROID_HOME 所在目录，一般在下面：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ANDROID_HOME=/Users/xxx/Library/Android/sdk</span><br></pre></td></tr></table></figure>
-<p>然后再找 aapt 命令所在目录：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$ANDROID_HOME</span>/build-tools/xx.x.x</span><br></pre></td></tr></table></figure>
-<p>把这个目录配到环境变量里面就可以使用 aapt 的命令了。</p>
+            <p>当引用第三方库的时候，经常会遇到下面的错误：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xxx is not a constructor</span><br></pre></td></tr></table></figure>
+<p>原因是该第三方库使用 es6 语法暴露出来一个类，但是在项目中使用了 require 来引用导致的。这是 babel 在转换 <code>import</code> 和 <code>export</code> 到 <code>require</code> 和 <code>exports</code> 时存在的差异，举个例子，用 es6 写 processor.js 暴露一个类：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// processor.js</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Processor</span> </span>&#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> Processor</span><br></pre></td></tr></table></figure>
+<p>如果用 require 来引用：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// require.js</span></span><br><span class="line"><span class="keyword">const</span> Processor = <span class="built_in">require</span>(<span class="string">'./processor'</span>);</span><br><span class="line"><span class="keyword">const</span> processor = <span class="keyword">new</span> Processor() <span class="comment">// 会报错</span></span><br></pre></td></tr></table></figure>
         </div>
         
           <p class="article-more-link">
-            <a href="/aapt/#more">Read More</a>
+            <a href="/not-a-constructor/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/aapt/" data-id="ck8kdhqku0000d6q4g9i5tv4o" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/">Android</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-es-case-sensitive" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/es-case-sensitive/" class="article-date">
-  <time datetime="2018-09-14T14:34:05.000Z" itemprop="datePublished">2018-09-14</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/es-case-sensitive/">es查询时匹配大小写</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>今天遇到一个在 ES 中使用 term 关键词进行查询时，大小写不能正确匹配的坑。例如用官方提供的示例库bank，下面的查询竟然查不到任何数据：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">escurl -XGET <span class="variable">$ES</span>/bank/_search?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "query": &#123;</span></span><br><span class="line"><span class="string">    "term": &#123;</span></span><br><span class="line"><span class="string">        "state": "ND"</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#125;'</span></span><br></pre></td></tr></table></figure>
-<p>如果把 ND 换成小写的话，就能查出来了，而且查出来的结果都是大写的。另外，如果把 term 换成 match 的话，无论 ND 是大小写，都是可以查到的。这是为什么呢？让我们来还原一下具体的场景：</p>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/es-case-sensitive/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/es-case-sensitive/" data-id="cjwq89ima0001v7q4jd0tztf6" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Elasticsearch/">Elasticsearch</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-distinct-array" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/distinct-array/" class="article-date">
-  <time datetime="2018-09-14T10:11:07.000Z" itemprop="datePublished">2018-09-14</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/distinct-array/">数组去重</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>数组去重的问题经常遇到，下面总结了几个比较实用的方法：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 对数组进行去重，原数组发生改变</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">unique</span>(<span class="params">arr, field</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">let</span> i = arr.length; i; i--) &#123;</span><br><span class="line">    <span class="keyword">const</span> item = arr[i - <span class="number">1</span>]</span><br><span class="line">    <span class="keyword">const</span> dup = arr.slice(<span class="number">0</span>, i - <span class="number">1</span>).find(<span class="function"><span class="params">it</span> =&gt;</span> field ? it[field] === item[field] : it === item)</span><br><span class="line">    <span class="keyword">if</span> (dup) arr.splice(i - <span class="number">1</span>, <span class="number">1</span>)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> arr</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 获取去重后新数组，不影响原数组</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getUnique</span>(<span class="params">arr, field</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (!field) <span class="keyword">return</span> arr.filter(<span class="function">(<span class="params">it, i</span>) =&gt;</span> arr.indexOf(it) === i)</span><br><span class="line">  <span class="keyword">return</span> arr.filter(<span class="function">(<span class="params">it, i</span>) =&gt;</span> arr.map(<span class="function"><span class="params">it</span> =&gt;</span> it[field]).indexOf(it[field]) === i)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 获取数组中的重复值</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getDuplicates</span>(<span class="params">arr, field</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (!field) <span class="keyword">return</span> arr.filter(<span class="function">(<span class="params">it, i</span>) =&gt;</span> arr.indexOf(it) !== i)</span><br><span class="line">  <span class="keyword">return</span> arr.filter(<span class="function">(<span class="params">it, i</span>) =&gt;</span> arr.map(<span class="function"><span class="params">it</span> =&gt;</span> it[field]).indexOf(it[field]) !== i)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// ES6写法</span></span><br><span class="line">[...new <span class="built_in">Set</span>(arr)]</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/distinct-array/" data-id="cjvrpwbjt0003ofq4ljb9gv3b" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/not-a-constructor/" data-id="cjssqvcur003i8uq4gflmeynz" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
@@ -198,10 +106,10 @@
 
 
   
-    <article id="post-logstash-grok" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-react-keep-alive" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/logstash-grok/" class="article-date">
-  <time datetime="2018-09-13T06:59:07.000Z" itemprop="datePublished">2018-09-13</time>
+    <a href="/react-keep-alive/" class="article-date">
+  <time datetime="2018-09-28T23:17:31.000Z" itemprop="datePublished">2018-09-29</time>
 </a>
     
   </div>
@@ -212,7 +120,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/logstash-grok/">grok 语法</a>
+      <a class="article-title" href="/react-keep-alive/">react保存路由状态</a>
     </h1>
   
 
@@ -224,130 +132,29 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <p>grok 语法：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">%&#123;SYNTAX:SEMANTIC&#125;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>SYNTAX：代表匹配值的类型，例如NUMBER能匹配3.14，IP能匹配127.0.0.1</li>
-<li>SEMANTIC：代表存储该值的变量名</li>
-</ul>
-<p>例如下面的语法表示匹配NUMBER类型的数据，存到 duration 变量中，匹配IP类型的数据，存到 ip 变量中。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">%&#123;NUMBER:duration&#125; %&#123;IP:ip&#125;</span><br></pre></td></tr></table></figure>
-<p>默认情况下，所有语义都保存为字符串，也可以转变数据类型，目前支持的转换只有 int 和 float 两种类型，例如将 duration 从一个字符串转换为一个整数。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">%&#123;NUMBER:duration:int&#125;</span><br></pre></td></tr></table></figure>
+            <p>在一个 React 项目中，客户希望切换路由再回来的时候，能够保持之前的状态。而保存状态有两种场景：</p>
+<ol>
+<li>只保留数据状态，不保留交互状态</li>
+<li>既保留数据状态，又保留交互状态</li>
+</ol>
+<p>所谓交互状态，就是连滚动位置、input 框里面输入到一半的文字等状态也要保留。上面两种场景对应的实现方法往往是：</p>
+<ol>
+<li>状态管理器中保存初始化数据，在 componentDidMount 时调用</li>
+<li>把页面隐藏掉，即设置：display: none</li>
+</ol>
+<p>对于第一种情况，一个简单的实现是把某个页面的状态参数放到 url 的 query 参数里面，同时也在全局状态对象中也存一份，组件初始化的时候先尝试从参数里面加载，如果没有参数，就从全局状态对象中取出来，示例代码如下：</p>
+<p>首先在 utils 中写暴露两个函数：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">getURLState</span>(<span class="params">opts</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> &#123; search, history, data = &#123;&#125; &#125; = opts</span><br><span class="line">  <span class="keyword">const</span> params = <span class="keyword">new</span> URLSearchParams(search)</span><br><span class="line">  <span class="keyword">const</span> fields = <span class="built_in">Object</span>.keys(data), ret = &#123;&#125;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; fields.length; i++) &#123;</span><br><span class="line">    <span class="keyword">const</span> field = fields[i]</span><br><span class="line">    ret[field] = params.get(field) || data[field]</span><br><span class="line">  &#125;</span><br><span class="line">  history.replace(<span class="built_in">window</span>.location.pathname + search)</span><br><span class="line">  <span class="keyword">return</span> ret</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">setURLState</span>(<span class="params">opts</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> &#123; search, history, data = &#123;&#125; &#125; = opts</span><br><span class="line">  <span class="keyword">const</span> currentUrlParams = <span class="keyword">new</span> URLSearchParams(search)</span><br><span class="line">  <span class="keyword">const</span> fields = <span class="built_in">Object</span>.keys(data), ret = &#123;&#125;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; fields.length; i++) &#123;</span><br><span class="line">    <span class="keyword">const</span> field = fields[i]</span><br><span class="line">    <span class="keyword">if</span> (field <span class="keyword">in</span> data) currentUrlParams.set(field, data[field])</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">const</span> newSearch = <span class="string">'?'</span> + currentUrlParams.toString()</span><br><span class="line">  history.push(<span class="built_in">window</span>.location.pathname + newSearch)</span><br><span class="line">  <span class="keyword">return</span> newSearch</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
         </div>
         
           <p class="article-more-link">
-            <a href="/logstash-grok/#more">Read More</a>
+            <a href="/react-keep-alive/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/logstash-grok/" data-id="cjssqvcu3002r8uq4a72i4bru" class="article-share-link">Share</a>
-     
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-es-compare" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/es-compare/" class="article-date">
-  <time datetime="2018-09-11T02:04:05.000Z" itemprop="datePublished">2018-09-11</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/es-compare/">ES新老写法的一些对比</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>2.x 版本只有 string 字段，5.x 版本引入 text 和 keyword 字段，并且抛弃 string。</p>
-<ul>
-<li>keyword：存储数据时候，不会分词建立索引</li>
-<li>text：存储数据时候，会自动分词，并生成索引</li>
-</ul>
-<p>新老写法对比：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 2.x 写法</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">"foo"</span>: &#123;</span><br><span class="line">        <span class="string">"type"</span>: <span class="string">"string"</span>,</span><br><span class="line">        <span class="string">"index"</span>: <span class="string">"analyzed"</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 5.x 写法</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">"foo"</span>: &#123;</span><br><span class="line">        <span class="string">"type"</span>: <span class="string">"text"</span>,</span><br><span class="line">        <span class="string">"index"</span>: <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 2.x 写法</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">"foo"</span>: &#123;</span><br><span class="line">        <span class="string">"type"</span>: <span class="string">"string"</span>,</span><br><span class="line">        <span class="string">"index"</span>: <span class="string">"not_analyzed"</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 5.x 写法</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">"foo"</span>: &#123;</span><br><span class="line">        <span class="string">"type"</span>: <span class="string">"keyword"</span>,</span><br><span class="line">        <span class="string">"index"</span>: <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/es-compare/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/es-compare/" data-id="cjw77iixv0005qlq4sw6q1wbo" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-buffer-vs-stream" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/buffer-vs-stream/" class="article-date">
-  <time datetime="2018-09-07T09:29:07.000Z" itemprop="datePublished">2018-09-07</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/buffer-vs-stream/">buffer 和 stream</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>nodejs 处理数据有两种模式：buffer 和 stream，前者是取完数据一次性操作, 后者就是边取数据边操作：</p>
-<ul>
-<li>buffer：等到所有数据都收集完了才发送给消费者</li>
-<li>stream：实时发送数据到消费者</li>
-</ul>
-<p>举个例子, 当我们拷贝一个非常大的文件时，不妨假设为 10G，用 buffer 的话就是先分配 10G 的内存，把文件全部读到内存，然后进行处理，代码如下：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> source = fs.readFileSync(<span class="string">'/path/to/source'</span>, &#123;<span class="attr">encoding</span>: <span class="string">'utf8'</span>&#125;);</span><br><span class="line">fs.writeFileSync(<span class="string">'/path/to/dest'</span>, source);</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/buffer-vs-stream/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/buffer-vs-stream/" data-id="cjssqvcs0000r8uq4v90ftatg" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/react-keep-alive/" data-id="ck10e5isy0005joq4ju2t9bd3" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
@@ -358,10 +165,10 @@
 
 
   
-    <article id="post-flex-grow-vs-flex-shrink" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-sudo-keep-env" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/flex-grow-vs-flex-shrink/" class="article-date">
-  <time datetime="2018-09-04T08:26:54.000Z" itemprop="datePublished">2018-09-04</time>
+    <a href="/sudo-keep-env/" class="article-date">
+  <time datetime="2018-09-28T01:06:07.000Z" itemprop="datePublished">2018-09-28</time>
 </a>
     
   </div>
@@ -372,7 +179,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/flex-grow-vs-flex-shrink/">flex-grow 和 flex-shrink</a>
+      <a class="article-title" href="/sudo-keep-env/">sudo 保持环境变量</a>
     </h1>
   
 
@@ -383,39 +190,20 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <div class="article-preview">
-            <p>flex-grow 属性的作用：</p>
+        <p>sudo 之后环境变量就没了，但有个 <code>-E</code> 选项能够保持环境变量：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ export HTTP_PROXY=foof</span><br><span class="line">$ sudo -E bash -c &apos;echo $HTTP_PROXY&apos;</span><br></pre></td></tr></table></figure>
+<p>帮助页面解释如下:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-E, --preserve-env</span><br></pre></td></tr></table></figure>
 <blockquote>
-<p>父元素在主轴方向还有剩余空间时，子元素们如何分配这些剩余空间。</p>
+<p>Indicates to the security policy that the user wishes to preserve their existing environment variables.  The security policy may return an error if the user does not have permission to preserve the environment.</p>
 </blockquote>
-<p>其值为一个权重（也称扩张因子），默认为 0（纯数值，无单位），剩余空间将会按照这个权重来分配。</p>
-<p>比如剩余空间为 x，三个元素的 flex-grow 分别为 a，b，c，求和  <code>sum = a + b + c</code>。那么三个元素权重是 <code>a/sum</code>, <code>b/sum</code>, <code>c/sum</code>，就是按照这个比例分配剩余空间的。</p>
-<p>举个例子：</p>
-<p>父元素宽度 500px，三个子元素的 width 分别为 100px，150px，100px，于是剩余空间为 150px。</p>
-<p>如果三个元素的 flex-grow 分别是 1，2，3，那么 sum 为 6，则三个元素被分到的空间是：</p>
-<ul>
-<li><code>150 * 1 / 6 = 25px</code></li>
-<li><code>150 * 2 / 6 = 50px</code></li>
-<li><code>150 * 3 / 6 = 75px</code></li>
-</ul>
-<p>三个元素最终的宽度分别：</p>
-<ul>
-<li><code>100px + 25px = 125px</code></li>
-<li><code>150px + 50px = 200px</code></li>
-<li><code>100px + 75px = 175px</code></li>
-</ul>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/flex-grow-vs-flex-shrink/#more">Read More</a>
-          </p>
-        
+
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/flex-grow-vs-flex-shrink/" data-id="cjssqvcsk001l8uq444k7csle" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/sudo-keep-env/" data-id="cjssqvcv900448uq4zkm2okf2" class="article-share-link">Share</a>
      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CSS/">CSS</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
 
     </footer>
   </div>
@@ -424,10 +212,10 @@
 
 
   
-    <article id="post-bootstrap4-notes" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-linux-route" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/bootstrap4-notes/" class="article-date">
-  <time datetime="2018-09-03T15:18:22.000Z" itemprop="datePublished">2018-09-03</time>
+    <a href="/linux-route/" class="article-date">
+  <time datetime="2018-09-27T14:43:07.000Z" itemprop="datePublished">2018-09-27</time>
 </a>
     
   </div>
@@ -438,49 +226,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/bootstrap4-notes/">bootstrap4记录</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>把 bootstrap4 中 navbar 的 dropdown 由 click 的方式改成 hover 的方式：</p>
-<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-class">.dropdown</span><span class="selector-pseudo">:hover</span> &gt; <span class="selector-class">.dropdown-menu</span> &#123;</span><br><span class="line">    <span class="attribute">display</span>: block;</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-class">.dropdown</span> &gt; <span class="selector-class">.dropdown-toggle</span><span class="selector-pseudo">:active</span> &#123;</span><br><span class="line">    <span class="comment">/*Without this, clicking will make it sticky*/</span></span><br><span class="line">    <span class="attribute">pointer-events</span>: none;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/bootstrap4-notes/" data-id="cjw77iixm0001qlq4kzgi47io" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CSS/">CSS</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-mongodb-optimize" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/mongodb-optimize/" class="article-date">
-  <time datetime="2018-09-03T14:45:03.000Z" itemprop="datePublished">2018-09-03</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/mongodb-optimize/">MongoDB 慢查询和性能优化</a>
+      <a class="article-title" href="/linux-route/">Linux 路由表</a>
     </h1>
   
 
@@ -492,44 +238,58 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <p>记录超过 1秒 的慢查询：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ db.setProfilingLevel(1, 1000)</span><br></pre></td></tr></table></figure>
+            <p>route 可查看路由表：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># route</span><br><span class="line">Destination     Gateway         Genmask Flags Metric Ref    Use Iface</span><br><span class="line">192.168.0.0     *               255.255.255.0   U     0      0        0 eth0</span><br><span class="line">169.254.0.0     *               255.255.0.0     U     0      0        0 eth0</span><br><span class="line">default         192.168.0.1     0.0.0.0         UG    0      0        0 eth0</span><br></pre></td></tr></table></figure>
 <table>
 <thead>
 <tr>
-<th>Level</th>
-<th>Description</th>
+<th>Destination</th>
+<th>目标网段或者主机</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>0</code></td>
-<td>关闭，不记录。默认配置</td>
+<td>Gateway</td>
+<td>网关地址，”*” 表示目标是本主机所属的网络，不需要路由</td>
 </tr>
 <tr>
-<td><code>1</code></td>
-<td>记录超过 <code>slowms</code> 值的操作</td>
+<td>Genmask</td>
+<td>网络掩码</td>
 </tr>
 <tr>
-<td><code>2</code></td>
-<td>记录所有操作</td>
+<td>Flags</td>
+<td>标记。</td>
+</tr>
+<tr>
+<td>Metric</td>
+<td>路由距离，到达指定网络所需的中转数（linux 内核中没有使用）</td>
+</tr>
+<tr>
+<td>Ref</td>
+<td>路由项引用次数（linux 内核中没有使用）</td>
+</tr>
+<tr>
+<td>Use</td>
+<td>此路由项被路由软件查找的次数</td>
+</tr>
+<tr>
+<td>Iface</td>
+<td>该路由表项对应的输出接口</td>
 </tr>
 </tbody>
 </table>
-<p>查看刚才的配置是否生效：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ db.getProfilingStatus()</span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">"was"</span> : <span class="number">1</span>,</span><br><span class="line">    <span class="string">"slowms"</span> : <span class="number">1000</span>,</span><br><span class="line">    <span class="string">"sampleRate"</span> : <span class="number">1.0</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
         </div>
         
           <p class="article-more-link">
-            <a href="/mongodb-optimize/#more">Read More</a>
+            <a href="/linux-route/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/mongodb-optimize/" data-id="cjssqvcuc00348uq4dy9sabr6" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/linux-route/" data-id="cjssqvctz002l8uq4wqkfpgce" class="article-share-link">Share</a>
      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MongoDB/">MongoDB</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
 
     </footer>
   </div>
@@ -538,10 +298,10 @@
 
 
   
-    <article id="post-upgrade-bootstrap4" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-install-latex-on-centos" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/upgrade-bootstrap4/" class="article-date">
-  <time datetime="2018-09-03T03:46:13.000Z" itemprop="datePublished">2018-09-03</time>
+    <a href="/install-latex-on-centos/" class="article-date">
+  <time datetime="2018-09-27T06:12:14.000Z" itemprop="datePublished">2018-09-27</time>
 </a>
     
   </div>
@@ -552,7 +312,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/upgrade-bootstrap4/">bootstrap语义等价表</a>
+      <a class="article-title" href="/install-latex-on-centos/">在centos上安装latex</a>
     </h1>
   
 
@@ -563,126 +323,276 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <p>升级到 bootstrap4 之后 <code>hidden-*</code>、<code>visible-*</code> 类以及 <code>-xs</code> 中缀都不存在了，可以使用 <code>d-*</code> 类来代替，下表是等价关系：</p>
-<table>
-<thead>
-<tr>
-<th>语义</th>
-<th>bootstrap3</th>
-<th>bootstrap4</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>xs 以下隐藏</td>
-<td><code>hidden-xs-down</code></td>
-<td><code>d-none d-sm-block</code></td>
-</tr>
-<tr>
-<td>sm 以下隐藏</td>
-<td><code>hidden-sm-down</code></td>
-<td><code>d-none d-md-block</code></td>
-</tr>
-<tr>
-<td>md 以下隐藏</td>
-<td><code>hidden-md-down</code></td>
-<td><code>d-none d-lg-block</code></td>
-</tr>
-<tr>
-<td>lg 以下隐藏</td>
-<td><code>hidden-lg-down</code></td>
-<td><code>d-none d-xl-block</code></td>
-</tr>
-<tr>
-<td>xl 以下隐藏</td>
-<td><code>hidden-xl-down</code></td>
-<td><code>d-none</code></td>
-</tr>
-<tr>
-<td>xs 以上隐藏</td>
-<td><code>hidden-xs-up</code></td>
-<td><code>d-none</code></td>
-</tr>
-<tr>
-<td>sm 以上隐藏</td>
-<td><code>hidden-sm-up</code></td>
-<td><code>d-sm-none</code></td>
-</tr>
-<tr>
-<td>md 以上隐藏</td>
-<td><code>hidden-md-up</code></td>
-<td><code>d-md-none</code></td>
-</tr>
-<tr>
-<td>lg 以上隐藏</td>
-<td><code>hidden-lg-up</code></td>
-<td><code>d-lg-none</code></td>
-</tr>
-<tr>
-<td>xl 以上隐藏</td>
-<td><code>hidden-xl-up</code></td>
-<td><code>d-xl-none</code></td>
-</tr>
-<tr>
-<td>只隐藏 xs</td>
-<td><code>hidden-xs</code></td>
-<td><code>d-none d-sm-block</code></td>
-</tr>
-<tr>
-<td>只隐藏 sm</td>
-<td><code>hidden-sm</code></td>
-<td><code>d-block d-sm-none d-md-block</code></td>
-</tr>
-<tr>
-<td>只隐藏 md</td>
-<td><code>hidden-md</code></td>
-<td><code>d-block d-md-none d-lg-block</code></td>
-</tr>
-<tr>
-<td>只隐藏 lg</td>
-<td><code>hidden-lg</code></td>
-<td><code>d-block d-lg-none d-xl-block</code></td>
-</tr>
-<tr>
-<td>只隐藏 xl</td>
-<td><code>hidden-xl</code></td>
-<td><code>d-block d-xl-none</code></td>
-</tr>
-<tr>
-<td>只显示 xs</td>
-<td><code>visible-xs</code></td>
-<td><code>d-block d-sm-none</code></td>
-</tr>
-<tr>
-<td>只显示 sm</td>
-<td><code>visible-sm</code></td>
-<td><code>d-none d-sm-block d-md-none</code></td>
-</tr>
-<tr>
-<td>只显示 md</td>
-<td><code>visible-md</code></td>
-<td><code>d-none d-md-block d-lg-none</code></td>
-</tr>
-<tr>
-<td>只显示 lg</td>
-<td><code>visible-lg</code></td>
-<td><code>d-none d-lg-block d-xl-none</code></td>
-</tr>
-<tr>
-<td>只显示 xl</td>
-<td><code>visible-xl</code></td>
-<td><code>d-none d-xl-block</code></td>
-</tr>
-</tbody>
-</table>
-<p>col-sm-</p>
+        <ol>
+<li>从<a href="https://www.tug.org/texlive/acquire-netinstall.html" target="_blank" rel="noopener">官网</a>下载<a href="http://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz" target="_blank" rel="noopener">安装包</a>并解压</li>
+<li><p>删除已存在的 texlive 版本</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ yum erase texlive texlive*</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>安装依赖</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ yum install perl-Digest-MD5 -y</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<ol>
+<li><p>进入解压后的文件夹</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">$ ./install-tl</span><br><span class="line">Installing to: /usr/local/texlive/2019</span><br><span class="line">...</span><br><span class="line">Welcome to TeX Live!</span><br><span class="line"></span><br><span class="line">See /usr/local/texlive/2019/index.html for links to documentation.</span><br><span class="line">The TeX Live web site (https://tug.org/texlive/) contains any updates and</span><br><span class="line">corrections. TeX Live is a joint project of the TeX user groups around the</span><br><span class="line">world; please consider supporting it by joining the group best for you. The</span><br><span class="line">list of groups is available on the web at https://tug.org/usergroups.html.</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Add /usr/local/texlive/2019/texmf-dist/doc/man to MANPATH.</span><br><span class="line">Add /usr/local/texlive/2019/texmf-dist/doc/info to INFOPATH.</span><br><span class="line">Most importantly, add /usr/local/texlive/2019/bin/x86_64-linux</span><br><span class="line">to your PATH for current and future sessions.</span><br><span class="line">Logfile: /usr/local/texlive/2019/install-tl.log</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>把路径添加到环境变量</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ~/.bashrc</span></span><br><span class="line"><span class="built_in">export</span> PATH=/usr/<span class="built_in">local</span>/texlive/2019/bin/x86_64-linux:<span class="variable">$PATH</span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
 
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/upgrade-bootstrap4/" data-id="ck10e5it00007joq4hec7bngj" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/install-latex-on-centos/" data-id="ck1k3sokb000b4nq4ibpzxk7j" class="article-share-link">Share</a>
      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CSS/">CSS</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-docker-quick-rm" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/docker-quick-rm/" class="article-date">
+  <time datetime="2018-09-27T01:47:23.000Z" itemprop="datePublished">2018-09-27</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/docker-quick-rm/">一句话删除所有容器和镜像</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <ol>
+<li>删除所有正在运行的容器：<code>docker kill $(docker ps -q)</code></li>
+<li>删除所有已停止的容器：<code>docker rm $(docker ps -a -q)</code></li>
+<li>删除所有镜像：<code>docker rmi $(docker images -q)</code></li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/docker-quick-rm/" data-id="cjssqvcsa00178uq4j518nrwk" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/">Docker</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-mac-ntfs" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/mac-ntfs/" class="article-date">
+  <time datetime="2018-09-26T22:45:23.000Z" itemprop="datePublished">2018-09-27</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/mac-ntfs/">Mac 读写 NTFS 硬盘</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Mac 打开 NTFS 格式硬盘读写功能：</p>
+<ol>
+<li><p><code>diskutil list</code> 找到磁盘名称，例如 Seagate</p>
+</li>
+<li><p><code>sudo vi /etc/fstab</code>，输入 <code>LABEL=Seagate none ntfs rw,auto,nobrowse</code></p>
+</li>
+<li><p><code>ln -s /Volumes/Seagate ~/Desktop/Seagate</code> 创建快捷方式</p>
+</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/mac-ntfs/" data-id="cjssqvcu9002y8uq4w3i12d1i" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Mac/">Mac</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-react-native-upload-image" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/react-native-upload-image/" class="article-date">
+  <time datetime="2018-09-26T13:55:08.000Z" itemprop="datePublished">2018-09-26</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/react-native-upload-image/">React Native 上传图片</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>写一个通用的上传函数：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">async</span> upload(url, data) &#123;</span><br><span class="line">  <span class="keyword">let</span> options = &#123;</span><br><span class="line">    headers: &#123;</span><br><span class="line">      <span class="string">'Content-Type'</span>: <span class="string">'multipart/form-data'</span></span><br><span class="line">    &#125;,</span><br><span class="line">    method: <span class="string">'POST'</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  options.body = <span class="keyword">new</span> FormData();</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">let</span> key <span class="keyword">in</span> data) &#123;</span><br><span class="line">    options.body.append(key, data[key]);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> fetch(requestUrl, options)</span><br><span class="line">      .then(<span class="function"><span class="params">response</span> =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> response.json()</span><br><span class="line">          .then(<span class="function"><span class="params">responseJson</span> =&gt;</span> &#123;</span><br><span class="line">            <span class="comment">//You put some checks here</span></span><br><span class="line">            <span class="keyword">return</span> responseJson;</span><br><span class="line">          &#125;)</span><br><span class="line">      &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后调用：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">this</span>.upload(<span class="string">'http://xxx.com/api'</span>, &#123;</span><br><span class="line">  file: &#123;</span><br><span class="line">    uri: image.path,</span><br><span class="line">    type: image.mime,</span><br><span class="line">    name: image.name,</span><br><span class="line">  &#125;</span><br><span class="line">&#125;).then(<span class="function"><span class="params">res</span> =&gt;</span> &#123;</span><br><span class="line">  </span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/react-native-upload-image/" data-id="cjssqvcuy003q8uq4k05x0uqy" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-portainer-notes" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/portainer-notes/" class="article-date">
+  <time datetime="2018-09-26T00:11:47.000Z" itemprop="datePublished">2018-09-26</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/portainer-notes/">Portainer 管理容器</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>如果想管理 docker 容器，portainer 是非常好的管理工具：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d -p 9000:9000 --name portainer --restart always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer</span><br></pre></td></tr></table></figure>
+<p>指定网络：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">docker run -d \</span><br><span class="line">-p 9000:9000 \</span><br><span class="line">--network=myportainers \</span><br><span class="line">--restart=always \</span><br><span class="line">--name my-portainer \</span><br><span class="line">-v /var/run/docker.sock:/var/run/docker.sock \</span><br><span class="line">-v portainer_data:/data \</span><br><span class="line">portainer/portainer</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/portainer-notes/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/portainer-notes/" data-id="cjssqvcuu003m8uq4npvm7xq1" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-react-native-android-debug" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/react-native-android-debug/" class="article-date">
+  <time datetime="2018-09-26T00:11:47.000Z" itemprop="datePublished">2018-09-26</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/react-native-android-debug/">React-Native 安卓调试</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>使用真机调试：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">system_profiler SPUSBDataType <span class="comment"># 找到Vendor ID</span></span><br><span class="line">vim ~/.android/adb_usb.ini <span class="comment"># 将上述ID复制进去</span></span><br><span class="line"><span class="comment"># 打开手机的调试模式</span></span><br><span class="line">adb <span class="built_in">kill</span>-server</span><br><span class="line">adb devices</span><br></pre></td></tr></table></figure>
+<p>重启 adb 方式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">adb kill-server</span><br><span class="line">adb start-server</span><br></pre></td></tr></table></figure>
+<p>使用 GenyMotion 虚拟机</p>
+<ol>
+<li>进入 GenyMotion <a href="https://www.genymotion.com/" target="_blank" rel="noopener">官网</a>，并下载 GenyMotion <a href="https://cloud.genymotion.com/page/launchpad/download/" target="_blank" rel="noopener">虚拟机</a></li>
+<li>申请个人<a href="https://www.genymotion.com/fun-zone/" target="_blank" rel="noopener">免费使用版</a></li>
+<li>下载 VirtualBox <a href="https://www.virtualbox.org/wiki/Downloads" target="_blank" rel="noopener">虚拟机</a></li>
+</ol>
+<p>在命令行启动虚拟设备：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">emulator -avd avd_name [ &#123;-option [value]&#125; … ]</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/react-native-android-debug/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/react-native-android-debug/" data-id="cjssqvcuw003o8uq4p3g59cp5" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
 
     </footer>
   </div>
@@ -694,7 +604,7 @@
 
 
   <nav id="page-nav">
-    <a class="extend prev" rel="prev" href="/page/7/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><span class="page-number current">8</span><a class="page-number" href="/page/9/">9</a><a class="page-number" href="/page/10/">10</a><span class="space">&hellip;</span><a class="page-number" href="/page/60/">60</a><a class="extend next" rel="next" href="/page/9/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/7/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><span class="page-number current">8</span><a class="page-number" href="/page/9/">9</a><a class="page-number" href="/page/10/">10</a><span class="space">&hellip;</span><a class="page-number" href="/page/62/">62</a><a class="extend next" rel="next" href="/page/9/">Next &raquo;</a>
   </nav>
 </section>
 

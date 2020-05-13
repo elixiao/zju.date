@@ -54,6 +54,50 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-flutter-constraints-are-unbounded" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/flutter-constraints-are-unbounded/" class="article-date">
+  <time datetime="2020-03-26T01:39:11.000Z" itemprop="datePublished">2020-03-26</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/flutter-constraints-are-unbounded/">Flutter布局报错</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>今天在 flutter 在 ListView 里面的 itemBuilder 写布局，发现报错了：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">RenderFlex children have non-zero flex but incoming height constraints are unbounded.</span><br></pre></td></tr></table></figure>
+<p>这个报错的 item 的布局就是 Column.children 里面有个 Row，然后这个 Row.children 里面有个 Column，然后给这个 Column 设置 <code>crossAxisAlignment</code> 为 <code>CrossAxisAlignment.stretch</code>。</p>
+<p>查了资料说报错原因是 ListView 垂直方向的计算是包裹子 View 的，也就是说子 View 必须有一个明确的高度，或者尽可能小的高度，而不能是无限高。可以用 IntrinsicHeight 组件包裹 Row，这个 Row 就能根据子控件的高度，智能调整自身高度，就不会报错了。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/flutter-constraints-are-unbounded/" data-id="cka4yu21r000f8zq43vu74o62" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flutter/">Flutter</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-slow-tencent-ssh" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/slow-tencent-ssh/" class="article-date">
@@ -202,6 +246,108 @@
 
 
   
+    <article id="post-flutter-build-after-async-action" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/flutter-build-after-async-action/" class="article-date">
+  <time datetime="2020-01-26T03:41:36.000Z" itemprop="datePublished">2020-01-26</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/flutter-build-after-async-action/">异步请求之后渲染页面</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在 Flutter 中，经常遇到先进行网络请求，然后用请求成功返回的结果来渲染页面的场景。如果网络请求速度比较慢的话，需要在等待网络返回结果的时候，给用户渲染一个等待的页面。有两种方式：</p>
+<ol>
+<li><p>使用 FutureBuilder 组件</p>
+<p> 封装好了这类组件</p>
+ <figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> FutureBuilder(</span><br><span class="line">  future: _future, <span class="comment">// Future 对象或 null</span></span><br><span class="line">  builder: (BuildContext context, AsyncSnapshot&lt;<span class="built_in">String</span>&gt; snapshot) &#123;</span><br><span class="line">    <span class="keyword">switch</span> (snapshot.connectionState) &#123;</span><br><span class="line">      <span class="keyword">case</span> ConnectionState.none: <span class="keyword">return</span> <span class="keyword">new</span> Text(<span class="string">'Press button to start'</span>);</span><br><span class="line">      <span class="keyword">case</span> ConnectionState.waiting: <span class="keyword">return</span> <span class="keyword">new</span> Text(<span class="string">'Awaiting result...'</span>);</span><br><span class="line">      <span class="keyword">default</span>:</span><br><span class="line">        <span class="keyword">if</span> (snapshot.hasError)</span><br><span class="line">          <span class="keyword">return</span> <span class="keyword">new</span> Text(<span class="string">'Error: <span class="subst">$&#123;snapshot.error&#125;</span>'</span>);</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">          <span class="keyword">return</span> <span class="keyword">new</span> Text(<span class="string">'Result: <span class="subst">$&#123;snapshot.data&#125;</span>'</span>);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>定义变量，然后用 setState 来刷新</p>
+ <figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyHomePage</span> <span class="keyword">extends</span> <span class="title">StatefulWidget</span> </span>&#123;</span><br><span class="line">  MyHomePage(&#123;Key key, <span class="keyword">this</span>.title&#125;) : <span class="keyword">super</span>(key: key);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">final</span> <span class="built_in">String</span> title;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  _MyHomePageState createState() =&gt; <span class="keyword">new</span> _MyHomePageState();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">_MyHomePageState</span> <span class="keyword">extends</span> <span class="title">State</span>&lt;<span class="title">MyHomePage</span>&gt; </span>&#123;</span><br><span class="line">  <span class="built_in">List</span> data;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  initState() &#123;</span><br><span class="line">    <span class="keyword">super</span>.initState();</span><br><span class="line">    <span class="keyword">new</span> Future&lt;<span class="built_in">String</span>&gt;.delayed(<span class="keyword">new</span> <span class="built_in">Duration</span>(seconds: <span class="number">5</span>), () =&gt; <span class="string">'["123", "456", "789"]'</span>).then((<span class="built_in">String</span> value) &#123;</span><br><span class="line">      setState(() &#123;</span><br><span class="line">        data = json.decode(value);</span><br><span class="line">      &#125;);</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  Widget build(BuildContext context) &#123;</span><br><span class="line">    <span class="keyword">if</span> (data == <span class="keyword">null</span>) &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">new</span> Scaffold(</span><br><span class="line">        appBar: <span class="keyword">new</span> AppBar(</span><br><span class="line">          title: <span class="keyword">new</span> Text(<span class="string">"Loading..."</span>),</span><br><span class="line">        ),</span><br><span class="line">      );</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">new</span> Scaffold(</span><br><span class="line">        appBar: <span class="keyword">new</span> AppBar(</span><br><span class="line">          title: <span class="keyword">new</span> Text(widget.title),</span><br><span class="line">        ),</span><br><span class="line">        body: <span class="keyword">new</span> Center(</span><br><span class="line">          child: <span class="keyword">new</span> ListView(</span><br><span class="line">            children: data</span><br><span class="line">                .map((data) =&gt; <span class="keyword">new</span> ListTile(</span><br><span class="line">                      title: <span class="keyword">new</span> Text(<span class="string">"one element"</span>),</span><br><span class="line">                      subtitle: <span class="keyword">new</span> Text(data),</span><br><span class="line">                    ))</span><br><span class="line">                .toList(),</span><br><span class="line">          ),</span><br><span class="line">        ),</span><br><span class="line">      );</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/flutter-build-after-async-action/" data-id="cka4yu21l000b8zq4x9jruyjm" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flutter/">Flutter</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-mac-install-mongodb" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/mac-install-mongodb/" class="article-date">
+  <time datetime="2020-01-14T08:39:13.000Z" itemprop="datePublished">2020-01-14</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/mac-install-mongodb/">Mac安装MongoDB</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>由于 MongoDB 开源许可证发生了变化，不是 MIT 了，所以 brew 不再提供下载支持，不过可以用 <code>brew tap</code> 来进行安装：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ brew tap mongodb/brew</span><br><span class="line">$ brew install mongodb-community</span><br><span class="line">$ brew install mongodb-community@3.6</span><br><span class="line">$ brew install mongodb-community-shell</span><br></pre></td></tr></table></figure>
+<p>安装之后有三个重要的文件或路径：</p>
+<ul>
+<li>配置文件：<code>/usr/local/etc/mongod.conf</code></li>
+<li>日志目录路径：<code>/usr/local/var/log/mongodb</code></li>
+<li>数据目录路径：<code>/usr/local/var/mongodb</code></li>
+</ul>
+<p>启动和停止 mongodb：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">brew services start mongodb-community</span><br><span class="line">brew services stop mongodb-community</span><br></pre></td></tr></table></figure>
+<p>手动开启命令：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mongod --config /usr/<span class="built_in">local</span>/etc/mongod.conf</span><br><span class="line">mongo admin --<span class="built_in">eval</span> <span class="string">"db.shutdownServer()"</span></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/mac-install-mongodb/" data-id="cka4yu222000r8zq4vglxhj7i" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MongoDB/">MongoDB</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-use-env-in-dockerfile" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/use-env-in-dockerfile/" class="article-date">
@@ -246,6 +392,51 @@
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/">Docker</a></li></ul>
 
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-same-wifi-ping-failed" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/same-wifi-ping-failed/" class="article-date">
+  <time datetime="2020-01-13T14:23:35.000Z" itemprop="datePublished">2020-01-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/same-wifi-ping-failed/">同一WiF无法ping通</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>同一个 WiFi 下，手机和电脑无法互相 ping 通：</p>
+<ol>
+<li>是不是在同一子网下</li>
+<li>检查防火墙，杀毒软件</li>
+<li>路由器是否开启了AP隔离</li>
+</ol>
+<p>小米路由器的 WiFi 默认使用 WPA 加密，把加密方法改为 WPA2 就好了，但是也不稳定，需要在 wpa2 和 普通方式之间来回切换，然后重启路由器才行。这么看来，小米路由器挺垃圾的。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/same-wifi-ping-failed/" data-id="cka4yu22f00158zq4bpca4tyj" class="article-share-link">Share</a>
+     
     </footer>
   </div>
   
@@ -298,10 +489,10 @@
 
 
   
-    <article id="post-风寒和风热感冒" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-dart-dynamic-instance" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/风寒和风热感冒/" class="article-date">
-  <time datetime="2019-11-13T07:42:05.000Z" itemprop="datePublished">2019-11-13</time>
+    <a href="/dart-dynamic-instance/" class="article-date">
+  <time datetime="2019-12-25T08:28:15.000Z" itemprop="datePublished">2019-12-25</time>
 </a>
     
   </div>
@@ -312,7 +503,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/风寒和风热感冒/">风寒与风热感冒</a>
+      <a class="article-title" href="/dart-dynamic-instance/">Dart根据类名生成类的实例</a>
     </h1>
   
 
@@ -323,230 +514,15 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <p>感冒分风寒感冒和风热感冒，这两种感冒病因病机、症状、治疗原则及用药差别很大。风寒感冒是风寒之邪外袭、肺气失宣所致。风热感冒是风热之邪犯表、肺气失和所致。</p>
-<ul>
-<li><p>风寒感冒症状和疗法</p>
-<p>  恶寒重、发热轻、无汗、头痛身痛、鼻塞流清涕、咳嗽吐稀白痰、口不渴或渴喜热饮、苔薄白。治疗药物：风寒感冒颗粒、感冒清热颗粒、正柴胡饮冲剂、头痛严重用川芎茶调散、咳嗽严重用通宣理肺丸。风寒感冒要多喝水、盖好被子、热水泡脚、喝姜茶，发汗有助于康复。</p>
-</li>
-<li><p>风热感冒症状和疗法</p>
-<p>  发热重、微恶风、头胀痛、有汗、咽喉红肿疼痛、咳嗽、痰粘或黄、鼻塞黄涕、口渴喜饮、舌尖边红、苔薄白微黄。治疗药物：感冒灵颗粒、连花清瘟胶囊、柴芩清宁胶囊、维C银翘片、双黄连等。</p>
-</li>
-</ul>
+        <p>在一个 Flutter 项目中，想动态创建类的实例，就是根据类名字符串，在进行某些操作的时候自动创建类的实例。但 Dart 语言不支持通过类名字符串生成实例，但是可以用下面的方式实现相同的效果：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> factories = &lt;<span class="built_in">String</span>, <span class="built_in">Object</span> <span class="built_in">Function</span>()&gt;&#123;</span><br><span class="line">    <span class="string">'Foo'</span>, () =&gt; <span class="keyword">new</span> Foo(), </span><br><span class="line">    <span class="string">'Bar'</span>, () =&gt; <span class="keyword">new</span> Bar()</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="built_in">String</span> name = <span class="string">'Foo'</span>;</span><br><span class="line"><span class="built_in">Object</span> instance = factories[name]();</span><br></pre></td></tr></table></figure>
 
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/风寒和风热感冒/" data-id="ck8zn3jvt000pvtq4zy07mlo6" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/dart-dynamic-instance/" data-id="cka4yu21b00048zq4mtcy3nul" class="article-share-link">Share</a>
      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-never-use-flutter-listtile" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/never-use-flutter-listtile/" class="article-date">
-  <time datetime="2019-11-12T13:39:02.000Z" itemprop="datePublished">2019-11-12</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/never-use-flutter-listtile/">千万不要用ListTile组件</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>最初，在 Flutter 项目中用 ListTile 实现了列表项的布局，速度很快，而且代码比较简单，例如：</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">ListTile(</span><br><span class="line">  leading: Icon(</span><br><span class="line">    Icons.account_box,</span><br><span class="line">    color: Colors.red,</span><br><span class="line">  ),</span><br><span class="line">  title: Text(</span><br><span class="line">    <span class="string">'账户'</span>,</span><br><span class="line">    textAlign: TextAlign.left,</span><br><span class="line">    style: TextStyle(</span><br><span class="line">      color: Colors.grey,</span><br><span class="line">    ),</span><br><span class="line">  ),</span><br><span class="line">  trailing: Icon(Icons.keyboard_arrow_right),</span><br><span class="line">  onTap: () &#123;</span><br><span class="line">    <span class="comment">// 响应点击事件</span></span><br><span class="line">  &#125;,</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
-<p>后来需求说要调整一下左边 Icon 和右边文字之间的间距，竟然在网上没找到方法，可能结论就是根本没有方法，ListTile 里面的边距就是定死的，只有一个 dense 能够切换成紧凑模式，也是固定的边距和样式。所以，在任何时候，请不要使用 ListTile，因为这个组件无法定制，而需求时刻在变，可以自己实现一个效果完全一样而且定制起来非常灵活，例如：</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">InkWell(</span><br><span class="line">  onTap: () &#123;</span><br><span class="line">    <span class="comment">// 响应点击事件</span></span><br><span class="line">  &#125;,</span><br><span class="line">  child: Container(</span><br><span class="line">    padding: EdgeInsets.fromLTRB(<span class="number">12</span>, <span class="number">15</span>, <span class="number">12</span>, <span class="number">15</span>),</span><br><span class="line">    decoration: BoxDecoration(</span><br><span class="line">      color: Colors.white,</span><br><span class="line">      border: Border(</span><br><span class="line">        bottom: BorderSide(</span><br><span class="line">          width: <span class="number">1</span>,</span><br><span class="line">          color: Colors.grey,</span><br><span class="line">        ),</span><br><span class="line">      ),</span><br><span class="line">    ),</span><br><span class="line">    child: Row(</span><br><span class="line">      children: &lt;Widget&gt;[</span><br><span class="line">        Icon(</span><br><span class="line">          Icons.account_box,</span><br><span class="line">          color: Colors.red,</span><br><span class="line">        ),</span><br><span class="line">        SizedBox(width: <span class="number">10</span>),</span><br><span class="line">        Text(</span><br><span class="line">          <span class="string">'账户'</span>,</span><br><span class="line">          textAlign: TextAlign.left,</span><br><span class="line">          style: TextStyle(</span><br><span class="line">            color: Colors.grey,</span><br><span class="line">            fontSize: <span class="number">16</span>,</span><br><span class="line">          ),</span><br><span class="line">        ),</span><br><span class="line">        Spacer(),</span><br><span class="line">        Icon(Icons.keyboard_arrow_right),</span><br><span class="line">      ],</span><br><span class="line">    ),</span><br><span class="line">  ),</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/never-use-flutter-listtile/" data-id="ck8zn3jv0000cvtq49p72ccg1" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flutter/">Flutter</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-webview-fontsize-too-small" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/webview-fontsize-too-small/" class="article-date">
-  <time datetime="2019-10-29T02:16:37.000Z" itemprop="datePublished">2019-10-29</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/webview-fontsize-too-small/">Flutter Webview手机模式</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>在 Flutter 项目中用 webview 里面开了一个网页，发现字体好小，解决方案就是通过 meta 指定 mobile 视图：</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> contentBase64 = base64Encode(</span><br><span class="line">  <span class="keyword">const</span> Utf8Encoder().convert(</span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    &lt;!DOCTYPE html&gt;</span></span><br><span class="line"><span class="string">    &lt;html&gt;</span></span><br><span class="line"><span class="string">      &lt;head&gt;&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;&lt;/head&gt;</span></span><br><span class="line"><span class="string">      &lt;body style='"margin: 0; padding: 0;'&gt;</span></span><br><span class="line"><span class="string">        &lt;div&gt;</span></span><br><span class="line"><span class="string">          $htmlString</span></span><br><span class="line"><span class="string">        &lt;/div&gt;</span></span><br><span class="line"><span class="string">      &lt;/body&gt;</span></span><br><span class="line"><span class="string">    &lt;/html&gt;</span></span><br><span class="line"><span class="string">    """</span>,</span><br><span class="line">  ),</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/webview-fontsize-too-small/" data-id="ck8zn3jvc000ivtq4nxik6pxw" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flutter/">Flutter</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-wxss-background" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/wxss-background/" class="article-date">
-  <time datetime="2019-10-09T09:05:19.000Z" itemprop="datePublished">2019-10-09</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/wxss-background/">小程序wxss背景图片</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>在 CSS 中我们可以用 background 添加背景图片，但是小程序中的本地资源无法在 wxss 中获取，也就是说不能像 CSS 那样通过 <code>url(/assets/xxx.png)</code> 来引用本地图片来设置背景，不过有两种折中的方案：</p>
-<ol>
-<li><p>把图片转成base64</p>
- <figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-class">.base64-image</span> &#123;</span><br><span class="line">  <span class="attribute">background</span>: <span class="built_in">url</span>(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA...);</span><br><span class="line">  <span class="attribute">background-size</span>: contain;</span><br><span class="line">  <span class="attribute">background-repeat</span>: no-repeat;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<pre><code>这个[地址](janedan-base64)可以把图片在线转成 base64 格式。
-</code></pre><ol>
-<li><p>把本地资源上传到网络，然后引用网络图片</p>
- <figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-class">.network-image</span> &#123;</span><br><span class="line">  <span class="attribute">background</span>: <span class="built_in">url</span>(http://xxxxx);</span><br><span class="line">  <span class="attribute">background-size</span>: contain;</span><br><span class="line">  <span class="attribute">background-repeat</span>: no-repeat;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<p>但是上面两种方式都不尽如人意，因为转成 base64 会导致文件体积会增大，且 base64 是一大串字符，无法本地直观地看到图片；用网络图片的话，页面渲染上又会有延迟，用户体验不好。所以只能采用 <code>&lt;image&gt;</code> 组件加绝对定位的方式来模拟背景图：</p>
-<p><code>&lt;image&gt;</code> 组件中的 mode 取值有：</p>
-<ol>
-<li><code>scaleToFill</code>：拉伸图片填满 image 元素</li>
-<li><code>aspectFit</code>：保持纵横比缩放图片，长边能完全显示出来，短边有空白</li>
-<li><code>aspectFill</code>：保持纵横比缩放图片，短边能完全显示出来，长边有截断</li>
-<li><code>widthFix</code>：宽度不变，高度自动变化，保持原图宽高比不变</li>
-</ol>
-<p>但是注意上面的选项并不能达到与CSS background 属性中完全相同的效果，对应的 <code>background-size</code> 的属性有：</p>
-<ol>
-<li><code>auto</code>：默认值，不改变原始图片的大小。</li>
-<li>px：自定义设置图片的大小，一般为成对出现例如 100px,50px,当设置一个值的时候，将其作为图片的宽度只进行等比缩放。</li>
-<li>百分比：0%-100%的任意值，一般也是成对出现，当设置一个值的时候，就成了正方形了。</li>
-<li><code>cover</code>：覆盖，用背景图等比例缩放填满整个容器。（推荐使用）</li>
-<li><code>contain</code>：容纳，即将背景图片等比缩放至<strong>某一边紧贴容器边缘为止。</strong></li>
-</ol>
-<p><code>mode=aspectFill</code> 和 <code>background-size:cover</code> 的区别是前者保证图片中心位置跟容器区域重合，后者保证图片的左上角跟容器的左上角重合。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/wxss-background/" data-id="ck8zn3jvr000ovtq4w7btj23v" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flutter/">Flutter</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-flutter-listtile-notes" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/flutter-listtile-notes/" class="article-date">
-  <time datetime="2019-09-12T06:25:53.000Z" itemprop="datePublished">2019-09-12</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/flutter-listtile-notes/">Flutter ListTile组件</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>ListTile 示例代码：</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">ListTile(</span><br><span class="line">  title: Text(<span class="string">'Horse'</span>),</span><br><span class="line">  subtitle: Text(<span class="string">'A strong animal'</span>),</span><br><span class="line">  dense: <span class="keyword">true</span>,</span><br><span class="line">  leading: CircleAvatar(</span><br><span class="line">    backgroundImage: NetworkImage(imageUrl),</span><br><span class="line">  ),</span><br><span class="line">  trailing: Icon(Icons.keyboard_arrow_right),</span><br><span class="line">  contentPadding: EdgeInsets.symmetric(horizontal: <span class="number">0.0</span>),</span><br><span class="line">  selected: <span class="keyword">true</span>,</span><br><span class="line">  onTap: ()&#123;&#125;,</span><br><span class="line">  onLongPress: ()&#123;&#125;,</span><br><span class="line">  enabled: <span class="keyword">false</span>,</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
-<p>可以看到 ListTile 有如下几个属性：</p>
-<ul>
-<li>title：标题</li>
-<li>subtitle：子标题</li>
-<li>dense：紧凑模式</li>
-<li>leading：头部图标</li>
-<li>trailing：尾部图标</li>
-<li>contentPadding：左侧和右侧的内边距（控制不了上面和下面）</li>
-<li>selected：点击之后变色</li>
-<li>onTap：响应点击事件</li>
-<li>onLongPress：响应长按事件</li>
-<li>enabled：是否响应手势</li>
-</ul>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/flutter-listtile-notes/" data-id="ck8zn3jsj0009vtq4ru120kjd" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flutter/">Flutter</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Dart/">Dart</a></li></ul>
 
     </footer>
   </div>
@@ -558,7 +534,7 @@
 
 
   <nav id="page-nav">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/60/">60</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/62/">62</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
   </nav>
 </section>
 

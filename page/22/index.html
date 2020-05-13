@@ -54,10 +54,10 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-redis-notes" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-nginx-map" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/redis-notes/" class="article-date">
-  <time datetime="2018-02-02T07:48:13.000Z" itemprop="datePublished">2018-02-02</time>
+    <a href="/nginx-map/" class="article-date">
+  <time datetime="2018-03-14T06:56:07.000Z" itemprop="datePublished">2018-03-14</time>
 </a>
     
   </div>
@@ -68,7 +68,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/redis-notes/">redis 学习笔记</a>
+      <a class="article-title" href="/nginx-map/">Nginx中的map指令</a>
     </h1>
   
 
@@ -80,22 +80,24 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <p>本地安装：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install redis <span class="comment"># 默认安装在 /usr/local/Cellar/redis</span></span><br></pre></td></tr></table></figure>
-<p>启动：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">$ redis-server</span><br><span class="line">39583:C 02 Feb 15:57:09.274 <span class="comment"># Warning: no config file specified, using the default config. In order to specify a config file use redis-server /path/to/redis.conf</span></span><br><span class="line">39583:M 02 Feb 15:57:09.276 * Increased maximum number of open files to 10032 (it was originally <span class="built_in">set</span> to 256).</span><br><span class="line">                _._                                                  </span><br><span class="line">           _.-``__ <span class="string">''</span>-._                                             </span><br><span class="line">      _.-``    `.  `_.  <span class="string">''</span>-._           Redis 3.2.6 (00000000/0) 64 bit</span><br><span class="line">  .-`` .-```.  ```\/    _.,_ <span class="string">''</span>-._                                   </span><br><span class="line"> (    <span class="string">'      ,       .-`  | `,    )     Running in standalone mode</span></span><br><span class="line"><span class="string"> |`-._`-...-` __...-.``-._|'</span>` _.-<span class="string">'|     Port: 6379</span></span><br><span class="line"><span class="string"> |    `-._   `._    /     _.-'</span>    |     PID: 39583</span><br><span class="line">  `-._    `-._  `-./  _.-<span class="string">'    _.-'</span>                                   </span><br><span class="line"> |`-._`-._    `-.__.-<span class="string">'    _.-'</span>_.-<span class="string">'|                                  </span></span><br><span class="line"><span class="string"> |    `-._`-._        _.-'</span>_.-<span class="string">'    |           http://redis.io        </span></span><br><span class="line"><span class="string">  `-._    `-._`-.__.-'</span>_.-<span class="string">'    _.-'</span>                                   </span><br><span class="line"> |`-._`-._    `-.__.-<span class="string">'    _.-'</span>_.-<span class="string">'|                                  </span></span><br><span class="line"><span class="string"> |    `-._`-._        _.-'</span>_.-<span class="string">'    |                                  </span></span><br><span class="line"><span class="string">  `-._    `-._`-.__.-'</span>_.-<span class="string">'    _.-'</span>                                   </span><br><span class="line">      `-._    `-.__.-<span class="string">'    _.-'</span>                                       </span><br><span class="line">          `-._        _.-<span class="string">'                                           </span></span><br><span class="line"><span class="string">              `-.__.-'</span>                                               </span><br><span class="line"></span><br><span class="line">39583:M 02 Feb 15:57:09.287 <span class="comment"># Server started, Redis version 3.2.6</span></span><br><span class="line">39583:M 02 Feb 15:57:09.287 * The server is now ready to accept connections on port 6379</span><br></pre></td></tr></table></figure>
+            <p>nginx 中有很多变量，为了方便记忆，可以打印出来看一下：</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">location</span> /hello &#123;</span><br><span class="line">    <span class="attribute">echo</span> <span class="string">'query_string: <span class="variable">$query_string</span>'</span>;</span><br><span class="line">    <span class="attribute">echo</span> <span class="string">'request_method: <span class="variable">$request_method</span>'</span>;</span><br><span class="line">    <span class="attribute">echo</span> <span class="string">'content_type: <span class="variable">$content_type</span>'</span>;</span><br><span class="line">    <span class="attribute">echo</span> <span class="string">'content_length: <span class="variable">$content_length</span>'</span>;</span><br><span class="line">    <span class="attribute">echo</span> <span class="string">'fastcgi_script_name: <span class="variable">$fastcgi_script_name</span>'</span>;</span><br><span class="line">    <span class="attribute">echo</span> <span class="string">'request_uri: <span class="variable">$request_uri</span>'</span>;</span><br><span class="line">    <span class="attribute">echo</span> <span class="string">'document_uri: <span class="variable">$document_uri</span>'</span>;</span><br><span class="line">    <span class="attribute">echo</span> <span class="string">'document_root: <span class="variable">$document_root</span>'</span>;</span><br><span class="line">    <span class="attribute">echo</span> <span class="string">'server_protocol: <span class="variable">$server_protocol</span>'</span>;</span><br><span class="line">    <span class="attribute">echo</span> <span class="string">'https: <span class="variable">$https</span>'</span>;</span><br><span class="line">    <span class="attribute">echo</span> <span class="string">'nginx_version: <span class="variable">$nginx_version</span>'</span>;</span><br><span class="line">    <span class="attribute">echo</span> <span class="string">'remote_addr: <span class="variable">$remote_addr</span>'</span>;</span><br><span class="line">    <span class="attribute">echo</span> <span class="string">'remote_port: <span class="variable">$remote_port</span>'</span>;</span><br><span class="line">    <span class="attribute">echo</span> <span class="string">'server_addr: <span class="variable">$server_addr</span>'</span>;</span><br><span class="line">    <span class="attribute">echo</span> <span class="string">'server_port: <span class="variable">$server_port</span>'</span>;</span><br><span class="line">    <span class="attribute">echo</span> <span class="string">'server_name: <span class="variable">$server_name</span>'</span>;</span><br><span class="line">    <span class="attribute">echo</span> <span class="string">'http_user_agent: <span class="variable">$http_user_agent</span>'</span>;</span><br><span class="line">    <span class="attribute">echo</span> <span class="string">'http_cookie: <span class="variable">$http_cookie</span>'</span>;</span><br><span class="line">    <span class="attribute">echo</span> <span class="string">'uri: <span class="variable">$uri</span>'</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>有了这些变量，可以用 map 指令对其进行加工处理。</p>
+<blockquote>
+<p>  map 指令是 ngx_http_map_module 模块提供的，用来创建变量，但是仅在变量被接受的时候执行视图映射操作，对于处理没有引用变量的请求时，这个模块并没有性能上的缺失。</p>
+</blockquote>
         </div>
         
           <p class="article-more-link">
-            <a href="/redis-notes/#more">Read More</a>
+            <a href="/nginx-map/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/redis-notes/" data-id="cjw77iiyf000qqlq4c1bhl7xv" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/nginx-map/" data-id="cjw77iiy9000kqlq4o9auxdcf" class="article-share-link">Share</a>
      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Nginx/">Nginx</a></li></ul>
 
     </footer>
   </div>
@@ -104,10 +106,10 @@
 
 
   
-    <article id="post-git-branch" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-docker-crontab-env" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/git-branch/" class="article-date">
-  <time datetime="2018-02-02T05:10:13.000Z" itemprop="datePublished">2018-02-02</time>
+    <a href="/docker-crontab-env/" class="article-date">
+  <time datetime="2018-03-13T07:07:07.000Z" itemprop="datePublished">2018-03-13</time>
 </a>
     
   </div>
@@ -118,7 +120,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/git-branch/">git 分支</a>
+      <a class="article-title" href="/docker-crontab-env/">crontab 中使用环境变量</a>
     </h1>
   
 
@@ -129,25 +131,24 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <div class="article-preview">
-            <p>刚 clone 下来的仓库，执行 git branch 会看到</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">* master</span><br></pre></td></tr></table></figure>
-<p>并不会看到其他分支，即便远程仓库上有其他分支，使用</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git branch -va</span><br></pre></td></tr></table></figure>
-<p>可以查看本地和远程分支列表</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">* master              0840594 merge master and 1.0.0</span><br><span class="line">remotes/origin/hello  743012a update</span><br><span class="line">remotes/origin/HEAD   -&gt; origin/master</span><br><span class="line">remotes/origin/master 0840594 merge master and 1.0.0</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/git-branch/#more">Read More</a>
-          </p>
-        
+        <p>如果遇到 crontab 的定时任务执行失败，但是手动执行却又成功，一般是因为脚本里用了系统的环境变量导致的。由于 crontab 的机制，通过定时任务执行的脚本无法直接使用环境变量，下面的方法可以帮助我们避免上述情况：</p>
+<ol>
+<li>脚本中涉及文件路径时写绝对路径</li>
+<li><p>脚本执行要用到环境变量时，通过 source 命令引入：</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cat restart.sh</span><br><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line"><span class="built_in">source</span> /etc/profile</span><br><span class="line"><span class="built_in">export</span> abc=/home/abc</span><br><span class="line">/usr/<span class="built_in">local</span>/run.sh -c hello &amp;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在crontab中直接引入环境变量：</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0 * * * * . /etc/profile;/bin/sh /path/to/your/shell/restart.sh</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>另外 crontab 最后一定要有换行，否则可能报错！</p>
+
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/git-branch/" data-id="cjhq778ku007mizq3h98tzo1y" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/docker-crontab-env/" data-id="cjssqvcs800138uq4mztwqv0w" class="article-share-link">Share</a>
      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/">Git</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
 
     </footer>
   </div>
@@ -156,10 +157,10 @@
 
 
   
-    <article id="post-debounce-vs-throttle" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-shell-echo-cmd" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/debounce-vs-throttle/" class="article-date">
-  <time datetime="2018-02-01T09:23:13.000Z" itemprop="datePublished">2018-02-01</time>
+    <a href="/shell-echo-cmd/" class="article-date">
+  <time datetime="2018-03-09T05:37:02.000Z" itemprop="datePublished">2018-03-09</time>
 </a>
     
   </div>
@@ -170,7 +171,109 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/debounce-vs-throttle/">在 Angular 中使用 debounce 和 throttle</a>
+      <a class="article-title" href="/shell-echo-cmd/">shell 命令回显</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>写脚本的时候有个需求：执行命令之前先打印这个命令，例如：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">DIRNAME=/usr/share</span><br><span class="line">ls <span class="variable">$DIRNAME</span></span><br></pre></td></tr></table></figure>
+<p>希望控制台能够打印：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls /usr/share</span><br></pre></td></tr></table></figure>
+<p>网上找到了解决办法：</p>
+<p><code>set -x</code> or <code>set -o xtrace</code> 可以开启这种效果，然后可以用 <code>set +x</code> 关闭。如果整个脚本都想这样，可以在文件第一行这么写：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/bin/sh -x</span></span><br></pre></td></tr></table></figure>
+<p>还发现了另外一个有趣的选项： <code>set -v</code>，区别在于它打印的是：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls <span class="variable">$DIRNAME</span></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/shell-echo-cmd/" data-id="cjhq778so00h0izq3zroyzvtq" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-docker-foreground" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/docker-foreground/" class="article-date">
+  <time datetime="2018-03-09T01:46:23.000Z" itemprop="datePublished">2018-03-09</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/docker-foreground/">docker程序为何前台运行</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>讲到Docker容器启动web服务时，都指定了前台运行的参数：</p>
+<p>例如apache:</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ENTRYPOINT</span><span class="bash"> [ <span class="string">"/usr/sbin/apache2"</span> ]  </span></span><br><span class="line"><span class="bash">CMD [<span class="string">"-D"</span>, <span class="string">"FOREGROUND"</span>]</span></span><br></pre></td></tr></table></figure>
+<p>又比如 nginx：</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ENTRYPOINT</span><span class="bash"> [ <span class="string">"/usr/sbin/nginx"</span>, <span class="string">"-g"</span>, <span class="string">"daemon off;"</span> ]</span></span><br></pre></td></tr></table></figure>
+<p>再比如 ssh：</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CMD</span><span class="bash"> /usr/sbin/sshd -D</span></span><br></pre></td></tr></table></figure>
+<p>还比如 crontab：</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CMD</span><span class="bash"> /usr/sbin/crond -f</span></span><br></pre></td></tr></table></figure>
+<p>为什么要这么做呢？因为 Docker容器仅在 1 号进程（PID为1）运行时，会保持运行。如果 1 号进程退出了，Docker容器也就退出了。所以当你运行下面的语句启动容器之后马上就退出了：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d --name centos centos</span><br></pre></td></tr></table></figure>
+<p>为了保证不退出可以这样：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d --name myalpine alpine tail -f /dev/null</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/docker-foreground/" data-id="cjhq778jk005qizq31hbtp41p" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/">Docker</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-alpine-pros-and-cons" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/alpine-pros-and-cons/" class="article-date">
+  <time datetime="2018-03-08T15:36:07.000Z" itemprop="datePublished">2018-03-08</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/alpine-pros-and-cons/">Alpine Linux的优势和问题</a>
     </h1>
   
 
@@ -182,29 +285,32 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <h2 id="debounce"><a href="#debounce" class="headerlink" title="debounce"></a>debounce</h2><ol>
-<li><p>名词释义</p>
-<p> 对于某事件流，自触发时刻开始，若持续指定时间内未有事件发生，则触发最后的事件；否则只更新最后事件，并不触发事件，直到满足持续指定时间未有事件发生的条件。</p>
+            <ol>
+<li><p>优势</p>
+<ul>
+<li>Alpine Linux的Docker镜像特点是轻巧（大小只有5M）且有完整的包管理工具(APK)。</li>
+<li>Docker 官方镜像可能会用 Alpine Linux 替 换Ubuntu。</li>
+</ul>
 </li>
-<li><p>应用场景</p>
-<p> 搜索手牌或商品的时候，keyup事件并不需要每次都触发请求，而是当用户某两次keyup中间的间隔超过指定时间才去请求，否则用户噼里啪啦打字，你发了几十个请求，浪费资源。</p>
-</li>
-<li><p>代码：</p>
- <figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123;Directive, EventEmitter, HostListener, Input, OnInit, Output&#125; <span class="keyword">from</span> <span class="string">'@angular/core'</span></span><br><span class="line"><span class="keyword">import</span> &#123;Subject&#125; <span class="keyword">from</span> <span class="string">'rxjs/Subject'</span></span><br><span class="line"><span class="keyword">import</span> &#123;debounceTime&#125; <span class="keyword">from</span> <span class="string">'rxjs/operators'</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@Directive</span>(&#123;</span><br><span class="line">  selector: <span class="string">'[debounce]'</span></span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> DebounceDirective <span class="keyword">implements</span> OnInit &#123;</span><br><span class="line">  <span class="meta">@Input</span>() debounce</span><br><span class="line">  <span class="meta">@Output</span>() debounceKeyup = <span class="keyword">new</span> EventEmitter()</span><br><span class="line">  <span class="keyword">private</span> keyupSubject = <span class="keyword">new</span> Subject()</span><br><span class="line"></span><br><span class="line">  <span class="keyword">constructor</span>(<span class="params"></span>) &#123;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  ngOnInit() &#123;</span><br><span class="line">    <span class="keyword">this</span>.keyupSubject</span><br><span class="line">      .pipe(debounceTime(<span class="keyword">this</span>.debounce || <span class="number">500</span>))</span><br><span class="line">      .subscribe(<span class="function"><span class="params">e</span> =&gt;</span> <span class="keyword">this</span>.debounceKeyup.emit(e))</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@HostListener</span>(<span class="string">'keyup'</span>, [<span class="string">'$event'</span>])</span><br><span class="line">  keyupEvent(event) &#123;</span><br><span class="line">    event.preventDefault()</span><br><span class="line">    event.stopPropagation()</span><br><span class="line">    <span class="keyword">this</span>.keyupSubject.next(event)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<li><p>问题</p>
+<ul>
+<li>Alpine Linux 使用了 musl，可能和其他 Linux 发行版使用的 glibc 实现会有些不同。</li>
+<li>Alpine 里面没有 bash，只有 sh</li>
+</ul>
 </li>
 </ol>
         </div>
         
           <p class="article-more-link">
-            <a href="/debounce-vs-throttle/#more">Read More</a>
+            <a href="/alpine-pros-and-cons/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/debounce-vs-throttle/" data-id="cjkajvcql00084eq3033qy33m" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/alpine-pros-and-cons/" data-id="cjssqvcpe00008uq4bwbyvtn3" class="article-share-link">Share</a>
      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
 
     </footer>
   </div>
@@ -213,10 +319,10 @@
 
 
   
-    <article id="post-git-branch-manage" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-centos-install-nginx" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/git-branch-manage/" class="article-date">
-  <time datetime="2018-02-01T07:50:13.000Z" itemprop="datePublished">2018-02-01</time>
+    <a href="/centos-install-nginx/" class="article-date">
+  <time datetime="2018-03-06T09:40:25.000Z" itemprop="datePublished">2018-03-06</time>
 </a>
     
   </div>
@@ -227,7 +333,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/git-branch-manage/">git 分支管理</a>
+      <a class="article-title" href="/centos-install-nginx/">centos 安装 nginx</a>
     </h1>
   
 
@@ -238,362 +344,211 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <div class="article-preview">
-            <h2 id="Git-分支管理"><a href="#Git-分支管理" class="headerlink" title="Git 分支管理"></a>Git 分支管理</h2><p>首先要明确下面两个分支的概念：</p>
-<table>
-<thead>
-<tr>
-<th>分支</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>develop</td>
-<td>包含的是下个版本需要发布的内容</td>
-</tr>
-<tr>
-<td>master</td>
-<td>包含的是可以部署到生产环境中的代码</td>
-</tr>
-</tbody>
-</table>
-<p>意思是说：</p>
-<ul>
-<li>develop 分支，是用于随时可以发布到 <code>develop</code> 的代码，便于线上测试；</li>
-<li>master 分支，是用于随时可以发布到 <code>master.com</code> 生产环境的代码。</li>
-</ul>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/git-branch-manage/#more">Read More</a>
-          </p>
-        
+        <p>在 centos 中尝试安装 nginx，报错：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">yum install nginx</span><br><span class="line">已加载插件：fastestmirror</span><br><span class="line">Loading mirror speeds from cached hostfile</span><br><span class="line"> * base: mirror.bit.edu.cn</span><br><span class="line"> * extras: mirror.bit.edu.cn</span><br><span class="line"> * updates: mirror.bit.edu.cn</span><br><span class="line">没有可用软件包 nginx。</span><br><span class="line">错误：无须任何处理</span><br></pre></td></tr></table></figure>
+<p>因为默认的源里面没有 nginx，这里推荐使用 EPEL，它是 <code>yum</code> 的一个软件源，里面包含了许多基本源里没有的软件。一些软件如 <strong>PHP</strong>、<strong>Redis</strong>、<strong>Nginx</strong>，必须添加 EPEL 源之后，才能用 <code>yum</code> 来安装。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install epel-release</span><br></pre></td></tr></table></figure>
+<p>检查软件源：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum repolist</span><br></pre></td></tr></table></figure>
+<p>再安装就成功了。</p>
+
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/git-branch-manage/" data-id="cjhq778kv007oizq3p4z1rf4l" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/centos-install-nginx/" data-id="cjhq778i60043izq3kxyjnl6f" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-seafile-notes" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/seafile-notes/" class="article-date">
+  <time datetime="2018-03-06T06:32:23.000Z" itemprop="datePublished">2018-03-06</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/seafile-notes/">seafile 搭建本地私有云盘</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>使用一键安装脚本：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">wget https://raw.githubusercontent.com/helloxz/seafile/master/install_seafile.sh</span><br><span class="line">chmod +x install_seafile.sh &amp;&amp; ./install_seafile.sh</span><br></pre></td></tr></table></figure>
+<p>然后命令行会弹出来输入IP和端口号，如果需要暴露到公网，就填写公网的IP和端口号，如果只在内网使用，就填写内网的IP和端口号。最后会让设置管理员账号用户名和密码，这个一定要记住。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/seafile-notes/" data-id="cju5m2z6d000hqqq46cp419gm" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-tmux-copy-paste" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/tmux-copy-paste/" class="article-date">
+  <time datetime="2018-03-06T01:48:07.000Z" itemprop="datePublished">2018-03-06</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/tmux-copy-paste/">Mac 中 tmux 的复制粘贴</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在 Mac 下使用 tmux，希望能够复制到系统粘贴板，可以通过下面的方式实现：</p>
+<ol>
+<li><p>安装 <code>rettach-to-user-namespace</code></p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install reattach-to-user-namespace</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>修改 <code>~/.tmux.conf</code></p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">set</span>-option -g default-command <span class="string">"reattach-to-user-namespace -l zsh"</span></span><br><span class="line"><span class="comment"># buffer缓存复制到Mac系统粘贴板</span></span><br><span class="line"><span class="built_in">bind</span> y run <span class="string">"tmux save-buffer - | reattach-to-user-namespace pbcopy"</span> \; display-message <span class="string">"Copied tmux buffer to system clipboard"</span></span><br><span class="line"><span class="comment"># Mac系统粘贴板内容复制到会话</span></span><br><span class="line"><span class="built_in">bind</span> C-v run <span class="string">"reattach-to-user-namespace pbpaste | tmux load-buffer - \; paste-buffer -d"</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在 tmux 中复制之后，按 <code>prefix + y</code> 就可以把 tmux 内复制的内容放到系统粘贴板了</p>
+</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/tmux-copy-paste/" data-id="cjhq778to00hyizq3avl0ifgc" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Mac/">Mac</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-mac-@" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/mac-@/" class="article-date">
+  <time datetime="2018-03-04T15:36:07.000Z" itemprop="datePublished">2018-03-04</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/mac-@/">Mac文件夹后面的@符号</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>mac 权限 <code>drwxr-xr-x@</code> 其中 <code>@</code> 表示什么？</p>
+<p>如果文件或目录有扩展属性,则使用 <code>-l</code> 选项执行 <code>ls</code> 命令时，会在权限许可字段后面附加一个字符 <code>@</code>。<br>如果文件或目录有扩展安全信息，则使用 <code>-l</code> 选项执行 <code>ls</code> 命令时，会在权限许可字段后面附件一个字符 <code>+</code>。</p>
+<blockquote>
+<p>  If the file or directory has extended<br>  attributes, the permissions field printed by the -l option is followed by<br>  a ‘@’ character. Otherwise, if the file or directory has extended secu-<br>  rity information, the permissions field printed by the -l option is fol-<br>  lowed by a ‘+’ character.</p>
+</blockquote>
+<p>使用 <code>xattr -c</code> 文件名 可以去除 <code>@</code></p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/mac-@/" data-id="cjhq778p800coizq3le8650ds" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-fingerprint-taken" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/fingerprint-taken/" class="article-date">
+  <time datetime="2018-03-02T02:38:03.000Z" itemprop="datePublished">2018-03-02</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/fingerprint-taken/">git 使用不同的 key</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在使用 <code>git clone</code> 时遇到下列报错：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Key has already been taken</span><br><span class="line">Fingerprint has already been taken</span><br></pre></td></tr></table></figure>
+<p>这是因为已经有其他项目使用了这个公钥，如果需要对不同的 git 仓库（例如 github 和 gitlab）使用不同的 ssh key 时候，可以先创建不同的密钥对：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mkdir ~/.ssh/gitlab</span><br><span class="line">cd ~/.ssh/gitlab</span><br><span class="line">ssh-keygen -f id_rsa</span><br></pre></td></tr></table></figure>
+<p>这样就可以在 <code>~/.ssh/gitlab</code> 目录下创建独立的 <code>id_rsa</code> 和 <code>id_rsa.pub</code> 密钥对，然后配置如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Host github.com</span><br><span class="line">    User git</span><br><span class="line">    Hostname github.com</span><br><span class="line">    PreferredAuthentications publickey</span><br><span class="line">    IdentityFile ~/.ssh/git/id_rsa</span><br><span class="line">Host gitlab.com</span><br><span class="line">    Hostname gitlab.com</span><br><span class="line">    PreferredAuthentications publickey</span><br><span class="line">    IdentityFile ~/.ssh/gitlab/id_rsa</span><br></pre></td></tr></table></figure>
+<p>再使用 <code>git clone git@gitlab.com:username/repo.git</code> 就会使用指定的密钥了。或者，更灵活的方式是每次 clone 的时候指定密钥文件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GIT_SSH_COMMAND=&quot;ssh -i ~/.ssh/id_rsa&quot; git clone example</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>  注意：<code>GIT_SSH_COMMAND</code>环境变量对于低于<code>git 2.3.0</code>版本无效</p>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/fingerprint-taken/" data-id="cjssqvcsf001f8uq4kam4ynzx" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/">Git</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-load-balance" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/load-balance/" class="article-date">
-  <time datetime="2018-01-27T01:57:07.000Z" itemprop="datePublished">2018-01-27</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/load-balance/">负载均衡配置</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>负载均衡，单从字面上的意思来理解就可以解释N台服务器平均分担负载，不会因为某台服务器负载高宕机和某台服务器闲置的情况，那么负载均衡的前提就是要2台以上服务器才能实现。假设我现在有三个 server，分别是：</p>
-<ul>
-<li>master（192.168.120.7）</li>
-<li>minion1 （192.168.120.8）</li>
-<li>minion2（192.168.120.9）</li>
-</ul>
-<p>我们把域名解析到 master 服务器的 80 端口，然后由 master 服务器的 80 端口转发到 minion1 服务器的 8080 端口和 minion2 服务器的 8081 端口。如果没有多台服务器，也可以用一台进行测试，使用不同端口即可。下面使用 nginx 和 haproxy 来实现负载均衡。</p>
-<h2 id="nginx"><a href="#nginx" class="headerlink" title="nginx"></a>nginx</h2><p>单配置：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">upstream anyname &#123;</span><br><span class="line">      server minion1:8080;</span><br><span class="line">      server minion2:8081;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">server&#123; </span><br><span class="line">    listen 80; </span><br><span class="line">    server_name 192.168.120.7; </span><br><span class="line">    location / &#123; </span><br><span class="line">        proxy_pass         http://anyname; </span><br><span class="line">        proxy_set_header   Host             $host; </span><br><span class="line">        proxy_set_header   X-Real-IP        $remote_addr; </span><br><span class="line">        proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for; </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/load-balance/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/load-balance/" data-id="cjhq778p500ckizq3y1j8cfb5" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-angular-ie9" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/angular-ie9/" class="article-date">
-  <time datetime="2018-01-25T13:10:23.000Z" itemprop="datePublished">2018-01-25</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/angular-ie9/">Angular 兼容 IE9</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>使用官网的 quickstart 是不兼容 IE9 的，我们需要另外配置使其兼容IE9，在 index.html 中引入 polyfill：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- Polyfill(s) for older browsers --&gt;</span><br><span class="line">&lt;script src=&quot;node_modules/core-js/client/shim.min.js&quot;&gt;&lt;/script&gt;</span><br><span class="line">&lt;script src=&quot;//cdnjs.cloudflare.com/ajax/libs/classlist/2014.01.31/classList.min.js&quot;&gt;&lt;/script&gt;</span><br></pre></td></tr></table></figure>
-<p>另外可能还要配置路由为 HashLocationStrategy，即在 RouterModule.forRoot 中设置 useHash 属性：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">imports: [</span><br><span class="line">       RouterModule.forRoot(appRoutes,&#123;useHash:true&#125;)</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/angular-ie9/" data-id="cjssqvcrh00098uq42p1rku9n" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Angular/">Angular</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-private-docker-registery" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/private-docker-registery/" class="article-date">
-  <time datetime="2018-01-25T06:58:23.000Z" itemprop="datePublished">2018-01-25</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/private-docker-registery/">搭建 docker 私有仓库</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>有时候需要在多个环境部署 docker 应用，在每一台机器上从头开始构建 image 比较耗时，我们可以搭建私有仓库，从 docker 官方公开仓库拉取镜像，在本地进行加工处理成私有镜像后，直接上传到私有仓库，这样每个主机就可以从私有仓库拉取制作好的私有镜像了，如下图所示：</p>
-<p><img src="http://img.react.ren/blog/private-docker-registry.png" alt="private-docker-registry"></p>
-<p>可以通过下面的命令启动官方的 registry ：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d -p 5000:5000 --restart=always --name registry registry</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/private-docker-registery/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/private-docker-registery/" data-id="cjkajvcr3000n4eq3qfcfrs1u" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-nfs-notes" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/nfs-notes/" class="article-date">
-  <time datetime="2018-01-23T08:04:07.000Z" itemprop="datePublished">2018-01-23</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/nfs-notes/">NFS笔记</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>NFS (network file system) 网络文件系统，类似 Windows 中的文件夹共享，多台机器可以访问同一个目录。</p>
-<h2 id="服务端"><a href="#服务端" class="headerlink" title="服务端"></a>服务端</h2><p>NFS 其实可以被视为一个 RPC 服务，可以通过下面的命令开启：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">systemctl start rpcbind <span class="comment"># 开启 rpcbind</span></span><br><span class="line">systemctl start nfs <span class="comment"># 开启 nfs</span></span><br></pre></td></tr></table></figure>
-<p>如果系统没安装的话，使用下面的命令安装：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">yum install nfs-utils</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加开启启动</span></span><br><span class="line">systemctl <span class="built_in">enable</span> rpcbind.service</span><br><span class="line">systemctl <span class="built_in">enable</span> nfs-server.service</span><br></pre></td></tr></table></figure>
-<p>然后就可以添加从机了，假如我们想共享本地文件夹 /home/nfs：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">vim  /etc/exports</span><br><span class="line">/home/nfs 192.168.120.8(rw,all_squash,anonuid=1000,anongid=1000) 192.168.120.9(rw,all_squash,anonuid=1000,anongid=1000) </span><br><span class="line"><span class="comment"># 或者</span></span><br><span class="line">/home/nfs 192.168.120.8(rw,sync,fsid=0,anonuid=0,anongid=0) 192.168.120.9(rw,sync,fsid=0,anonuid=0,anongid=0)</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/nfs-notes/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/nfs-notes/" data-id="cjhq778qj00egizq33h62dfti" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-react-redux" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/react-redux/" class="article-date">
-  <time datetime="2018-01-23T01:11:33.000Z" itemprop="datePublished">2018-01-23</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/react-redux/">在react中使用redux</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>掌握了 redux 的思想之后，尝试在 react 项目使用 redux，首先引入 react-redux 包：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn add react-redux</span><br></pre></td></tr></table></figure>
-<p>这里面最重要的函数是 connect，它连接了 react 组件和 redux 存储。connect 接收四个参数：</p>
-<ul>
-<li>mapStateToProps 函数</li>
-<li>mapDispatchToProps 函数</li>
-<li>mergeProps</li>
-<li>options</li>
-</ul>
-<p>用的最多的就是第一个函数，这个函数允许我们将 store 中的数据作为 props 绑定到组件上：</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mapStateToProps(state, ownProps) : stateProps</span><br></pre></td></tr></table></figure>
-<p>connect 的第二个参数是 mapDispatchToProps ，它的功能是将 action 作为 props 绑定到组件上（如果没有传入这个参数，会直接把 dispatch 函数当作 props 传入）：</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mapDispatchToProps(dispatch, ownProps): dispatchProps</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/react-redux/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/react-redux/" data-id="cjw77iiye000pqlq43by7438m" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-learn-angular-from-scratch" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/learn-angular-from-scratch/" class="article-date">
-  <time datetime="2018-01-20T01:38:21.000Z" itemprop="datePublished">2018-01-20</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/learn-angular-from-scratch/">从零开始学习Angular</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>创建一个最小化项目：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ng new ws-angular --skipTests --skipInstall --skipGit --minimal --routing --style=less --dryRun --verbose</span><br></pre></td></tr></table></figure>
-<p>几个参数的含义：</p>
-<ul>
-<li><code>skip-tests</code>：不创建测试文件</li>
-<li><code>skip-install</code>：不自动安装依赖</li>
-<li>`skip-git</li>
-</ul>
-<p>得到的项目结构：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">|____.angular-cli.json <span class="comment"># angular-cli 配置</span></span><br><span class="line">|____package.json <span class="comment"># 第三方依赖</span></span><br><span class="line">|____tsconfig.json <span class="comment"># typescript 配置</span></span><br><span class="line">|____src <span class="comment"># 源码目录</span></span><br><span class="line">| |____styles.less <span class="comment"># 全局样式</span></span><br><span class="line">| |____index.html <span class="comment"># 单页面应用主页入口</span></span><br><span class="line">| |____app <span class="comment"># app 跟目录</span></span><br><span class="line">| | |____app-routing.module.ts <span class="comment"># 路由文件</span></span><br><span class="line">| | |____app.module.ts <span class="comment"># 模块</span></span><br><span class="line">| | |____app.component.ts <span class="comment"># 跟组件</span></span><br><span class="line">| |____main.ts <span class="comment"># 应用程序入口</span></span><br><span class="line">| |____tsconfig.app.json <span class="comment"># typescript 配置</span></span><br><span class="line">| |____environments <span class="comment"># 环境</span></span><br><span class="line">| | |____environment.prod.ts <span class="comment"># 生产环境配置</span></span><br><span class="line">| | |____environment.ts <span class="comment"># 开发环境配置</span></span><br><span class="line">| |____typings.d.ts <span class="comment"># typescript 类型定义文件</span></span><br><span class="line">| |____assets</span><br><span class="line">| | |____.gitkeep</span><br><span class="line">| |____polyfills.ts <span class="comment"># 垫片</span></span><br></pre></td></tr></table></figure>
-<p>应用程序入口 main.ts</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; platformBrowserDynamic &#125; <span class="keyword">from</span> <span class="string">'@angular/platform-browser-dynamic'</span></span><br><span class="line"><span class="keyword">import</span> &#123; AppModule &#125; <span class="keyword">from</span> <span class="string">'./app/app.module'</span></span><br><span class="line"><span class="keyword">import</span> &#123; environment &#125; <span class="keyword">from</span> <span class="string">'./environments/environment'</span></span><br><span class="line"><span class="keyword">import</span> &#123; enableProdMode &#125; <span class="keyword">from</span> <span class="string">'@angular/core'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (environment.production) &#123;</span><br><span class="line">  enableProdMode()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">platformBrowserDynamic()</span><br><span class="line">  .bootstrapModule(AppModule)</span><br><span class="line">  .catch(<span class="function"><span class="params">err</span> =&gt;</span> <span class="built_in">console</span>.log(err))</span><br></pre></td></tr></table></figure>
-<p>启动模块 app.module.ts：</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; BrowserModule &#125; <span class="keyword">from</span> <span class="string">'@angular/platform-browser'</span></span><br><span class="line"><span class="keyword">import</span> &#123; NgModule &#125; <span class="keyword">from</span> <span class="string">'@angular/core'</span></span><br><span class="line"><span class="keyword">import</span> &#123; AppRoutingModule &#125; <span class="keyword">from</span> <span class="string">'./app-routing.module'</span></span><br><span class="line"><span class="keyword">import</span> &#123; AppComponent &#125; <span class="keyword">from</span> <span class="string">'./app.component'</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@NgModule</span>(&#123;</span><br><span class="line">  declarations: [AppComponent],</span><br><span class="line">  imports: [BrowserModule, AppRoutingModule],</span><br><span class="line">  providers: [],</span><br><span class="line">  bootstrap: [AppComponent]</span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> AppModule &#123;&#125;</span><br></pre></td></tr></table></figure>
-<p>启动组件 app.component.ts：</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; Component &#125; <span class="keyword">from</span> <span class="string">'@angular/core'</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span>(&#123;</span><br><span class="line">  selector: <span class="string">'app-root'</span>,</span><br><span class="line">  template: <span class="string">`</span></span><br><span class="line"><span class="string">    Home</span></span><br><span class="line"><span class="string">    &lt;router-outlet&gt;&lt;/router-outlet&gt;</span></span><br><span class="line"><span class="string">  `</span>,</span><br><span class="line">  styles: []</span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> AppComponent &#123;</span><br><span class="line">  title = <span class="string">'app'</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>路由定义文件：</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; NgModule &#125; <span class="keyword">from</span> <span class="string">'@angular/core'</span></span><br><span class="line"><span class="keyword">import</span> &#123; Routes, RouterModule &#125; <span class="keyword">from</span> <span class="string">'@angular/router'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> routes: Routes = []</span><br><span class="line"></span><br><span class="line"><span class="meta">@NgModule</span>(&#123;</span><br><span class="line">  imports: [RouterModule.forRoot(routes)],</span><br><span class="line">  exports: [RouterModule]</span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> AppRoutingModule &#123;&#125;</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/learn-angular-from-scratch/" data-id="cjw53wyai0008m5q4mrdnos05" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
     </footer>
   </div>
@@ -605,7 +560,7 @@
 
 
   <nav id="page-nav">
-    <a class="extend prev" rel="prev" href="/page/21/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/20/">20</a><a class="page-number" href="/page/21/">21</a><span class="page-number current">22</span><a class="page-number" href="/page/23/">23</a><a class="page-number" href="/page/24/">24</a><span class="space">&hellip;</span><a class="page-number" href="/page/60/">60</a><a class="extend next" rel="next" href="/page/23/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/21/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/20/">20</a><a class="page-number" href="/page/21/">21</a><span class="page-number current">22</span><a class="page-number" href="/page/23/">23</a><a class="page-number" href="/page/24/">24</a><span class="space">&hellip;</span><a class="page-number" href="/page/62/">62</a><a class="extend next" rel="next" href="/page/23/">Next &raquo;</a>
   </nav>
 </section>
 

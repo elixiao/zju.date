@@ -54,10 +54,10 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-mongodb-unset-array" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-react-push-url-params" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/mongodb-unset-array/" class="article-date">
-  <time datetime="2017-08-01T06:55:07.000Z" itemprop="datePublished">2017-08-01</time>
+    <a href="/react-push-url-params/" class="article-date">
+  <time datetime="2017-08-12T03:33:07.000Z" itemprop="datePublished">2017-08-12</time>
 </a>
     
   </div>
@@ -68,7 +68,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/mongodb-unset-array/">mongodb $unset array 字段</a>
+      <a class="article-title" href="/react-push-url-params/">react更新URL参数</a>
     </h1>
   
 
@@ -79,15 +79,21 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <p>mongodb 的 <code>$unset</code> 操作符对 <code>array</code> 类型的字段不适用，也不能用 <code>$pull</code>，因为把 array 置空了。可以用下面的办法：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">doc.set(&apos;field&apos;, undefined, &#123; strict: false &#125;)</span><br></pre></td></tr></table></figure>
+        <p>首先获取当前参数，并转换为 URLSearchParams 对象：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> currentUrlParams = <span class="keyword">new</span> URLSearchParams(<span class="built_in">window</span>.location.search)</span><br></pre></td></tr></table></figure>
+<p>然后设置相应的参数：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">currentUrlParams.set(<span class="string">'page'</span>, pageNumber)</span><br></pre></td></tr></table></figure>
+<p>然后更新到 history 中：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">this</span>.props.history.push(<span class="built_in">window</span>.location.pathname + <span class="string">"?"</span> + currentUrlParams.toString())</span><br></pre></td></tr></table></figure>
+<p>完整的代码是：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> currentUrlParams = <span class="keyword">new</span> URLSearchParams(<span class="built_in">window</span>.location.search)</span><br><span class="line">currentUrlParams.set(<span class="string">'page'</span>, pageNumber)</span><br><span class="line"><span class="keyword">this</span>.props.history.push(<span class="built_in">window</span>.location.pathname + <span class="string">"?"</span> + currentUrlParams.toString())</span><br></pre></td></tr></table></figure>
 
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/mongodb-unset-array/" data-id="cjhq778q100dsizq3zv9j6ozb" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/react-push-url-params/" data-id="cjw53wyay000pm5q4wga0a2vu" class="article-share-link">Share</a>
      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
     </footer>
   </div>
@@ -96,10 +102,10 @@
 
 
   
-    <article id="post-nginx-stream-reverse-proxy" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-use-terminal-command-in-nodejs" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/nginx-stream-reverse-proxy/" class="article-date">
-  <time datetime="2017-07-28T06:03:07.000Z" itemprop="datePublished">2017-07-28</time>
+    <a href="/use-terminal-command-in-nodejs/" class="article-date">
+  <time datetime="2017-08-11T15:07:07.000Z" itemprop="datePublished">2017-08-11</time>
 </a>
     
   </div>
@@ -110,7 +116,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/nginx-stream-reverse-proxy/">Nginx反向代理tcp数据流</a>
+      <a class="article-title" href="/use-terminal-command-in-nodejs/">在node.js中使用terminal命令</a>
     </h1>
   
 
@@ -121,65 +127,14 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <div class="article-preview">
-            <p>nginx 不仅可以用于反向代理 http 服务，可以反向代理任何 tcp 数据流，写在 stream 语法块里面：</p>
-<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">http</span> &#123; <span class="attribute">foo</span> &#125;</span><br><span class="line">stream &#123; <span class="attribute">bar</span> &#125;</span><br></pre></td></tr></table></figure>
-<p>例如反向代理 mongodb 连接的语法如下：</p>
-<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">stream</span> &#123;</span><br><span class="line">    <span class="section">server</span> &#123;</span><br><span class="line">        <span class="attribute">listen</span>  &lt;your incoming Mongo TCP port&gt;;</span><br><span class="line">        <span class="attribute">proxy_connect_timeout</span> <span class="number">1s</span>;</span><br><span class="line">        <span class="attribute">proxy_timeout</span> <span class="number">3s</span>;</span><br><span class="line">        <span class="attribute">proxy_pass</span>    stream_mongo_backend;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">upstream</span> stream_mongo_backend &#123;</span><br><span class="line">      <span class="attribute">server</span> &lt;localhost:your local Mongo TCP port&gt;;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="section">http</span> &#123;</span><br><span class="line">   ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/nginx-stream-reverse-proxy/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/nginx-stream-reverse-proxy/" data-id="cjw53wyas000im5q43b7vdhzl" class="article-share-link">Share</a>
-     
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-chrome-overwritten-css-style" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/chrome-overwritten-css-style/" class="article-date">
-  <time datetime="2017-07-27T06:10:36.000Z" itemprop="datePublished">2017-07-27</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/chrome-overwritten-css-style/">chrome中查看被覆盖的CSS样式</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>问题：</strong>如何在chrome里面找到被覆盖的CSS样式呢？</p>
-<p><strong>答案：</strong>打开“检查”——&gt;“computed面板”：</p>
-<p><img src="http://img.react.ren/blog/overriding-css-rules.png" alt="overriding-css-rules"></p>
-<p><a href="http://stackoverflow.com/questions/13867088/chrome-developer-tools-how-to-find-out-what-is-overriding-a-css-rule" target="_blank" rel="noopener">原文链接</a></p>
+        <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> exec = <span class="built_in">require</span>(<span class="string">'child_process'</span>).exec;</span><br><span class="line"><span class="keyword">let</span> cmd = <span class="string">'echo hello'</span></span><br><span class="line">exec(cmd, (error, stdout, stderr) =&gt; &#123;</span><br><span class="line">  <span class="keyword">if</span> (error) <span class="keyword">return</span> <span class="built_in">console</span>.error(<span class="string">`exec error: <span class="subst">$&#123;error&#125;</span>`</span>);</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">`stdout: <span class="subst">$&#123;stdout&#125;</span>`</span>, <span class="string">`stderr: <span class="subst">$&#123;stderr&#125;</span>`</span>);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
 
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/chrome-overwritten-css-style/" data-id="cjhq778ii004dizq30a86ws8o" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/use-terminal-command-in-nodejs/" data-id="cjhq778ut00iuizq359iwtk9w" class="article-share-link">Share</a>
      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CSS/">CSS</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
     </footer>
   </div>
@@ -188,10 +143,10 @@
 
 
   
-    <article id="post-innerHTML-outerHTML-innerText-outerText" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-linux-hash" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/innerHTML-outerHTML-innerText-outerText/" class="article-date">
-  <time datetime="2017-07-27T06:10:36.000Z" itemprop="datePublished">2017-07-27</time>
+    <a href="/linux-hash/" class="article-date">
+  <time datetime="2017-08-11T09:20:51.000Z" itemprop="datePublished">2017-08-11</time>
 </a>
     
   </div>
@@ -202,7 +157,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/innerHTML-outerHTML-innerText-outerText/">innerHTML、outerHTML、innerText和outerText</a>
+      <a class="article-title" href="/linux-hash/">Linux hash命令</a>
     </h1>
   
 
@@ -213,71 +168,22 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <div class="article-preview">
-            <p>innerHTML、outerHTML、innerText和outerText分别表示什么呢？</p>
-<ol>
-<li>innerHTML 设置或获取位于对象起始和结束标签内的 HTML </li>
-<li>outerHTML 设置或获取对象及其内容的 HTML 形式 </li>
-<li>innerText 设置或获取位于对象起始和结束标签内的文本 </li>
-<li>outerText 设置（包括标签）或获取（不包括标签）对象的文本 </li>
-</ol>
-<p>简单的说innerHTML和outerHTML、innerText与outerText的不同之处在于</p>
+        <p>hash命令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hash [-lr] [-p filename] [-dt] [name]</span><br></pre></td></tr></table></figure>
+<p>hash 命令的作用是在环境变量 PATH 中搜索命令 name 的完整路径并记住它，这样以后再次执行相同的命令时，就不必搜索其完整路径了，而且 shell 每次执行环境变量 PATH 中的一个命令时，hash都会记住它。</p>
 <ul>
-<li>innerHTML与outerHTML在设置对象的内容时包含的HTML会被解析，而innerText与outerText则不会。 </li>
-<li>在设置时，innerHTML与innerText仅设置标签内的文本，而outerHTML与outerText设置包括标签在内的文本。 </li>
+<li>不指定任何参数时，显示当前hash列表</li>
+<li><code>-l</code> 用于显示当前 hash 列表中的命令及完整路径等信息</li>
+<li><code>-r</code> 用于清空hash列表。</li>
+<li><code>-p</code> filename` 用于指定命令name的路径，路径 filename 是一个文件而非目录</li>
+<li><code>-d</code> 用于从hash列表中移除命令name对应的记录。</li>
+<li><code>-t</code> 用于显示hash列表中命令name的完整路径</li>
 </ul>
-<p>可以用下面的代码进行测试：</p>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/innerHTML-outerHTML-innerText-outerText/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/innerHTML-outerHTML-innerText-outerText/" data-id="cjhq778mj009gizq3cfyjh8yu" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/HTML/">HTML</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-use-xkill-in-ubuntu" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/use-xkill-in-ubuntu/" class="article-date">
-  <time datetime="2017-07-27T06:10:36.000Z" itemprop="datePublished">2017-07-27</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/use-xkill-in-ubuntu/">Linux命令之xkill</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><code>xkill</code>可以强制关闭未响应的桌面程序，比如当firefox 出现崩溃不能退出时，点鼠标就能杀死firefox 。在terminal输入xkill之后，鼠标会变成骷髅头图标，想杀掉哪个图形程序就点一下，如果想取消，就按右键。</p>
 
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/use-xkill-in-ubuntu/" data-id="cjhq778uu00iwizq30hq49546" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/linux-hash/" data-id="cjhq778ow00c8izq3a735ebtj" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
 
@@ -288,10 +194,10 @@
 
 
   
-    <article id="post-javascript-regex-escape" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-safe-mongodb" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/javascript-regex-escape/" class="article-date">
-  <time datetime="2017-07-25T15:07:07.000Z" itemprop="datePublished">2017-07-25</time>
+    <a href="/safe-mongodb/" class="article-date">
+  <time datetime="2017-08-11T02:38:07.000Z" itemprop="datePublished">2017-08-11</time>
 </a>
     
   </div>
@@ -302,7 +208,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/javascript-regex-escape/">JavaScript创建正则表达式</a>
+      <a class="article-title" href="/safe-mongodb/">mongodb安全管理</a>
     </h1>
   
 
@@ -314,19 +220,128 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <p>用字符串来创建正则表达式：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> r = <span class="keyword">new</span> <span class="built_in">RegExp</span>(<span class="string">'Hello Universe'</span>);</span><br><span class="line"><span class="comment">// 等价于：</span></span><br><span class="line"><span class="keyword">let</span> r = <span class="regexp">/Hello Universe/</span></span><br></pre></td></tr></table></figure>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> r = <span class="keyword">new</span> <span class="built_in">RegExp</span>(<span class="string">'^(\\d+) users'</span>)</span><br><span class="line"><span class="comment">// 等价于：</span></span><br><span class="line"><span class="keyword">let</span> r = <span class="regexp">/^(\d+) users/</span></span><br></pre></td></tr></table></figure>
+            <h2 id="安装与启动"><a href="#安装与启动" class="headerlink" title="安装与启动"></a>安装与启动</h2><p>安装可参考<a href="http://zju.date/fast-install">文章</a>，数据默认存储位置是：</p>
+<ul>
+<li>Linux 和 OS X： <code>/data/db</code></li>
+<li>Windows：<code>\data\db</code></li>
+</ul>
+<p>如果这个目录不存在，使用 <code>mongod</code> 启动的时候就会报错：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">exception in initAndListen: 29 Data directory /data/db not found., terminating</span><br></pre></td></tr></table></figure>
+<p>如果用包管理器安装MongoDB，可通过查看文件 <code>/etc/mongod.conf</code> 来找到默认存储位置：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cat /etc/mongod.conf | grep dbPath</span><br><span class="line"><span class="comment"># dbPath: /var/lib/mongo</span></span><br></pre></td></tr></table></figure>
+<p>然后指定用这个配置文件来启动MongoDB：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">mongod --config /etc/mongod.conf</span><br><span class="line"><span class="comment"># 或者</span></span><br><span class="line">mongod -f /etc/mongod.conf</span><br><span class="line"><span class="comment"># 或者</span></span><br><span class="line">service mongod start <span class="comment"># 默认使用 /etc/mongod.conf配置</span></span><br></pre></td></tr></table></figure>
         </div>
         
           <p class="article-more-link">
-            <a href="/javascript-regex-escape/#more">Read More</a>
+            <a href="/safe-mongodb/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/javascript-regex-escape/" data-id="cjhq778nf00akizq3elgvkbx3" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/safe-mongodb/" data-id="cjiom0g4n0007rbq30qvdnozt" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MongoDB/">MongoDB</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-env" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/env/" class="article-date">
+  <time datetime="2017-08-08T11:40:07.000Z" itemprop="datePublished">2017-08-08</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/env/">脚本中的env</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>在linux的一些脚本里，需在开头一行指定脚本的解释程序，如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">#!/usr/bin/env python</span><br><span class="line">#!/usr/bin/env perl</span><br><span class="line">#!/usr/bin/env zimbu</span><br></pre></td></tr></table></figure>
+<p>但有时候也用</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#!/usr/bin/python</span><br><span class="line">#!/usr/bin/perl</span><br></pre></td></tr></table></figure>
+<p>那么 env 到底有什么用？何时用这个呢？脚本用 env 启动的原因，是因为脚本解释器在 linux 中可能被安装于不同的目录，env 可以在系统的 PATH 目录中查找。同时，env 还规定一些系统环境变量。</p>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/env/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/env/" data-id="cjhq778k1006eizq3egimpe8z" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-JavaScript-tips-1" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/JavaScript-tips-1/" class="article-date">
+  <time datetime="2017-08-08T06:58:07.000Z" itemprop="datePublished">2017-08-08</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/JavaScript-tips-1/">JavaScript常用技巧</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="定时器"><a href="#定时器" class="headerlink" title="定时器"></a>定时器</h3><p>每隔1秒打印hello：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">setInterval(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'hello'</span>);</span><br><span class="line">&#125;, <span class="number">1000</span>);</span><br></pre></td></tr></table></figure>
+<p>延迟1秒打印hello：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">setTimeout(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'hello'</span>);</span><br><span class="line">&#125;, <span class="number">1000</span>);</span><br></pre></td></tr></table></figure>
+<p>取消上面的延迟1秒打印：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> printLater = setTimeout(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'hello'</span>);</span><br><span class="line">&#125;, <span class="number">1000</span>);</span><br><span class="line"></span><br><span class="line">clearTimeout(printLater)</span><br></pre></td></tr></table></figure>
+<h3 id="数组的-splice-方法"><a href="#数组的-splice-方法" class="headerlink" title="数组的 splice 方法"></a>数组的 <code>splice</code> 方法</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> arr = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>]</span><br><span class="line">arr.splice(<span class="number">1</span>,<span class="number">1</span>)  <span class="comment">// 返回值是一个数组[2]，而不是数字2。</span></span><br><span class="line">arr.splice(<span class="number">1</span>,<span class="number">1</span>,<span class="number">4</span>) <span class="comment">//是把中间的2替换成4了，变成了[1,4,3]。</span></span><br><span class="line">arr.splice(<span class="number">1</span>,<span class="number">0</span>,<span class="number">4</span>) <span class="comment">// 是在位置为1的元素前面插入4，变成了[1,4,2,3]。</span></span><br><span class="line">arr.splice(<span class="number">1</span>,<span class="number">0</span>,<span class="number">4</span>,<span class="number">5</span>) <span class="comment">// 是在位置为1的元素前面插入4和5，变成了[1,4,5,2,3]。</span></span><br><span class="line">arr.splice(<span class="number">1</span>,<span class="number">0</span>,[<span class="number">4</span>,<span class="number">5</span>]) <span class="comment">//是在位置为1的元素前面插入4，变成了[1,[4,5],2,3]</span></span><br></pre></td></tr></table></figure>
+<p>那如果想用数组的形式表示插入的参数怎么办呢？用下面的方法：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[].splice.apply(arr,[<span class="number">1</span>,<span class="number">0</span>,<span class="number">4</span>,<span class="number">5</span>])</span><br><span class="line"><span class="comment">// 或者</span></span><br><span class="line">arr.splice(<span class="number">1</span>,<span class="number">0</span>,...[<span class="number">4</span>,<span class="number">5</span>])</span><br></pre></td></tr></table></figure>
+<h3 id="用变量作为对象的key"><a href="#用变量作为对象的key" class="headerlink" title="用变量作为对象的key"></a>用变量作为对象的key</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> key = <span class="string">'name'</span></span><br><span class="line"><span class="keyword">var</span> obj = &#123;</span><br><span class="line">	key:<span class="string">'David'</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">console</span>.log(obj) <span class="comment">// &#123; key: 'David' &#125;</span></span><br><span class="line"><span class="keyword">var</span> obj2 = &#123;</span><br><span class="line">	[key]:<span class="string">'David'</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">console</span>.log(obj2) <span class="comment">// &#123; name: 'David' &#125;</span></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/JavaScript-tips-1/" data-id="cjhq778fx000vizq3iacar8t7" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
@@ -337,10 +352,10 @@
 
 
   
-    <article id="post-http-header-accept-encoding" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-angular-dependency-injection" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/http-header-accept-encoding/" class="article-date">
-  <time datetime="2017-07-25T11:40:07.000Z" itemprop="datePublished">2017-07-25</time>
+    <a href="/angular-dependency-injection/" class="article-date">
+  <time datetime="2017-08-08T06:57:35.000Z" itemprop="datePublished">2017-08-08</time>
 </a>
     
   </div>
@@ -351,7 +366,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/http-header-accept-encoding/">http header中的Accept-Encoding字段</a>
+      <a class="article-title" href="/angular-dependency-injection/">Angular 中的依赖注入</a>
     </h1>
   
 
@@ -363,24 +378,24 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <p>什么是<code>Accept-Encoding</code>？这篇<a href="https://imququ.com/post/content-encoding-header-in-http.html" target="_blank" rel="noopener">博客</a>里面的解释非常到位：</p>
+            <p>关于 Angular 里面的依赖注入的逻辑：</p>
 <blockquote>
-<p>浏览器发送请求时，通过 Accept-Encoding 带上自己支持的内容编码格式列表；<br>服务端从中挑选一种用来对正文进行编码，并通过 Content-Encoding 响应头指明选定的格式；<br>浏览器拿到响应正文后，依据 Content-Encoding 进行解压。<br>当然，服务端也可以返回未压缩的正文，但这种情况不允许返回 Content-Encoding。</p>
+<p>当一个组件申请获得一个依赖时，Angular 先尝试用该组件自己的注入器来满足它。 如果该组件的注入器没有找到对应的提供商（provider），它就把这个申请转给它父组件的注入器来处理。 如果那个注入器也无法满足这个申请，它就继续转给它的父组件的注入器。 这个申请继续往上冒泡 —— 直到找到了一个能处理此申请的注入器或者超出了组件树中的祖先位置为止。 如果超出了组件树中的祖先还未找到，Angular 就会抛出一个错误。</p>
 </blockquote>
-<p><code>Accept-Encoding</code>的语法如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Accept-Encoding: gzip</span><br><span class="line">Accept-Encoding: compress</span><br><span class="line">Accept-Encoding: deflate</span><br><span class="line">Accept-Encoding: br</span><br><span class="line">Accept-Encoding: identity</span><br><span class="line">Accept-Encoding: *</span><br></pre></td></tr></table></figure>
+<p>模块：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@NgModule</span>(&#123;</span><br><span class="line">  declarations: [</span><br><span class="line">    AppComponent,</span><br><span class="line">  ],</span><br><span class="line">  imports: [</span><br><span class="line">    BrowserModule</span><br><span class="line">  ],</span><br><span class="line">  providers: [],</span><br><span class="line">  bootstrap: [AppComponent]</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
         </div>
         
           <p class="article-more-link">
-            <a href="/http-header-accept-encoding/#more">Read More</a>
+            <a href="/angular-dependency-injection/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/http-header-accept-encoding/" data-id="cjhq778mh009cizq32jfx37r3" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/angular-dependency-injection/" data-id="cjssqvcpl00018uq4pfqw8txh" class="article-share-link">Share</a>
      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/HTTP/">HTTP</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Angular/">Angular</a></li></ul>
 
     </footer>
   </div>
@@ -389,10 +404,10 @@
 
 
   
-    <article id="post-ps-cut" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-ubuntu-shutdown-while-upgrade" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/ps-cut/" class="article-date">
-  <time datetime="2017-07-25T11:40:07.000Z" itemprop="datePublished">2017-07-25</time>
+    <a href="/ubuntu-shutdown-while-upgrade/" class="article-date">
+  <time datetime="2017-08-08T03:20:07.000Z" itemprop="datePublished">2017-08-08</time>
 </a>
     
   </div>
@@ -403,7 +418,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/ps-cut/">photoshop 切片功能</a>
+      <a class="article-title" href="/ubuntu-shutdown-while-upgrade/">Ubuntu升级过程中关机</a>
     </h1>
   
 
@@ -414,18 +429,18 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <p>用ps的切片可以快速截取网络图片中的一部分，切好切片后，导出为想要的格式：</p>
-<ol>
-<li>文件–&gt;存储为 web 和设备所有格式（快捷键：<code>【Ctrl】+【Alt】+【Shift】+【S】</code>）</li>
-<li>在弹出的”存储为 web 和设备所有格式“对话框中，按住 shift 选中需要的切片，再选择 PNG 格式</li>
-<li>点击“存储“按钮，弹出”将优化结果存储为”对话框中，切片选项选择“选中的切片”，最后保存便可</li>
-</ol>
+        <p>今天软件中心提示系统需要更新，然后就点更新，由于其他原因，没更新完就重启电脑，导致蓝屏和黑屏。</p>
+<p>一筹莫展，正准备放弃重装之际，网上说 <code>Ctrl+Alt+F1</code> 可以进终端，试了一下果然可以，说明图形界面出了问题，然后网上找了一堆命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo dpkg --configure -a  </span><br><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get upgrade</span><br><span class="line">sudo apt-get dist-upgrade</span><br></pre></td></tr></table></figure>
+<p>经过漫长的安装，<code>reboot</code> 之后竟然回复正常了！可喜可贺，及时把文件备份到云端，因为你永远不知道本地会出现什么问题。</p>
 
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/ps-cut/" data-id="cjhq778ri00fqizq3du6aa9rq" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/ubuntu-shutdown-while-upgrade/" data-id="cjhq778uc00ieizq3p5c9sqo9" class="article-share-link">Share</a>
      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
     </footer>
   </div>
   
@@ -433,10 +448,10 @@
 
 
   
-    <article id="post-use-zone-in-angular" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-logic-operator-in-querySelectAll" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/use-zone-in-angular/" class="article-date">
-  <time datetime="2017-07-25T09:09:47.000Z" itemprop="datePublished">2017-07-25</time>
+    <a href="/logic-operator-in-querySelectAll/" class="article-date">
+  <time datetime="2017-08-07T15:07:07.000Z" itemprop="datePublished">2017-08-07</time>
 </a>
     
   </div>
@@ -447,7 +462,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/use-zone-in-angular/">angular手动触发视图更新</a>
+      <a class="article-title" href="/logic-operator-in-querySelectAll/">querySelectorAll中使用逻辑操作符</a>
     </h1>
   
 
@@ -458,16 +473,15 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <p>在Angular项目中引用了第三方库，在其他组件里面的回调中改变angular组件的状态并不会触发视图更新。为了解决这个问题，可以注入zone对象，把需要改变的变量放在一个函数里面，作为<code>this.zone.run()</code>的参数即可。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">private zone:NgZone</span><br><span class="line"><span class="keyword">this</span>.zone.run(<span class="function"><span class="params">()</span> =&gt;</span> <span class="keyword">this</span>.successMessage = result);</span><br></pre></td></tr></table></figure>
-<p>参考文档：<a href="https://www.joshmorony.com/understanding-zones-and-change-detection-in-ionic-2-angular-2/" target="_blank" rel="noopener">文档1</a>、<a href="https://medium.com/@MertzAlertz/what-the-hell-is-zone-js-and-why-is-it-in-my-angular-2-6ff28bcf943e" target="_blank" rel="noopener">文档2</a></p>
+        <p><code>querySelectorAll</code>批量选择元素中可以使用逻辑操作符，例如<code>or</code>，<code>and</code>，<code>not</code>等，不过语法是<code>css</code>的语法：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// or (选择所有 divs 和 p 标签下的 spans)</span></span><br><span class="line"><span class="built_in">document</span>.querySelectorAll(<span class="string">'div, p span'</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// and (选择具有样式 myClass 的所有 divs)</span></span><br><span class="line"><span class="built_in">document</span>.querySelectorAll(<span class="string">'div.myClass'</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// not (选择不具备样式 myclass 的所有 divs)</span></span><br><span class="line"><span class="built_in">document</span>.querySelectorAll(<span class="string">'div:not(.myClass)'</span>);</span><br></pre></td></tr></table></figure>
 
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/use-zone-in-angular/" data-id="cjhq778uw00iyizq3dfnlu506" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/logic-operator-in-querySelectAll/" data-id="cjhq778p600cmizq37f6s9zno" class="article-share-link">Share</a>
      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CSS/">CSS</a></li></ul>
 
     </footer>
   </div>
@@ -476,10 +490,10 @@
 
 
   
-    <article id="post-install-global-packages-using-yarn" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-mongoose-ignore-fields" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/install-global-packages-using-yarn/" class="article-date">
-  <time datetime="2017-07-24T01:36:32.000Z" itemprop="datePublished">2017-07-24</time>
+    <a href="/mongoose-ignore-fields/" class="article-date">
+  <time datetime="2017-08-07T15:07:07.000Z" itemprop="datePublished">2017-08-07</time>
 </a>
     
   </div>
@@ -490,7 +504,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/install-global-packages-using-yarn/">使用yarn安装全局包</a>
+      <a class="article-title" href="/mongoose-ignore-fields/">Mongoose populate 时自动忽略指定字段</a>
     </h1>
   
 
@@ -502,22 +516,26 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <p>使用nvm对node版本进行管理，有个问题就是每次升级新版本的node，原来在全局安装的包都要重新安装一次，非常麻烦。例如安装了8.2.1版本的node，原来的全局包都是放在下面的目录中的：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/Users/lixiao/.nvm/versions/node/v8.2.1/lib/node_modules</span><br></pre></td></tr></table></figure>
-<p>如果查看全局安装了哪些依赖，可以使用下面的命令：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">npm ls -g --depth=0   </span><br><span class="line">/Users/lixiao/.nvm/versions/node/v8.2.1/lib</span><br><span class="line">├── gulp@3.9.1</span><br><span class="line">├── json-server@0.11.2</span><br><span class="line">└── npm@5.3.0</span><br></pre></td></tr></table></figure>
+            <p>在 populate 用户表的时候希望密码字段默认不被选择</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Blogs.findOne(&#123;...&#125;).populate(<span class="string">"user"</span>).exec()</span><br></pre></td></tr></table></figure>
+<p>可以手动使用 select 来指定不选择 password，</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Blogs.findOne(&#123;...&#125;).populate(&#123;<span class="attr">path</span>:<span class="string">'user'</span>,<span class="attr">select</span>:<span class="string">'-password'</span>&#125;).exec()</span><br><span class="line"></span><br><span class="line"><span class="comment">// 或者</span></span><br><span class="line">Blogs.findOne(&#123;...&#125;).populate(<span class="string">'user'</span>, <span class="string">'-password'</span>).exec()</span><br><span class="line"></span><br><span class="line"><span class="comment">// 注意下面的写法是注入多个</span></span><br><span class="line">Blogs.findOne(&#123;...&#125;).populate(<span class="string">'user comment'</span>).exec()</span><br></pre></td></tr></table></figure>
+<p>其实可以在模型定义的时候设置这个字段的默认可选择性：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">password: &#123; <span class="attr">type</span>: <span class="built_in">String</span>, <span class="attr">select</span>: <span class="literal">false</span> &#125;</span><br></pre></td></tr></table></figure>
+<p>但是一旦设定了默认不选择，除非明确指定需要这个字段（ <code>&#39;+password&#39;</code>），其他任何场景下都不再会返回这个字段了：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Users.findOne(&#123;<span class="attr">_id</span>: id&#125;).select(<span class="string">'+password'</span>).exec(...)</span><br></pre></td></tr></table></figure>
         </div>
         
           <p class="article-more-link">
-            <a href="/install-global-packages-using-yarn/#more">Read More</a>
+            <a href="/mongoose-ignore-fields/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/install-global-packages-using-yarn/" data-id="cjhq778mx009sizq32cxevv0o" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/mongoose-ignore-fields/" data-id="cjhq778qa00e4izq3b5jc9zhz" class="article-share-link">Share</a>
      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
 
     </footer>
   </div>
@@ -529,7 +547,7 @@
 
 
   <nav id="page-nav">
-    <a class="extend prev" rel="prev" href="/page/35/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/34/">34</a><a class="page-number" href="/page/35/">35</a><span class="page-number current">36</span><a class="page-number" href="/page/37/">37</a><a class="page-number" href="/page/38/">38</a><span class="space">&hellip;</span><a class="page-number" href="/page/60/">60</a><a class="extend next" rel="next" href="/page/37/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/35/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/34/">34</a><a class="page-number" href="/page/35/">35</a><span class="page-number current">36</span><a class="page-number" href="/page/37/">37</a><a class="page-number" href="/page/38/">38</a><span class="space">&hellip;</span><a class="page-number" href="/page/62/">62</a><a class="extend next" rel="next" href="/page/37/">Next &raquo;</a>
   </nav>
 </section>
 

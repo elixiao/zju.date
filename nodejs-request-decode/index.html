@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="nodejs 通过 request 包进行网络请求，返回的是 GBK 编码，而本地是 UTF8 所以看到全是乱码，可以用下面的方式进行转换： 123456789const options = &amp;#123;  method: &apos;POST&apos;,  uri: &apos;xxxx&apos;,  form: body,  encoding: null&amp;#125;request(options, function (error">
+<meta name="keywords" content="JavaScript">
+<meta property="og:type" content="article">
+<meta property="og:title" content="node.js中字符编码转换">
+<meta property="og:url" content="https://zju.date/nodejs-request-decode/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="nodejs 通过 request 包进行网络请求，返回的是 GBK 编码，而本地是 UTF8 所以看到全是乱码，可以用下面的方式进行转换： 123456789const options = &amp;#123;  method: &apos;POST&apos;,  uri: &apos;xxxx&apos;,  form: body,  encoding: null&amp;#125;request(options, function (error">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2020-05-13T01:44:38.736Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="node.js中字符编码转换">
+<meta name="twitter:description" content="nodejs 通过 request 包进行网络请求，返回的是 GBK 编码，而本地是 UTF8 所以看到全是乱码，可以用下面的方式进行转换： 123456789const options = &amp;#123;  method: &apos;POST&apos;,  uri: &apos;xxxx&apos;,  form: body,  encoding: null&amp;#125;request(options, function (error">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-nodejs-request-decode" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/nodejs-request-decode/" class="article-date">
+  <time datetime="2019-12-20T02:17:48.000Z" itemprop="datePublished">2019-12-20</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      node.js中字符编码转换
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>nodejs 通过 request 包进行网络请求，返回的是 GBK 编码，而本地是 UTF8 所以看到全是乱码，可以用下面的方式进行转换：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> options = &#123;</span><br><span class="line">  method: <span class="string">'POST'</span>,</span><br><span class="line">  uri: <span class="string">'xxxx'</span>,</span><br><span class="line">  form: body,</span><br><span class="line">  encoding: <span class="literal">null</span></span><br><span class="line">&#125;</span><br><span class="line">request(options, <span class="function"><span class="keyword">function</span> (<span class="params">error, response, body</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> decodedBody = iconv.decode(body, <span class="string">'GBK'</span>)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<p>注意，这里一定要得到 buffer 然后再 decode ，千万不要 decode string，因为Node.js 不支持 gbk 编码，Node.js 目前支持的字符编码包括：</p>
+<ul>
+<li><code>ascii</code> - 仅支持 7 位 ASCII 数据。如果设置去掉高位的话，这种编码是非常快的。</li>
+<li><code>utf8</code> - 多字节编码的 Unicode 字符。许多网页和其他文档格式都使用 UTF-8 。</li>
+<li><code>utf16le</code> - 2 或 4 个字节，小字节序编码的 Unicode 字符。支持代理对（U+10000 至 U+10FFFF）。</li>
+<li><code>ucs2</code> - ‘utf16le’ 的别名。</li>
+<li><code>base64</code> - Base64 编码</li>
+<li><code>latin1</code> - 一种把 Buffer 编码成一字节编码的字符串的方式</li>
+<li><code>binary</code> - ‘latin1’ 的别名。</li>
+<li><code>hex</code> - 将每个字节编码为两个十六进制字符</li>
+</ul>
+<p>如果拿到的是 string 的话，就意味着已经用 utf8(默认)编码过了，再转成 gbk 就会得到一堆的【锟斤拷锟斤拷锟斤拷】。</p>
+<h2 id="锟斤拷是怎么来的？"><a href="#锟斤拷是怎么来的？" class="headerlink" title="锟斤拷是怎么来的？"></a>锟斤拷是怎么来的？</h2><p>Unicode 和老编码体系的转化过程中，有一些字用 Unicode 是没法表示的，于是 Unicode 官方用了一个占位符来表示这些文字，即：U+FFFD。而 U+FFFD 的 utf8 编码是 ‘\xef\xbf\xbd’。重复多次就是 ‘\xef\xbf\xbd\xef\xbf\xbd’，如果用 gbk 解码的话，由于一个汉字2个字节，就得到：锟(0xEFBF)，斤（0xBDEF），拷（0xBFBD）。简单地说就是 gbk 编码传过去，但是 utf8 的服务器不认得，就返回了容错字符，然后又被 gbk 翻译回了汉字。</p>
+<p>如果看不懂上面的解释，这里再详细描述一次：utf8中有一个专门用来容错的字符 U+FFFD，0xFFFD对应的utf8编码是 11101111, 10111111,  10111101，那么这用16进制表示就是 0xEF 0xBF 0xBD，也就是 0xEFBFBD ，如果按照gbk来解码这三个字符，如果有两个容错字符的话，那么就是 0xEF 0xBF 0xBD 0xEF 0xBF 0xBD 6个字节，按照每两个字节，去查询gbk编码对应的汉字，就会发现刚好对应着这三个汉字：</p>
+<ul>
+<li>锟（0xEFBF）</li>
+<li>斤（0xBDEF）</li>
+<li>拷（0xBFBD）</li>
+</ul>
+<p>所以出现锟斤拷至少要满足如下三个条件：</p>
+<ol>
+<li>大于一个稀有的字符 ，至少俩，不然无法配对</li>
+<li>被替换成了0xFFFD</li>
+<li>然后又用GBK解码</li>
+</ol>
+<h2 id="字符编码的起源"><a href="#字符编码的起源" class="headerlink" title="字符编码的起源"></a>字符编码的起源</h2><ol>
+<li>美国人首先对其英文字符进行了编码，也就是最早的ascii码，用一个字节的低7位来表示英文的128个字符，高1位统一为0； </li>
+<li>后来欧洲人发现尼玛你这128位哪够用，比如我高贵的法国人字母上面的还有注音符，这个怎么区分，得，把高1位编进来吧，这样欧洲普遍使用一个全字节进行编码，最多可表示256位。欧美人就是喜欢直来直去，字符少，编码用得位数少； </li>
+<li>但是即使位数少，不同国家地区用不同的字符编码，虽然0–127表示的符号是一样的，但是128–255这一段的解释完全乱套了，即使2进制完全一样，表示的字符完全不一样，比如135在法语，希伯来语，俄语编码中完全是不同的符号； </li>
+<li>更麻烦的是，尼玛这电脑高科技传到中国后，中国人发现我们有10万多个汉字，你们欧美这256字塞牙缝都不够。于是就发明了GB2312这些汉字编码，典型的用2个字节来表示绝大部分的常用汉字，最多可以表示65536个汉字字符，这样就不难理解有些汉字你在新华字典里查得到，但是电脑上如果不处理一下你是显示不出来的了吧。 </li>
+<li>这下各用各的字符集编码，这世界咋统一？俄国人发封email给中国人，两边字符集编码不同，尼玛显示都是乱码啊。为了统一，于是就发明了unicode，将世界上所有的符号都纳入其中，每一个符号都给予一个独一无二的编码，现在unicode可以容纳100多万个符号，每个符号的编码都不一样，这下可统一了，所有语言都可以互通，一个网页页面里可以同时显示各国文字。 </li>
+<li>然而，unicode虽然统一了全世界字符的二进制编码，但没有规定如何存储啊，亲。x86和amd体系结构的电脑小端序和大端序都分不清，别提计算机如何识别到底是unicode还是acsii了。如果Unicode统一规定，每个符号用三个或四个字节表示，那么每个英文字母前都必然有二到三个字节是0，文本文件的大小会因此大出二三倍，这对于存储来说是极大的浪费。这样导致一个后果：出现了Unicode的多种存储方式。 </li>
+<li>互联网的兴起，网页上要显示各种字符，必须统一啊，亲。utf-8就是Unicode最重要的实现方式之一。另外还有utf-16、utf-32等。UTF-8不是固定字长编码的，而是一种变长的编码方式。它可以使用1~4个字节表示一个符号，根据不同的符号而变化字节长度。这是种比较巧妙的设计，如果一个字节的第一位是0，则这个字节单独就是一个字符；如果第一位是1，则连续有多少个1，就表示当前字符占用多少个字节。 </li>
+<li>注意unicode的字符编码和utf-8的存储编码表示是不同的，例如”严”字的Unicode码是4E25，UTF-8编码是E4B8A5，这个7里面解释了的，UTF-8编码不仅考虑了编码，还考虑了存储，E4B8A5是在存储识别编码的基础上塞进了4E25。 </li>
+<li>UTF-8 使用一至四个字节为每个字符编码。128 个 ASCII 字符（Unicode 范围由 U+0000 至 U+007F）只需一个字节，带有变音符号的拉丁文、希腊文、西里尔字母、亚美尼亚语、希伯来文、阿拉伯文、叙利亚文及马尔代夫语（Unicode 范围由 U+0080 至 U+07FF）需要二个字节，其他基本多文种平面（BMP）中的字符（CJK属于此类-Qieqie注）使用三个字节，其他 Unicode 辅助平面的字符使用四字节编码。 </li>
+<li>最后，要回答你的问题，常规来看，中文汉字在utf-8中到底占几个字节，一般是3个字节，最常见的编码方式是1110xxxx 10xxxxxx 1 0xxxxxx。</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/nodejs-request-decode/" data-id="cka4yu22c00118zq4sb0y0rwq" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/flutter-container-image-full-width-height/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          flutter container中的image
+        
+      </div>
+    </a>
+  
+  
+    <a href="/dart-new-outside-main/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Dart中main函数外面的new</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dart/">Dart</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Elasticsearch/">Elasticsearch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Flutter/">Flutter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>
