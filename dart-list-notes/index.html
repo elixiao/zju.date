@@ -5,18 +5,18 @@
   
   <title>zju.date</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="Dart 中合并 Map 的三种方式：  通过 addAll  123456789var firstMap = &amp;#123;&quot;1&quot;:&quot;2&quot;&amp;#125;;var secondMap = &amp;#123;&quot;2&quot;:&quot;3&quot;&amp;#125;;var thirdMap = &amp;#123;&amp;#125;;thirdMap.addAll(firstMap);thirdMap.addAll(secondMap);print(t">
+  <meta name="description" content="总结 dart 中关于 list 的一些特殊操作： 在 map 中使用索引在 js 中可以在 map 中取到 i 的值： 12list.map((it, i)=&amp;gt;&amp;#123;&amp;#125;) 但是在 dart 中这种写法会报错，函数中只能得到 it 而得不到 i，那应该怎么办呢？可以使用 Map Entries： 12345list.asMap().entries.map((entry) &amp;#">
 <meta name="keywords" content="Dart">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Dart中合并Map的三种方式">
-<meta property="og:url" content="https://zju.date/merge-maps-in-dart/index.html">
+<meta property="og:title" content="Dart List操作">
+<meta property="og:url" content="https://zju.date/dart-list-notes/index.html">
 <meta property="og:site_name" content=".">
-<meta property="og:description" content="Dart 中合并 Map 的三种方式：  通过 addAll  123456789var firstMap = &amp;#123;&quot;1&quot;:&quot;2&quot;&amp;#125;;var secondMap = &amp;#123;&quot;2&quot;:&quot;3&quot;&amp;#125;;var thirdMap = &amp;#123;&amp;#125;;thirdMap.addAll(firstMap);thirdMap.addAll(secondMap);print(t">
+<meta property="og:description" content="总结 dart 中关于 list 的一些特殊操作： 在 map 中使用索引在 js 中可以在 map 中取到 i 的值： 12list.map((it, i)=&amp;gt;&amp;#123;&amp;#125;) 但是在 dart 中这种写法会报错，函数中只能得到 it 而得不到 i，那应该怎么办呢？可以使用 Map Entries： 12345list.asMap().entries.map((entry) &amp;#">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2020-04-21T08:37:04.514Z">
+<meta property="og:updated_time" content="2020-05-18T03:32:21.458Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Dart中合并Map的三种方式">
-<meta name="twitter:description" content="Dart 中合并 Map 的三种方式：  通过 addAll  123456789var firstMap = &amp;#123;&quot;1&quot;:&quot;2&quot;&amp;#125;;var secondMap = &amp;#123;&quot;2&quot;:&quot;3&quot;&amp;#125;;var thirdMap = &amp;#123;&amp;#125;;thirdMap.addAll(firstMap);thirdMap.addAll(secondMap);print(t">
+<meta name="twitter:title" content="Dart List操作">
+<meta name="twitter:description" content="总结 dart 中关于 list 的一些特殊操作： 在 map 中使用索引在 js 中可以在 map 中取到 i 的值： 12list.map((it, i)=&amp;gt;&amp;#123;&amp;#125;) 但是在 dart 中这种写法会报错，函数中只能得到 it 而得不到 i，那应该怎么办呢？可以使用 Map Entries： 12345list.asMap().entries.map((entry) &amp;#">
   
     <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
   
@@ -57,10 +57,10 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main"><article id="post-merge-maps-in-dart" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main"><article id="post-dart-list-notes" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/merge-maps-in-dart/" class="article-date">
-  <time datetime="2019-10-24T01:57:02.000Z" itemprop="datePublished">2019-10-24</time>
+    <a href="/dart-list-notes/" class="article-date">
+  <time datetime="2019-12-27T08:06:26.000Z" itemprop="datePublished">2019-12-27</time>
 </a>
     
   </div>
@@ -71,7 +71,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      Dart中合并Map的三种方式
+      Dart List操作
     </h1>
   
 
@@ -82,24 +82,22 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <p>Dart 中合并 Map 的三种方式：</p>
-<ol>
-<li><p>通过 <code>addAll</code></p>
- <figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> firstMap = &#123;<span class="string">"1"</span>:<span class="string">"2"</span>&#125;;</span><br><span class="line"><span class="keyword">var</span> secondMap = &#123;<span class="string">"2"</span>:<span class="string">"3"</span>&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> thirdMap = &#123;&#125;;</span><br><span class="line"></span><br><span class="line">thirdMap.addAll(firstMap);</span><br><span class="line">thirdMap.addAll(secondMap);</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(thirdMap);</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>通过 <code>..</code> </p>
- <figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> thirdMap = &#123;&#125;..addAll(firstMap)..addAll(secondMap);</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>通过 <code>...</code></p>
- <figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> firstMap = &#123;<span class="string">"1"</span>:<span class="string">"2"</span>&#125;;</span><br><span class="line"><span class="keyword">final</span> secondMap = &#123;<span class="string">"2"</span>:<span class="string">"3"</span>&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">final</span> thirdMap = &#123;</span><br><span class="line">   ...firstMap,</span><br><span class="line">   ...secondMap,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<pre><code>注意：`...` 操作符在 sdk 2.3 及以后版本中可用 
-</code></pre>
+        <p>总结 dart 中关于 list 的一些特殊操作：</p>
+<h3 id="在-map-中使用索引"><a href="#在-map-中使用索引" class="headerlink" title="在 map 中使用索引"></a>在 map 中使用索引</h3><p>在 js 中可以在 map 中取到 i 的值：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">list.map(<span class="function">(<span class="params">it, i</span>)=&gt;</span>&#123;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>但是在 dart 中这种写法会报错，函数中只能得到 it 而得不到 i，那应该怎么办呢？可以使用 Map Entries：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">list.asMap().entries.map((entry) &#123;</span><br><span class="line">    <span class="built_in">int</span> i = entry.key;</span><br><span class="line">    <span class="built_in">String</span> it = entry.value;</span><br><span class="line">    <span class="keyword">return</span> something;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<h3 id="生成固定长度的列表"><a href="#生成固定长度的列表" class="headerlink" title="生成固定长度的列表"></a>生成固定长度的列表</h3><p>如果想一下子生成 [0, 1, 2, …, n] 可以用下面的方法：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="built_in">List</span> fixedList = <span class="built_in">Iterable</span>&lt;<span class="built_in">int</span>&gt;.generate(n).toList();</span><br></pre></td></tr></table></figure>
+<h3 id="列表去重"><a href="#列表去重" class="headerlink" title="列表去重"></a>列表去重</h3><figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="built_in">List</span> uniqueList = <span class="built_in">Set</span>.from(myList).toList();</span><br></pre></td></tr></table></figure>
+<h3 id="列表扩容"><a href="#列表扩容" class="headerlink" title="列表扩容"></a>列表扩容</h3><figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> input = [<span class="string">'1'</span>, <span class="string">'2'</span>, <span class="string">'3'</span>];</span><br><span class="line"><span class="keyword">var</span> duplicated = input.expand((i) =&gt; [i, i]).toList();</span><br><span class="line"><span class="built_in">print</span>(duplicated);  <span class="comment">// [1, 1, 2, 2, 3, 3]</span></span><br></pre></td></tr></table></figure>
+<h3 id="map-和-foreach-的区别"><a href="#map-和-foreach-的区别" class="headerlink" title="map 和 foreach 的区别"></a>map 和 foreach 的区别</h3><p>在执行上 map 是 lazy 的，只有在用到的时候才会调用，foreach 是立即调用的。</p>
+
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/merge-maps-in-dart/" data-id="cka4yu223000t8zq4ixdz25sj" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/dart-list-notes/" data-id="ckacnwnjc00004gq4duqhy6s3" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Dart/">Dart</a></li></ul>
 
@@ -109,19 +107,19 @@
     
 <nav id="article-nav">
   
-    <a href="/webview-fontsize-too-small/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/flutter-safe-string/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
-          Flutter Webview手机模式
+          Flutter字符串处理
         
       </div>
     </a>
   
   
-    <a href="/flutter-listview-with-header/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/dart-dynamic-instance/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">Flutter中带header的ListView</div>
+      <div class="article-nav-title">Dart根据类名生成类的实例</div>
     </a>
   
 </nav>

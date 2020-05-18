@@ -13,7 +13,7 @@
 <meta property="og:site_name" content=".">
 <meta property="og:description" content="Flutter 和 微信小程序都有下拉刷新和上拉加载更多的功能，具体实现如下： Flutter 下拉刷新  只需要在 ListView 最外层包装一个 RefreshIndicator 即可：  1234567891011RefreshIndicator(  onRefresh: () =&amp;gt; _fetchCreditLogs(false),  child: ListView.builder(">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2020-04-21T07:19:41.277Z">
+<meta property="og:updated_time" content="2020-05-18T15:52:24.888Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Flutter和小程序的下拉刷新和上拉加载功能">
 <meta name="twitter:description" content="Flutter 和 微信小程序都有下拉刷新和上拉加载更多的功能，具体实现如下： Flutter 下拉刷新  只需要在 ListView 最外层包装一个 RefreshIndicator 即可：  1234567891011RefreshIndicator(  onRefresh: () =&amp;gt; _fetchCreditLogs(false),  child: ListView.builder(">
@@ -87,10 +87,8 @@
 <li><p>下拉刷新</p>
 <p> 只需要在 ListView 最外层包装一个 RefreshIndicator 即可：</p>
  <figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">RefreshIndicator(</span><br><span class="line">  onRefresh: () =&gt; _fetchCreditLogs(<span class="keyword">false</span>),</span><br><span class="line">  child: ListView.builder(</span><br><span class="line">    physics: AlwaysScrollableScrollPhysics(),</span><br><span class="line">    controller: _scrollController,</span><br><span class="line">    itemCount: _list.length,</span><br><span class="line">    itemBuilder: (BuildContext context, <span class="built_in">int</span> index) &#123;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">  ),</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<p> 这里需要注意的是：当列表内容未占满整屏的时候，ListView 不会触发滚动，会导致下拉刷新和上拉加载都无效。添加 <code>physics: const AlwaysScrollableScrollPhysics()</code> 之后，能够解决这个问题。</p>
 </li>
-</ol>
-<pre><code>这里需要注意的是：当列表内容未占满整屏的时候，ListView 不会触发滚动，会导致下拉刷新和上拉加载都无效。添加 `physics: const AlwaysScrollableScrollPhysics()` 之后，能够解决这个问题。
-</code></pre><ol>
 <li><p>上拉加载</p>
 <p> ListView 有一个 ScrollController 属性，专门来控制 ListView 滑动事件，在这里可以根据 ListView 的位置来判断是否滑动到了底部：</p>
  <figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">_scrollController.addListener(() &#123;</span><br><span class="line">  <span class="keyword">if</span> (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) &#123;</span><br><span class="line">    _getMore();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
@@ -100,14 +98,10 @@
 <li><p>下拉刷新</p>
 <p> 需要在.json文件里设置 <code>&quot;enablePullDownRefresh&quot;: true</code>，当前页设置也可以全局设置；</p>
  <figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"enablePullDownRefresh"</span>: <span class="literal">true</span> //当前页</span><br><span class="line">    <span class="string">"backgroundTextStyle"</span>: <span class="string">"dark"</span> //顶部显示颜色为深色的三个点</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> 具体的逻辑写在页面的 <code>onPullDownRefresh</code> 函数里面：</p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">onPullDownRefresh: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.fetchArticleList(<span class="literal">false</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> 下拉刷新的时候，顶部会有一个三个点的动效，可以在合适的时候使用 <code>wx.stopPullDownRefresh()</code> 停止该动效。</p>
 </li>
-</ol>
-<pre><code>具体的逻辑写在页面的 `onPullDownRefresh` 函数里面：
-
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">onPullDownRefresh: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.fetchArticleList(<span class="literal">false</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-下拉刷新的时候，顶部会有一个三个点的动效，可以在合适的时候使用 `wx.stopPullDownRefresh()` 停止该动效。
-</code></pre><ol>
 <li><p>上拉加载</p>
 <p> 上拉加载在小程序里面就更简单了，逻辑直接在 <code>onReachBottom</code> 函数里即可：</p>
  <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">onReachBottom: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.fetchArticleList(<span class="literal">true</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>

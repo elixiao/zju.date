@@ -54,6 +54,48 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-dart-dynamic-instance" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/dart-dynamic-instance/" class="article-date">
+  <time datetime="2019-12-25T08:28:15.000Z" itemprop="datePublished">2019-12-25</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/dart-dynamic-instance/">Dart根据类名生成类的实例</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在一个 Flutter 项目中，想动态创建类的实例，就是根据类名字符串，在进行某些操作的时候自动创建类的实例。但 Dart 语言不支持通过类名字符串生成实例，但是可以用下面的方式实现相同的效果：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> factories = &lt;<span class="built_in">String</span>, <span class="built_in">Object</span> <span class="built_in">Function</span>()&gt;&#123;</span><br><span class="line">    <span class="string">'Foo'</span>, () =&gt; <span class="keyword">new</span> Foo(), </span><br><span class="line">    <span class="string">'Bar'</span>, () =&gt; <span class="keyword">new</span> Bar()</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="built_in">String</span> name = <span class="string">'Foo'</span>;</span><br><span class="line"><span class="built_in">Object</span> instance = factories[name]();</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/dart-dynamic-instance/" data-id="cka4yu21b00048zq4mtcy3nul" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Dart/">Dart</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-flutter-container-image-full-width-height" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/flutter-container-image-full-width-height/" class="article-date">
@@ -452,57 +494,19 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <p>最初，在 Flutter 项目中用 ListTile 实现了列表项的布局，速度很快，而且代码比较简单，例如：</p>
+        <div class="article-preview">
+            <p>最初，在 Flutter 项目中用 ListTile 实现了列表项的布局，速度很快，而且代码比较简单，例如：</p>
 <figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">ListTile(</span><br><span class="line">  leading: Icon(</span><br><span class="line">    Icons.account_box,</span><br><span class="line">    color: Colors.red,</span><br><span class="line">  ),</span><br><span class="line">  title: Text(</span><br><span class="line">    <span class="string">'账户'</span>,</span><br><span class="line">    textAlign: TextAlign.left,</span><br><span class="line">    style: TextStyle(</span><br><span class="line">      color: Colors.grey,</span><br><span class="line">    ),</span><br><span class="line">  ),</span><br><span class="line">  trailing: Icon(Icons.keyboard_arrow_right),</span><br><span class="line">  onTap: () &#123;</span><br><span class="line">    <span class="comment">// 响应点击事件</span></span><br><span class="line">  &#125;,</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
-<p>后来需求说要调整一下左边 Icon 和右边文字之间的间距，竟然在网上没找到方法，可能结论就是根本没有方法，ListTile 里面的边距就是定死的，只有一个 dense 能够切换成紧凑模式，也是固定的边距和样式。所以，在任何时候，请不要使用 ListTile，因为这个组件无法定制，而需求时刻在变，可以自己实现一个效果完全一样而且定制起来非常灵活，例如：</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">InkWell(</span><br><span class="line">  onTap: () &#123;</span><br><span class="line">    <span class="comment">// 响应点击事件</span></span><br><span class="line">  &#125;,</span><br><span class="line">  child: Container(</span><br><span class="line">    padding: EdgeInsets.fromLTRB(<span class="number">12</span>, <span class="number">15</span>, <span class="number">12</span>, <span class="number">15</span>),</span><br><span class="line">    decoration: BoxDecoration(</span><br><span class="line">      color: Colors.white,</span><br><span class="line">      border: Border(</span><br><span class="line">        bottom: BorderSide(</span><br><span class="line">          width: <span class="number">1</span>,</span><br><span class="line">          color: Colors.grey,</span><br><span class="line">        ),</span><br><span class="line">      ),</span><br><span class="line">    ),</span><br><span class="line">    child: Row(</span><br><span class="line">      children: &lt;Widget&gt;[</span><br><span class="line">        Icon(</span><br><span class="line">          Icons.account_box,</span><br><span class="line">          color: Colors.red,</span><br><span class="line">        ),</span><br><span class="line">        SizedBox(width: <span class="number">10</span>),</span><br><span class="line">        Text(</span><br><span class="line">          <span class="string">'账户'</span>,</span><br><span class="line">          textAlign: TextAlign.left,</span><br><span class="line">          style: TextStyle(</span><br><span class="line">            color: Colors.grey,</span><br><span class="line">            fontSize: <span class="number">16</span>,</span><br><span class="line">          ),</span><br><span class="line">        ),</span><br><span class="line">        Spacer(),</span><br><span class="line">        Icon(Icons.keyboard_arrow_right),</span><br><span class="line">      ],</span><br><span class="line">    ),</span><br><span class="line">  ),</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
-
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/never-use-flutter-listtile/#more">Read More</a>
+          </p>
+        
       
     </div>
     <footer class="article-footer">
      <a data-url="https://zju.date/never-use-flutter-listtile/" data-id="ck8zn3jv0000cvtq49p72ccg1" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flutter/">Flutter</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-webview-fontsize-too-small" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/webview-fontsize-too-small/" class="article-date">
-  <time datetime="2019-10-29T02:16:37.000Z" itemprop="datePublished">2019-10-29</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/webview-fontsize-too-small/">Flutter Webview手机模式</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>在 Flutter 项目中用 webview 里面开了一个网页，发现字体好小，解决方案就是通过 meta 指定 mobile 视图：</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> contentBase64 = base64Encode(</span><br><span class="line">  <span class="keyword">const</span> Utf8Encoder().convert(</span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    &lt;!DOCTYPE html&gt;</span></span><br><span class="line"><span class="string">    &lt;html&gt;</span></span><br><span class="line"><span class="string">      &lt;head&gt;&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;&lt;/head&gt;</span></span><br><span class="line"><span class="string">      &lt;body style='"margin: 0; padding: 0;'&gt;</span></span><br><span class="line"><span class="string">        &lt;div&gt;</span></span><br><span class="line"><span class="string">          $htmlString</span></span><br><span class="line"><span class="string">        &lt;/div&gt;</span></span><br><span class="line"><span class="string">      &lt;/body&gt;</span></span><br><span class="line"><span class="string">    &lt;/html&gt;</span></span><br><span class="line"><span class="string">    """</span>,</span><br><span class="line">  ),</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/webview-fontsize-too-small/" data-id="ck8zn3jvc000ivtq4nxik6pxw" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flutter/">Flutter</a></li></ul>
 

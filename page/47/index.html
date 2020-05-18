@@ -54,6 +54,100 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-es-dynamic-script" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/es-dynamic-script/" class="article-date">
+  <time datetime="2017-01-13T01:49:29.000Z" itemprop="datePublished">2017-01-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/es-dynamic-script/">开启elasticsearch动态脚本功能</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>更新也可以通过使用简单的脚本来进行。这个例子使用一个脚本将age加5：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">curl -XPOST <span class="string">'localhost:9200/megacorp/employee/1/_update?pretty'</span> -d <span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "script" : "ctx._source.age += 5"</span></span><br><span class="line"><span class="string">&#125;'</span></span><br></pre></td></tr></table></figure>
+<p>但会报错：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;error&quot; : &#123;</span><br><span class="line">    &quot;root_cause&quot; : [ &#123;</span><br><span class="line">      &quot;type&quot; : &quot;remote_transport_exception&quot;,</span><br><span class="line">      &quot;reason&quot; : &quot;[Professor X][127.0.0.1:9302][indices:data/write/update[s]]&quot;</span><br><span class="line">    &#125; ],</span><br><span class="line">    &quot;type&quot; : &quot;illegal_argument_exception&quot;,</span><br><span class="line">    &quot;reason&quot; : &quot;failed to execute script&quot;,</span><br><span class="line">    &quot;caused_by&quot; : &#123;</span><br><span class="line">      &quot;type&quot; : &quot;script_exception&quot;,</span><br><span class="line">      &quot;reason&quot; : &quot;scripts of type [inline], operation [update] and lang [groovy] are disabled&quot;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  &quot;status&quot; : 400</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>因为新版本的elasticsearch中，基于安全考虑，默认禁用了动态脚本功能，可以通过修改配置文件开启动态脚本功能：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 编辑 config/elasticsearch.yml 文件，添加</span></span><br><span class="line">script.inline: on</span><br><span class="line">script.indexed: on</span><br><span class="line">script.file: on</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/es-dynamic-script/" data-id="cjhq778jx0067izq3a98kr3eu" class="article-share-link">Share</a>
+     
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-ajax-request-in-chrome-console" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/ajax-request-in-chrome-console/" class="article-date">
+  <time datetime="2017-01-11T07:36:36.000Z" itemprop="datePublished">2017-01-11</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/ajax-request-in-chrome-console/">在控制台发送 ajax 请求</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>浏览器控制台是个非常强大的工具，有一次浏览某网站的时候，想把部分数据保存在本地，但浏览器并未提供读写本地文件的接口，于是想到自己搭建一个 server，然后通过 ajax 请求发送给服务器保存。</p>
+<p>假如我们想要保存的数据在 id 为 info 的 div 中，可以用下面的命令获取全部文本数据：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">document</span>.querySelector(<span class="string">'#info'</span>).textContent</span><br></pre></td></tr></table></figure>
+<p>然后用 express 搭建了一个server，读取 POST 请求的 body，然后保存到本地。</p>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/ajax-request-in-chrome-console/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/ajax-request-in-chrome-console/" data-id="cjhq778h0002bizq37z16dfmn" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-solve-math-puzzle-using-javascript" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/solve-math-puzzle-using-javascript/" class="article-date">
@@ -447,117 +541,6 @@
      <a data-url="https://zju.date/story-of-guanzhong/" data-id="cjhq778t200hkizq392gnono3" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-mac-set-default-browser" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/mac-set-default-browser/" class="article-date">
-  <time datetime="2016-10-29T02:04:07.000Z" itemprop="datePublished">2016-10-29</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/mac-set-default-browser/">Mac设置默认浏览器</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Mac设置默认浏览器的方法：</p>
-<ul>
-<li><p><code>OS X Yosemite</code> 以上版本：</p>
-<ol>
-<li>点击 <code>Apple ()</code> 菜单</li>
-<li>选择系统偏好设置（<code>System Preferences</code>）</li>
-<li>选择通用（<code>General</code>）</li>
-<li>从默认网页浏览器（<code>Default web browser</code>）下拉菜单中选择。</li>
-</ol>
-</li>
-<li><p><code>Mavericks</code> 以前版本：</p>
-<ol>
-<li>打开 <code>Safari</code></li>
-<li>单击菜单选择偏好设置（<code>Preferences</code>）</li>
-<li>选择通用（<code>General</code>）</li>
-<li>从默认网页浏览器（<code>Default web browser</code>）下拉菜单中选</li>
-</ol>
-</li>
-</ul>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/mac-set-default-browser/" data-id="cjhq778pi00d0izq3xtgf4kbv" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-get-ip-using-javascript" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/get-ip-using-javascript/" class="article-date">
-  <time datetime="2016-10-28T03:11:08.000Z" itemprop="datePublished">2016-10-28</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/get-ip-using-javascript/">JavaScript获取IP</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <ol>
-<li><p>调用sohu的接口：</p>
- <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;script src=<span class="string">"http://pv.sohu.com/cityjson?ie=utf-8"</span>&gt;<span class="xml"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span></span><br><span class="line">&lt;script type=<span class="string">"text/javascript"</span>&gt;</span><br><span class="line">    <span class="built_in">document</span>.write(returnCitySN[<span class="string">"cip"</span>]+<span class="string">','</span>+returnCitySN[<span class="string">"cname"</span>])</span><br><span class="line">&lt;<span class="regexp">/script&gt;</span></span><br></pre></td></tr></table></figure>
-<p> 会在全局创建一个returnCitySN变量：</p>
- <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> returnCitySN = &#123;<span class="string">"cip"</span>: <span class="string">"114.251.47.65"</span>, <span class="string">"cid"</span>: <span class="string">"110000"</span>, <span class="string">"cname"</span>: <span class="string">"北京市"</span>&#125;;</span><br></pre></td></tr></table></figure>
-<p> 需要的时候直接引用即可。</p>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/get-ip-using-javascript/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/get-ip-using-javascript/" data-id="cjhq778kp007gizq3982x5pja" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
     </footer>
   </div>

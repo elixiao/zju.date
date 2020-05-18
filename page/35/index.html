@@ -54,6 +54,145 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-git-notes" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/git-notes/" class="article-date">
+  <time datetime="2017-08-16T02:26:23.000Z" itemprop="datePublished">2017-08-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/git-notes/">Git学习笔记</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h2><h3 id="fetch"><a href="#fetch" class="headerlink" title="fetch"></a>fetch</h3><p>git fetch从远程分支获取最新版本到本地，语法是：<code>git fetch origin remote_branch:local_branch</code>，不会自动merge，可以先观察区别之后再决定是否merge：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git fetch origin master</span><br><span class="line">git <span class="built_in">log</span> -p master..origin/master</span><br><span class="line">git merge origin/master</span><br></pre></td></tr></table></figure>
+<p>其实逻辑和下面的把远程分支下载到本地的一个临时分支上，查看区别，然后合并：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git fetch origin master:tmp</span><br><span class="line">git diff tmp</span><br><span class="line">git merge tmp</span><br></pre></td></tr></table></figure>
+<h3 id="pull"><a href="#pull" class="headerlink" title="pull"></a>pull</h3><p>如果你运行git pull，那么git会帮你做两件事情，首先拿到远程最新的代码，然后运行 git merge。即git pull 是从远程获取最新版然后就直接merge到本地相同分支了。这么看来，fetch要安全一些，因为在merge前可以查看更新情况，然后再决定是否合并。</p>
+<h3 id="cherry-pick"><a href="#cherry-pick" class="headerlink" title="cherry-pick"></a>cherry-pick</h3><p>例如，假设我们有两个分支A和B，这两个分支不能合并，否则这样会导致版本混乱，但是又想增加A分支中的一个功能到B分支中，可以使用cherry-pick了。</p>
+<p>cherry-pick 就是对已经存在的commit 进行 再次提交；</p>
+<p>语法如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git cherry-pick &lt;commit id&gt;</span><br></pre></td></tr></table></figure>
+<p>当执行完 cherry-pick 以后，将会 生成一个新的提交；这个新的提交的哈希值和原来的不同，但标识名一样；</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ git checkout B</span><br><span class="line">$ git cherry-pick 6aa94d53d702876a7f7a61da2e72c43016618ecc</span><br></pre></td></tr></table></figure>
+<h3 id="rebase"><a href="#rebase" class="headerlink" title="rebase"></a>rebase</h3><p>git rebase是把某个分支上的一部分commit嫁接到另一个commit后面，而在这个过程中这些commit的base（基）变了，所以这个操作叫做rebase。</p>
+<p>语法如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git rebase &lt;upstream&gt; &lt;branch&gt;</span><br></pre></td></tr></table></figure>
+<p>比如我们有如下的提交历史，当前的分支是topic：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">     A---B---C topic(HEAD)</span><br><span class="line">    /</span><br><span class="line">D---E---F---G master</span><br></pre></td></tr></table></figure>
+<p>我们执行了如下任何一个命令（区别是后者会首先checkout到topic分支，然后再执行rebase的操作。）之后：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ git rebase master</span><br><span class="line">$ git rebase master topic</span><br></pre></td></tr></table></figure>
+<p>提交历史将会变成如下这样：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">              A&apos;--B&apos;--C&apos; topic(HEAD)</span><br><span class="line">             /</span><br><span class="line">D---E---F---G master</span><br></pre></td></tr></table></figure>
+<p>git把A—B—C这段commit嫁接到了G之后，不过虽然这些新commit的内容是一样的，但是hash值是不同的（A’–B’–C’），因为在这个过程中，git做了三件事情：</p>
+<ol>
+<li>首先对topic分支和<upstream>做一个差集，把不同的commit找出来，对于以上例子来说结果就是A—B—C，然后把这些commit存在一个临时的地方。</upstream></li>
+<li>其次，git会把当前分支reset到<upstream>上，类似于执行git reset –hard <upstream>命令。对于以上例子来说就是reset到master。</upstream></upstream></li>
+<li>最后，git把第一步中暂存的commit，按照顺序一个一个地应用到分支上，相当于一个一个重复提交，这就是为什么rebase之后commit的hash值变了。</li>
+</ol>
+<p>如果中的一个commit进行了某项修改，而当前分支中也存在一个commit，这两个commit的修改的内容一样，那么当前分支中的commit将会被忽略。比如以下的<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure></p>
+<pre><code> A---B---C topic
+/
+</code></pre><p>D—E—A’—F master<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">执行完git rebase master之后，结果如下：</span><br></pre></td></tr></table></figure></p>
+<pre><code> B&apos;---C&apos; topic
+/
+</code></pre><p>D—E—A’—F master<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">rebase往往和pull一起使用，git pull --rebase的意思是git fetch去服务器拿到最新代码，然后运行git rebase，注意不是git merge，如果没有--rebase，那么就会执行git merge，但是有--rebase就执行git rebase。和git pull的区别简单来说都是将不同分支的代码融合在一起，但生成的代码树不同，git pull --rebase不会生成大量的merge节点。</span><br><span class="line"></span><br><span class="line">## 常见问题</span><br><span class="line"></span><br><span class="line">### 创建分支失败</span><br><span class="line"></span><br><span class="line">```bash</span><br><span class="line">$ git branch frontend</span><br><span class="line">fatal: Not a valid object name: &apos;master&apos;.</span><br></pre></td></tr></table></figure></p>
+<p>问题描述-一个非法的master,原因：本地还没有创建master，你可以执行以下git branch，会发现没有看到本地分支列表。</p>
+<p>解决方案就是先提交，创建master分支之后再创建其他分支。</p>
+<h3 id="push失败"><a href="#push失败" class="headerlink" title="push失败"></a>push失败</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">error: failed to push some refs to <span class="string">'git@github.com:your/name.git'</span></span><br><span class="line">hint: Updates were rejected because the remote contains work that you <span class="keyword">do</span></span><br><span class="line">hint: not have locally. This is usually caused by another repository pushing</span><br><span class="line">hint: to the same ref. You may want to first integrate the remote changes</span><br><span class="line">hint: (e.g., <span class="string">'git pull ...'</span>) before pushing again.</span><br><span class="line">hint: See the <span class="string">'Note about fast-forwards'</span> <span class="keyword">in</span> <span class="string">'git push --help'</span> <span class="keyword">for</span> details.</span><br></pre></td></tr></table></figure>
+<p>还没pull就push了，而远程有本地没有的文件，就提示这个错误，解决方案就是先pull然后再push即可。</p>
+<h3 id="下载远程指定分支"><a href="#下载远程指定分支" class="headerlink" title="下载远程指定分支"></a>下载远程指定分支</h3><p>git下载远程指定分支：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> -b &lt;branch&gt; &lt;remote_repo&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="创建一个新的空白分支"><a href="#创建一个新的空白分支" class="headerlink" title="创建一个新的空白分支"></a>创建一个新的空白分支</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git checkout --orphan &lt;branchname&gt; <span class="comment"># 创建一个孤儿分支，没有任何提交历史</span></span><br><span class="line">git rm --cached -r . <span class="comment"># 如果执行此命令会清空缓存区文件</span></span><br></pre></td></tr></table></figure>
+<h3 id="同一个项目添加多个远程仓库地址"><a href="#同一个项目添加多个远程仓库地址" class="headerlink" title="同一个项目添加多个远程仓库地址"></a>同一个项目添加多个远程仓库地址</h3><p>假如在 github 仓库 clone 代码要传到 gitlab，可以添加多个远程仓库地址：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">git remote add new_origin_name git@gitlab.com:xxx/xxx.git</span><br><span class="line">git remote -v <span class="comment"># 查看远程仓库地址</span></span><br><span class="line">git pull new_origin_name </span><br><span class="line">git push new_origin_name develop</span><br></pre></td></tr></table></figure>
+<h3 id="fatal-refusing-to-merge-unrelated-histories"><a href="#fatal-refusing-to-merge-unrelated-histories" class="headerlink" title="fatal: refusing to merge unrelated histories"></a>fatal: refusing to merge unrelated histories</h3><p>pull 或 merge 代码时提示无法 merge，添加 <code>allow-unrelated-histories</code> 参数即可：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git pull origin master --allow-unrelated-histories</span><br><span class="line">git merge master --allow-unrelated-histories</span><br></pre></td></tr></table></figure>
+<h3 id="merge-时忽略历史提交记录"><a href="#merge-时忽略历史提交记录" class="headerlink" title="merge 时忽略历史提交记录"></a>merge 时忽略历史提交记录</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git merge --squash</span><br></pre></td></tr></table></figure>
+<h3 id="error-src-refspec-master-does-not-match-any"><a href="#error-src-refspec-master-does-not-match-any" class="headerlink" title="error:src refspec master does not match any"></a><code>error:src refspec master does not match any</code></h3><p>引起该错误的原因是，目录中没有文件，空目录是不能提交上去的。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/git-notes/" data-id="cjhq778l0007uizq36k1kv72w" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/">Git</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-react-native-common-errors" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/react-native-common-errors/" class="article-date">
+  <time datetime="2017-08-16T02:25:52.000Z" itemprop="datePublished">2017-08-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/react-native-common-errors/">react-native常见错误记录</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>记录一些开发过程中的错误，方便日后查阅，比较琐碎。</p>
+<h4 id="import-时大括号使用错误"><a href="#import-时大括号使用错误" class="headerlink" title="import 时大括号使用错误"></a>import 时大括号使用错误</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Uncaught Error: Invariant Violation: Element type is invalid: expected a string (for built-in components) or a class/function but got: object</span><br></pre></td></tr></table></figure>
+<p>如果export default就不需要大括号，否则需要大括号：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123;MyComponent&#125; <span class="keyword">from</span> <span class="string">'../components/xyz.js'</span>;</span><br><span class="line"><span class="keyword">import</span> MyComponent <span class="keyword">from</span> <span class="string">'../components/xyz.js'</span>;</span><br></pre></td></tr></table></figure>
+<p>如果第二个是对的，那么第一个会报上面的错。</p>
+<h4 id="在-render-中更新-props-和-state"><a href="#在-render-中更新-props-和-state" class="headerlink" title="在 render 中更新 props 和 state"></a>在 render 中更新 props 和 state</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Warning: setState(...): Cannot update during an existing state transition (such as within `render` or another component&apos;s constructor) Render methods should be a pure function of props and state; constructor side-effects are an anti-pattern, but can be moved to &apos;componentWillMount&apos;</span><br></pre></td></tr></table></figure>
+<p>大体意思就是在 render 这种需要 props 和 state 进行渲染的方法中，不能再对 props 和 state 进行更新。因为React 会在 props 和 state 改变的时候调用 render 进行 DOM diff 然后渲染，如果在渲染过程中再对 props 和 state 进行更改，就陷入死循环了。onPress 应该传递进一个函数，这个函数会在点击的时候执行。一种可行的写法是使用匿名函数封装：</p>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/react-native-common-errors/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/react-native-common-errors/" data-id="cjw77iiz5000zqlq45tpwwqqi" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-generate-DOM-using-LaTeX" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/generate-DOM-using-LaTeX/" class="article-date">
@@ -496,116 +635,6 @@
      <a data-url="https://zju.date/ubuntu-add-icon-to-dash/" data-id="cjhq778u400i8izq3ih0dxr3f" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-linux-tee" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/linux-tee/" class="article-date">
-  <time datetime="2017-08-13T03:47:42.000Z" itemprop="datePublished">2017-08-13</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/linux-tee/">Linux命令之tee</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><code>ls &gt; a.txt</code>可以把输出保存到文件，但这时我们就不能看到输出了，如果我们既想把输出保存到文件中，又想在屏幕上看到输出内容，就要使用tee命令。</p>
-<ol>
-<li><p><code>tee</code></p>
-<p> 只输出到标准输出。</p>
-</li>
-<li><p><code>tee file</code></p>
-<p> 保存到文件并输出到标准输出，如果文件不存在，则创建；如果已经存在，则覆盖。</p>
-</li>
-<li><p><code>tee -a file</code></p>
-<p> 输出到标准输出的同时，追加到文件file中。如果文件不存在，则创建；如果已经存在，就在末尾追加内容，而不是覆盖。</p>
-</li>
-<li><p><code>tee -</code></p>
-<p> 输出到标准输出两次，例如：</p>
- <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> 12345 | tee -</span><br><span class="line">12345</span><br><span class="line">12345</span><br></pre></td></tr></table></figure>
-</li>
-<li><p><code>tee file1 file2 -</code></p>
-<p> 输出到标准输出两次，同时保存到file1和file2中。</p>
-</li>
-</ol>
-<p>要注意的是：在使用管道线时，前一个命令的标准错误输出不会被tee读取，如果想把错误也保存到文件可以用：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls <span class="string">"*"</span> 2&gt;&amp;1 | tee ls.txt</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/linux-tee/" data-id="cjhq778p100ceizq3vjpdlb5b" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-ubuntu-google-ad" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/ubuntu-google-ad/" class="article-date">
-  <time datetime="2017-08-12T09:05:42.000Z" itemprop="datePublished">2017-08-12</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/ubuntu-google-ad/">ubuntu上google自动插入广告</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>今天在ubuntu的chrome上打开博客网站的时候发现竟然出现了广告！这可是我自己的网站，怎么可能有广告！第一时间想到的是运营商劫持，为了确认猜想，于是打开控制台研究代码。发现是在页面底部加了一个iframe：</p>
-<p><img src="http://img.react.ren/blog/zju.date-google-chrome.jpg" alt="iframe"></p>
-<p>令人震惊的是iframe里面的src属性包含我电脑的mac地址：CC:81:DA:A5:30:50，我赶紧查看一下：</p>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/ubuntu-google-ad/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/ubuntu-google-ad/" data-id="cjhq778ua00icizq3owosrm67" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
 
     </footer>
   </div>

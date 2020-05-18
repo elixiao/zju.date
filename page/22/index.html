@@ -54,6 +54,58 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-git-submodule-unadvertised-object" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/git-submodule-unadvertised-object/" class="article-date">
+  <time datetime="2018-03-21T10:12:07.000Z" itemprop="datePublished">2018-03-21</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/git-submodule-unadvertised-object/">git submodule unadvertised object</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>使用 git submodule 进行 update 的时候，出现下面的错误：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ git submodule update</span><br><span class="line">Submodule path <span class="string">'project1'</span>: checked out <span class="string">'f0246e6589fcb0f80e62f99c5ac39cfb397aff9d'</span></span><br><span class="line">error: Server does not allow request <span class="keyword">for</span> unadvertised object 1c82bfd3c5b066f8b47b70330beeef091f990e7e</span><br><span class="line">Fetched <span class="keyword">in</span> submodule path <span class="string">'project2'</span>, but it did not contain 1c82bfd3c5b066f8b47b70330beeef091f990e7e. Direct fetching of that commit failed.</span><br></pre></td></tr></table></figure>
+<p>这种情况是如何产生的呢？请看下面的场景：</p>
+<blockquote>
+<p>现有主仓库 main，里面有子模块对应的仓库 sub。用户修改了 sub 中的文件，但没有提交到 sub 的远程库，然后把 main 提交到了远程库。现在，另外一个人尝试把 main 拉去下来并同步 sub 中的修改时，由于 sub 的改动并未 push 到其对应的远程库，但 update 命令尝试从 sub 的远程库 pull 对应的改动(1c82bfd3c5b066f8b47b70330beeef091f990e7e)，因此也就不存在，就会报错。</p>
+</blockquote>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/git-submodule-unadvertised-object/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/git-submodule-unadvertised-object/" data-id="cjhq778l70086izq38c5onyyn" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/">Git</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-nginx-map" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/nginx-map/" class="article-date">
@@ -498,57 +550,6 @@
      <a data-url="https://zju.date/mac-@/" data-id="cjhq778p800coizq3le8650ds" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-fingerprint-taken" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/fingerprint-taken/" class="article-date">
-  <time datetime="2018-03-02T02:38:03.000Z" itemprop="datePublished">2018-03-02</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/fingerprint-taken/">git 使用不同的 key</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>在使用 <code>git clone</code> 时遇到下列报错：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Key has already been taken</span><br><span class="line">Fingerprint has already been taken</span><br></pre></td></tr></table></figure>
-<p>这是因为已经有其他项目使用了这个公钥，如果需要对不同的 git 仓库（例如 github 和 gitlab）使用不同的 ssh key 时候，可以先创建不同的密钥对：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mkdir ~/.ssh/gitlab</span><br><span class="line">cd ~/.ssh/gitlab</span><br><span class="line">ssh-keygen -f id_rsa</span><br></pre></td></tr></table></figure>
-<p>这样就可以在 <code>~/.ssh/gitlab</code> 目录下创建独立的 <code>id_rsa</code> 和 <code>id_rsa.pub</code> 密钥对，然后配置如下</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Host github.com</span><br><span class="line">    User git</span><br><span class="line">    Hostname github.com</span><br><span class="line">    PreferredAuthentications publickey</span><br><span class="line">    IdentityFile ~/.ssh/git/id_rsa</span><br><span class="line">Host gitlab.com</span><br><span class="line">    Hostname gitlab.com</span><br><span class="line">    PreferredAuthentications publickey</span><br><span class="line">    IdentityFile ~/.ssh/gitlab/id_rsa</span><br></pre></td></tr></table></figure>
-<p>再使用 <code>git clone git@gitlab.com:username/repo.git</code> 就会使用指定的密钥了。或者，更灵活的方式是每次 clone 的时候指定密钥文件：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GIT_SSH_COMMAND=&quot;ssh -i ~/.ssh/id_rsa&quot; git clone example</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>  注意：<code>GIT_SSH_COMMAND</code>环境变量对于低于<code>git 2.3.0</code>版本无效</p>
-</blockquote>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/fingerprint-taken/" data-id="cjssqvcsf001f8uq4kam4ynzx" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/">Git</a></li></ul>
 
     </footer>
   </div>

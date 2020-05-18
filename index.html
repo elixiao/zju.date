@@ -212,7 +212,8 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <p>Flex 布局是目前 web 和移动端最流行的布局方式，在 Flutter 中，也有对应的组件，它们就是：</p>
+        <div class="article-preview">
+            <p>Flex 布局是目前 web 和移动端最流行的布局方式，在 Flutter 中，也有对应的组件，它们就是：</p>
 <h2 id="容器组件"><a href="#容器组件" class="headerlink" title="容器组件"></a>容器组件</h2><ul>
 <li>Row：水平方向上创建一个 flex 容器。</li>
 <li>Column：垂直方向上创建一个 flex 容器。</li>
@@ -221,17 +222,12 @@
 <p>  Flex 有个 <code>direction</code> 属性能够控制容器布局主轴方向，例如指定 <code>Axis.horizontal</code> 时跟 Row 一样的效果。</p>
 </li>
 </ul>
-<h2 id="填充组件（必须是容器组件的children）"><a href="#填充组件（必须是容器组件的children）" class="headerlink" title="填充组件（必须是容器组件的children）"></a>填充组件（必须是容器组件的children）</h2><ul>
-<li>Expanded：在主轴方向自动扩展，填充父级 Flex 容器可用的空白区域。</li>
-<li><p>Flexible：是 Expanded 的父类 </p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">class Expanded extends Flexible</span><br></pre></td></tr></table></figure>
-<p>  与 Expanded 组件不同，它不强制子组件填充可用空间。它有个 <code>fit</code> 属性，值可取 <code>FlexFit.loose</code>（不强制扩展） 和 <code>FlexFit.tight</code>（强制扩展）。</p>
-</li>
-<li><p>Spacer：在 Flex 容器内创建一个可以调整的空白区域，可用于调整组件之间的间距。</p>
-<p>  注意：一旦 Flex 容器组件的 children 里面包含了 Spacer。<code>mainAxisAlignment</code> 的属性值将起不到作用，因为 Spacer 已经占据了所有额外的空间，没有剩余的空间可分配了。</p>
-</li>
-</ul>
-
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/flutter-flex-widgets/#more">Read More</a>
+          </p>
+        
       
     </div>
     <footer class="article-footer">
@@ -271,17 +267,18 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <p>在 Flutter 中，经常遇到先进行网络请求，然后用请求成功返回的结果来渲染页面的场景。如果网络请求速度比较慢的话，需要在等待网络返回结果的时候，给用户渲染一个等待的页面。有两种方式：</p>
+        <div class="article-preview">
+            <p>在 Flutter 中，经常遇到先进行网络请求，然后用请求成功返回的结果来渲染页面的场景。如果网络请求速度比较慢的话，需要在等待网络返回结果的时候，给用户渲染一个等待的页面。有两种方式：</p>
 <ol>
 <li><p>使用 FutureBuilder 组件</p>
 <p> 封装好了这类组件</p>
  <figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> FutureBuilder(</span><br><span class="line">  future: _future, <span class="comment">// Future 对象或 null</span></span><br><span class="line">  builder: (BuildContext context, AsyncSnapshot&lt;<span class="built_in">String</span>&gt; snapshot) &#123;</span><br><span class="line">    <span class="keyword">switch</span> (snapshot.connectionState) &#123;</span><br><span class="line">      <span class="keyword">case</span> ConnectionState.none: <span class="keyword">return</span> <span class="keyword">new</span> Text(<span class="string">'Press button to start'</span>);</span><br><span class="line">      <span class="keyword">case</span> ConnectionState.waiting: <span class="keyword">return</span> <span class="keyword">new</span> Text(<span class="string">'Awaiting result...'</span>);</span><br><span class="line">      <span class="keyword">default</span>:</span><br><span class="line">        <span class="keyword">if</span> (snapshot.hasError)</span><br><span class="line">          <span class="keyword">return</span> <span class="keyword">new</span> Text(<span class="string">'Error: <span class="subst">$&#123;snapshot.error&#125;</span>'</span>);</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">          <span class="keyword">return</span> <span class="keyword">new</span> Text(<span class="string">'Result: <span class="subst">$&#123;snapshot.data&#125;</span>'</span>);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>定义变量，然后用 setState 来刷新</p>
- <figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyHomePage</span> <span class="keyword">extends</span> <span class="title">StatefulWidget</span> </span>&#123;</span><br><span class="line">  MyHomePage(&#123;Key key, <span class="keyword">this</span>.title&#125;) : <span class="keyword">super</span>(key: key);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">final</span> <span class="built_in">String</span> title;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  _MyHomePageState createState() =&gt; <span class="keyword">new</span> _MyHomePageState();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">_MyHomePageState</span> <span class="keyword">extends</span> <span class="title">State</span>&lt;<span class="title">MyHomePage</span>&gt; </span>&#123;</span><br><span class="line">  <span class="built_in">List</span> data;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  initState() &#123;</span><br><span class="line">    <span class="keyword">super</span>.initState();</span><br><span class="line">    <span class="keyword">new</span> Future&lt;<span class="built_in">String</span>&gt;.delayed(<span class="keyword">new</span> <span class="built_in">Duration</span>(seconds: <span class="number">5</span>), () =&gt; <span class="string">'["123", "456", "789"]'</span>).then((<span class="built_in">String</span> value) &#123;</span><br><span class="line">      setState(() &#123;</span><br><span class="line">        data = json.decode(value);</span><br><span class="line">      &#125;);</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  Widget build(BuildContext context) &#123;</span><br><span class="line">    <span class="keyword">if</span> (data == <span class="keyword">null</span>) &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">new</span> Scaffold(</span><br><span class="line">        appBar: <span class="keyword">new</span> AppBar(</span><br><span class="line">          title: <span class="keyword">new</span> Text(<span class="string">"Loading..."</span>),</span><br><span class="line">        ),</span><br><span class="line">      );</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">new</span> Scaffold(</span><br><span class="line">        appBar: <span class="keyword">new</span> AppBar(</span><br><span class="line">          title: <span class="keyword">new</span> Text(widget.title),</span><br><span class="line">        ),</span><br><span class="line">        body: <span class="keyword">new</span> Center(</span><br><span class="line">          child: <span class="keyword">new</span> ListView(</span><br><span class="line">            children: data</span><br><span class="line">                .map((data) =&gt; <span class="keyword">new</span> ListTile(</span><br><span class="line">                      title: <span class="keyword">new</span> Text(<span class="string">"one element"</span>),</span><br><span class="line">                      subtitle: <span class="keyword">new</span> Text(data),</span><br><span class="line">                    ))</span><br><span class="line">                .toList(),</span><br><span class="line">          ),</span><br><span class="line">        ),</span><br><span class="line">      );</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/flutter-build-after-async-action/#more">Read More</a>
+          </p>
+        
       
     </div>
     <footer class="article-footer">
@@ -489,10 +486,10 @@
 
 
   
-    <article id="post-dart-dynamic-instance" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-dart-list-notes" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/dart-dynamic-instance/" class="article-date">
-  <time datetime="2019-12-25T08:28:15.000Z" itemprop="datePublished">2019-12-25</time>
+    <a href="/dart-list-notes/" class="article-date">
+  <time datetime="2019-12-27T08:06:26.000Z" itemprop="datePublished">2019-12-27</time>
 </a>
     
   </div>
@@ -503,7 +500,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/dart-dynamic-instance/">Dart根据类名生成类的实例</a>
+      <a class="article-title" href="/dart-list-notes/">Dart List操作</a>
     </h1>
   
 
@@ -514,13 +511,22 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <p>在一个 Flutter 项目中，想动态创建类的实例，就是根据类名字符串，在进行某些操作的时候自动创建类的实例。但 Dart 语言不支持通过类名字符串生成实例，但是可以用下面的方式实现相同的效果：</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> factories = &lt;<span class="built_in">String</span>, <span class="built_in">Object</span> <span class="built_in">Function</span>()&gt;&#123;</span><br><span class="line">    <span class="string">'Foo'</span>, () =&gt; <span class="keyword">new</span> Foo(), </span><br><span class="line">    <span class="string">'Bar'</span>, () =&gt; <span class="keyword">new</span> Bar()</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="built_in">String</span> name = <span class="string">'Foo'</span>;</span><br><span class="line"><span class="built_in">Object</span> instance = factories[name]();</span><br></pre></td></tr></table></figure>
-
+        <div class="article-preview">
+            <p>总结 dart 中关于 list 的一些特殊操作：</p>
+<h3 id="在-map-中使用索引"><a href="#在-map-中使用索引" class="headerlink" title="在 map 中使用索引"></a>在 map 中使用索引</h3><p>在 js 中可以在 map 中取到 i 的值：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">list.map(<span class="function">(<span class="params">it, i</span>)=&gt;</span>&#123;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>但是在 dart 中这种写法会报错，函数中只能得到 it 而得不到 i，那应该怎么办呢？可以使用 Map Entries：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">list.asMap().entries.map((entry) &#123;</span><br><span class="line">    <span class="built_in">int</span> i = entry.key;</span><br><span class="line">    <span class="built_in">String</span> it = entry.value;</span><br><span class="line">    <span class="keyword">return</span> something;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/dart-list-notes/#more">Read More</a>
+          </p>
+        
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/dart-dynamic-instance/" data-id="cka4yu21b00048zq4mtcy3nul" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/dart-list-notes/" data-id="ckacnwnjc00004gq4duqhy6s3" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Dart/">Dart</a></li></ul>
 
