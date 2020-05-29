@@ -54,6 +54,303 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-mongodb-bulk" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/mongodb-bulk/" class="article-date">
+  <time datetime="2018-09-01T13:52:22.000Z" itemprop="datePublished">2018-09-01</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/mongodb-bulk/">MongoDB 批量操作</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>批量写入的速度比 promise.all 单个写入速度快多了：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">use YOUR_DB</span><br><span class="line">var bulk = db.collection.initializeUnorderedBulkOp()</span><br><span class="line">bulk.find( &#123; _id : 1 &#125; ).upsert().update( &#123; $set: &#123; &quot;text&quot;: &quot;something else&quot; &#125; &#125; )</span><br><span class="line">bulk.find( &#123; _id : 4 &#125; ).upsert().update( &#123; $set: &#123; &quot;text&quot;: &quot;baz&quot; &#125; &#125; )</span><br><span class="line">bulk.find( &#123; _id : 99 &#125; ).upsert().update( &#123; $set: &#123; &quot;text&quot;: &quot;mrga&quot; &#125; &#125; )</span><br><span class="line">bulk.execute()</span><br></pre></td></tr></table></figure>
+<ul>
+<li><strong>Orderred</strong>: 按照添加的顺序执行，如果发生错误将停止批处理，并返回错误。</li>
+<li><strong>UnOrderred</strong>: 并行执行，遇到错误不返回。</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/mongodb-bulk/" data-id="cjw53wyao000em5q4ybk7wpxl" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MongoDB/">MongoDB</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-docker-volume-copy" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/docker-volume-copy/" class="article-date">
+  <time datetime="2018-08-31T10:25:55.000Z" itemprop="datePublished">2018-08-31</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/docker-volume-copy/">docker拷贝数据卷</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>把旧数据卷 old_volume 里面的内容放到新数据卷 new_volume 里面：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker volume create --name &lt;new_volume&gt;</span><br><span class="line">docker run --rm -it -v &lt;old_volume&gt;:/from -v &lt;new_volume&gt;:/to alpine ash -c <span class="string">"cd /from ; cp -av . /to"</span></span><br><span class="line">docker volume rm &lt;old_volume&gt;</span><br></pre></td></tr></table></figure>
+<p>可以写一个函数</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#/bin/bash</span></span><br><span class="line">docker volume create --name <span class="variable">$2</span></span><br><span class="line">docker run --rm -it -v <span class="variable">$1</span>:/from -v <span class="variable">$2</span>:/to alpine ash -c <span class="string">"cd /from ; cp -av . /to"</span></span><br><span class="line">[ $? -eq 0 ] &amp;&amp; docker volume rm <span class="variable">$1</span></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/docker-volume-copy/" data-id="cjxai2nis0007jkq4xbh09kw5" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/">Docker</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-micro-service-notes" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/micro-service-notes/" class="article-date">
+  <time datetime="2018-08-24T13:51:23.000Z" itemprop="datePublished">2018-08-24</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/micro-service-notes/">微服务学习笔记</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>把传统业务拆分成微服务的时候，要注意下面的要点：</p>
+<ol>
+<li>区分边界服务和内部服务。边界服务是会接受公网流量的服务，比如处理HTTP请求的服务；反之就是内部服务。边界服务和内部服务在安全方面的考虑是不一样的，例如边界服务需要做针对User的鉴权等等。</li>
+<li>区分基础和业务服务。业务服务追求变化，feature，基础服务追求稳定，性能。</li>
+<li>一定要考虑调用失败的场景。微服务的提供方，一定要考虑调用可能会有bug，比如出现死循环。</li>
+<li>没有把握的做到合理拆分的时候可以选择先不拆，等到发现瓶颈了自然就知道怎么拆了。</li>
+</ol>
+<p>从通信类型的角度看，大概有三种类型：</p>
+<ol>
+<li>同步调用</li>
+<li>异步调用</li>
+<li>广播</li>
+</ol>
+<p>在微服务的设计之初要想清楚调用关系以及调用方式，哪些需要同步，哪些可以异步，哪些需要广播，最好团队内部要有统一的认识。然后就是要确定好调用协议了，例如常见的选择有：</p>
+<ul>
+<li>同步调用：HTTP REST, gRPC, thrift, etc.</li>
+<li>异步调用：Sidekiq, Celery, etc. 对应的backend有 Redis, 各类 AMQP 实现, Kafka 等等</li>
+<li>广播：各类 AMQP 实现, Kafka，etc.</li>
+</ul>
+<p>微服务除了是个技术活，更是个管理活。一定得有和微服务相融的团队组织方式和工作流程。首先就是要成立架构组。架构组要负责微服务的基础设施的建设，例如 CI/CD 系统， Kubernetes 集群，Service Mesh 集群，监控报警系统，日志手机系统，基础的工具和库的构建和维护。在我们的实践中，每个微服务团队由2-3人组成，有一个master，负责 DevOps 流程的建设，权限的分配等等一系列工作。例如我们的DevOps是基于 GitLab CI 和 kubernetes 的，所以 master 要负责 .gitlab-ci.yml ，以及所有自己服务相关的 k8s 的 deployment, job, service 等等的编写维护。</p>
+<p>【备注】此笔记中的观点来自网络收集，用于记录微服务最佳实践，学习共勉。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/micro-service-notes/" data-id="cjw53wyal000bm5q467dqyy35" class="article-share-link">Share</a>
+     
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-though2-notes" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/though2-notes/" class="article-date">
+  <time datetime="2018-08-14T02:09:03.000Z" itemprop="datePublished">2018-08-14</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/though2-notes/">though2 快速创建转换流</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>下面几个包是对 nodejs 原生流的封装，有了这些库之后使用起来会更方便。</p>
+<ul>
+<li>through2 用于快速创建转化流</li>
+<li>from2 用于快速创建输入流</li>
+<li>writable2 用于快速创建输出流</li>
+</ul>
+<p>最常用的是 through2，它能够让使用者只关注对流的处理，而不需要每次都要去创建 stream， 例如一个大写化的 stream：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ThroughStream</span> <span class="keyword">extends</span> <span class="title">stream</span>.<span class="title">Transform</span> </span>&#123;</span><br><span class="line">  <span class="keyword">constructor</span>(options) &#123;</span><br><span class="line">    <span class="keyword">super</span>(options);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  _transform(chunk, enc, cb) &#123;</span><br><span class="line">    <span class="keyword">this</span>.push(chunk.toString().replace(<span class="regexp">/\n/</span>, <span class="string">''</span>).toUpperCase());</span><br><span class="line">    cb();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/though2-notes/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/though2-notes/" data-id="cjssqvcvd004a8uq4ueah73gw" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-css-required" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/css-required/" class="article-date">
+  <time datetime="2018-08-13T15:11:36.000Z" itemprop="datePublished">2018-08-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/css-required/">css必填项星号</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在做表单布局的时候，需要在必填项的 label 上添加红色的星号，最初级的方法就是添加一个 span 标签，把星号放里面，然后设置字体颜色：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">span</span> <span class="attr">style</span>=<span class="string">"color: red"</span>&gt;</span>*<span class="tag">&lt;<span class="name">span</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>上面的方式不够灵活，会多出很多冗余的 HTML，更好的方式是使用 css 伪元素：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-class">.required-star-hint</span><span class="selector-pseudo">::after</span> &#123;</span><br><span class="line">    <span class="attribute">content</span>: <span class="string">"*"</span>;</span><br><span class="line">    <span class="attribute">color</span>: red;</span><br><span class="line">    <span class="attribute">display</span>: inline-block;</span><br><span class="line">    <span class="attribute">width</span>: <span class="number">0</span>;</span><br><span class="line">    <span class="attribute">position</span>: relative;</span><br><span class="line">    <span class="attribute">left</span>: <span class="number">2px</span>;</span><br><span class="line">    <span class="attribute">top</span>: <span class="number">2px</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>使用的时候，只需要给 label 添加这个 class 即可，例如：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">label</span> <span class="attr">class</span>=<span class="string">"form-group-label required-star-hint"</span>&gt;</span>姓名<span class="tag">&lt;/<span class="name">label</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/css-required/" data-id="cjxai2nij0004jkq45cyili20" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CSS/">CSS</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-android-cpuinfo" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/android-cpuinfo/" class="article-date">
+  <time datetime="2018-08-13T15:06:21.000Z" itemprop="datePublished">2018-08-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/android-cpuinfo/">查看安卓真机或模拟器CPU架构</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>如果只有一台设备，可以通过下面的命令查看：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">adb shell</span><br><span class="line">cat /proc/cpuinfo</span><br></pre></td></tr></table></figure>
+<p>如果连接了多台设备，上面的命令会报错：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">more than one device/emulator</span><br></pre></td></tr></table></figure>
+<p>此时可以用 -s 来指定设备序列号，例如：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">adb -s 67a3793d shell</span><br></pre></td></tr></table></figure>
+<p>可以通过下面的方式查看所有设备序列号：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">adb devices</span><br></pre></td></tr></table></figure>
+<p>如果只连接了两个设备，且一台是真机，另一台是模拟器的话，有更方便的办法：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">adb -d shell <span class="comment"># 进入真机（即那台通过USB连接的设备，如果有多个会报错）</span></span><br><span class="line">adb -e shell <span class="comment"># 进入模拟器（emulator，如果有多个会报错）</span></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/android-cpuinfo/" data-id="ck1k3soju00004nq4gwry20yx" class="article-share-link">Share</a>
+     
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-moment-timezone" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/moment-timezone/" class="article-date">
@@ -291,307 +588,10 @@
 
 
   
-    <article id="post-mysql-notes" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/mysql-notes/" class="article-date">
-  <time datetime="2018-07-31T01:23:07.000Z" itemprop="datePublished">2018-07-31</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/mysql-notes/">MySQL学习笔记</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>在命令行运行 MySQL 命令时报错：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ mysql</span><br><span class="line"><span class="built_in">command</span> not found</span><br></pre></td></tr></table></figure>
-<p>在终端进入目录：/usr/local/bin ，设置 MySQL 命令路径</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo ln -s /usr/<span class="built_in">local</span>/mysql/bin/mysql mysql</span><br></pre></td></tr></table></figure>
-<p>MySQL 基本命令：</p>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/mysql-notes/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/mysql-notes/" data-id="cjw77iiy4000gqlq4tkrz4pea" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-mongoose-schema-default-field" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/mongoose-schema-default-field/" class="article-date">
-  <time datetime="2018-07-26T07:48:22.000Z" itemprop="datePublished">2018-07-26</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/mongoose-schema-default-field/">mongodb default 字段</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>例如模型：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> mongoose = <span class="built_in">require</span>(<span class="string">'mongoose'</span>)</span><br><span class="line"><span class="keyword">const</span> Schema = mongoose.Schema</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> Model = mongoose.model(<span class="string">'holiday'</span>, <span class="keyword">new</span> Schema(&#123;</span><br><span class="line">  name: &#123;<span class="attr">type</span>: <span class="built_in">String</span>&#125;,</span><br><span class="line">  startAt: &#123;<span class="attr">type</span>: <span class="built_in">Date</span>&#125;,</span><br><span class="line">  endAt: &#123;<span class="attr">type</span>: <span class="built_in">Date</span>&#125;</span><br><span class="line">&#125;))</span><br><span class="line"></span><br><span class="line"><span class="built_in">module</span>.exports = Model</span><br></pre></td></tr></table></figure>
-<p>加个 nation 字段，表示国家，默认是中国。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nation: &#123;<span class="attr">type</span>: <span class="built_in">String</span>, <span class="attr">default</span>: <span class="string">'zh-cn'</span>&#125;</span><br></pre></td></tr></table></figure>
-<p>然后再添加 holiday 时，如果未指定 nation，会自动创建。这个时候数据库中的历史数据并没有 nation，需要写个脚本全部加上：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(!it.nation) &#123;</span><br><span class="line">    it.nation = <span class="string">'zh-cn'</span></span><br><span class="line">    it.save()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>但是问题就出在了 it.nation 这里，因为有 default，所以即使数据库中没有存这个字段，也会返回默认值。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/mongoose-schema-default-field/" data-id="cjssqvcug00398uq4p1q0mszt" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MongoDB/">MongoDB</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-auto-increase-field" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/auto-increase-field/" class="article-date">
-  <time datetime="2018-07-24T01:46:09.000Z" itemprop="datePublished">2018-07-24</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/auto-increase-field/">mongodb 自增字段</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>想在 MongoDB 中实现自增的字段，首先定义一个 counter 模型：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> mongoose = <span class="built_in">require</span>(<span class="string">'mongoose'</span>)</span><br><span class="line"><span class="keyword">const</span> Schema = mongoose.Schema</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> Model = mongoose.model(<span class="string">'counter'</span>, <span class="keyword">new</span> Schema(&#123;</span><br><span class="line">  _id: &#123;<span class="attr">type</span>: <span class="built_in">String</span>, <span class="attr">required</span>: <span class="literal">true</span>&#125;,</span><br><span class="line">  seq: &#123;<span class="attr">type</span>: <span class="built_in">Number</span>, <span class="attr">default</span>: <span class="number">0</span>&#125;</span><br><span class="line">&#125;, &#123;<span class="attr">timestamps</span>: <span class="literal">true</span>&#125;))</span><br><span class="line"></span><br><span class="line"><span class="built_in">module</span>.exports = Model</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/auto-increase-field/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/auto-increase-field/" data-id="cjkajvcqf00034eq3euj25isf" class="article-share-link">Share</a>
-     
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-css-first-element-with-class" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/css-first-element-with-class/" class="article-date">
-  <time datetime="2018-07-20T02:06:07.000Z" itemprop="datePublished">2018-07-20</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/css-first-element-with-class/">CSS选择第一个拥有某类的元素</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>现在有如下 HTML 结构：</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"home"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">span</span>&gt;</span>blah<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">p</span> <span class="attr">class</span>=<span class="string">"red"</span>&gt;</span>first<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">p</span> <span class="attr">class</span>=<span class="string">"red"</span>&gt;</span>second<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">p</span> <span class="attr">class</span>=<span class="string">"red"</span>&gt;</span>third<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">p</span> <span class="attr">class</span>=<span class="string">"red"</span>&gt;</span>fourth<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>想只给第一个拥有 red 类的元素设置红色边框，应该如何做呢？很多人可能会使用 <code>:first-child</code> 选择器：</p>
-<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-class">.home</span> <span class="selector-class">.red</span><span class="selector-pseudo">:first-child</span> &#123;</span><br><span class="line">    <span class="attribute">border</span>: <span class="number">1px</span> solid red;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/css-first-element-with-class/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/css-first-element-with-class/" data-id="cjw53wyaa0001m5q4mjxrds3j" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CSS/">CSS</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-angular-hmr" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/angular-hmr/" class="article-date">
-  <time datetime="2018-07-20T01:54:13.000Z" itemprop="datePublished">2018-07-20</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/angular-hmr/">配置 Angular 热加载</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <ol>
-<li><p>安装依赖：</p>
- <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">npm install -D @angularclass/hmr</span><br><span class="line"><span class="comment"># yarn add @angularclass/hmr --dev</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>增加 hmr 环境变量：</p>
- <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// src/enviroments/environment.hmr.ts</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> environment = &#123;</span><br><span class="line">  production: <span class="literal">false</span>,</span><br><span class="line">  hmr: <span class="literal">true</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// src/enviroments/environment.ts</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> environment = &#123;</span><br><span class="line">  production: <span class="literal">false</span>,</span><br><span class="line">  hmr: <span class="literal">false</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// src/enviroments/environment.prod.ts</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> environment = &#123;</span><br><span class="line">  production: <span class="literal">true</span>,</span><br><span class="line">  hmr: <span class="literal">false</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/angular-hmr/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/angular-hmr/" data-id="cjkajvcqc00014eq3oo5u9m5r" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-es-aggregate" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/es-aggregate/" class="article-date">
-  <time datetime="2018-07-19T03:29:36.000Z" itemprop="datePublished">2018-07-19</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/es-aggregate/">使用ES进行聚合操作</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>参见<a href="/es-prepare">准备工作</a>，搭建好命令行查询语法。</p>
-<h3 id="获取数据的多维度统计值"><a href="#获取数据的多维度统计值" class="headerlink" title="获取数据的多维度统计值"></a>获取数据的多维度统计值</h3><p>总数量、最大值、最小值、平均值、求和：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">escurl -XGET <span class="variable">$ES</span>/bank/_search?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "size": 0,</span></span><br><span class="line"><span class="string">  "aggs": &#123;</span></span><br><span class="line"><span class="string">    "group_by_balance": &#123;</span></span><br><span class="line"><span class="string">      "min": &#123;</span></span><br><span class="line"><span class="string">        "field": "balance"</span></span><br><span class="line"><span class="string">      &#125;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#125;'</span></span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/es-aggregate/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/es-aggregate/" data-id="cjwq89im40000v7q44hc0mzw1" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Elasticsearch/">Elasticsearch</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
 
 
   <nav id="page-nav">
-    <a class="extend prev" rel="prev" href="/page/11/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="page-number" href="/page/11/">11</a><span class="page-number current">12</span><a class="page-number" href="/page/13/">13</a><a class="page-number" href="/page/14/">14</a><span class="space">&hellip;</span><a class="page-number" href="/page/62/">62</a><a class="extend next" rel="next" href="/page/13/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/11/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="page-number" href="/page/11/">11</a><span class="page-number current">12</span><a class="page-number" href="/page/13/">13</a><a class="page-number" href="/page/14/">14</a><span class="space">&hellip;</span><a class="page-number" href="/page/63/">63</a><a class="extend next" rel="next" href="/page/13/">Next &raquo;</a>
   </nav>
 </section>
 

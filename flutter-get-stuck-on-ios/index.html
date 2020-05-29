@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="最近用 Flutter 做了一个项目，上线测试的时候 iOS 界面非常卡顿，那怕一个简单的页面切换，都会卡在一半的位置，而安卓上正常。一开始以为是 Flutter 代码问题，但是经过几天的代码优化和问题排查，最后定位问题出在了服务端 https 证书上面。据说 iOS 端给 Let’s Encrypt 做联网验证，验证的地址是 http://ocsp.int-x3.letsencrypt.org">
+<meta name="keywords" content="Flutter">
+<meta property="og:type" content="article">
+<meta property="og:title" content="终于找到了Flutter在iOS上卡顿的原因">
+<meta property="og:url" content="https://zju.date/flutter-get-stuck-on-ios/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="最近用 Flutter 做了一个项目，上线测试的时候 iOS 界面非常卡顿，那怕一个简单的页面切换，都会卡在一半的位置，而安卓上正常。一开始以为是 Flutter 代码问题，但是经过几天的代码优化和问题排查，最后定位问题出在了服务端 https 证书上面。据说 iOS 端给 Let’s Encrypt 做联网验证，验证的地址是 http://ocsp.int-x3.letsencrypt.org">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2020-05-29T14:27:25.393Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="终于找到了Flutter在iOS上卡顿的原因">
+<meta name="twitter:description" content="最近用 Flutter 做了一个项目，上线测试的时候 iOS 界面非常卡顿，那怕一个简单的页面切换，都会卡在一半的位置，而安卓上正常。一开始以为是 Flutter 代码问题，但是经过几天的代码优化和问题排查，最后定位问题出在了服务端 https 证书上面。据说 iOS 端给 Let’s Encrypt 做联网验证，验证的地址是 http://ocsp.int-x3.letsencrypt.org">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-flutter-get-stuck-on-ios" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/flutter-get-stuck-on-ios/" class="article-date">
+  <time datetime="2020-05-29T13:33:47.000Z" itemprop="datePublished">2020-05-29</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      终于找到了Flutter在iOS上卡顿的原因
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>最近用 Flutter 做了一个项目，上线测试的时候 iOS 界面非常卡顿，那怕一个简单的页面切换，都会卡在一半的位置，而安卓上正常。一开始以为是 Flutter 代码问题，但是经过几天的代码优化和问题排查，最后定位问题出在了服务端 https 证书上面。据说 iOS 端给 Let’s Encrypt 做联网验证，验证的地址是 <a href="http://ocsp.int-x3.letsencrypt.org" target="_blank" rel="noopener">http://ocsp.int-x3.letsencrypt.org</a> ，而该地址国内无法访问，就导致 iOS 直接卡死。</p>
+<p>这个问题在 Github 上有许多讨论，参见 <a href="https://github.com/dart-lang/sdk/issues/41519" target="_blank" rel="noopener">dart-lang-issue</a>、<a href="https://github.com/flutterchina/dio/issues/703" target="_blank" rel="noopener">dio-issue</a>，基本上可以断定：只要在国内，服务端用了 LetsEncrypt 证书，Flutter 在 iOS 上进行网络请求就会卡顿。注意这不是 Flutter 的问题，是 iOS 系统和 LetsEncrypt 证书共同造成的问题，例如 Safari 打开 LetsEncrypt 证书的网页也会卡，所以解决方案就是换证书。</p>
+<p>查了一下资料，OCSP 叫做在线证书状态协议（英语：Online Certificate Status Protocol，缩写：OCSP），是 TLS 协议的扩展协议，在 TLS 的使用中，客户端无法判断一个还没有过期的证书是否被吊销了。这个时候有些客户端在从服务端拿到了一个证书之后，会去找服务端的接口去验证一下这个证书的是否过期、是否吊销等，而有些则不进行客户端检查。iOS 上的软件会检查，而 Android 不检查，据说因为 Google 不满意 OCSP 这个解决方案，认为检查证书状态并不能增加安全性，反而会导致 https 请求时间变长，所以所有 Google 的产品，无论是 Android 还是 Chrome 都不进行 OCSP 检查。</p>
+<p>如果坚持要用 LetsEncrypt 证书的话，也是有解决办法的，<a href="https://jhuo.ca/post/ocsp-stapling-letsencrypt/" target="_blank" rel="noopener">这篇文章</a>里面有详细介绍，通过配置 ssl_stapling_responder 使得请求 OCSP 被发送到设置的服务器。不过建议大家还是换证书吧！</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/flutter-get-stuck-on-ios/" data-id="ckasaznmm00020qsewwakczjk" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flutter/">Flutter</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/flutter-constraints-are-unbounded/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Flutter布局报错</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dart/">Dart</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Elasticsearch/">Elasticsearch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Flutter/">Flutter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

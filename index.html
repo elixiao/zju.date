@@ -54,6 +54,50 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-flutter-get-stuck-on-ios" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/flutter-get-stuck-on-ios/" class="article-date">
+  <time datetime="2020-05-29T13:33:47.000Z" itemprop="datePublished">2020-05-29</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/flutter-get-stuck-on-ios/">终于找到了Flutter在iOS上卡顿的原因</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>最近用 Flutter 做了一个项目，上线测试的时候 iOS 界面非常卡顿，那怕一个简单的页面切换，都会卡在一半的位置，而安卓上正常。一开始以为是 Flutter 代码问题，但是经过几天的代码优化和问题排查，最后定位问题出在了服务端 https 证书上面。据说 iOS 端给 Let’s Encrypt 做联网验证，验证的地址是 <a href="http://ocsp.int-x3.letsencrypt.org" target="_blank" rel="noopener">http://ocsp.int-x3.letsencrypt.org</a> ，而该地址国内无法访问，就导致 iOS 直接卡死。</p>
+<p>这个问题在 Github 上有许多讨论，参见 <a href="https://github.com/dart-lang/sdk/issues/41519" target="_blank" rel="noopener">dart-lang-issue</a>、<a href="https://github.com/flutterchina/dio/issues/703" target="_blank" rel="noopener">dio-issue</a>，基本上可以断定：只要在国内，服务端用了 LetsEncrypt 证书，Flutter 在 iOS 上进行网络请求就会卡顿。注意这不是 Flutter 的问题，是 iOS 系统和 LetsEncrypt 证书共同造成的问题，例如 Safari 打开 LetsEncrypt 证书的网页也会卡，所以解决方案就是换证书。</p>
+<p>查了一下资料，OCSP 叫做在线证书状态协议（英语：Online Certificate Status Protocol，缩写：OCSP），是 TLS 协议的扩展协议，在 TLS 的使用中，客户端无法判断一个还没有过期的证书是否被吊销了。这个时候有些客户端在从服务端拿到了一个证书之后，会去找服务端的接口去验证一下这个证书的是否过期、是否吊销等，而有些则不进行客户端检查。iOS 上的软件会检查，而 Android 不检查，据说因为 Google 不满意 OCSP 这个解决方案，认为检查证书状态并不能增加安全性，反而会导致 https 请求时间变长，所以所有 Google 的产品，无论是 Android 还是 Chrome 都不进行 OCSP 检查。</p>
+<p>如果坚持要用 LetsEncrypt 证书的话，也是有解决办法的，<a href="https://jhuo.ca/post/ocsp-stapling-letsencrypt/" target="_blank" rel="noopener">这篇文章</a>里面有详细介绍，通过配置 ssl_stapling_responder 使得请求 OCSP 被发送到设置的服务器。不过建议大家还是换证书吧！</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/flutter-get-stuck-on-ios/" data-id="ckasaznmm00020qsewwakczjk" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flutter/">Flutter</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-flutter-constraints-are-unbounded" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/flutter-constraints-are-unbounded/" class="article-date">
@@ -293,6 +337,56 @@
 
 
   
+    <article id="post-flutter-app-icon" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/flutter-app-icon/" class="article-date">
+  <time datetime="2020-01-15T01:31:28.000Z" itemprop="datePublished">2020-01-15</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/flutter-app-icon/">flutter快速生成app图标</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>首先准备一张分辨率为 1024x1024 的 png 图片，放入 <code>assets/images</code> 目录中，名称为 icon.png（这个目录名和文件名可以随意起，只要跟下面对应起来即可）</p>
+<p>在pubspec.yaml中添加</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">dev_dependencies:</span> </span><br><span class="line"><span class="attr">  flutter_launcher_icons:</span> </span><br><span class="line">  </span><br><span class="line"><span class="attr">flutter_icons:</span></span><br><span class="line"><span class="attr">  android:</span> <span class="string">"launcher_icon"</span> </span><br><span class="line"><span class="attr">  ios:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">  image_path:</span> <span class="string">"assets/images/icon.png"</span></span><br><span class="line"><span class="string">```</span> </span><br><span class="line"></span><br><span class="line"><span class="string">然后在终端运行：</span></span><br></pre></td></tr></table></figure>
+<p>flutter packages get<br>flutter packages pub run flutter_launcher_icons:main<br><code>`</code></p>
+<p>App 图标就生成好了，可以直接去下面的目录查看：</p>
+<ul>
+<li>安卓：<code>android\app\src\main\res</code></li>
+<li>苹果：<code>ios\Runner\Assets.xcassets\AppIcon.appiconset</code></li>
+</ul>
+<p>非常方便是不是？不过这里生成的图标还可以进一步压缩，打开 imageOptim 软件，把图标拖进去，图片大小可以缩减到一半。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/flutter-app-icon/" data-id="ckasaznmj00010qseoax9ps81" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flutter/">Flutter</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-mac-install-mongodb" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/mac-install-mongodb/" class="article-date">
@@ -441,106 +535,10 @@
 
 
   
-    <article id="post-flutter-safe-string" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/flutter-safe-string/" class="article-date">
-  <time datetime="2020-01-05T14:44:55.000Z" itemprop="datePublished">2020-01-05</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/flutter-safe-string/">Flutter字符串处理</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Dart 的 String 类使用 UTF-16 编码格式，遇到一些特殊语言和表情符号时会处理异常，例如：</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">main() &#123;</span><br><span class="line">  <span class="keyword">var</span> input = [<span class="string">'Resume'</span>, <span class="string">'Résumé'</span>, <span class="string">'个人简历'</span>, <span class="string">'💼📃'</span>, <span class="string">'Currículo'</span>];</span><br><span class="line">  input.forEach((it) =&gt; <span class="built_in">print</span>(it.substring(<span class="number">0</span>, <span class="number">3</span>)));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>输出：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Res</span><br><span class="line">Ré</span><br><span class="line">个人简</span><br><span class="line">💼���</span><br><span class="line">Cur</span><br></pre></td></tr></table></figure>
-<p>通过引入字符串处理包 <a href="https://pub.flutter-io.cn/packages/characters" target="_blank" rel="noopener">https://pub.flutter-io.cn/packages/characters</a> ，然后用 <code>it.characters.take(3)</code> 替换 <code>it.substring(0, 3)</code>。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/flutter-safe-string/" data-id="ck8zn3jsg0007vtq4uujaaduk" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flutter/">Flutter</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-dart-list-notes" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/dart-list-notes/" class="article-date">
-  <time datetime="2019-12-27T08:06:26.000Z" itemprop="datePublished">2019-12-27</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/dart-list-notes/">Dart List操作</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>总结 dart 中关于 list 的一些特殊操作：</p>
-<h3 id="在-map-中使用索引"><a href="#在-map-中使用索引" class="headerlink" title="在 map 中使用索引"></a>在 map 中使用索引</h3><p>在 js 中可以在 map 中取到 i 的值：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">list.map(<span class="function">(<span class="params">it, i</span>)=&gt;</span>&#123;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
-<p>但是在 dart 中这种写法会报错，函数中只能得到 it 而得不到 i，那应该怎么办呢？可以使用 Map Entries：</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">list.asMap().entries.map((entry) &#123;</span><br><span class="line">    <span class="built_in">int</span> i = entry.key;</span><br><span class="line">    <span class="built_in">String</span> it = entry.value;</span><br><span class="line">    <span class="keyword">return</span> something;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/dart-list-notes/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/dart-list-notes/" data-id="ckacnwnjc00004gq4duqhy6s3" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Dart/">Dart</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
 
 
   <nav id="page-nav">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/62/">62</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/63/">63</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
   </nav>
 </section>
 

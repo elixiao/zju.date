@@ -54,6 +54,150 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-flutter-safe-string" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/flutter-safe-string/" class="article-date">
+  <time datetime="2020-01-05T14:44:55.000Z" itemprop="datePublished">2020-01-05</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/flutter-safe-string/">Flutter字符串处理</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Dart 的 String 类使用 UTF-16 编码格式，遇到一些特殊语言和表情符号时会处理异常，例如：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">main() &#123;</span><br><span class="line">  <span class="keyword">var</span> input = [<span class="string">'Resume'</span>, <span class="string">'Résumé'</span>, <span class="string">'个人简历'</span>, <span class="string">'💼📃'</span>, <span class="string">'Currículo'</span>];</span><br><span class="line">  input.forEach((it) =&gt; <span class="built_in">print</span>(it.substring(<span class="number">0</span>, <span class="number">3</span>)));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>输出：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Res</span><br><span class="line">Ré</span><br><span class="line">个人简</span><br><span class="line">💼���</span><br><span class="line">Cur</span><br></pre></td></tr></table></figure>
+<p>通过引入字符串处理包 <a href="https://pub.flutter-io.cn/packages/characters" target="_blank" rel="noopener">https://pub.flutter-io.cn/packages/characters</a> ，然后用 <code>it.characters.take(3)</code> 替换 <code>it.substring(0, 3)</code>。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/flutter-safe-string/" data-id="ck8zn3jsg0007vtq4uujaaduk" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flutter/">Flutter</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-flutter-scrollview-inside-scrollview" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/flutter-scrollview-inside-scrollview/" class="article-date">
+  <time datetime="2019-12-30T10:15:56.000Z" itemprop="datePublished">2019-12-30</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/flutter-scrollview-inside-scrollview/">Flutter中滚动组件嵌套滚动组件</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>【转】<a href="https://medium.com/flutterpub/flutter-listview-gridview-inside-scrollview-68b722ae89d4" target="_blank" rel="noopener">原文地址</a>。在 Flutter 中，如果想在 scrollview 里面嵌套另一个 listview 的话，例如：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">Scaffold(</span><br><span class="line">  appBar: AppBar(</span><br><span class="line">    title: Text(<span class="string">"ListView"</span>),</span><br><span class="line">  ),</span><br><span class="line">  body: Container(</span><br><span class="line">    child: SingleChildScrollView(</span><br><span class="line">      child: Column(</span><br><span class="line">        children: &lt;Widget&gt;[</span><br><span class="line">          HeaderWidget(<span class="string">"Header 1"</span>),</span><br><span class="line">          HeaderWidget(<span class="string">"Header 2"</span>),</span><br><span class="line">          HeaderWidget(<span class="string">"Header 3"</span>),</span><br><span class="line">          HeaderWidget(<span class="string">"Header 4"</span>),</span><br><span class="line">          ListView(</span><br><span class="line">            children: &lt;Widget&gt;[</span><br><span class="line">              BodyWidget(Colors.blue),</span><br><span class="line">              BodyWidget(Colors.red),</span><br><span class="line">              BodyWidget(Colors.green),</span><br><span class="line">            ],</span><br><span class="line">          ),</span><br><span class="line">        ],</span><br><span class="line">      ),</span><br><span class="line">    ),</span><br><span class="line">  ),</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/flutter-scrollview-inside-scrollview/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/flutter-scrollview-inside-scrollview/" data-id="ckasaznmr00060qse6f3waux2" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flutter/">Flutter</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-dart-list-notes" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/dart-list-notes/" class="article-date">
+  <time datetime="2019-12-27T08:06:26.000Z" itemprop="datePublished">2019-12-27</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/dart-list-notes/">Dart List操作</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>总结 dart 中关于 list 的一些特殊操作：</p>
+<h3 id="在-map-中使用索引"><a href="#在-map-中使用索引" class="headerlink" title="在 map 中使用索引"></a>在 map 中使用索引</h3><p>在 js 中可以在 map 中取到 i 的值：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">list.map(<span class="function">(<span class="params">it, i</span>)=&gt;</span>&#123;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>但是在 dart 中这种写法会报错，函数中只能得到 it 而得不到 i，那应该怎么办呢？可以使用 Map Entries：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">list.asMap().entries.map((entry) &#123;</span><br><span class="line">    <span class="built_in">int</span> i = entry.key;</span><br><span class="line">    <span class="built_in">String</span> it = entry.value;</span><br><span class="line">    <span class="keyword">return</span> something;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/dart-list-notes/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/dart-list-notes/" data-id="ckacnwnjc00004gq4duqhy6s3" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Dart/">Dart</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-dart-dynamic-instance" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/dart-dynamic-instance/" class="article-date">
@@ -364,163 +508,10 @@
 
 
   
-    <article id="post-flutter-mirrors" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/flutter-mirrors/" class="article-date">
-  <time datetime="2019-11-20T13:47:50.000Z" itemprop="datePublished">2019-11-20</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/flutter-mirrors/">flutter国内镜像地址</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><a href="https://www.awaimai.com/2835.html" target="_blank" rel="noopener">【转】</a> Flutter 官方镜像很慢，在此记录一些国内镜像地址，方便查阅：</p>
-<ul>
-<li><p>Flutter 社区<br>  社区主镜像，采用多种方式同步 Flutter 开发者资源（推荐）。</p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ export PUB_HOSTED_URL=https://pub.flutter-io.cn</span><br><span class="line">$ export FLUTTER_STORAGE_BASE_URL=https://storage.flutter-io.cn</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>清华大学 TUNA 协会<br>  定时与 Flutter 社区 Storage 镜像同步，Pub API 采取定时主动抓取策略，镜像配置了完善的失败回源策略（推荐）。</p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ export PUB_HOSTED_URL=https://mirrors.tuna.tsinghua.edu.cn/dart-pub</span><br><span class="line">$ export FLUTTER_STORAGE_BASE_URL=https://mirrors.tuna.tsinghua.edu.cn/flutter</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>上海交大 Linux 用户组<br>  使用反向代理方式建立的 Flutter 镜像，数据与站源实时同步。 Pub API 返回值未做处理，可能造成无法访问的情况。</p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ export PUB_HOSTED_URL=https://dart-pub.mirrors.sjtug.sjtu.edu.cn</span><br><span class="line">$ export FLUTTER_STORAGE_BASE_URL=https://mirrors.sjtug.sjtu.edu.cn</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>CNNIC<br>  基于 TUNA 协会的镜像服务，数据策略与 TUNA 一致，通过非教育网的域名访问。</p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ export PUB_HOSTED_URL=http://mirrors.cnnic.cn/dart-pub</span><br><span class="line">$ export FLUTTER_STORAGE_BASE_URL=http://mirrors.cnnic.cn/flutter</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>腾讯云开源镜像站<br>  定时（每天凌晨）与 TUNA 协会镜像同步，数据有延迟，访问速度有待反馈。</p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ export PUB_HOSTED_URL=https://mirrors.cloud.tencent.com/dart-pub</span><br><span class="line">$ export FLUTTER_STORAGE_BASE_URL=https://mirrors.cloud.tencent.com/flutter</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/flutter-mirrors/" data-id="cka4yu21x000l8zq4fw9ed6w8" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flutter/">Flutter</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-风寒和风热感冒" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/风寒和风热感冒/" class="article-date">
-  <time datetime="2019-11-13T07:42:05.000Z" itemprop="datePublished">2019-11-13</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/风寒和风热感冒/">风寒与风热感冒</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>感冒分风寒感冒和风热感冒，这两种感冒病因病机、症状、治疗原则及用药差别很大。风寒感冒是风寒之邪外袭、肺气失宣所致。风热感冒是风热之邪犯表、肺气失和所致。</p>
-<ul>
-<li><p>风寒感冒症状和疗法</p>
-<p>  恶寒重、发热轻、无汗、头痛身痛、鼻塞流清涕、咳嗽吐稀白痰、口不渴或渴喜热饮、苔薄白。治疗药物：风寒感冒颗粒、感冒清热颗粒、正柴胡饮冲剂、头痛严重用川芎茶调散、咳嗽严重用通宣理肺丸。风寒感冒要多喝水、盖好被子、热水泡脚、喝姜茶，发汗有助于康复。</p>
-</li>
-<li><p>风热感冒症状和疗法</p>
-<p>  发热重、微恶风、头胀痛、有汗、咽喉红肿疼痛、咳嗽、痰粘或黄、鼻塞黄涕、口渴喜饮、舌尖边红、苔薄白微黄。治疗药物：感冒灵颗粒、连花清瘟胶囊、柴芩清宁胶囊、维C银翘片、双黄连等。</p>
-</li>
-</ul>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/风寒和风热感冒/" data-id="ck8zn3jvt000pvtq4zy07mlo6" class="article-share-link">Share</a>
-     
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-never-use-flutter-listtile" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/never-use-flutter-listtile/" class="article-date">
-  <time datetime="2019-11-12T13:39:02.000Z" itemprop="datePublished">2019-11-12</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/never-use-flutter-listtile/">千万不要用ListTile组件</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>最初，在 Flutter 项目中用 ListTile 实现了列表项的布局，速度很快，而且代码比较简单，例如：</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">ListTile(</span><br><span class="line">  leading: Icon(</span><br><span class="line">    Icons.account_box,</span><br><span class="line">    color: Colors.red,</span><br><span class="line">  ),</span><br><span class="line">  title: Text(</span><br><span class="line">    <span class="string">'账户'</span>,</span><br><span class="line">    textAlign: TextAlign.left,</span><br><span class="line">    style: TextStyle(</span><br><span class="line">      color: Colors.grey,</span><br><span class="line">    ),</span><br><span class="line">  ),</span><br><span class="line">  trailing: Icon(Icons.keyboard_arrow_right),</span><br><span class="line">  onTap: () &#123;</span><br><span class="line">    <span class="comment">// 响应点击事件</span></span><br><span class="line">  &#125;,</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/never-use-flutter-listtile/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/never-use-flutter-listtile/" data-id="ck8zn3jv0000cvtq49p72ccg1" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flutter/">Flutter</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
 
 
   <nav id="page-nav">
-    <a class="extend prev" rel="prev" href="/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/62/">62</a><a class="extend next" rel="next" href="/page/3/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/63/">63</a><a class="extend next" rel="next" href="/page/3/">Next &raquo;</a>
   </nav>
 </section>
 

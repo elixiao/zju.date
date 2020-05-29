@@ -5,18 +5,18 @@
   
   <title>zju.date</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="debounce 名词释义  对于某事件流，自触发时刻开始，若持续指定时间内未有事件发生，则触发最后的事件；否则只更新最后事件，并不触发事件，直到满足持续指定时间未有事件发生的条件。  应用场景  搜索手牌或商品的时候，keyup事件并不需要每次都触发请求，而是当用户某两次keyup中间的间隔超过指定时间才去请求，否则用户噼里啪啦打字，你发了几十个请求，浪费资源。  代码：  1234567891">
+  <meta name="description" content="debounce 防抖 名词释义  对于某事件流，自触发时刻开始，若持续指定时间内未有事件发生，则触发该事件，否则更新该事件，直到满足持续指定时间未有事件发生的条件后再触发最后更新的这个事件。  防抖的原理就是：你尽管触发事件，但是我一定在事件触发 n 秒后才执行，如果你在一个事件触发的 n 秒内又触发了这个事件，那我就以新的事件的时间为准，n 秒后才执行，总之，就是要等你触发完事件 n 秒内不再">
 <meta name="keywords" content="JavaScript">
 <meta property="og:type" content="article">
 <meta property="og:title" content="在 Angular 中使用 debounce 和 throttle">
 <meta property="og:url" content="https://zju.date/debounce-vs-throttle/index.html">
 <meta property="og:site_name" content=".">
-<meta property="og:description" content="debounce 名词释义  对于某事件流，自触发时刻开始，若持续指定时间内未有事件发生，则触发最后的事件；否则只更新最后事件，并不触发事件，直到满足持续指定时间未有事件发生的条件。  应用场景  搜索手牌或商品的时候，keyup事件并不需要每次都触发请求，而是当用户某两次keyup中间的间隔超过指定时间才去请求，否则用户噼里啪啦打字，你发了几十个请求，浪费资源。  代码：  1234567891">
+<meta property="og:description" content="debounce 防抖 名词释义  对于某事件流，自触发时刻开始，若持续指定时间内未有事件发生，则触发该事件，否则更新该事件，直到满足持续指定时间未有事件发生的条件后再触发最后更新的这个事件。  防抖的原理就是：你尽管触发事件，但是我一定在事件触发 n 秒后才执行，如果你在一个事件触发的 n 秒内又触发了这个事件，那我就以新的事件的时间为准，n 秒后才执行，总之，就是要等你触发完事件 n 秒内不再">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2018-08-01T03:06:16.057Z">
+<meta property="og:updated_time" content="2020-05-26T09:32:00.851Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="在 Angular 中使用 debounce 和 throttle">
-<meta name="twitter:description" content="debounce 名词释义  对于某事件流，自触发时刻开始，若持续指定时间内未有事件发生，则触发最后的事件；否则只更新最后事件，并不触发事件，直到满足持续指定时间未有事件发生的条件。  应用场景  搜索手牌或商品的时候，keyup事件并不需要每次都触发请求，而是当用户某两次keyup中间的间隔超过指定时间才去请求，否则用户噼里啪啦打字，你发了几十个请求，浪费资源。  代码：  1234567891">
+<meta name="twitter:description" content="debounce 防抖 名词释义  对于某事件流，自触发时刻开始，若持续指定时间内未有事件发生，则触发该事件，否则更新该事件，直到满足持续指定时间未有事件发生的条件后再触发最后更新的这个事件。  防抖的原理就是：你尽管触发事件，但是我一定在事件触发 n 秒后才执行，如果你在一个事件触发的 n 秒内又触发了这个事件，那我就以新的事件的时间为准，n 秒后才执行，总之，就是要等你触发完事件 n 秒内不再">
   
     <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
   
@@ -82,9 +82,10 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="debounce"><a href="#debounce" class="headerlink" title="debounce"></a>debounce</h2><ol>
+        <h2 id="debounce-防抖"><a href="#debounce-防抖" class="headerlink" title="debounce 防抖"></a>debounce 防抖</h2><ol>
 <li><p>名词释义</p>
-<p> 对于某事件流，自触发时刻开始，若持续指定时间内未有事件发生，则触发最后的事件；否则只更新最后事件，并不触发事件，直到满足持续指定时间未有事件发生的条件。</p>
+<p> 对于某事件流，自触发时刻开始，若持续指定时间内未有事件发生，则触发该事件，否则更新该事件，直到满足持续指定时间未有事件发生的条件后再触发最后更新的这个事件。</p>
+<p> 防抖的原理就是：你尽管触发事件，但是我一定在事件触发 n 秒后才执行，如果你在一个事件触发的 n 秒内又触发了这个事件，那我就以新的事件的时间为准，n 秒后才执行，总之，就是要等你触发完事件 n 秒内不再触发事件，我才执行!</p>
 </li>
 <li><p>应用场景</p>
 <p> 搜索手牌或商品的时候，keyup事件并不需要每次都触发请求，而是当用户某两次keyup中间的间隔超过指定时间才去请求，否则用户噼里啪啦打字，你发了几十个请求，浪费资源。</p>
@@ -94,9 +95,9 @@
 </li>
 </ol>
 <a id="more"></a>
-<h2 id="throttle"><a href="#throttle" class="headerlink" title="throttle"></a>throttle</h2><ol>
+<h2 id="throttle-节流"><a href="#throttle-节流" class="headerlink" title="throttle 节流"></a>throttle 节流</h2><ol>
 <li><p>名词释义</p>
-<p> 对于某事件流，若触发时刻之前指定时间内未有事件发生，则立即触发；否则无视该事件，直到当前时间与上一次触发时间的间隔超过指定时间。</p>
+<p> 对于某事件流，若触发时刻之前指定时间内未有事件发生，则立即触发，否则无视该事件，直到当前时间与上一次触发时间的间隔超过指定时间。</p>
 </li>
 <li><p>应用场景</p>
 <p> 点击保存按钮的时候，如果页面卡顿造成用户短时间连续点击多次，可能导致保存重复数据，需要把某个指定时间区间内的多次点击合并成一个。</p>

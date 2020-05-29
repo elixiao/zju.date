@@ -54,6 +54,304 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-speed-measure-webpack-plugin" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/speed-measure-webpack-plugin/" class="article-date">
+  <time datetime="2018-04-18T11:11:07.000Z" itemprop="datePublished">2018-04-18</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/speed-measure-webpack-plugin/">计算 webpack 插件/加载器的运行时间</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>webpack 有时候打包很慢，用了很多 plugin 和 loader，想知道到底是哪个环节慢，下面这个插件可以计算 plugin 和 loader 的耗时。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn add -D speed-measure-webpack-plugin</span><br></pre></td></tr></table></figure>
+<p>使用方法很简单，把 webpack 配置对象包裹起来即可：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> SpeedMeasurePlugin = <span class="built_in">require</span>(<span class="string">"speed-measure-webpack-plugin"</span>);</span><br><span class="line"><span class="keyword">const</span> smp = <span class="keyword">new</span> SpeedMeasurePlugin();</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> webpackConfig = smp.wrap(&#123;</span><br><span class="line">  entry: &#123;</span><br><span class="line">    app: [<span class="string">"./app.js"</span>]</span><br><span class="line">  &#125;,</span><br><span class="line">  output: <span class="string">"./public"</span>,</span><br><span class="line">  <span class="built_in">module</span>: &#123;</span><br><span class="line">    rules: [</span><br><span class="line">      &#123;</span><br><span class="line">        test: <span class="regexp">/\.js$/</span>,</span><br><span class="line">        use: [&#123; <span class="attr">loader</span>: <span class="string">"babel-loader"</span> &#125;]</span><br><span class="line">      &#125;</span><br><span class="line">    ]</span><br><span class="line">  &#125;,</span><br><span class="line">  plugins: [</span><br><span class="line">    <span class="keyword">new</span> MyPlugin(),</span><br><span class="line">    <span class="keyword">new</span> MyOtherPlugin()</span><br><span class="line">  ]</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/speed-measure-webpack-plugin/" data-id="cjhq778sv00haizq39miouwjv" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-shorten-angular-import" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/shorten-angular-import/" class="article-date">
+  <time datetime="2018-04-16T09:36:12.000Z" itemprop="datePublished">2018-04-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/shorten-angular-import/">缩短 angular 中文件的引用</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>常见的代码：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; ConstantService &#125; <span class="keyword">from</span> <span class="string">'../../../core/services/constant.service'</span></span><br></pre></td></tr></table></figure>
+<p>有点长，能不能短点？例如：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; ConstantService &#125; <span class="keyword">from</span> <span class="string">'@app/core/services/constant.service'</span></span><br></pre></td></tr></table></figure>
+<p>可以配置 <code>tsconfig</code> 文件：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"compilerOptions"</span>: &#123;</span><br><span class="line">    ...</span><br><span class="line">    "baseUrl": "./src",</span><br><span class="line">    "paths": &#123;</span><br><span class="line">      "@datorama/utils/*": ["app/utils/*"],</span><br><span class="line">      "@datorama/pipes/*": ["app/pipes/*"]</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/shorten-angular-import/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/shorten-angular-import/" data-id="cjssqvcv700428uq4gfc0fm5q" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-angular-components" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/angular-components/" class="article-date">
+  <time datetime="2018-04-13T07:49:39.000Z" itemprop="datePublished">2018-04-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/angular-components/">Angular中的组件</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>组件的概念最近很流行，在各大框架中都有这个概念，那究竟什么是组件？</p>
+<blockquote>
+<p>组件是一块封装好的用户界面。</p>
+</blockquote>
+<p>利用组件，用户可以把大且复杂的界面拆分为小而简单的区域。就好比把复杂逻辑拆分成多个函数一样。当组件多了之后，应用就变成组件树的结构了，大部分场景下父子组件需要交互（传递数据），在 angular 中是通过输入属性（Input properties）和输出事件（Output events），父组件传递输入参数，子组件输出事件。</p>
+<p>这样以来，数据流就非常清晰了，但也带来一些问题：</p>
+<ul>
+<li>哪个组件负责向后台请求数据？</li>
+<li>哪个组件负责保存用户数据？</li>
+</ul>
+<p>组件跟纯函数一样，接收 <code>@Input</code> ，返回 <code>@Output</code>，单一职责，负责页面渲染。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;app-product-item </span><br><span class="line">  [item]=<span class="string">"itemData"</span></span><br><span class="line">  (select)=<span class="string">"selectProduct($event)"</span>&gt;&lt;<span class="regexp">/app-product-item&gt;</span></span><br></pre></td></tr></table></figure>
+<p>那到底如何管理组件的状态，例如某组件想获取其子组件的子组件的数据，该如何传递呢？</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/angular-components/" data-id="ck1k3sojz00014nq41yf0a56d" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-angular-dynamic-import" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/angular-dynamic-import/" class="article-date">
+  <time datetime="2018-04-13T07:40:07.000Z" itemprop="datePublished">2018-04-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/angular-dynamic-import/">Angular 动态引入模块</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>根据阮一峰的<a href="http://es6.ruanyifeng.com/#docs/module#import-%E5%91%BD%E4%BB%A4" target="_blank" rel="noopener">文章</a>，ES6中的 <code>import</code> 是静态执行，不能使用表达式和变量，下面几种情况都会报错：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 报错</span></span><br><span class="line"><span class="keyword">import</span> &#123; <span class="string">'f'</span> + <span class="string">'oo'</span> &#125; <span class="keyword">from</span> <span class="string">'my_module'</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 报错</span></span><br><span class="line"><span class="keyword">let</span> <span class="built_in">module</span> = <span class="string">'my_module'</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; foo &#125; <span class="keyword">from</span> <span class="built_in">module</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 报错</span></span><br><span class="line"><span class="keyword">if</span> (x === <span class="number">1</span>) &#123;</span><br><span class="line">  <span class="keyword">import</span> &#123; foo &#125; <span class="keyword">from</span> <span class="string">'module1'</span>;</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">  <span class="keyword">import</span> &#123; foo &#125; <span class="keyword">from</span> <span class="string">'module2'</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>而从 Typescript 2.4 版本开始，可以动态引用模块了，例如：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (myCondition === <span class="literal">true</span>) &#123;</span><br><span class="line">  <span class="keyword">import</span>(<span class="string">'/common/helpers/string'</span>).then(<span class="function"><span class="params">stringHelpers</span> =&gt;</span> &#123;</span><br><span class="line">    stringHelpers.reverse(<span class="string">'Hello World'</span>);</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/angular-dynamic-import/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/angular-dynamic-import/" data-id="cjhq778ha002rizq3h4ghrh3e" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-common-rxjs-error" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/common-rxjs-error/" class="article-date">
+  <time datetime="2018-04-13T07:22:28.000Z" itemprop="datePublished">2018-04-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/common-rxjs-error/">rxjs 中常见的错误</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <ol>
+<li><p>把异步订阅当做同步处理</p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">init() &#123;</span><br><span class="line">  <span class="keyword">let</span> id;</span><br><span class="line">  <span class="keyword">this</span>.router.subscribe(<span class="function"><span class="params">params</span> =&gt;</span> id = params[<span class="string">'id'</span>]);</span><br><span class="line">  <span class="keyword">if</span> (id) &#123;</span><br><span class="line">    <span class="keyword">this</span>.getUser(id).subscribe(<span class="function"><span class="params">user</span> =&gt;</span> <span class="keyword">this</span>.user = user);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/common-rxjs-error/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/common-rxjs-error/" data-id="cjhq778in004mizq37tepkx29" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-angular-multi-http-requests" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/angular-multi-http-requests/" class="article-date">
+  <time datetime="2018-04-13T07:00:00.000Z" itemprop="datePublished">2018-04-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/angular-multi-http-requests/">Angular 中处理多个 http 请求</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>由于 Angular 的 HTTPClient 使用 RxJS，之前大家用 promise 很熟练，但换成 RxJS 之后对操作符不了解，只会基本的订阅，很多原来 promise 的写法换成 RxJS 该怎么写，例如：<code>promise.all</code> 处理并行的场景，在 RxJS 中的等价写法是这样的：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; Component &#125; <span class="keyword">from</span> <span class="string">'@angular/core'</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; HttpClient &#125; <span class="keyword">from</span> <span class="string">'@angular/common/http'</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; Observable &#125; <span class="keyword">from</span> <span class="string">'rxjs/Observable'</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; forkJoin &#125; <span class="keyword">from</span> <span class="string">"rxjs/observable/forkJoin"</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span>(&#123;</span><br><span class="line">  selector: <span class="string">'app-root'</span>,</span><br><span class="line">  templateUrl: <span class="string">'app/app.component.html'</span></span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> AppComponent &#123;</span><br><span class="line">  <span class="keyword">constructor</span>(<span class="params"><span class="keyword">private</span> http: HttpClient</span>) &#123; &#125;</span><br><span class="line">  </span><br><span class="line">  ngOnInit() &#123;</span><br><span class="line">    <span class="keyword">const</span> employeeRequest = <span class="keyword">this</span>.http.get(<span class="string">'/api/employee/1'</span>);</span><br><span class="line">    <span class="keyword">const</span> companyRequest = <span class="keyword">this</span>.http.get(<span class="string">'/api/company/1'</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// Promise 的写法</span></span><br><span class="line">    <span class="built_in">Promise</span>.all([employeeRequest, companyRequest]).then([employee, company] =&gt; &#123;</span><br><span class="line">    &#125;);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// RxJS 的写法</span></span><br><span class="line">    forkJoin([employeeRequest, companyRequest]).subscribe([employee,company] =&gt; &#123;</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/angular-multi-http-requests/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/angular-multi-http-requests/" data-id="cjssqvcro000f8uq49pvjpgoe" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Angular/">Angular</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-angular-route" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/angular-route/" class="article-date">
@@ -279,337 +577,10 @@
 
 
   
-    <article id="post-jwt-notes" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/jwt-notes/" class="article-date">
-  <time datetime="2018-04-11T12:47:39.000Z" itemprop="datePublished">2018-04-11</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/jwt-notes/">jwt 学习笔记</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>一个JWT实际上就是一个字符串，长这样：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xxx.yyy.zzz</span><br></pre></td></tr></table></figure>
-<p>被 <code>.</code> 分隔的三部分是：</p>
-<ol>
-<li>头部（Header）</li>
-<li>负荷（Payload）</li>
-<li>签名（Signature）</li>
-</ol>
-<p>详细解释：</p>
-<ol>
-<li><p>头部</p>
-<p> 头部用于描述关于该JWT的最基本的信息，例如其类型以及签名所用的算法，例如：</p>
- <figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"typ"</span>: <span class="string">"JWT"</span>,</span><br><span class="line">  <span class="attr">"alg"</span>: <span class="string">"HS256"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p> 这个JSON通过 <strong>Base64Url</strong> 编码为JWT的第一部分。</p>
-</li>
-</ol>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/jwt-notes/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/jwt-notes/" data-id="cjhq778ok00buizq35ewzbl79" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-clean-mac-disk" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/clean-mac-disk/" class="article-date">
-  <time datetime="2018-04-09T11:00:12.000Z" itemprop="datePublished">2018-04-09</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/clean-mac-disk/">清理 Mac 存储空间</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>256G 的 Mac 用久了磁盘空间容易不足，可以用 OmniDiskSweeper 全盘扫描一下，发现大文件然后又针对性的删除。其中 Xcode 占用的空间占绝大多数，可以用下面的方法释放磁盘空间：</p>
-<ol>
-<li><p>删除不用的模拟器</p>
-<p> 模拟器被放在了目录 <code>~/Library/Developer/CoreSimulator/Devices</code> 中，用 <code>xcrun simctl delete unavailable</code> 可以释放：</p>
- <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ du -hs * </span><br><span class="line">6.0G	Caches</span><br><span class="line"> 12G	Devices</span><br><span class="line">  0B	Temp</span><br><span class="line">$ xcrun simctl delete unavailable</span><br><span class="line">$ du -hs *                       </span><br><span class="line">6.0G	Caches</span><br><span class="line">428M	Devices</span><br><span class="line">  0B	Temp</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>清除模拟器缓存</p>
-<p> 模拟器缓存被放在了目录 <code>~/Library/Developer/CoreSimulator/Caches/dyld</code> 中，在我电脑上，该目录下只有一个叫 19D76 的子目录，占了 6 个 G 的存储空间，进去一看，是 iOS、tvOS、watchOS 的缓存，应该用不上，全删了</p>
- <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$ du -hs *</span><br><span class="line">6.0G	19D76</span><br><span class="line">$ <span class="built_in">cd</span> 19D76</span><br><span class="line">$ du -hs *</span><br><span class="line">1.3G	com.apple.CoreSimulator.SimRuntime.iOS-13-3.17C45</span><br><span class="line">1.3G	com.apple.CoreSimulator.SimRuntime.iOS-13-4.17E8260</span><br><span class="line">849M	com.apple.CoreSimulator.SimRuntime.tvOS-13-3.17K446</span><br><span class="line">906M	com.apple.CoreSimulator.SimRuntime.tvOS-13-4.17L255</span><br><span class="line">864M	com.apple.CoreSimulator.SimRuntime.watchOS-6-1.17S445</span><br><span class="line">894M	com.apple.CoreSimulator.SimRuntime.watchOS-6-2.17T256</span><br><span class="line">$ rm -rf 19D76</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>清除系统缓存</p>
-<p> 系统缓存被放在了目录 <code>~/Library/Caches</code> 中，这里面有各种应用程序的缓存数据，例如浏览器、IDE 等，也可以删除：</p>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ ls</span><br><span class="line">314M	AndroidStudio3.5</span><br><span class="line">792M	CocoaPods</span><br><span class="line">188M	Firefox</span><br><span class="line">459M	Google</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/clean-mac-disk/" data-id="cka4yu20x00008zq4hx7exdp0" class="article-share-link">Share</a>
-     
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-nginx-location" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/nginx-location/" class="article-date">
-  <time datetime="2018-04-09T05:59:56.000Z" itemprop="datePublished">2018-04-09</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/nginx-location/">Nginx 中的 location</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>语法：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">location [modifier] uri</span><br></pre></td></tr></table></figure>
-<p>修饰符有四种：</p>
-<ol>
-<li><code>=</code> ：精确匹配并终止搜索</li>
-<li><code>~</code>：区分大小写的正则表达式匹配</li>
-<li><code>~*</code>：不区分大小写的正则表达式匹配</li>
-<li><code>^~</code>：字符串打头匹配（若是最佳匹配，则不进行正则表达式匹配）</li>
-</ol>
-<p>优先级顺序：</p>
-<ol>
-<li>精确匹配(<code>=</code>) </li>
-<li>字符串打头匹配(<code>^~</code>)  </li>
-<li>正则匹配(<code>~</code> 或 <code>~*</code>) </li>
-<li>通用匹配(<code>/</code>)</li>
-</ol>
-<blockquote>
-<p> 两种正则当中，区分大小写的优先级高，也就是不带 <code>*</code> 的优先级高</p>
-</blockquote>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/nginx-location/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/nginx-location/" data-id="cjhq778qm00elizq355e9573x" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Nginx/">Nginx</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-nginx-server-name" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/nginx-server-name/" class="article-date">
-  <time datetime="2018-04-09T05:51:49.000Z" itemprop="datePublished">2018-04-09</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/nginx-server-name/">Nginx 中的 server_name</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p><code>server_name</code> 可以用三种方式定义：</p>
-<ol>
-<li>准确值</li>
-<li>通配符</li>
-<li>正则表达式</li>
-</ol>
-<p>例如：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 准确值</span></span><br><span class="line">server &#123;</span><br><span class="line">    listen       80;</span><br><span class="line">    server_name  example.org  www.example.org;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment"># 开头通配符</span></span><br><span class="line">server &#123;</span><br><span class="line">    listen       80;</span><br><span class="line">    server_name  *.example.org;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment"># 结尾通配符</span></span><br><span class="line">server &#123;</span><br><span class="line">    listen       80;</span><br><span class="line">    server_name  mail.*;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment"># 正则表达式</span></span><br><span class="line">server &#123;</span><br><span class="line">    listen       80;</span><br><span class="line">    server_name  ~^(?&lt;user&gt;.+)\.example\.net$;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/nginx-server-name/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/nginx-server-name/" data-id="cjhq778qs00esizq3wr4w45to" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Nginx/">Nginx</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-nodejs-catch-stream-error" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/nodejs-catch-stream-error/" class="article-date">
-  <time datetime="2018-04-09T05:38:32.000Z" itemprop="datePublished">2018-04-09</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/nodejs-catch-stream-error/">捕获流错误</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>在 nodejs 中，如果想要捕获流操作过程中发生的错误，只在最后监听 error 事件是不够的，例如：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a = createStream()</span><br><span class="line">a.pipe(b).pipe(c).on(<span class="string">'error'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">e</span>)</span>&#123;handleError(e)&#125;)</span><br></pre></td></tr></table></figure>
-<p>上面的代码只会捕获错误 c，a 和 b 上发生的错误不会被传递下来，也得逐个监听错误事件，就像下面这样：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a = createStream()</span><br><span class="line">a.on(<span class="string">'error'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">e</span>)</span>&#123;handleError(e)&#125;)</span><br><span class="line">.pipe(b)</span><br><span class="line">.on(<span class="string">'error'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">e</span>)</span>&#123;handleError(e)&#125;)</span><br><span class="line">.pipe(c)</span><br><span class="line">.on(<span class="string">'error'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">e</span>)</span>&#123;handleError(e)&#125;);</span><br></pre></td></tr></table></figure>
-<p>但是这样写的话太麻烦了，更好的方式是将流包装在一个域，捕获所有错误。</p>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/nodejs-catch-stream-error/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/nodejs-catch-stream-error/" data-id="cjw53wyat000km5q4uh9v534m" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-chrome-kernal" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/chrome-kernal/" class="article-date">
-  <time datetime="2018-04-09T05:36:12.000Z" itemprop="datePublished">2018-04-09</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/chrome-kernal/">强制使用Webkit内核</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>对于国内双核浏览器强制使用Webkit内核渲染页面</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;meta name=<span class="string">"renderer"</span> content=<span class="string">"webkit"</span>&gt;</span><br><span class="line"><span class="comment">//360 6.X 以上可识别</span></span><br><span class="line">&lt;meta name=<span class="string">"force-rendering"</span> content=<span class="string">"webkit"</span>&gt;</span><br><span class="line"><span class="comment">//其他双核可识别</span></span><br><span class="line">&lt;meta http-equiv=<span class="string">"X-UA-Compatible"</span> content=<span class="string">"IE=edge,chrome=1"</span>/&gt;</span><br><span class="line"><span class="comment">//对于没有自带 IE7 内核的浏览器 强制使用用户已安装的最高版本浏览器渲染, 有Chrome框架的优先使用</span></span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/chrome-kernal/" data-id="cjssqvcs1000t8uq4r6dqdh78" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
 
 
   <nav id="page-nav">
-    <a class="extend prev" rel="prev" href="/page/18/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/17/">17</a><a class="page-number" href="/page/18/">18</a><span class="page-number current">19</span><a class="page-number" href="/page/20/">20</a><a class="page-number" href="/page/21/">21</a><span class="space">&hellip;</span><a class="page-number" href="/page/62/">62</a><a class="extend next" rel="next" href="/page/20/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/18/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/17/">17</a><a class="page-number" href="/page/18/">18</a><span class="page-number current">19</span><a class="page-number" href="/page/20/">20</a><a class="page-number" href="/page/21/">21</a><span class="space">&hellip;</span><a class="page-number" href="/page/63/">63</a><a class="extend next" rel="next" href="/page/20/">Next &raquo;</a>
   </nav>
 </section>
 
