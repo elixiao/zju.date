@@ -12,7 +12,7 @@
 <meta property="og:site_name" content=".">
 <meta property="og:description" content="nginx 中 proxy_pass 指令必然对应显示或隐式的 upstream，或者 resolver。  proxy_pass 和显式 upstream  1234567891011upstream bar &amp;#123;    server 127.0.0.1:8001;&amp;#125;server &amp;#123;    listen       80;    server_name  localh">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2020-05-11T06:26:16.428Z">
+<meta property="og:updated_time" content="2020-06-17T02:22:30.736Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Nginx中显式和隐式的upstream">
 <meta name="twitter:description" content="nginx 中 proxy_pass 指令必然对应显示或隐式的 upstream，或者 resolver。  proxy_pass 和显式 upstream  1234567891011upstream bar &amp;#123;    server 127.0.0.1:8001;&amp;#125;server &amp;#123;    listen       80;    server_name  localh">
@@ -85,13 +85,12 @@
 <ol>
 <li><p>proxy_pass 和显式 upstream</p>
  <figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">upstream</span> bar &#123;</span><br><span class="line">    <span class="attribute">server</span> <span class="number">127.0.0.1:8001</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span>       <span class="number">80</span>;</span><br><span class="line">    <span class="attribute">server_name</span>  localhost;</span><br><span class="line">    <span class="attribute">location</span> /foo &#123;</span><br><span class="line">        <span class="attribute">proxy_pass</span> http://bar;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p> 访问 <a href="http://localhost/foo，proxy" target="_blank" rel="noopener">http://localhost/foo，proxy</a> 模块会将请求转发到 127.0.0.1 的8001端口上。</p>
+<p> 访问 <code>http://localhost/foo</code>，proxy 模块会将请求转发到 127.0.0.1 的 8001 端口上。</p>
  <a id="more"></a>
 </li>
 <li><p>proxy_pass 和隐式 upstream</p>
  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    listen       80;</span><br><span class="line">    server_name  localhost;</span><br><span class="line">    location /foo &#123;</span><br><span class="line">        proxy_pass http://bar;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p> 实际上是隐式创建了upstream，upstream 名字就是 bar。upstream 模块利用本机设置的DNS服务器（或/etc/hosts），将bar 解析成IP，访问 <a href="http://localhost/foo，proxy" target="_blank" rel="noopener">http://localhost/foo，proxy</a> 模块会将请求转发到解析后的IP上。</p>
-<p> 如果本机未设置DNS服务器，或者DNS服务器无法解析域名，则nginx启动时会报类似如下错误：</p>
+<p> 实际上是隐式创建了 upstream，upstream 名字就是 bar。upstream 模块利用本机设置的DNS服务器（或/etc/hosts），将 bar 解析成IP，访问 <code>http://localhost/foo</code>，proxy 模块会将请求转发到解析后的IP上。如果本机未设置DNS服务器，或者DNS服务器无法解析域名，则nginx启动时会报类似如下错误：</p>
  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nginx: [emerg] host not found in upstream &quot;bar&quot; in /path/nginx/conf/nginx.conf:110</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>proxy_pass 和 resolver</p>
@@ -104,13 +103,13 @@
  <figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">upstream</span> bar &#123;</span><br><span class="line">    <span class="attribute">server</span> <span class="number">127.0.0.1:8001</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span>       <span class="number">80</span>;</span><br><span class="line">    <span class="attribute">server_name</span>  localhost;</span><br><span class="line">    <span class="attribute">resolver</span> <span class="number">114.114.114.114</span>;</span><br><span class="line">    <span class="attribute">location</span> /foo &#123;</span><br><span class="line">        <span class="attribute">set</span> <span class="variable">$foo</span> bar;</span><br><span class="line">        <span class="attribute">proxy_pass</span> http://<span class="variable">$foo</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 </li>
 </ol>
-<pre><code>访问 http://localhost/foo 时，如果有定义 upstream，后端服务器则直接利用，不再走 DNS 解析，resolver 无用，会将请求转发到 127.0.0.1 的 8001 端口上。
+<pre><code>访问 `http://localhost/foo` 时，如果有定义 upstream，后端服务器则直接利用，不再走 DNS 解析，即 resolver 配置不起作用，Nginx 会将请求转发到 127.0.0.1 的 8001 端口上。
 </code></pre><ol>
 <li>proxy_pass、隐式 upstream 和 resolver</li>
 </ol>
 <pre><code><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span>       <span class="number">80</span>;</span><br><span class="line">    <span class="attribute">server_name</span>  localhost;</span><br><span class="line">    <span class="attribute">resolver</span> <span class="number">114.114.114.114</span>;</span><br><span class="line">    <span class="attribute">location</span> /foo &#123;</span><br><span class="line">        <span class="attribute">set</span> <span class="variable">$foo</span> bar;</span><br><span class="line">        <span class="attribute">proxy_pass</span> http://<span class="variable">$foo</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">location</span> /foo2 &#123;</span><br><span class="line">        <span class="attribute">proxy_pass</span> http://bar;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-这里虽然没有写 upstream，但是注意 location /foo2 实际上是隐式定义了 upstream bar，并由本地 DNS 服务器进行了域名解析，访问 http://localhost/foo 时，upstream 模块会优先查找隐式定义的 bar 不走 resolver。
+注意这里虽然没有写 upstream，但是注意 location /foo2 实际上是隐式定义了 upstream bar，并由本地 DNS 服务器进行了域名解析，访问 `http://localhost/foo` 时，upstream 模块会优先查找隐式定义的 bar，也不走 resolver。
 </code></pre>
       
     </div>

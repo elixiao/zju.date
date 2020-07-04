@@ -54,6 +54,106 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-docker-crontab-env" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/docker-crontab-env/" class="article-date">
+  <time datetime="2018-03-13T07:07:07.000Z" itemprop="datePublished">2018-03-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/docker-crontab-env/">crontab 中使用环境变量</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>如果遇到 crontab 的定时任务执行失败，但是手动执行却又成功，一般是因为脚本里用了系统的环境变量导致的。由于 crontab 的机制，通过定时任务执行的脚本无法直接使用环境变量，下面的方法可以帮助我们避免上述情况：</p>
+<ol>
+<li>脚本中涉及文件路径时写绝对路径</li>
+<li><p>脚本执行要用到环境变量时，通过 source 命令引入：</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cat restart.sh</span><br><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line"><span class="built_in">source</span> /etc/profile</span><br><span class="line"><span class="built_in">export</span> abc=/home/abc</span><br><span class="line">/usr/<span class="built_in">local</span>/run.sh -c hello &amp;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在crontab中直接引入环境变量：</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0 * * * * . /etc/profile;/bin/sh /path/to/your/shell/restart.sh</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>另外 crontab 最后一定要有换行，否则可能报错！</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/docker-crontab-env/" data-id="cjssqvcs800138uq4mztwqv0w" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-shell-echo-cmd" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/shell-echo-cmd/" class="article-date">
+  <time datetime="2018-03-09T05:37:02.000Z" itemprop="datePublished">2018-03-09</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/shell-echo-cmd/">shell 命令回显</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>写脚本的时候有个需求：执行命令之前先打印这个命令，例如：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">DIRNAME=/usr/share</span><br><span class="line">ls <span class="variable">$DIRNAME</span></span><br></pre></td></tr></table></figure>
+<p>希望控制台能够打印：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls /usr/share</span><br></pre></td></tr></table></figure>
+<p>网上找到了解决办法：</p>
+<p><code>set -x</code> or <code>set -o xtrace</code> 可以开启这种效果，然后可以用 <code>set +x</code> 关闭。如果整个脚本都想这样，可以在文件第一行这么写：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/bin/sh -x</span></span><br></pre></td></tr></table></figure>
+<p>还发现了另外一个有趣的选项： <code>set -v</code>，区别在于它打印的是：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls <span class="variable">$DIRNAME</span></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/shell-echo-cmd/" data-id="cjhq778so00h0izq3zroyzvtq" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-docker-foreground" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/docker-foreground/" class="article-date">
@@ -473,105 +573,6 @@
     </div>
     <footer class="article-footer">
      <a data-url="https://zju.date/tar/" data-id="cjssqvcvc00488uq4j8bz19x7" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-echo" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/echo/" class="article-date">
-  <time datetime="2018-03-01T02:11:03.000Z" itemprop="datePublished">2018-03-01</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/echo/">echo 命令</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>echo 默认会换行，例如：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ echo 123;echo 456</span><br><span class="line">123</span><br><span class="line">456</span><br></pre></td></tr></table></figure>
-<p>使用 echo -n 可以不换行输出</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ echo -n 123;echo 456</span><br><span class="line">123456</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/echo/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/echo/" data-id="cjhq778jv0065izq308f8k0yv" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-ssh-auto-password" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/ssh-auto-password/" class="article-date">
-  <time datetime="2018-02-28T11:31:23.000Z" itemprop="datePublished">2018-02-28</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/ssh-auto-password/">ssh自动输入密码</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>假设管理员密码为 “12345”，要执行的 <code>sudo vi test.txt</code>，那我们就写一个 test.sh 档，里面的内容是：<code>echo 12345 | sudo -S vi test.txt</code>，主要就是把密码利用 echo 打在前面，后样 sudo 加上 <code>-S</code>，然后中间用 pipe 串起来即可。这个 <code>-S</code> 的意思是从 stdin 读取密码。</p>
-<p>但是对于 ssh，却没有这个选项，不过可以安装 sshpass 来实现：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">brew install sshpass</span><br><span class="line">Error: No available formula with the name <span class="string">"sshpass"</span> </span><br><span class="line">We won<span class="string">'t add sshpass because it makes it too easy for novice SSH users to</span></span><br><span class="line"><span class="string">ruin SSH'</span>s security.</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/ssh-auto-password/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/ssh-auto-password/" data-id="cjhq778su00h8izq3b7xgvonm" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
 

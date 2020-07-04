@@ -54,6 +54,115 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-es-alias" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/es-alias/" class="article-date">
+  <time datetime="2018-07-31T03:29:36.000Z" itemprop="datePublished">2018-07-31</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/es-alias/">在ES中为索引起别名</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>参见<a href="/es-prepare">准备工作</a>，搭建好命令行查询语法。</p>
+<p>查看全部索引：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">escurl -XGET $ES/_cat/indices?v</span><br></pre></td></tr></table></figure>
+<p>创建一个 test 索引：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">escurl -XPUT <span class="variable">$ES</span>/<span class="built_in">test</span>?pretty</span><br></pre></td></tr></table></figure>
+<p>添加一个文档：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">escurl -XPUT <span class="variable">$ES</span>/<span class="built_in">test</span>/_doc/1?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "name": "小明"</span></span><br><span class="line"><span class="string">&#125;'</span></span><br></pre></td></tr></table></figure>
+<p>查看索引内全部文档：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">escurl -XGET <span class="variable">$ES</span>/<span class="built_in">test</span>/_search?pretty</span><br></pre></td></tr></table></figure>
+<p>根据旧索引创建新索引：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">escurl -XPOST <span class="variable">$ES</span>/_reindex?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "source": &#123;"index":"test"&#125;,</span></span><br><span class="line"><span class="string">  "dest":&#123;"index":"test_v2"&#125;</span></span><br><span class="line"><span class="string">&#125;'</span></span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/es-alias/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/es-alias/" data-id="cjwn3tbtn00002zq4vo0w7gy5" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Elasticsearch/">Elasticsearch</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-docker-ps-format" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/docker-ps-format/" class="article-date">
+  <time datetime="2018-07-31T01:24:23.000Z" itemprop="datePublished">2018-07-31</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/docker-ps-format/">docker ps 指定列</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>通过 <code>--format</code> 参数，可以在 <code>docker ps</code> 的时候指定输出的列：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 输出名称和镜像</span></span><br><span class="line">docker ps --format <span class="string">'&#123;&#123;.Names&#125;&#125;\t&#123;&#123;.Image&#125;&#125;'</span></span><br><span class="line"><span class="comment"># 按照表格展示</span></span><br><span class="line">docker ps --format <span class="string">'table &#123;&#123;.Names&#125;&#125;\t&#123;&#123;.Image&#125;&#125;'</span></span><br></pre></td></tr></table></figure>
+<p>还可以修改默认输出格式，默认配置文件是：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">~/.docker/config.json</span><br></pre></td></tr></table></figure>
+<p>然后添加下面的自定义参数：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"psFormat"</span>: <span class="string">"table &#123;&#123;.Names&#125;&#125;\\t&#123;&#123;.Image&#125;&#125;\\t&#123;&#123;.RunningFor&#125;&#125; ago\\t&#123;&#123;.Status&#125;&#125;\\t&#123;&#123;.Command&#125;&#125;"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/docker-ps-format/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/docker-ps-format/" data-id="cjssqvcsc00198uq44yf7tonb" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-mysql-notes" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/mysql-notes/" class="article-date">
@@ -432,113 +541,6 @@
      <a data-url="https://zju.date/shell-alias-with-params/" data-id="cjw53wyb2000sm5q4ijc4gonr" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-node-get-parent-file-path" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/node-get-parent-file-path/" class="article-date">
-  <time datetime="2018-07-06T01:54:56.000Z" itemprop="datePublished">2018-07-06</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/node-get-parent-file-path/">js 获取引用自己的那个文件所在的目录</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>如果 <code>a.js</code> 引用了 <code>b.js</code>，如果在 <code>b.js</code> 里面获取到引用它的文件（也就是 <code>a.js</code>）所在的文件夹呢？答案是：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>.parent.filename</span><br></pre></td></tr></table></figure>
-<p>例如：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cosnt path = <span class="built_in">require</span>(<span class="string">'path'</span>)</span><br><span class="line"><span class="built_in">console</span>.log(path.dirname(<span class="built_in">module</span>.parent.filename))</span><br></pre></td></tr></table></figure>
-<p>如果要获取最开始被执行的那个 js 文件，可以用：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">require</span>.main.filename</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/node-get-parent-file-path/" data-id="cjkajvcr1000m4eq3lnmu9iw0" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-git-commit-log" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/git-commit-log/" class="article-date">
-  <time datetime="2018-07-05T02:17:56.000Z" itemprop="datePublished">2018-07-05</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/git-commit-log/">Git 提交规范</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>分为 header 和 body 两个部分：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;type&gt;: &lt;subject&gt;</span><br><span class="line"></span><br><span class="line">&lt;body&gt;</span><br></pre></td></tr></table></figure>
-<h2 id="头部-header"><a href="#头部-header" class="headerlink" title="头部 header"></a>头部 header</h2><p>header 由 type 和 subject 两部分组成：</p>
-<h4 id="type"><a href="#type" class="headerlink" title="type"></a>type</h4><p>表示类型，只能是下几种：</p>
-<ul>
-<li><strong>feat: 新功能</strong></li>
-<li><strong>fix: 修复问题</strong></li>
-<li>docs: 修改文档</li>
-<li>style: 修改代码格式，不影响代码逻辑</li>
-<li>refactor: 重构代码，理论上不影响现有功能</li>
-<li><strong>perf: 提升性能</strong></li>
-<li>test: 增加修改测试用例</li>
-<li>chore: 改变构建流程、或者增加依赖库、工具等</li>
-<li>revert: 回滚到上一个版本</li>
-</ul>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/git-commit-log/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/git-commit-log/" data-id="cjkajvcqr000c4eq3l0drch41" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/">Git</a></li></ul>
 
     </footer>
   </div>
