@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="事件循环是如何产生的在浏览器中，JS 的主线程是单线程的，异步的代码被放到了任务队列中，JS 主线程不断地轮询任务队列，每次从队首取出一个任务并进行处理，从而构成了事件环。 任务队列的类型任务队列有两种，分别是宏任务（macrotask）队列和微任务（microtask）队列，用于存放不同的任务：  宏任务主要有：script（用户代码）、setTimeout、setInterval、I/O、UI">
+<meta name="keywords" content="JavaScript">
+<meta property="og:type" content="article">
+<meta property="og:title" content="浏览器中的消息队列和事件循环">
+<meta property="og:url" content="https://zju.date/browser-eventloop/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="事件循环是如何产生的在浏览器中，JS 的主线程是单线程的，异步的代码被放到了任务队列中，JS 主线程不断地轮询任务队列，每次从队首取出一个任务并进行处理，从而构成了事件环。 任务队列的类型任务队列有两种，分别是宏任务（macrotask）队列和微任务（microtask）队列，用于存放不同的任务：  宏任务主要有：script（用户代码）、setTimeout、setInterval、I/O、UI">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://img.zlib.cn/blog/eventloop.svg">
+<meta property="og:updated_time" content="2020-07-06T10:31:49.550Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="浏览器中的消息队列和事件循环">
+<meta name="twitter:description" content="事件循环是如何产生的在浏览器中，JS 的主线程是单线程的，异步的代码被放到了任务队列中，JS 主线程不断地轮询任务队列，每次从队首取出一个任务并进行处理，从而构成了事件环。 任务队列的类型任务队列有两种，分别是宏任务（macrotask）队列和微任务（microtask）队列，用于存放不同的任务：  宏任务主要有：script（用户代码）、setTimeout、setInterval、I/O、UI">
+<meta name="twitter:image" content="http://img.zlib.cn/blog/eventloop.svg">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-browser-eventloop" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/browser-eventloop/" class="article-date">
+  <time datetime="2019-10-31T09:15:09.000Z" itemprop="datePublished">2019-10-31</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      浏览器中的消息队列和事件循环
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="事件循环是如何产生的"><a href="#事件循环是如何产生的" class="headerlink" title="事件循环是如何产生的"></a>事件循环是如何产生的</h2><p>在浏览器中，JS 的主线程是单线程的，异步的代码被放到了任务队列中，JS 主线程不断地轮询任务队列，每次从队首取出一个任务并进行处理，从而构成了事件环。</p>
+<h2 id="任务队列的类型"><a href="#任务队列的类型" class="headerlink" title="任务队列的类型"></a>任务队列的类型</h2><p>任务队列有两种，分别是宏任务（macrotask）队列和微任务（microtask）队列，用于存放不同的任务：</p>
+<ul>
+<li>宏任务主要有：script（用户代码）、setTimeout、setInterval、I/O、UI 交互事件、postMessage、MessageChannel 等</li>
+<li>微任务主要有：Promise.then、 MutationObserver 等</li>
+</ul>
+<h2 id="事件环的工作流程"><a href="#事件环的工作流程" class="headerlink" title="事件环的工作流程"></a>事件环的工作流程</h2><ul>
+<li>JS 引擎首先从上而下执行用户 script 代码（宏任务）</li>
+<li>如果遇到 setTimeout、promise、click事件等，按照分类放入宏任务队列或微任务队列中</li>
+<li>继续执行后面的代码，script 执行完毕后，会清空所有的微任务</li>
+<li>微任务清空后可能会进行一次 UI 渲染（不是每次都会）</li>
+<li>然后再去宏任务队列中取出一个执行，循环往复</li>
+</ul>
+<h2 id="图示"><a href="#图示" class="headerlink" title="图示"></a>图示</h2><p><img src="http://img.zlib.cn/blog/eventloop.svg" alt="浏览器中的事件环"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/browser-eventloop/" data-id="ckcar38jb0000f6se1st5j1pn" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/never-use-flutter-listtile/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          千万不要用ListTile组件
+        
+      </div>
+    </a>
+  
+  
+    <a href="/webview-fontsize-too-small/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Flutter Webview手机模式</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dart/">Dart</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Elasticsearch/">Elasticsearch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Flutter/">Flutter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

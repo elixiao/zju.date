@@ -54,6 +54,240 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-wxss-background" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/wxss-background/" class="article-date">
+  <time datetime="2019-10-09T09:05:19.000Z" itemprop="datePublished">2019-10-09</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/wxss-background/">小程序wxss背景图片</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在 CSS 中我们可以用 background 添加背景图片，但是小程序中的本地资源无法在 wxss 中获取，也就是说不能像 CSS 那样通过 <code>url(/assets/xxx.png)</code> 来引用本地图片来设置背景，不过有两种折中的方案：</p>
+<ol>
+<li><p>把图片转成base64</p>
+ <figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-class">.base64-image</span> &#123;</span><br><span class="line">  <span class="attribute">background</span>: <span class="built_in">url</span>(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA...);</span><br><span class="line">  <span class="attribute">background-size</span>: contain;</span><br><span class="line">  <span class="attribute">background-repeat</span>: no-repeat;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<pre><code>这个[地址](janedan-base64)可以把图片在线转成 base64 格式。
+</code></pre><ol>
+<li><p>把本地资源上传到网络，然后引用网络图片</p>
+ <figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-class">.network-image</span> &#123;</span><br><span class="line">  <span class="attribute">background</span>: <span class="built_in">url</span>(http://xxxxx);</span><br><span class="line">  <span class="attribute">background-size</span>: contain;</span><br><span class="line">  <span class="attribute">background-repeat</span>: no-repeat;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>但是上面两种方式都不尽如人意，因为转成 base64 会导致文件体积会增大，且 base64 是一大串字符，无法本地直观地看到图片；用网络图片的话，页面渲染上又会有延迟，用户体验不好。所以只能采用 <code>&lt;image&gt;</code> 组件加绝对定位的方式来模拟背景图：</p>
+<p><code>&lt;image&gt;</code> 组件中的 mode 取值有：</p>
+<ol>
+<li><code>scaleToFill</code>：拉伸图片填满 image 元素</li>
+<li><code>aspectFit</code>：保持纵横比缩放图片，长边能完全显示出来，短边有空白</li>
+<li><code>aspectFill</code>：保持纵横比缩放图片，短边能完全显示出来，长边有截断</li>
+<li><code>widthFix</code>：宽度不变，高度自动变化，保持原图宽高比不变</li>
+</ol>
+<p>但是注意上面的选项并不能达到与CSS background 属性中完全相同的效果，对应的 <code>background-size</code> 的属性有：</p>
+<ol>
+<li><code>auto</code>：默认值，不改变原始图片的大小。</li>
+<li>px：自定义设置图片的大小，一般为成对出现例如 100px,50px,当设置一个值的时候，将其作为图片的宽度只进行等比缩放。</li>
+<li>百分比：0%-100%的任意值，一般也是成对出现，当设置一个值的时候，就成了正方形了。</li>
+<li><code>cover</code>：覆盖，用背景图等比例缩放填满整个容器。（推荐使用）</li>
+<li><code>contain</code>：容纳，即将背景图片等比缩放至<strong>某一边紧贴容器边缘为止。</strong></li>
+</ol>
+<p><code>mode=aspectFill</code> 和 <code>background-size:cover</code> 的区别是前者保证图片中心位置跟容器区域重合，后者保证图片的左上角跟容器的左上角重合。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/wxss-background/" data-id="ck8zn3jvr000ovtq4w7btj23v" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flutter/">Flutter</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-flutter-listtile-notes" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/flutter-listtile-notes/" class="article-date">
+  <time datetime="2019-09-12T06:25:53.000Z" itemprop="datePublished">2019-09-12</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/flutter-listtile-notes/">Flutter ListTile组件</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>ListTile 示例代码：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">ListTile(</span><br><span class="line">  title: Text(<span class="string">'Horse'</span>),</span><br><span class="line">  subtitle: Text(<span class="string">'A strong animal'</span>),</span><br><span class="line">  dense: <span class="keyword">true</span>,</span><br><span class="line">  leading: CircleAvatar(</span><br><span class="line">    backgroundImage: NetworkImage(imageUrl),</span><br><span class="line">  ),</span><br><span class="line">  trailing: Icon(Icons.keyboard_arrow_right),</span><br><span class="line">  contentPadding: EdgeInsets.symmetric(horizontal: <span class="number">0.0</span>),</span><br><span class="line">  selected: <span class="keyword">true</span>,</span><br><span class="line">  onTap: ()&#123;&#125;,</span><br><span class="line">  onLongPress: ()&#123;&#125;,</span><br><span class="line">  enabled: <span class="keyword">false</span>,</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<p>可以看到 ListTile 有如下几个属性：</p>
+<ul>
+<li>title：标题</li>
+<li>subtitle：子标题</li>
+<li>dense：紧凑模式</li>
+<li>leading：头部图标</li>
+<li>trailing：尾部图标</li>
+<li>contentPadding：左侧和右侧的内边距（控制不了上面和下面）</li>
+<li>selected：点击之后变色</li>
+<li>onTap：响应点击事件</li>
+<li>onLongPress：响应长按事件</li>
+<li>enabled：是否响应手势</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/flutter-listtile-notes/" data-id="ck8zn3jsj0009vtq4ru120kjd" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flutter/">Flutter</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-webpack-external" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/webpack-external/" class="article-date">
+  <time datetime="2019-08-27T09:05:09.000Z" itemprop="datePublished">2019-08-27</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/webpack-external/">webpack中的external参数</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>今天用 electron 集成 sqlite3 和 knex 的时候报错了：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Module not found: Error: Cannot resolve module &apos;sqlite3&apos; in xxx/node_modules/knex/lib/dialects/sqlite3</span><br></pre></td></tr></table></figure>
+<p>在官方<a href="https://github.com/tgriesser/knex/issues/1128" target="_blank" rel="noopener">issue</a> 中找到了解决方案：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">externals: &#123;</span><br><span class="line">  knex: <span class="string">'commonjs knex'</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>于是顺便学习一下 webpack externals 参数的含义：</p>
+<blockquote>
+<p>external 配置选项提供了「不从 bundle 中引用依赖」或者说叫做「从输出的 bundle 中排除依赖」的方法。防止将某些 import 包打包到 bundle 中，而是在运行时(runtime)再去从外部获取这些扩展包(external package)。</p>
+</blockquote>
+<p>也就是说可以让打包后的 bundle 依赖于那些存在于用户环境(consumer environment)中的依赖。举个最基本的例子：</p>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/webpack-external/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/webpack-external/" data-id="ck10e5it10009joq4i4gfkjng" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-download-subfolder-in-github" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/download-subfolder-in-github/" class="article-date">
+  <time datetime="2019-08-25T14:05:53.000Z" itemprop="datePublished">2019-08-25</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/download-subfolder-in-github/">github上下载单个文件夹</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>git 可以 clone 子目录了，具体实现如下：</p>
+<ol>
+<li><p>先启用 Sparse Checkout 功能:</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git config core.sparsecheckout <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>初始化项目并添加远程仓库</p>
+</li>
+</ol>
+<pre><code><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mkdir xxx </span><br><span class="line"><span class="built_in">cd</span> xxx</span><br><span class="line">git init</span><br><span class="line">git remote add origin  https://github.com/xxx/xxx.git <span class="comment"># 增加远端的仓库地址</span></span><br></pre></td></tr></table></figure>
+</code></pre><ol>
+<li><p>配置子目录</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">"relative/folder"</span> &gt;&gt; .git/info/sparse-checkout </span><br><span class="line">git pull --depth 1 origin master</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>这样就会只下载 <code>relative/folder</code> 目录啦！</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/download-subfolder-in-github/" data-id="ckcar38jg0001f6sevvjz3c41" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/">Git</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-promisify" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/promisify/" class="article-date">
@@ -337,221 +571,10 @@
 
 
   
-    <article id="post-angular-cli-custom-builder" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/angular-cli-custom-builder/" class="article-date">
-  <time datetime="2019-07-27T12:54:44.000Z" itemprop="datePublished">2019-07-27</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/angular-cli-custom-builder/">Angular中自定义webpack参数</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>angular-cli 运行起来之后，发现有个 node 进程始终占用 60% 的 CPU，即使什么也没改，如果文件发生变动之后，又会多出来一个 node 进程，CPU 飙升到 100% 以上。第一个 60% 的进程是 watch 进程，监控文件发生变化的，第二个进程是 re-build 进程，用于文件变化之后进行重新构建。于是猜测 CPU 高的原因是不是因为 Angular 把 node_modules 里面的文件全部 watch 了，如果这样的话，可以通过修改 webpack 的 watchOptions 属性来解决。</p>
-<p>很遗憾的是 angular 从 6 版本开始就不支持 eject 了，并没有提供配置 webpack 的 watchOptions 的地方，这就尴尬了。不过好在 angular 开发团队并没有一棒子打死，好歹留了一个解决入口，那就是自定义 angular builder。</p>
-<p>当我们使用 <code>ng new xxx</code> 创建一个新项目之后，会生成一个 angular.json 文件，里面的内容框架是：</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"$schema"</span>: <span class="string">"./node_modules/@angular/cli/lib/config/schema.json"</span>,</span><br><span class="line">  <span class="attr">"version"</span>: <span class="number">1</span>,</span><br><span class="line">  <span class="attr">"newProjectRoot"</span>: <span class="string">"projects"</span>,</span><br><span class="line">  <span class="attr">"projects"</span>: &#123;</span><br><span class="line">    "xxx": &#123;...&#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  "defaultProject": "xxx",</span><br><span class="line">  "schematics": &#123;</span><br><span class="line">    "@schematics/angular:component": &#123;</span><br><span class="line">      "prefix": "app",</span><br><span class="line">      "styleext": "scss"</span><br><span class="line">    &#125;,</span><br><span class="line">    "@schematics/angular:directive": &#123;</span><br><span class="line">      "prefix": "app"</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/angular-cli-custom-builder/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/angular-cli-custom-builder/" data-id="ck1k3sok100024nq4777b68se" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-dockerfile-nodejs" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/dockerfile-nodejs/" class="article-date">
-  <time datetime="2019-07-24T06:04:32.000Z" itemprop="datePublished">2019-07-24</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/dockerfile-nodejs/">制作nodejs的镜像</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>下面的 dockerfile 可以制作一个能够运行 node.js 项目的 docker 镜像：</p>
-<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">FROM</span> node:<span class="number">12</span>-alpine</span><br><span class="line"><span class="keyword">ENV</span> NODE_ENV=production</span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> mkdir /app</span></span><br><span class="line"><span class="bash">WORKDIR /app</span></span><br><span class="line"><span class="bash">COPY package.json yarn.lock ./</span></span><br><span class="line"><span class="bash">RUN yarn --pure-lockfile --production</span></span><br><span class="line"><span class="bash">COPY . .</span></span><br><span class="line"><span class="bash">CMD [<span class="string">"npm"</span>, <span class="string">"start"</span>]</span></span><br></pre></td></tr></table></figure>
-<p><code>--pure-lockfile</code> 的意思是不生成 <code>yarn.lock</code><br><code>--production</code> 的意思是只安装 dependencies 里的包</p>
-<p><code>COPY . .</code> 中前面一个 <code>.</code> 表示在宿主机上执行 <code>docker build</code> 命令时所在的目录，后面那个 <code>.</code> 的含义是容器通过 WORKDIR 所指定的工作目录，所以 <code>COPY . .</code>  的意思是把当前宿主机目录下所有文件拷贝到容器的工作目录里面。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/dockerfile-nodejs/" data-id="ck8zn3jse0005vtq4jizb8udk" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/">Docker</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-package-json-scripts" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/package-json-scripts/" class="article-date">
-  <time datetime="2019-07-24T01:33:34.000Z" itemprop="datePublished">2019-07-24</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/package-json-scripts/">package.json中的scripts属性</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>npm run 可以执行定义在 package.json 中 scripts 标签里面的命令，例如：</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">"scripts": &#123;</span><br><span class="line">    "start": "node ./script.js"</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>如果运行 <code>npm run start</code> 就是相当于运行 <code>node ./scripts.js</code> 了。从 npm 2.0 版本开始，可以将参数传递给 npm run 命令，语法如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm run &lt;command&gt; [-- &lt;args&gt;]</span><br></pre></td></tr></table></figure>
-<p>也就是说<code>--</code>后面的参数首先会被传递到 npm 命令本身，然后将其转发给脚本。例如：</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">"scripts": &#123;</span><br><span class="line">    "gulp": "gulp",</span><br><span class="line">    "server": "node server.js"</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/package-json-scripts/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/package-json-scripts/" data-id="ck1k3sokt000f4nq48wtl8vo6" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-flutter-vs-wxminiapp" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/flutter-vs-wxminiapp/" class="article-date">
-  <time datetime="2019-07-24T01:30:51.000Z" itemprop="datePublished">2019-07-24</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/flutter-vs-wxminiapp/">Flutter和小程序的下拉刷新和上拉加载功能</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Flutter 和 微信小程序都有下拉刷新和上拉加载更多的功能，具体实现如下：</p>
-<h2 id="Flutter"><a href="#Flutter" class="headerlink" title="Flutter"></a>Flutter</h2><ol>
-<li><p>下拉刷新</p>
-<p> 只需要在 ListView 最外层包装一个 RefreshIndicator 即可：</p>
- <figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">RefreshIndicator(</span><br><span class="line">  onRefresh: () =&gt; _fetchCreditLogs(<span class="keyword">false</span>),</span><br><span class="line">  child: ListView.builder(</span><br><span class="line">    physics: AlwaysScrollableScrollPhysics(),</span><br><span class="line">    controller: _scrollController,</span><br><span class="line">    itemCount: _list.length,</span><br><span class="line">    itemBuilder: (BuildContext context, <span class="built_in">int</span> index) &#123;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">  ),</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
-<p> 这里需要注意的是：当列表内容未占满整屏的时候，ListView 不会触发滚动，会导致下拉刷新和上拉加载都无效。添加 <code>physics: const AlwaysScrollableScrollPhysics()</code> 之后，能够解决这个问题。</p>
-</li>
-<li><p>上拉加载</p>
-<p> ListView 有一个 ScrollController 属性，专门来控制 ListView 滑动事件，在这里可以根据 ListView 的位置来判断是否滑动到了底部：</p>
- <figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">_scrollController.addListener(() &#123;</span><br><span class="line">  <span class="keyword">if</span> (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) &#123;</span><br><span class="line">    _getMore();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<h2 id="微信小程序"><a href="#微信小程序" class="headerlink" title="微信小程序"></a>微信小程序</h2><ol>
-<li><p>下拉刷新</p>
-<p> 需要在.json文件里设置 <code>&quot;enablePullDownRefresh&quot;: true</code>，当前页设置也可以全局设置；</p>
- <figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"enablePullDownRefresh"</span>: <span class="literal">true</span> //当前页</span><br><span class="line">    <span class="string">"backgroundTextStyle"</span>: <span class="string">"dark"</span> //顶部显示颜色为深色的三个点</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p> 具体的逻辑写在页面的 <code>onPullDownRefresh</code> 函数里面：</p>
- <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">onPullDownRefresh: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.fetchArticleList(<span class="literal">false</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p> 下拉刷新的时候，顶部会有一个三个点的动效，可以在合适的时候使用 <code>wx.stopPullDownRefresh()</code> 停止该动效。</p>
-</li>
-<li><p>上拉加载</p>
-<p> 上拉加载在小程序里面就更简单了，逻辑直接在 <code>onReachBottom</code> 函数里即可：</p>
- <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">onReachBottom: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.fetchArticleList(<span class="literal">true</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/flutter-vs-wxminiapp/" data-id="cka4yu220000p8zq4jmg2z4yn" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flutter/">Flutter</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
 
 
   <nav id="page-nav">
-    <a class="extend prev" rel="prev" href="/page/3/">&laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/63/">63</a><a class="extend next" rel="next" href="/page/5/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/3/">&laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/64/">64</a><a class="extend next" rel="next" href="/page/5/">Next &raquo;</a>
   </nav>
 </section>
 

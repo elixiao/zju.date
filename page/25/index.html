@@ -54,6 +54,224 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-disk-full" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/disk-full/" class="article-date">
+  <time datetime="2018-02-07T06:16:23.000Z" itemprop="datePublished">2018-02-07</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/disk-full/">磁盘空间检查</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在服务器上安装了 gitlab，有一天突然发现挂了，重启也没用，输入命令 <code>df -h</code> 看到：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ df -h</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">文件系统	      容量   已用  可用   已用%% 挂载点</span><br><span class="line">/dev/vda1        20G   19G   0G     100%   /</span><br><span class="line">tmpfs            3.9G  4.0K  3.9G   1%     /dev/shm</span><br><span class="line">/dev/vdb1        99G   16G   79G    17%    /mnt</span><br></pre></td></tr></table></figure>
+<p>磁盘空间不够，进入跟目录，使用命令：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">du -sh *</span><br></pre></td></tr></table></figure>
+<p>逐步定位大文件，删除了一些无用的文件，特别是 tomcat 日志，3.5G，删掉之后系统恢复正常。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/disk-full/" data-id="cjssqvcs700118uq4aiw9nba4" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-mongodb-readwrite-without-drop" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/mongodb-readwrite-without-drop/" class="article-date">
+  <time datetime="2018-02-07T06:16:23.000Z" itemprop="datePublished">2018-02-07</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/mongodb-readwrite-without-drop/">MongoDB 创建能读写但不能drop的用户</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>在 MongoDB 中，有两类用户角色：</p>
+<ol>
+<li><p>普通用户角色：</p>
+<ul>
+<li>read</li>
+<li>readWrite</li>
+</ul>
+</li>
+<li><p>管理员角色：</p>
+<ul>
+<li>dbAdmin</li>
+<li>userAdmin</li>
+<li>dbOwner</li>
+</ul>
+</li>
+</ol>
+<h3 id="创建只读用户"><a href="#创建只读用户" class="headerlink" title="创建只读用户"></a>创建只读用户</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">db.createUser(&#123;user: <span class="string">'readonly'</span>, <span class="built_in">pwd</span>: <span class="string">'pwd'</span>, roles:[&#123;role:<span class="string">'read'</span>, db:<span class="string">'test'</span>&#125;]&#125;)</span><br><span class="line">Successfully added user: &#123;</span><br><span class="line">	<span class="string">"user"</span> : <span class="string">"readonly"</span>,</span><br><span class="line">	<span class="string">"roles"</span> : [</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="string">"role"</span> : <span class="string">"read"</span>,</span><br><span class="line">			<span class="string">"db"</span> : <span class="string">"test"</span></span><br><span class="line">		&#125;</span><br><span class="line">	]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>只读用户可以执行的命令有：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">collStats</span><br><span class="line">dbHash</span><br><span class="line">dbStats</span><br><span class="line">find</span><br><span class="line">killCursors</span><br><span class="line">listIndexes</span><br><span class="line">listCollections</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/mongodb-readwrite-without-drop/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/mongodb-readwrite-without-drop/" data-id="cjssqvcue00368uq41ylu99be" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-npm-link" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/npm-link/" class="article-date">
+  <time datetime="2018-02-05T01:45:23.000Z" itemprop="datePublished">2018-02-05</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/npm-link/">npm link</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <blockquote>
+<p><code>npm link</code>命令可以将一个任意位置的<code>npm包</code>链接到全局执行环境，从而在任意位置使用命令行都可以直接运行该npm包。</p>
+</blockquote>
+<p>当运行<code>npm link</code>时发生了两件事：</p>
+<ul>
+<li>为npm包目录创建软链接，将其链到<code>{prefix}/lib/node_modules/&lt;package&gt;</code></li>
+<li>为可执行文件(bin)创建软链接，将其链到<code>{prefix}/bin/{name}</code></li>
+</ul>
+<p>在 windows 中：</p>
+<ul>
+<li>目录: <code>C:\Users\{Username}\AppData\Roaming\npm\node_modules\&lt;package&gt;</code></li>
+<li>文件: <code>C:\Users\{Username}\AppData\Roaming\npm\&lt;name&gt;</code></li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm init -f</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/npm-link/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/npm-link/" data-id="cjssqvcut003k8uq4w6i36hsa" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-docker-version-install" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/docker-version-install/" class="article-date">
+  <time datetime="2018-02-04T02:52:13.000Z" itemprop="datePublished">2018-02-04</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/docker-version-install/">安装指定版本的 docker</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>首先要确保 docker 卸载干净：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sudo yum remove docker \</span><br><span class="line">                  docker-common \</span><br><span class="line">                  container-selinux \</span><br><span class="line">                  docker-selinux \</span><br><span class="line">                  docker-engine</span><br></pre></td></tr></table></figure>
+<p>然后添加源：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ sudo yum-config-manager \</span><br><span class="line">&gt;     --add-repo \</span><br><span class="line">&gt;     https://download.docker.com/linux/centos/docker-ce.repo</span><br><span class="line">Loaded plugins: langpacks</span><br><span class="line">adding repo from: https://download.docker.com/linux/centos/docker-ce.repo</span><br><span class="line">grabbing file https://download.docker.com/linux/centos/docker-ce.repo to /etc/yum.repos.d/docker-ce.repo</span><br><span class="line">repo saved to /etc/yum.repos.d/docker-ce.repo</span><br></pre></td></tr></table></figure>
+<p>查找版本：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">yum list docker-ce --showduplicates | sort -r</span><br><span class="line">已加载插件：fastestmirror</span><br><span class="line">可安装的软件包</span><br><span class="line">Loading mirror speeds from cached hostfile</span><br><span class="line">docker-ce.x86_64            17.12.0.ce-1.el7.centos             docker-ce-stable</span><br><span class="line">docker-ce.x86_64            17.09.1.ce-1.el7.centos             docker-ce-stable</span><br><span class="line">docker-ce.x86_64            17.09.0.ce-1.el7.centos             docker-ce-stable</span><br><span class="line">docker-ce.x86_64            17.06.2.ce-1.el7.centos             docker-ce-stable</span><br><span class="line">docker-ce.x86_64            17.06.1.ce-1.el7.centos             docker-ce-stable</span><br><span class="line">docker-ce.x86_64            17.06.0.ce-1.el7.centos             docker-ce-stable</span><br><span class="line">docker-ce.x86_64            17.03.2.ce-1.el7.centos             docker-ce-stable</span><br><span class="line">docker-ce.x86_64            17.03.1.ce-1.el7.centos             docker-ce-stable</span><br><span class="line">docker-ce.x86_64            17.03.0.ce-1.el7.centos             docker-ce-stable</span><br></pre></td></tr></table></figure>
+<p>指定版本安装：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ yum install --<span class="built_in">setopt</span>=obsoletes=0 \</span><br><span class="line">   docker-ce-17.03.2.ce-1.el7.centos.x86_64 \</span><br><span class="line">   docker-ce-selinux-17.03.2.ce-1.el7.centos.noarch <span class="comment"># on a new system with yum repo defined, forcing older version and ignoring obsoletes introduced by 17.06.0</span></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/docker-version-install/" data-id="cjhq778jr005zizq36a584eir" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-git-rename-branch" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/git-rename-branch/" class="article-date">
@@ -352,237 +570,10 @@
 
 
   
-    <article id="post-debounce-vs-throttle" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/debounce-vs-throttle/" class="article-date">
-  <time datetime="2018-02-01T09:23:13.000Z" itemprop="datePublished">2018-02-01</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/debounce-vs-throttle/">在 Angular 中使用 debounce 和 throttle</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <h2 id="debounce-防抖"><a href="#debounce-防抖" class="headerlink" title="debounce 防抖"></a>debounce 防抖</h2><ol>
-<li><p>名词释义</p>
-<p> 对于某事件流，自触发时刻开始，若持续指定时间内未有事件发生，则触发该事件，否则更新该事件，直到满足持续指定时间未有事件发生的条件后再触发最后更新的这个事件。</p>
-<p> 防抖的原理就是：你尽管触发事件，但是我一定在事件触发 n 秒后才执行，如果你在一个事件触发的 n 秒内又触发了这个事件，那我就以新的事件的时间为准，n 秒后才执行，总之，就是要等你触发完事件 n 秒内不再触发事件，我才执行!</p>
-</li>
-<li><p>应用场景</p>
-<p> 搜索手牌或商品的时候，keyup事件并不需要每次都触发请求，而是当用户某两次keyup中间的间隔超过指定时间才去请求，否则用户噼里啪啦打字，你发了几十个请求，浪费资源。</p>
-</li>
-<li><p>代码：</p>
- <figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123;Directive, EventEmitter, HostListener, Input, OnInit, Output&#125; <span class="keyword">from</span> <span class="string">'@angular/core'</span></span><br><span class="line"><span class="keyword">import</span> &#123;Subject&#125; <span class="keyword">from</span> <span class="string">'rxjs/Subject'</span></span><br><span class="line"><span class="keyword">import</span> &#123;debounceTime&#125; <span class="keyword">from</span> <span class="string">'rxjs/operators'</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@Directive</span>(&#123;</span><br><span class="line">  selector: <span class="string">'[debounce]'</span></span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> DebounceDirective <span class="keyword">implements</span> OnInit &#123;</span><br><span class="line">  <span class="meta">@Input</span>() debounce</span><br><span class="line">  <span class="meta">@Output</span>() debounceKeyup = <span class="keyword">new</span> EventEmitter()</span><br><span class="line">  <span class="keyword">private</span> keyupSubject = <span class="keyword">new</span> Subject()</span><br><span class="line"></span><br><span class="line">  <span class="keyword">constructor</span>(<span class="params"></span>) &#123;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  ngOnInit() &#123;</span><br><span class="line">    <span class="keyword">this</span>.keyupSubject</span><br><span class="line">      .pipe(debounceTime(<span class="keyword">this</span>.debounce || <span class="number">500</span>))</span><br><span class="line">      .subscribe(<span class="function"><span class="params">e</span> =&gt;</span> <span class="keyword">this</span>.debounceKeyup.emit(e))</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@HostListener</span>(<span class="string">'keyup'</span>, [<span class="string">'$event'</span>])</span><br><span class="line">  keyupEvent(event) &#123;</span><br><span class="line">    event.preventDefault()</span><br><span class="line">    event.stopPropagation()</span><br><span class="line">    <span class="keyword">this</span>.keyupSubject.next(event)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/debounce-vs-throttle/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/debounce-vs-throttle/" data-id="cjkajvcql00084eq3033qy33m" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-git-branch-manage" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/git-branch-manage/" class="article-date">
-  <time datetime="2018-02-01T07:50:13.000Z" itemprop="datePublished">2018-02-01</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/git-branch-manage/">git 分支管理</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <h2 id="Git-分支管理"><a href="#Git-分支管理" class="headerlink" title="Git 分支管理"></a>Git 分支管理</h2><p>首先要明确下面两个分支的概念：</p>
-<table>
-<thead>
-<tr>
-<th>分支</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>develop</td>
-<td>包含的是下个版本需要发布的内容</td>
-</tr>
-<tr>
-<td>master</td>
-<td>包含的是可以部署到生产环境中的代码</td>
-</tr>
-</tbody>
-</table>
-<p>意思是说：</p>
-<ul>
-<li>develop 分支，是用于随时可以发布到 <code>develop</code> 的代码，便于线上测试；</li>
-<li>master 分支，是用于随时可以发布到 <code>master.com</code> 生产环境的代码。</li>
-</ul>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/git-branch-manage/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/git-branch-manage/" data-id="cjhq778kv007oizq3p4z1rf4l" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/">Git</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-load-balance" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/load-balance/" class="article-date">
-  <time datetime="2018-01-27T01:57:07.000Z" itemprop="datePublished">2018-01-27</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/load-balance/">负载均衡配置</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>负载均衡，单从字面上的意思来理解就可以解释N台服务器平均分担负载，不会因为某台服务器负载高宕机和某台服务器闲置的情况，那么负载均衡的前提就是要2台以上服务器才能实现。假设我现在有三个 server，分别是：</p>
-<ul>
-<li>master（192.168.120.7）</li>
-<li>minion1 （192.168.120.8）</li>
-<li>minion2（192.168.120.9）</li>
-</ul>
-<p>我们把域名解析到 master 服务器的 80 端口，然后由 master 服务器的 80 端口转发到 minion1 服务器的 8080 端口和 minion2 服务器的 8081 端口。如果没有多台服务器，也可以用一台进行测试，使用不同端口即可。下面使用 nginx 和 haproxy 来实现负载均衡。</p>
-<h2 id="nginx"><a href="#nginx" class="headerlink" title="nginx"></a>nginx</h2><p>单配置：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">upstream anyname &#123;</span><br><span class="line">      server minion1:8080;</span><br><span class="line">      server minion2:8081;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">server&#123; </span><br><span class="line">    listen 80; </span><br><span class="line">    server_name 192.168.120.7; </span><br><span class="line">    location / &#123; </span><br><span class="line">        proxy_pass         http://anyname; </span><br><span class="line">        proxy_set_header   Host             $host; </span><br><span class="line">        proxy_set_header   X-Real-IP        $remote_addr; </span><br><span class="line">        proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for; </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/load-balance/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/load-balance/" data-id="cjhq778p500ckizq3y1j8cfb5" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-angular-ie9" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/angular-ie9/" class="article-date">
-  <time datetime="2018-01-25T13:10:23.000Z" itemprop="datePublished">2018-01-25</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/angular-ie9/">Angular 兼容 IE9</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>使用官网的 quickstart 是不兼容 IE9 的，我们需要另外配置使其兼容IE9，在 index.html 中引入 polyfill：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- Polyfill(s) for older browsers --&gt;</span><br><span class="line">&lt;script src=&quot;node_modules/core-js/client/shim.min.js&quot;&gt;&lt;/script&gt;</span><br><span class="line">&lt;script src=&quot;//cdnjs.cloudflare.com/ajax/libs/classlist/2014.01.31/classList.min.js&quot;&gt;&lt;/script&gt;</span><br></pre></td></tr></table></figure>
-<p>另外可能还要配置路由为 HashLocationStrategy，即在 RouterModule.forRoot 中设置 useHash 属性：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">imports: [</span><br><span class="line">       RouterModule.forRoot(appRoutes,&#123;useHash:true&#125;)</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/angular-ie9/" data-id="cjssqvcrh00098uq42p1rku9n" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Angular/">Angular</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
 
 
   <nav id="page-nav">
-    <a class="extend prev" rel="prev" href="/page/24/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/23/">23</a><a class="page-number" href="/page/24/">24</a><span class="page-number current">25</span><a class="page-number" href="/page/26/">26</a><a class="page-number" href="/page/27/">27</a><span class="space">&hellip;</span><a class="page-number" href="/page/63/">63</a><a class="extend next" rel="next" href="/page/26/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/24/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/23/">23</a><a class="page-number" href="/page/24/">24</a><span class="page-number current">25</span><a class="page-number" href="/page/26/">26</a><a class="page-number" href="/page/27/">27</a><span class="space">&hellip;</span><a class="page-number" href="/page/64/">64</a><a class="extend next" rel="next" href="/page/26/">Next &raquo;</a>
   </nav>
 </section>
 

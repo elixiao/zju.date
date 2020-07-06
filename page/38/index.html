@@ -54,6 +54,194 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-JavaScript-tips-1" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/JavaScript-tips-1/" class="article-date">
+  <time datetime="2017-08-08T06:58:07.000Z" itemprop="datePublished">2017-08-08</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/JavaScript-tips-1/">JavaScript常用技巧</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="定时器"><a href="#定时器" class="headerlink" title="定时器"></a>定时器</h3><p>每隔1秒打印hello：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">setInterval(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'hello'</span>);</span><br><span class="line">&#125;, <span class="number">1000</span>);</span><br></pre></td></tr></table></figure>
+<p>延迟1秒打印hello：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">setTimeout(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'hello'</span>);</span><br><span class="line">&#125;, <span class="number">1000</span>);</span><br></pre></td></tr></table></figure>
+<p>取消上面的延迟1秒打印：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> printLater = setTimeout(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'hello'</span>);</span><br><span class="line">&#125;, <span class="number">1000</span>);</span><br><span class="line"></span><br><span class="line">clearTimeout(printLater)</span><br></pre></td></tr></table></figure>
+<h3 id="数组的-splice-方法"><a href="#数组的-splice-方法" class="headerlink" title="数组的 splice 方法"></a>数组的 <code>splice</code> 方法</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> arr = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>]</span><br><span class="line">arr.splice(<span class="number">1</span>,<span class="number">1</span>)  <span class="comment">// 返回值是一个数组[2]，而不是数字2。</span></span><br><span class="line">arr.splice(<span class="number">1</span>,<span class="number">1</span>,<span class="number">4</span>) <span class="comment">//是把中间的2替换成4了，变成了[1,4,3]。</span></span><br><span class="line">arr.splice(<span class="number">1</span>,<span class="number">0</span>,<span class="number">4</span>) <span class="comment">// 是在位置为1的元素前面插入4，变成了[1,4,2,3]。</span></span><br><span class="line">arr.splice(<span class="number">1</span>,<span class="number">0</span>,<span class="number">4</span>,<span class="number">5</span>) <span class="comment">// 是在位置为1的元素前面插入4和5，变成了[1,4,5,2,3]。</span></span><br><span class="line">arr.splice(<span class="number">1</span>,<span class="number">0</span>,[<span class="number">4</span>,<span class="number">5</span>]) <span class="comment">//是在位置为1的元素前面插入4，变成了[1,[4,5],2,3]</span></span><br></pre></td></tr></table></figure>
+<p>那如果想用数组的形式表示插入的参数怎么办呢？用下面的方法：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[].splice.apply(arr,[<span class="number">1</span>,<span class="number">0</span>,<span class="number">4</span>,<span class="number">5</span>])</span><br><span class="line"><span class="comment">// 或者</span></span><br><span class="line">arr.splice(<span class="number">1</span>,<span class="number">0</span>,...[<span class="number">4</span>,<span class="number">5</span>])</span><br></pre></td></tr></table></figure>
+<h3 id="用变量作为对象的key"><a href="#用变量作为对象的key" class="headerlink" title="用变量作为对象的key"></a>用变量作为对象的key</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> key = <span class="string">'name'</span></span><br><span class="line"><span class="keyword">var</span> obj = &#123;</span><br><span class="line">	key:<span class="string">'David'</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">console</span>.log(obj) <span class="comment">// &#123; key: 'David' &#125;</span></span><br><span class="line"><span class="keyword">var</span> obj2 = &#123;</span><br><span class="line">	[key]:<span class="string">'David'</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">console</span>.log(obj2) <span class="comment">// &#123; name: 'David' &#125;</span></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/JavaScript-tips-1/" data-id="cjhq778fx000vizq3iacar8t7" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-angular-dependency-injection" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/angular-dependency-injection/" class="article-date">
+  <time datetime="2017-08-08T06:57:35.000Z" itemprop="datePublished">2017-08-08</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/angular-dependency-injection/">Angular 中的依赖注入</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>关于 Angular 里面的依赖注入的逻辑：</p>
+<blockquote>
+<p>当一个组件申请获得一个依赖时，Angular 先尝试用该组件自己的注入器来满足它。 如果该组件的注入器没有找到对应的提供商（provider），它就把这个申请转给它父组件的注入器来处理。 如果那个注入器也无法满足这个申请，它就继续转给它的父组件的注入器。 这个申请继续往上冒泡 —— 直到找到了一个能处理此申请的注入器或者超出了组件树中的祖先位置为止。 如果超出了组件树中的祖先还未找到，Angular 就会抛出一个错误。</p>
+</blockquote>
+<p>模块：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@NgModule</span>(&#123;</span><br><span class="line">  declarations: [</span><br><span class="line">    AppComponent,</span><br><span class="line">  ],</span><br><span class="line">  imports: [</span><br><span class="line">    BrowserModule</span><br><span class="line">  ],</span><br><span class="line">  providers: [],</span><br><span class="line">  bootstrap: [AppComponent]</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/angular-dependency-injection/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/angular-dependency-injection/" data-id="cjssqvcpl00018uq4pfqw8txh" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Angular/">Angular</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-ubuntu-shutdown-while-upgrade" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/ubuntu-shutdown-while-upgrade/" class="article-date">
+  <time datetime="2017-08-08T03:20:07.000Z" itemprop="datePublished">2017-08-08</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/ubuntu-shutdown-while-upgrade/">Ubuntu升级过程中关机</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>今天软件中心提示系统需要更新，然后就点更新，由于其他原因，没更新完就重启电脑，导致蓝屏和黑屏。</p>
+<p>一筹莫展，正准备放弃重装之际，网上说 <code>Ctrl+Alt+F1</code> 可以进终端，试了一下果然可以，说明图形界面出了问题，然后网上找了一堆命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo dpkg --configure -a  </span><br><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get upgrade</span><br><span class="line">sudo apt-get dist-upgrade</span><br></pre></td></tr></table></figure>
+<p>经过漫长的安装，<code>reboot</code> 之后竟然回复正常了！可喜可贺，及时把文件备份到云端，因为你永远不知道本地会出现什么问题。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/ubuntu-shutdown-while-upgrade/" data-id="cjhq778uc00ieizq3p5c9sqo9" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-logic-operator-in-querySelectAll" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/logic-operator-in-querySelectAll/" class="article-date">
+  <time datetime="2017-08-07T15:07:07.000Z" itemprop="datePublished">2017-08-07</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/logic-operator-in-querySelectAll/">querySelectorAll中使用逻辑操作符</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><code>querySelectorAll</code>批量选择元素中可以使用逻辑操作符，例如<code>or</code>，<code>and</code>，<code>not</code>等，不过语法是<code>css</code>的语法：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// or (选择所有 divs 和 p 标签下的 spans)</span></span><br><span class="line"><span class="built_in">document</span>.querySelectorAll(<span class="string">'div, p span'</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// and (选择具有样式 myClass 的所有 divs)</span></span><br><span class="line"><span class="built_in">document</span>.querySelectorAll(<span class="string">'div.myClass'</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// not (选择不具备样式 myclass 的所有 divs)</span></span><br><span class="line"><span class="built_in">document</span>.querySelectorAll(<span class="string">'div:not(.myClass)'</span>);</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/logic-operator-in-querySelectAll/" data-id="cjhq778p600cmizq37f6s9zno" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CSS/">CSS</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-mongoose-ignore-fields" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/mongoose-ignore-fields/" class="article-date">
@@ -343,210 +531,10 @@
 
 
   
-    <article id="post-css-pseudo-split" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/css-pseudo-split/" class="article-date">
-  <time datetime="2017-08-07T08:32:45.000Z" itemprop="datePublished">2017-08-07</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/css-pseudo-split/">CSS伪元素添加分隔符</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>想实现下面的效果：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">One | Two | Three | Four | Five</span><br></pre></td></tr></table></figure>
-<p>HTML 代码如下：</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">ul</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">li</span>&gt;</span>One<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">li</span>&gt;</span>Two<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">li</span>&gt;</span>Three<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">li</span>&gt;</span>Four<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">li</span>&gt;</span>Five<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">ul</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>CSS 代码如下：</p>
-<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">ul</span> &#123;</span><br><span class="line">    <span class="attribute">list-style-type</span>: none;</span><br><span class="line">    <span class="attribute">text-align</span>: center;</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-tag">li</span> &#123;</span><br><span class="line">    <span class="attribute">display</span>: inline;</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-tag">li</span><span class="selector-pseudo">::after</span> &#123;</span><br><span class="line">  <span class="attribute">content</span>: <span class="string">' |'</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-tag">li</span><span class="selector-pseudo">:last-child</span><span class="selector-pseudo">::after</span> &#123;</span><br><span class="line">    <span class="attribute">content</span>: <span class="string">''</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/css-pseudo-split/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/css-pseudo-split/" data-id="cjxwmqce30001ftq4pmhol2hl" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CSS/">CSS</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-eslint-switch" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/eslint-switch/" class="article-date">
-  <time datetime="2017-08-07T08:32:07.000Z" itemprop="datePublished">2017-08-07</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/eslint-switch/">ESLint switch 缩进错误</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>ESLint 提示 switch-case 语句的缩进错误: </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Expected indentation of 8 space characters but found 12.</span><br></pre></td></tr></table></figure>
-<p>只有把switch内的case缩进全都和switch对齐才能消除这个错误。ESLint 的 indent 参数有个控制 switch-case 缩进大小的属性，叫 SwitchCase，默认是0，代表没有任何缩进（文档参考），把他改成1（代表进行1个单位的缩进）代码就通过验证了，配置类似这样：</p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"rules"</span>: &#123;</span><br><span class="line">        <span class="attr">"indent"</span>: [<span class="number">2</span>, <span class="number">4</span>, &#123;<span class="attr">"SwitchCase"</span>: <span class="number">1</span>&#125;]</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/eslint-switch/" data-id="cjhq778k3006iizq3qmpq01u5" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-linux-alias" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/linux-alias/" class="article-date">
-  <time datetime="2017-08-07T08:32:07.000Z" itemprop="datePublished">2017-08-07</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/linux-alias/">取消别名</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>有些系统中 <code>cp</code> 命令被映射到 <code>cp -i</code>，下面的命令可以查看所有别名：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">alias</span></span><br><span class="line"><span class="built_in">alias</span> cp=<span class="string">'cp -i'</span></span><br><span class="line"><span class="built_in">alias</span> diff=<span class="string">'diff -u'</span></span><br><span class="line">....</span><br></pre></td></tr></table></figure>
-<p>可以临时取消别名使用原先的命令，例如使用 zsh，gm 是 <code>git merge</code> 的别名。但按照了 graphic magic 之后呢，gm 代表图片剪裁命令，此时使用 <code>\gm</code> 就能取消别名，使用本身：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">$ alias gm</span><br><span class="line">gm=&apos;git merge&apos;</span><br><span class="line">$ gm</span><br><span class="line">fatal: Not a git repository (or any of the parent directories): .git</span><br><span class="line">$ \gm</span><br><span class="line">GraphicsMagick 1.3.23 2015-11-07 Q8 http://www.GraphicsMagick.org/</span><br><span class="line">Copyright (C) 2002-2015 GraphicsMagick Group.</span><br><span class="line">Additional copyrights and licenses apply to this software.</span><br><span class="line">See http://www.GraphicsMagick.org/www/Copyright.html for details.</span><br><span class="line">Usage: gm command [options ...]</span><br><span class="line"></span><br><span class="line">Where commands include: </span><br><span class="line">      batch - issue multiple commands in interactive or batch mode</span><br><span class="line">  benchmark - benchmark one of the other commands</span><br><span class="line">    compare - compare two images</span><br><span class="line">  composite - composite images together</span><br><span class="line">    conjure - execute a Magick Scripting Language (MSL) XML script</span><br><span class="line">    convert - convert an image or sequence of images</span><br><span class="line">       help - obtain usage message for named command</span><br><span class="line">   identify - describe an image or image sequence</span><br><span class="line">    mogrify - transform an image or sequence of images</span><br><span class="line">    montage - create a composite image (in a grid) from separate images</span><br><span class="line">       time - time one of the other commands</span><br><span class="line">    version - obtain release version</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/linux-alias/" data-id="cjhq778oo00byizq3mq3kogth" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-webstorm-regex-replace" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/webstorm-regex-replace/" class="article-date">
-  <time datetime="2017-08-07T08:32:07.000Z" itemprop="datePublished">2017-08-07</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/webstorm-regex-replace/">WebStorm正则替换</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <ol>
-<li><p>驼峰转下划线<code>\l</code></p>
-<p> 查找: <code>([A-Z])</code><br> 替换: <code>_\l$1</code></p>
-<p> <code>someThing -&gt; some_thing</code></p>
-</li>
-<li><p>大写转小写<code>\L</code></p>
-<p> 查找: <code>(\w*)</code><br> 替换: <code>\L$1</code></p>
-<p> <code>SOMETHING -&gt; something</code></p>
-</li>
-<li><p>小写转大写<code>\U</code></p>
-<p> 查找: <code>(\w*)</code><br> 替换: <code>\U$1</code></p>
-<p> <code>something -&gt; SOMETHING</code></p>
-</li>
-</ol>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/webstorm-regex-replace/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/webstorm-regex-replace/" data-id="cjhq778vc00jkizq31w5rkmdf" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
 
 
   <nav id="page-nav">
-    <a class="extend prev" rel="prev" href="/page/37/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/36/">36</a><a class="page-number" href="/page/37/">37</a><span class="page-number current">38</span><a class="page-number" href="/page/39/">39</a><a class="page-number" href="/page/40/">40</a><span class="space">&hellip;</span><a class="page-number" href="/page/63/">63</a><a class="extend next" rel="next" href="/page/39/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/37/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/36/">36</a><a class="page-number" href="/page/37/">37</a><span class="page-number current">38</span><a class="page-number" href="/page/39/">39</a><a class="page-number" href="/page/40/">40</a><span class="space">&hellip;</span><a class="page-number" href="/page/64/">64</a><a class="extend next" rel="next" href="/page/39/">Next &raquo;</a>
   </nav>
 </section>
 

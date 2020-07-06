@@ -54,6 +54,192 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-promise-all" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/promise-all/" class="article-date">
+  <time datetime="2017-03-22T10:04:07.000Z" itemprop="datePublished">2017-03-22</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/promise-all/">Promise.all</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>等待所有代码的完成或第一个代码的失败。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> p1 = <span class="built_in">Promise</span>.resolve(<span class="number">3</span>)</span><br><span class="line"><span class="keyword">var</span> p2 = <span class="number">1337</span></span><br><span class="line"><span class="keyword">var</span> p3 = <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> &#123;</span><br><span class="line">  setTimeout(resolve, <span class="number">100</span>, <span class="string">"foo"</span>)</span><br><span class="line">&#125;)</span><br><span class="line"><span class="built_in">Promise</span>.all([p1, p2, p3]).then(<span class="function"><span class="params">values</span> =&gt;</span> &#123; </span><br><span class="line">  <span class="built_in">console</span>.log(values); <span class="comment">// [3, 1337, "foo"] </span></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/promise-all/" data-id="cjhq778rf00fmizq3xpyedrd6" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-change-ssh-port" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/change-ssh-port/" class="article-date">
+  <time datetime="2017-03-10T01:06:07.000Z" itemprop="datePublished">2017-03-10</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/change-ssh-port/">ssh多端口登录</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>通常ssh远程登录的默认端口是22，这个端口一般是可以更改或者添加的，配置文件位置在：<code>/etc/ssh/sshd_config</code>，下面添加 8080 端口：</p>
+<p>执行命令 vim /etc/ssh/sshd_config 编辑配置文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Port 22</span><br><span class="line">Port 8080</span><br></pre></td></tr></table></figure>
+<p>去掉 Port 22 的注释并且新增一行 Port 8080 然后保存并退出，然后重启ssh服务： </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl restart sshd.service</span><br></pre></td></tr></table></figure>
+<p>重启之后 22 和 8080 端口均可以连接，当不是默认端口时需要使用 <code>ssh -p 2223 hostname</code> 进行连接。</p>
+<p>　　<br>查看 ssh 端口状态：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">[root@iZrj9hj308beua257ojjzfZ ~]# systemctl status sshd.service</span><br><span class="line">● sshd.service - OpenSSH server daemon</span><br><span class="line">   Loaded: loaded (/usr/lib/systemd/system/sshd.service; enabled; vendor preset: enabled)</span><br><span class="line">   Active: active (running) since Thu 2017-10-26 13:17:25 CST; 5min ago</span><br><span class="line">     Docs: man:sshd(8)</span><br><span class="line">           man:sshd_config(5)</span><br><span class="line"> Main PID: 7394 (sshd)</span><br><span class="line">   CGroup: /system.slice/sshd.service</span><br><span class="line">           ├─7394 /usr/sbin/sshd -D</span><br><span class="line">           ├─7744 sshd: [accepted]</span><br><span class="line">           └─7745 sshd: [net]</span><br><span class="line"></span><br><span class="line">Oct 26 13:17:25 iZrj9hj308beua257ojjzfZ systemd[1]: Starting OpenSSH server daemon...</span><br><span class="line">Oct 26 13:17:25 iZrj9hj308beua257ojjzfZ sshd[7394]: Server listening on 0.0.0.0 port 8080.</span><br><span class="line">Oct 26 13:17:25 iZrj9hj308beua257ojjzfZ sshd[7394]: Server listening on 0.0.0.0 port 22.</span><br><span class="line">Oct 26 13:17:25 iZrj9hj308beua257ojjzfZ systemd[1]: Started OpenSSH server daemon.</span><br><span class="line">Oct 26 13:18:40 iZrj9hj308beua257ojjzfZ sshd[7397]: Accepted publickey for root from 54.191.168.76 port 51818 ssh2: RSA af:e8:67:48...:5e:d1</span><br><span class="line">Oct 26 13:21:22 iZrj9hj308beua257ojjzfZ sshd[7576]: Accepted publickey for root from 54.191.168.76 port 36028 ssh2: RSA af:e8:67:48...:5e:d1</span><br><span class="line">Hint: Some lines were ellipsized, use -l to show in full.</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/change-ssh-port/" data-id="cjhq778im004kizq39e8gmo70" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-format-input-date-format-in-angularjs" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/format-input-date-format-in-angularjs/" class="article-date">
+  <time datetime="2017-03-09T00:08:07.000Z" itemprop="datePublished">2017-03-09</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/format-input-date-format-in-angularjs/">angular.js input 中日期格式化</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>angular.js 日期选择器需要把选中的日期输出到 input 输入框中，默认显示的是时间戳形式的时间，现需要把格式变成特定格式，但 input 上 ng-model 无法使用 filter，网上寻找解决方案就是写个 directive，具体实例代码如下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">angular.module(<span class="string">'dateRange'</span>,[]).directive(<span class="string">'dateFormat'</span>, [<span class="string">'$filter'</span>,<span class="function"><span class="keyword">function</span>(<span class="params">$filter</span>) </span>&#123;  </span><br><span class="line">    <span class="keyword">var</span> dateFilter = $filter(<span class="string">'date'</span>);  </span><br><span class="line">    <span class="keyword">return</span> &#123;  </span><br><span class="line">        <span class="built_in">require</span>: <span class="string">'ngModel'</span>,  </span><br><span class="line">        link: <span class="function"><span class="keyword">function</span>(<span class="params">scope, elm, attrs, ctrl</span>) </span>&#123;  </span><br><span class="line"></span><br><span class="line">            <span class="function"><span class="keyword">function</span> <span class="title">formatter</span>(<span class="params">value</span>) </span>&#123;  </span><br><span class="line">                <span class="keyword">return</span> dateFilter(value, <span class="string">'yyyy-MM-dd'</span>); <span class="comment">//format  </span></span><br><span class="line">            &#125;  </span><br><span class="line">      </span><br><span class="line">            <span class="function"><span class="keyword">function</span> <span class="title">parser</span>(<span class="params"></span>) </span>&#123;  </span><br><span class="line">                <span class="keyword">return</span> ctrl.$modelValue;  </span><br><span class="line">            &#125;  </span><br><span class="line">      </span><br><span class="line">            ctrl.$formatters.push(formatter);  </span><br><span class="line">            ctrl.$parsers.unshift(parser);  </span><br><span class="line">      </span><br><span class="line">        &#125;  </span><br><span class="line">    &#125;;  </span><br><span class="line">&#125;]);</span><br></pre></td></tr></table></figure>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"text"</span> <span class="attr">ng-model</span>=<span class="string">"start_date"</span> <span class="attr">date-format</span> <span class="attr">disabled</span>=<span class="string">"disabled"</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/format-input-date-format-in-angularjs/" data-id="cjhq778kn007cizq3pt4ee3k8" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-reverse-ssh" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/reverse-ssh/" class="article-date">
+  <time datetime="2017-03-02T03:42:55.000Z" itemprop="datePublished">2017-03-02</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/reverse-ssh/">用ssh建立反向连接</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>本地开发时，都是在localhost上起服务，只要是在同一个局域网，就可以访问。有时候想在外网访问本机localhost，有两种办法：</p>
+<ol>
+<li>通过软件<a href="https://ngrok.com/" target="_blank" rel="noopener">ngrock</a></li>
+<li>通过ssh反向代理</li>
+</ol>
+<p>ngrock的使用非常简单，去官网按照demo操作就行。ssh反向代理则需要有一个云服务器，首先要登录到该服务器，修改<code>sshd</code>的配置文件<code>/etc/ssh/sshd_config</code>，修改下面的注释：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#GatewayPorts no</span></span><br><span class="line">GatewayPorts yes <span class="comment"># 取消注释，并把no修改为yes</span></span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/reverse-ssh/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/reverse-ssh/" data-id="cjhq778sf00goizq3s5txq19b" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-git-messy" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/git-messy/" class="article-date">
@@ -331,206 +517,10 @@
 
 
   
-    <article id="post-docker-container-hosts-mapping" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/docker-container-hosts-mapping/" class="article-date">
-  <time datetime="2017-02-16T01:45:07.000Z" itemprop="datePublished">2017-02-16</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/docker-container-hosts-mapping/">修改 docker 容器内 host 映射</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>在开发过程中，有这样的场景：宿主机（或者宿主机所在局域网内的另一台机器）跑着一个 DB（可能是MySQL或MongoDB），docker里运行的应用程序要连宿主机的 DB 时，如何把这个 IP 映射到host文件呢？（这样应用程序里面可以使用访问 db 来访问数据库了）</p>
-<p>假如宿主机的IP是 192.168.23.5，解决方案：</p>
-<ol>
-<li><p>docker</p>
-<p> 使用 <code>--add-host</code> 标签：</p>
- <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker run --add-host=db:192.168.23.5 ...</span><br><span class="line"><span class="comment"># 或者</span></span><br><span class="line"><span class="built_in">alias</span> hostip=<span class="string">"ifconfig en0 | grep inet | grep -v inet6 | awk '&#123;print <span class="variable">$2</span>&#125;'"</span>  &amp;&amp; docker run --add-host=db:$(hostip) ...</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>docker-compose：</p>
- <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">extra_hosts:</span></span><br><span class="line"><span class="bullet"> -</span> <span class="string">"db:192.168.23.5"</span></span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/docker-container-hosts-mapping/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/docker-container-hosts-mapping/" data-id="cjhq778ji005oizq3p1dt38pg" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-ASCII-Unicode-UTF32-UTF16-UTF8-GB2312" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/ASCII-Unicode-UTF32-UTF16-UTF8-GB2312/" class="article-date">
-  <time datetime="2017-02-02T07:46:29.000Z" itemprop="datePublished">2017-02-02</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/ASCII-Unicode-UTF32-UTF16-UTF8-GB2312/">ASCII、Unicode、UTF-32、UTF-16、UTF-8、GB2312</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <h3 id="ASCII码"><a href="#ASCII码" class="headerlink" title="ASCII码"></a>ASCII码</h3><p>每一个二进制位（bit）有 0 和 1 两种状态，八个二进制位（一个字节byte）可以组合出256种状态，每一个状态对应一个符号，就是 256 个符号，从 0000000 到 11111111。</p>
-<p>ASCII 码有 128 个字符的编码，这 128 个符号（包括 32 个不能打印出来的控制符号），只占用了一个字节的后 7 位，第 1 位统一规定为 0。比如空格 SPACE 是 32（二进制00100000），大写的字母 A 是 65（二进制01000001）。</p>
-<p>ASCII 的最大缺点是只能显示 26 个基本拉丁字母、阿拉伯数目字和英式标点符号。而汉字就多达 10 万左右，用ASCII码表示肯定是不够的，因此必须使用多个字节表达一个符号。比如，简体中文常见的编码方式是GB2312，使用两个字节表示一个汉字，所以理论上最多可以表示 256x256=65536 个符号。</p>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/ASCII-Unicode-UTF32-UTF16-UTF8-GB2312/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/ASCII-Unicode-UTF32-UTF16-UTF8-GB2312/" data-id="cjhq778f90004izq3mtwg0681" class="article-share-link">Share</a>
-     
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-js-define-property" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/js-define-property/" class="article-date">
-  <time datetime="2017-01-20T02:01:07.000Z" itemprop="datePublished">2017-01-20</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/js-define-property/">Object.defineProperty</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>为对象定义属性：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> obj = &#123;&#125;</span><br><span class="line"><span class="comment">// 方法1</span></span><br><span class="line">obj.name = <span class="string">'David'</span></span><br><span class="line"><span class="comment">// 方法2 </span></span><br><span class="line">obj[<span class="string">'name'</span>] = <span class="string">'David'</span></span><br><span class="line"><span class="comment">// 方法3</span></span><br><span class="line"><span class="built_in">Object</span>.defineProperty(obj, <span class="string">'name'</span>, &#123;</span><br><span class="line">    value : <span class="string">'David'</span></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/js-define-property/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/js-define-property/" data-id="cjhq778o500baizq3ncpur1qz" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-es-dynamic-script" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/es-dynamic-script/" class="article-date">
-  <time datetime="2017-01-13T01:49:29.000Z" itemprop="datePublished">2017-01-13</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/es-dynamic-script/">开启elasticsearch动态脚本功能</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>更新也可以通过使用简单的脚本来进行。这个例子使用一个脚本将age加5：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">curl -XPOST <span class="string">'localhost:9200/megacorp/employee/1/_update?pretty'</span> -d <span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "script" : "ctx._source.age += 5"</span></span><br><span class="line"><span class="string">&#125;'</span></span><br></pre></td></tr></table></figure>
-<p>但会报错：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;error&quot; : &#123;</span><br><span class="line">    &quot;root_cause&quot; : [ &#123;</span><br><span class="line">      &quot;type&quot; : &quot;remote_transport_exception&quot;,</span><br><span class="line">      &quot;reason&quot; : &quot;[Professor X][127.0.0.1:9302][indices:data/write/update[s]]&quot;</span><br><span class="line">    &#125; ],</span><br><span class="line">    &quot;type&quot; : &quot;illegal_argument_exception&quot;,</span><br><span class="line">    &quot;reason&quot; : &quot;failed to execute script&quot;,</span><br><span class="line">    &quot;caused_by&quot; : &#123;</span><br><span class="line">      &quot;type&quot; : &quot;script_exception&quot;,</span><br><span class="line">      &quot;reason&quot; : &quot;scripts of type [inline], operation [update] and lang [groovy] are disabled&quot;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  &quot;status&quot; : 400</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>因为新版本的elasticsearch中，基于安全考虑，默认禁用了动态脚本功能，可以通过修改配置文件开启动态脚本功能：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 编辑 config/elasticsearch.yml 文件，添加</span></span><br><span class="line">script.inline: on</span><br><span class="line">script.indexed: on</span><br><span class="line">script.file: on</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/es-dynamic-script/" data-id="cjhq778jx0067izq3a98kr3eu" class="article-share-link">Share</a>
-     
-    </footer>
-  </div>
-  
-</article>
-
-
-  
 
 
   <nav id="page-nav">
-    <a class="extend prev" rel="prev" href="/page/46/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/45/">45</a><a class="page-number" href="/page/46/">46</a><span class="page-number current">47</span><a class="page-number" href="/page/48/">48</a><a class="page-number" href="/page/49/">49</a><span class="space">&hellip;</span><a class="page-number" href="/page/63/">63</a><a class="extend next" rel="next" href="/page/48/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/46/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/45/">45</a><a class="page-number" href="/page/46/">46</a><span class="page-number current">47</span><a class="page-number" href="/page/48/">48</a><a class="page-number" href="/page/49/">49</a><span class="space">&hellip;</span><a class="page-number" href="/page/64/">64</a><a class="extend next" rel="next" href="/page/48/">Next &raquo;</a>
   </nav>
 </section>
 

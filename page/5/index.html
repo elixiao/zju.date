@@ -54,6 +54,217 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-angular-cli-custom-builder" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/angular-cli-custom-builder/" class="article-date">
+  <time datetime="2019-07-27T12:54:44.000Z" itemprop="datePublished">2019-07-27</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/angular-cli-custom-builder/">Angular中自定义webpack参数</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>angular-cli 运行起来之后，发现有个 node 进程始终占用 60% 的 CPU，即使什么也没改，如果文件发生变动之后，又会多出来一个 node 进程，CPU 飙升到 100% 以上。第一个 60% 的进程是 watch 进程，监控文件发生变化的，第二个进程是 re-build 进程，用于文件变化之后进行重新构建。于是猜测 CPU 高的原因是不是因为 Angular 把 node_modules 里面的文件全部 watch 了，如果这样的话，可以通过修改 webpack 的 watchOptions 属性来解决。</p>
+<p>很遗憾的是 angular 从 6 版本开始就不支持 eject 了，并没有提供配置 webpack 的 watchOptions 的地方，这就尴尬了。不过好在 angular 开发团队并没有一棒子打死，好歹留了一个解决入口，那就是自定义 angular builder。</p>
+<p>当我们使用 <code>ng new xxx</code> 创建一个新项目之后，会生成一个 angular.json 文件，里面的内容框架是：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"$schema"</span>: <span class="string">"./node_modules/@angular/cli/lib/config/schema.json"</span>,</span><br><span class="line">  <span class="attr">"version"</span>: <span class="number">1</span>,</span><br><span class="line">  <span class="attr">"newProjectRoot"</span>: <span class="string">"projects"</span>,</span><br><span class="line">  <span class="attr">"projects"</span>: &#123;</span><br><span class="line">    "xxx": &#123;...&#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  "defaultProject": "xxx",</span><br><span class="line">  "schematics": &#123;</span><br><span class="line">    "@schematics/angular:component": &#123;</span><br><span class="line">      "prefix": "app",</span><br><span class="line">      "styleext": "scss"</span><br><span class="line">    &#125;,</span><br><span class="line">    "@schematics/angular:directive": &#123;</span><br><span class="line">      "prefix": "app"</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/angular-cli-custom-builder/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/angular-cli-custom-builder/" data-id="ck1k3sok100024nq4777b68se" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-dockerfile-nodejs" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/dockerfile-nodejs/" class="article-date">
+  <time datetime="2019-07-24T06:04:32.000Z" itemprop="datePublished">2019-07-24</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/dockerfile-nodejs/">制作nodejs的镜像</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>下面的 dockerfile 可以制作一个能够运行 node.js 项目的 docker 镜像：</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">FROM</span> node:<span class="number">12</span>-alpine</span><br><span class="line"><span class="keyword">ENV</span> NODE_ENV=production</span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> mkdir /app</span></span><br><span class="line"><span class="bash">WORKDIR /app</span></span><br><span class="line"><span class="bash">COPY package.json yarn.lock ./</span></span><br><span class="line"><span class="bash">RUN yarn --pure-lockfile --production</span></span><br><span class="line"><span class="bash">COPY . .</span></span><br><span class="line"><span class="bash">CMD [<span class="string">"npm"</span>, <span class="string">"start"</span>]</span></span><br></pre></td></tr></table></figure>
+<p><code>--pure-lockfile</code> 的意思是不生成 <code>yarn.lock</code><br><code>--production</code> 的意思是只安装 dependencies 里的包</p>
+<p><code>COPY . .</code> 中前面一个 <code>.</code> 表示在宿主机上执行 <code>docker build</code> 命令时所在的目录，后面那个 <code>.</code> 的含义是容器通过 WORKDIR 所指定的工作目录，所以 <code>COPY . .</code>  的意思是把当前宿主机目录下所有文件拷贝到容器的工作目录里面。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/dockerfile-nodejs/" data-id="ck8zn3jse0005vtq4jizb8udk" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/">Docker</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-package-json-scripts" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/package-json-scripts/" class="article-date">
+  <time datetime="2019-07-24T01:33:34.000Z" itemprop="datePublished">2019-07-24</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/package-json-scripts/">package.json中的scripts属性</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>npm run 可以执行定义在 package.json 中 scripts 标签里面的命令，例如：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">"scripts": &#123;</span><br><span class="line">    "start": "node ./script.js"</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果运行 <code>npm run start</code> 就是相当于运行 <code>node ./scripts.js</code> 了。从 npm 2.0 版本开始，可以将参数传递给 npm run 命令，语法如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm run &lt;command&gt; [-- &lt;args&gt;]</span><br></pre></td></tr></table></figure>
+<p>也就是说<code>--</code>后面的参数首先会被传递到 npm 命令本身，然后将其转发给脚本。例如：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">"scripts": &#123;</span><br><span class="line">    "gulp": "gulp",</span><br><span class="line">    "server": "node server.js"</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/package-json-scripts/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/package-json-scripts/" data-id="ck1k3sokt000f4nq48wtl8vo6" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-flutter-vs-wxminiapp" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/flutter-vs-wxminiapp/" class="article-date">
+  <time datetime="2019-07-24T01:30:51.000Z" itemprop="datePublished">2019-07-24</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/flutter-vs-wxminiapp/">Flutter和小程序的下拉刷新和上拉加载功能</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Flutter 和 微信小程序都有下拉刷新和上拉加载更多的功能，具体实现如下：</p>
+<h2 id="Flutter"><a href="#Flutter" class="headerlink" title="Flutter"></a>Flutter</h2><ol>
+<li><p>下拉刷新</p>
+<p> 只需要在 ListView 最外层包装一个 RefreshIndicator 即可：</p>
+ <figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">RefreshIndicator(</span><br><span class="line">  onRefresh: () =&gt; _fetchCreditLogs(<span class="keyword">false</span>),</span><br><span class="line">  child: ListView.builder(</span><br><span class="line">    physics: AlwaysScrollableScrollPhysics(),</span><br><span class="line">    controller: _scrollController,</span><br><span class="line">    itemCount: _list.length,</span><br><span class="line">    itemBuilder: (BuildContext context, <span class="built_in">int</span> index) &#123;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">  ),</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<p> 这里需要注意的是：当列表内容未占满整屏的时候，ListView 不会触发滚动，会导致下拉刷新和上拉加载都无效。添加 <code>physics: const AlwaysScrollableScrollPhysics()</code> 之后，能够解决这个问题。</p>
+</li>
+<li><p>上拉加载</p>
+<p> ListView 有一个 ScrollController 属性，专门来控制 ListView 滑动事件，在这里可以根据 ListView 的位置来判断是否滑动到了底部：</p>
+ <figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">_scrollController.addListener(() &#123;</span><br><span class="line">  <span class="keyword">if</span> (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) &#123;</span><br><span class="line">    _getMore();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h2 id="微信小程序"><a href="#微信小程序" class="headerlink" title="微信小程序"></a>微信小程序</h2><ol>
+<li><p>下拉刷新</p>
+<p> 需要在.json文件里设置 <code>&quot;enablePullDownRefresh&quot;: true</code>，当前页设置也可以全局设置；</p>
+ <figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"enablePullDownRefresh"</span>: <span class="literal">true</span> //当前页</span><br><span class="line">    <span class="string">"backgroundTextStyle"</span>: <span class="string">"dark"</span> //顶部显示颜色为深色的三个点</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> 具体的逻辑写在页面的 <code>onPullDownRefresh</code> 函数里面：</p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">onPullDownRefresh: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.fetchArticleList(<span class="literal">false</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> 下拉刷新的时候，顶部会有一个三个点的动效，可以在合适的时候使用 <code>wx.stopPullDownRefresh()</code> 停止该动效。</p>
+</li>
+<li><p>上拉加载</p>
+<p> 上拉加载在小程序里面就更简单了，逻辑直接在 <code>onReachBottom</code> 函数里即可：</p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">onReachBottom: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.fetchArticleList(<span class="literal">true</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/flutter-vs-wxminiapp/" data-id="cka4yu220000p8zq4jmg2z4yn" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flutter/">Flutter</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-nodejs-ssl-unsupported-protocol" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/nodejs-ssl-unsupported-protocol/" class="article-date">
@@ -340,210 +551,10 @@
 
 
   
-    <article id="post-utf16-to-utf8" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/utf16-to-utf8/" class="article-date">
-  <time datetime="2019-04-26T02:12:07.000Z" itemprop="datePublished">2019-04-26</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/utf16-to-utf8/">utf16转换为utf8</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>如何把 utf16 编码的字符串转换为 utf8 呢？</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">utf16to8</span>(<span class="params">str</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> out, i, len, c;</span><br><span class="line"></span><br><span class="line">    out = <span class="string">""</span>;</span><br><span class="line">    len = str.length;</span><br><span class="line">    <span class="keyword">for</span>(i = <span class="number">0</span>; i &lt; len; i++) &#123;</span><br><span class="line">	c = str.charCodeAt(i);</span><br><span class="line">	<span class="keyword">if</span> ((c &gt;= <span class="number">0x0001</span>) &amp;&amp; (c &lt;= <span class="number">0x007F</span>)) &#123;</span><br><span class="line">	    out += str.charAt(i);</span><br><span class="line">	&#125; <span class="keyword">else</span> <span class="keyword">if</span> (c &gt; <span class="number">0x07FF</span>) &#123;</span><br><span class="line">	    out += <span class="built_in">String</span>.fromCharCode(<span class="number">0xE0</span> | ((c &gt;&gt; <span class="number">12</span>) &amp; <span class="number">0x0F</span>));</span><br><span class="line">	    out += <span class="built_in">String</span>.fromCharCode(<span class="number">0x80</span> | ((c &gt;&gt;  <span class="number">6</span>) &amp; <span class="number">0x3F</span>));</span><br><span class="line">	    out += <span class="built_in">String</span>.fromCharCode(<span class="number">0x80</span> | ((c &gt;&gt;  <span class="number">0</span>) &amp; <span class="number">0x3F</span>));</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">	    out += <span class="built_in">String</span>.fromCharCode(<span class="number">0xC0</span> | ((c &gt;&gt;  <span class="number">6</span>) &amp; <span class="number">0x1F</span>));</span><br><span class="line">	    out += <span class="built_in">String</span>.fromCharCode(<span class="number">0x80</span> | ((c &gt;&gt;  <span class="number">0</span>) &amp; <span class="number">0x3F</span>));</span><br><span class="line">	&#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> out;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/utf16-to-utf8/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/utf16-to-utf8/" data-id="cjvrpwbki000gofq4er4oh0bo" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-react-auth" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/react-auth/" class="article-date">
-  <time datetime="2019-04-22T05:30:07.000Z" itemprop="datePublished">2019-04-22</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/react-auth/">react登录认证</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>用 react 框架做项目时，如何实现登录认证呢？即登录成功加载当前页，否则跳转至登录页。可以写一个高阶函数来实现这个目的：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> React, &#123; Component &#125; <span class="keyword">from</span> <span class="string">'react'</span></span><br><span class="line"><span class="keyword">import</span> &#123; connect &#125; <span class="keyword">from</span> <span class="string">'react-redux'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="function"><span class="keyword">function</span>(<span class="params">ComposedComponent</span>) </span>&#123;</span><br><span class="line">  <span class="class"><span class="keyword">class</span> <span class="title">Auth</span> <span class="keyword">extends</span> <span class="title">Component</span> </span>&#123;</span><br><span class="line">    componentWillMount() &#123;</span><br><span class="line">      <span class="keyword">if</span> (!<span class="keyword">this</span>.props.auth.authorized) &#123;</span><br><span class="line">        <span class="keyword">this</span>.props.history.push(<span class="string">'/login'</span>)</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    componentWillUpdate(nextProps) &#123;</span><br><span class="line">      <span class="keyword">if</span> (!nextProps.auth.authorized) &#123;</span><br><span class="line">        <span class="keyword">this</span>.props.history.push(<span class="string">'/login'</span>)</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    render() &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">ComposedComponent</span> &#123;<span class="attr">...this.props</span>&#125; /&gt;</span></span></span><br><span class="line"><span class="xml">    &#125;</span></span><br><span class="line"><span class="xml">  &#125;</span></span><br><span class="line"><span class="xml"></span></span><br><span class="line"><span class="xml">  const mapStateToProps = state =&gt; (&#123;</span></span><br><span class="line"><span class="xml">    auth: state.auth</span></span><br><span class="line"><span class="xml">  &#125;)</span></span><br><span class="line"><span class="xml"></span></span><br><span class="line"><span class="xml">  return connect(mapStateToProps)(Auth)</span></span><br><span class="line"><span class="xml">&#125;</span></span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/react-auth/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/react-auth/" data-id="cjw53wyav000lm5q40f7p14on" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-adb-notes" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/adb-notes/" class="article-date">
-  <time datetime="2019-04-10T03:44:45.000Z" itemprop="datePublished">2019-04-10</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/adb-notes/">adb学习笔记</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>adb 相关命令可以方便我们在电脑上安装和调试apk，在此学习和记录如下：</p>
-<p>查看所有设备：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">adb devices</span><br></pre></td></tr></table></figure>
-<p>安装apk到设备：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">adb install xxx.apk</span><br><span class="line">adb -s emulator-5555 install xxx.apk <span class="comment"># 指定序列号安装</span></span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>如果有多个可用设备，但只有一个是模拟器，可以使用 <code>-e</code> 选项将命令发送至该模拟器。<br>如果有多个设备，但只连接了一个硬件设备，可以使用 <code>-d</code> 选项将命令发送至该硬件设备。</p>
-</blockquote>
-<p>进入到 shell：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">adb -s emulator-5554 shell</span><br><span class="line">run-as app.package.name <span class="comment"># 例如 com.example.demo</span></span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/adb-notes/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/adb-notes/" data-id="ck8kdhqkz0001d6q4ce0eztsu" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/">Android</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-package-json-resolutions" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/package-json-resolutions/" class="article-date">
-  <time datetime="2019-04-04T15:04:37.000Z" itemprop="datePublished">2019-04-04</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/package-json-resolutions/">package.json中的resolution</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>开发过程中经常会遇到下面两个场景：</p>
-<ol>
-<li>项目依赖一个不常更新的包，但这个包又依赖另一个包，而这个包由于各种原因需要立即升级，例如紧急安全更新等。</li>
-<li>项目的直接依赖定义了过于宽泛的子依赖版本范围，恰巧这其中的某个版本有问题，需要把子依赖限制在某些正常工作的版本范围里。</li>
-</ol>
-<p>这个时候就很头疼，因为项目 package.json 不能指定依赖的依赖的版本，它是在依赖的 package.json 中指定的，要么坐等作者升级，要么手动编辑 package-lock.json。如果用 yarn 作为包管理工具的话，就好办了，只需要在 package.json 文件里添加 resolutions 字段，就能覆盖版本定义，例如：</p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"name"</span>: <span class="string">"project"</span>,</span><br><span class="line">  <span class="attr">"version"</span>: <span class="string">"1.0.0"</span>,</span><br><span class="line">  <span class="attr">"dependencies"</span>: &#123;</span><br><span class="line">    <span class="attr">"left-pad"</span>: <span class="string">"1.0.0"</span>,</span><br><span class="line">    <span class="attr">"c"</span>: <span class="string">"file:../c-1"</span>,</span><br><span class="line">    <span class="attr">"d2"</span>: <span class="string">"file:../d2-1"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">"resolutions"</span>: &#123;</span><br><span class="line">    <span class="attr">"d2/left-pad"</span>: <span class="string">"1.1.1"</span>,</span><br><span class="line">    <span class="attr">"c/**/left-pad"</span>: <span class="string">"1.1.2"</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>意思是说可以直接指定依赖 d2 所依赖的 left-pad 版本为 1.1.1。可惜 npm 官方并不支持这个参数，不过 github 上有一个<a href="https://github.com/rogeriochaves/npm-force-resolutions" target="_blank" rel="noopener">第三方库</a>支持了这个功能。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/package-json-resolutions/" data-id="ck10e5isr0001joq49lmbtfph" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
 
 
   <nav id="page-nav">
-    <a class="extend prev" rel="prev" href="/page/4/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/63/">63</a><a class="extend next" rel="next" href="/page/6/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/4/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/64/">64</a><a class="extend next" rel="next" href="/page/6/">Next &raquo;</a>
   </nav>
 </section>
 

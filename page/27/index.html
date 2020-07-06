@@ -54,6 +54,227 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-js-base64" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/js-base64/" class="article-date">
+  <time datetime="2018-01-18T09:08:45.000Z" itemprop="datePublished">2018-01-18</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/js-base64/">JavaScript 转换 base64</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>下面的代码可以将字符串转换为 base64，也可以将 base64 还原为字符串：</p>
+<ol>
+<li><p>浏览器端</p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> str = <span class="string">'Hello World!'</span></span><br><span class="line"><span class="keyword">const</span> encodedString = btoa(str)</span><br><span class="line"><span class="built_in">console</span>.log(encodedString) <span class="comment">// 输出: "SGVsbG8gV29ybGQh"</span></span><br><span class="line"><span class="keyword">const</span> decodedString = atob(encodedString)</span><br><span class="line"><span class="built_in">console</span>.log(decodedString) <span class="comment">// 输出: "Hello World!"</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>nodejs端</p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> str = <span class="string">'Hello World!'</span></span><br><span class="line"><span class="keyword">const</span> encodedString = Buffer.from(str).toString(<span class="string">'base64'</span>)</span><br><span class="line"><span class="built_in">console</span>.log(encodedString) <span class="comment">// 输出: "SGVsbG8gV29ybGQh"</span></span><br><span class="line"><span class="keyword">const</span> decodedString = Buffer.from(encodedString, <span class="string">'base64'</span>).toString(<span class="string">'ascii'</span>)</span><br><span class="line"><span class="built_in">console</span>.log(decodedString) <span class="comment">// 输出: "Hello World!"</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>跨平台通用函数</p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> Base64=&#123;<span class="attr">_keyStr</span>:<span class="string">"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/="</span>,<span class="attr">encode</span>:<span class="function"><span class="keyword">function</span>(<span class="params">e</span>)</span>&#123;<span class="keyword">var</span> t=<span class="string">""</span>;<span class="keyword">var</span> n,r,i,s,o,u,a;<span class="keyword">var</span> f=<span class="number">0</span>;e=Base64._utf8_encode(e);<span class="keyword">while</span>(f&lt;e.length)&#123;n=e.charCodeAt(f++);r=e.charCodeAt(f++);i=e.charCodeAt(f++);s=n&gt;&gt;<span class="number">2</span>;o=(n&amp;<span class="number">3</span>)&lt;&lt;<span class="number">4</span>|r&gt;&gt;<span class="number">4</span>;u=(r&amp;<span class="number">15</span>)&lt;&lt;<span class="number">2</span>|i&gt;&gt;<span class="number">6</span>;a=i&amp;<span class="number">63</span>;<span class="keyword">if</span>(<span class="built_in">isNaN</span>(r))&#123;u=a=<span class="number">64</span>&#125;<span class="keyword">else</span> <span class="keyword">if</span>(<span class="built_in">isNaN</span>(i))&#123;a=<span class="number">64</span>&#125;t=t+<span class="keyword">this</span>._keyStr.charAt(s)+<span class="keyword">this</span>._keyStr.charAt(o)+<span class="keyword">this</span>._keyStr.charAt(u)+<span class="keyword">this</span>._keyStr.charAt(a)&#125;<span class="keyword">return</span> t&#125;,<span class="attr">decode</span>:<span class="function"><span class="keyword">function</span>(<span class="params">e</span>)</span>&#123;<span class="keyword">var</span> t=<span class="string">""</span>;<span class="keyword">var</span> n,r,i;<span class="keyword">var</span> s,o,u,a;<span class="keyword">var</span> f=<span class="number">0</span>;e=e.replace(<span class="regexp">/[^A-Za-z0-9+/=]/g</span>,<span class="string">""</span>);<span class="keyword">while</span>(f&lt;e.length)&#123;s=<span class="keyword">this</span>._keyStr.indexOf(e.charAt(f++));o=<span class="keyword">this</span>._keyStr.indexOf(e.charAt(f++));u=<span class="keyword">this</span>._keyStr.indexOf(e.charAt(f++));a=<span class="keyword">this</span>._keyStr.indexOf(e.charAt(f++));n=s&lt;&lt;<span class="number">2</span>|o&gt;&gt;<span class="number">4</span>;r=(o&amp;<span class="number">15</span>)&lt;&lt;<span class="number">4</span>|u&gt;&gt;<span class="number">2</span>;i=(u&amp;<span class="number">3</span>)&lt;&lt;<span class="number">6</span>|a;t=t+<span class="built_in">String</span>.fromCharCode(n);<span class="keyword">if</span>(u!=<span class="number">64</span>)&#123;t=t+<span class="built_in">String</span>.fromCharCode(r)&#125;<span class="keyword">if</span>(a!=<span class="number">64</span>)&#123;t=t+<span class="built_in">String</span>.fromCharCode(i)&#125;&#125;t=Base64._utf8_decode(t);<span class="keyword">return</span> t&#125;,<span class="attr">_utf8_encode</span>:<span class="function"><span class="keyword">function</span>(<span class="params">e</span>)</span>&#123;e=e.replace(<span class="regexp">/rn/g</span>,<span class="string">"n"</span>);<span class="keyword">var</span> t=<span class="string">""</span>;<span class="keyword">for</span>(<span class="keyword">var</span> n=<span class="number">0</span>;n&lt;e.length;n++)&#123;<span class="keyword">var</span> r=e.charCodeAt(n);<span class="keyword">if</span>(r&lt;<span class="number">128</span>)&#123;t+=<span class="built_in">String</span>.fromCharCode(r)&#125;<span class="keyword">else</span> <span class="keyword">if</span>(r&gt;<span class="number">127</span>&amp;&amp;r&lt;<span class="number">2048</span>)&#123;t+=<span class="built_in">String</span>.fromCharCode(r&gt;&gt;<span class="number">6</span>|<span class="number">192</span>);t+=<span class="built_in">String</span>.fromCharCode(r&amp;<span class="number">63</span>|<span class="number">128</span>)&#125;<span class="keyword">else</span>&#123;t+=<span class="built_in">String</span>.fromCharCode(r&gt;&gt;<span class="number">12</span>|<span class="number">224</span>);t+=<span class="built_in">String</span>.fromCharCode(r&gt;&gt;<span class="number">6</span>&amp;<span class="number">63</span>|<span class="number">128</span>);t+=<span class="built_in">String</span>.fromCharCode(r&amp;<span class="number">63</span>|<span class="number">128</span>)&#125;&#125;<span class="keyword">return</span> t&#125;,<span class="attr">_utf8_decode</span>:<span class="function"><span class="keyword">function</span>(<span class="params">e</span>)</span>&#123;<span class="keyword">var</span> t=<span class="string">""</span>;<span class="keyword">var</span> n=<span class="number">0</span>;<span class="keyword">var</span> r=c1=c2=<span class="number">0</span>;<span class="keyword">while</span>(n&lt;e.length)&#123;r=e.charCodeAt(n);<span class="keyword">if</span>(r&lt;<span class="number">128</span>)&#123;t+=<span class="built_in">String</span>.fromCharCode(r);n++&#125;<span class="keyword">else</span> <span class="keyword">if</span>(r&gt;<span class="number">191</span>&amp;&amp;r&lt;<span class="number">224</span>)&#123;c2=e.charCodeAt(n+<span class="number">1</span>);t+=<span class="built_in">String</span>.fromCharCode((r&amp;<span class="number">31</span>)&lt;&lt;<span class="number">6</span>|c2&amp;<span class="number">63</span>);n+=<span class="number">2</span>&#125;<span class="keyword">else</span>&#123;c2=e.charCodeAt(n+<span class="number">1</span>);c3=e.charCodeAt(n+<span class="number">2</span>);t+=<span class="built_in">String</span>.fromCharCode((r&amp;<span class="number">15</span>)&lt;&lt;<span class="number">12</span>|(c2&amp;<span class="number">63</span>)&lt;&lt;<span class="number">6</span>|c3&amp;<span class="number">63</span>);n+=<span class="number">3</span>&#125;&#125;<span class="keyword">return</span> t&#125;&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> str = <span class="string">'Hello World!'</span></span><br><span class="line"><span class="keyword">const</span> encodedString = Base64.encode(str)</span><br><span class="line"><span class="built_in">console</span>.log(encodedString) <span class="comment">// 输出: "SGVsbG8gV29ybGQh"</span></span><br><span class="line"><span class="keyword">const</span> decodedString = Base64.decode(encodedString)</span><br><span class="line"><span class="built_in">console</span>.log(decodedString) <span class="comment">// 输出: "Hello World!"</span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/js-base64/" data-id="cjhq778nw00b6izq3u9uxbwgb" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-js-get-function-name-inside-function" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/js-get-function-name-inside-function/" class="article-date">
+  <time datetime="2018-01-18T05:33:33.000Z" itemprop="datePublished">2018-01-18</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/js-get-function-name-inside-function/">js 在函数内部获取函数名称</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>如何在函数内部获取当前函数的名称呢？</p>
+<p>如果不是 strict 模式，可以使用：<code>arguments.callee</code>.</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">foo</span>(<span class="params"></span>) </span>&#123; </span><br><span class="line">    <span class="built_in">console</span>.log(<span class="built_in">arguments</span>.callee.name)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/js-get-function-name-inside-function/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/js-get-function-name-inside-function/" data-id="cjssqvctu002d8uq433yozp2i" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-package-json-dependencies" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/package-json-dependencies/" class="article-date">
+  <time datetime="2018-01-18T05:17:36.000Z" itemprop="datePublished">2018-01-18</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/package-json-dependencies/">package.json中的各种依赖</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>package.json 中有各种 dependencies ：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"devDependencies"</span>: &#123;</span><br><span class="line">    <span class="attr">"webpack"</span>: <span class="string">"^3.6.0"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">"dependencies"</span>: &#123;</span><br><span class="line">    <span class="attr">"jquery"</span>: <span class="string">"^3.4.1"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">"peerDependencies"</span>: &#123;</span><br><span class="line">    <span class="attr">"gulp"</span>: <span class="string">"3.x"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">"optionalDependencies"</span>: &#123;</span><br><span class="line">    <span class="attr">"usb"</span>: <span class="string">"*"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">"bundledDependencies"</span>: [</span><br><span class="line">    <span class="string">"yargs"</span></span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>他们的关系是：</p>
+<table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>中文翻译</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>dependencies</td>
+<td>业务依赖</td>
+<td>执行业务所必需的包</td>
+</tr>
+<tr>
+<td>devDependencies</td>
+<td>开发环境依赖</td>
+<td>里面的包只用于开发环境，通常是单元测试或者打包工具等</td>
+</tr>
+<tr>
+<td>peerDependencies</td>
+<td>同伴依赖</td>
+<td>指定当前包兼容的宿主版本</td>
+</tr>
+<tr>
+<td>optionalDependencies</td>
+<td>可选依赖</td>
+<td>如果有一些依赖包即使安装失败，项目仍然能够运行或者希望<code>npm</code>继续运行。（需要注意<code>optionalDependencies</code>会覆盖<code>dependencies</code>中的同名依赖包，所以不要在两个地方都写）</td>
+</tr>
+<tr>
+<td>bundledDependencies</td>
+<td>打包依赖</td>
+<td>执行打包命令<code>npm pack</code>, 在生成的<code>tgz</code>包中将包含数组里面的依赖。（ 需要注意这些包必须先在<code>devDependencies</code>或<code>dependencies</code>声明过，否则打包会报错）</td>
+</tr>
+</tbody>
+</table>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/package-json-dependencies/" data-id="ck10e5isv0003joq47g8yt6fy" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-sqlite-in-iphone-simulator" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/sqlite-in-iphone-simulator/" class="article-date">
+  <time datetime="2018-01-17T01:26:38.000Z" itemprop="datePublished">2018-01-17</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/sqlite-in-iphone-simulator/">iPhone模拟器中sqlite存储位置</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在移动端使用了 sqlite 数据库，那如何在 iPhone 手机模拟器上找到这个 sqlite 数据库存储的位置呢？在类似下面这个路径里面：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/Users/lx/Library/Developer/CoreSimulator/Devices/AFF42019-F6BC-4F96-9F65-6FA42E2E95DB/data/Containers/Data/Application/0470F5FC-0043-46B7-A21C-A431A59ED714/Documents/yourdatabase.extension</span><br></pre></td></tr></table></figure>
+<p><a href="https://stackoverflow.com/questions/4644158/how-to-view-the-data-in-sqlite-file-running-in-iphone-application/4644189#4644189" target="_blank" rel="noopener">参考链接</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/sqlite-in-iphone-simulator/" data-id="cka4yu22h00178zq46h05bgqw" class="article-share-link">Share</a>
+     
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-js-random-id" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/js-random-id/" class="article-date">
@@ -347,227 +568,10 @@
 
 
   
-    <article id="post-docker-network" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/docker-network/" class="article-date">
-  <time datetime="2018-01-11T14:50:16.000Z" itemprop="datePublished">2018-01-11</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/docker-network/">Docker网络笔记</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <h2 id="Docker中的网络"><a href="#Docker中的网络" class="headerlink" title="Docker中的网络"></a>Docker中的网络</h2><p>安装 Docker 后会自动创建 3 个网络。可以使用 <strong>docker network ls</strong> 命令列出这些网络：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ docker network ls </span><br><span class="line">NETWORK ID          NAME                DRIVER </span><br><span class="line">7fca4eb8c647        bridge              bridge </span><br><span class="line">9f904ee27bf5        none                null </span><br><span class="line">cf03ee007fb4        host                host</span><br></pre></td></tr></table></figure>
-<p>Docker 会为每个节点自动创建3个网络：</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:left">网络名称</th>
-<th style="text-align:left">作用</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">bridge</td>
-<td style="text-align:left">Docker安装时默认安装的docker0网络，若未指定，则容器默认连接此网络</td>
-</tr>
-<tr>
-<td style="text-align:left">none</td>
-<td style="text-align:left">容器定制的网络栈</td>
-</tr>
-<tr>
-<td style="text-align:left">host</td>
-<td style="text-align:left">在宿主网络栈上添加一个容器，容器中的网络配置和宿主机一样</td>
-</tr>
-</tbody>
-</table>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/docker-network/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/docker-network/" data-id="ck1k3sok900094nq4ihwiq97j" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/">Docker</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-ssh-jump-agent" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/ssh-jump-agent/" class="article-date">
-  <time datetime="2018-01-11T14:50:03.000Z" itemprop="datePublished">2018-01-11</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/ssh-jump-agent/">ssh 跳板机</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>访问公司的内网服务器，一般会设置一个跳板机，先从跳板机做一个ssh跳转，这个跳板机是部署在外网的服务器，而且需要通过证书登录。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">本机ssh-&gt;跳板机-&gt;目标机器</span><br></pre></td></tr></table></figure>
-<p>举个例子：iptables 限制了 SSH 端口白名单， 例如指定 IP 才能登陆，或者没有开通VPN权限，无法直接登录到服务器。这个时候可以用一台机器做为跳板登陆到指定的机器去处理问题：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">+-----+             +-----+             +-----+</span><br><span class="line">|     |             |     |             |     |</span><br><span class="line">|  A  +-----------&gt; |  B  +-----------&gt; |  C  |</span><br><span class="line">|     |             |     |             |     |</span><br><span class="line">+-----+             +-----+             +-----+</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/ssh-jump-agent/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/ssh-jump-agent/" data-id="cjw53wyb4000um5q4x49zxn1e" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-docker-compose-yaml-override" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/docker-compose-yaml-override/" class="article-date">
-  <time datetime="2018-01-11T14:37:07.000Z" itemprop="datePublished">2018-01-11</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/docker-compose-yaml-override/">docker compose 覆盖</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><code>docker-compose.override.yaml</code> 文件可以覆盖 <code>docker-compose.yaml</code>，详细规则如下：</p>
-<ol>
-<li><p><code>build</code> 和 <code>image</code> 是互斥的，以覆盖文件为准。</p>
-</li>
-<li><p>单值的选项，例如 <code>image</code>, <code>command</code> 和 <code>mem_limit</code>, 以覆盖文件为准。</p>
- <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># original service</span></span><br><span class="line"><span class="attr">command:</span> <span class="string">python</span> <span class="string">app.py</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># local service</span></span><br><span class="line"><span class="attr">command:</span> <span class="string">python</span> <span class="string">otherapp.py</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># result</span></span><br><span class="line"><span class="attr">command:</span> <span class="string">python</span> <span class="string">otherapp.py</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>多值的选项，例如： <code>ports</code>, <code>expose</code>, <code>external_links</code>, <code>dns</code>, <code>dns_search</code>, 和 <code>tmpfs</code>, 会将值合并。</p>
- <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># original service</span></span><br><span class="line"><span class="attr">expose:</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">"3000"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># local service</span></span><br><span class="line"><span class="attr">expose:</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">"4000"</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">"5000"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># result</span></span><br><span class="line"><span class="attr">expose:</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">"3000"</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">"4000"</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">"5000"</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>有键值对的 <code>environment</code>, <code>labels</code>, <code>volumes</code> and <code>devices</code>, 也会合并，但是当键相同的时候以覆盖文件为准。</p>
- <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># original service</span></span><br><span class="line"><span class="attr">environment:</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">FOO=original</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">BAR=original</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># local service</span></span><br><span class="line"><span class="attr">environment:</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">BAR=local</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">BAZ=local</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># result</span></span><br><span class="line"><span class="attr">environment:</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">FOO=original</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">BAR=local</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">BAZ=local</span></span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/docker-compose-yaml-override/" data-id="cjhq778jh005mizq3bnqi2zeg" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/">Docker</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-docker-compose-env" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/docker-compose-env/" class="article-date">
-  <time datetime="2018-01-11T14:35:23.000Z" itemprop="datePublished">2018-01-11</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/docker-compose-env/">docker-compose 环境变量</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>docker-compose 的 yaml 文件里面用环境变量只适用于 value，key 不能用，例如：</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">db:</span></span><br><span class="line"><span class="attr">  image:</span> <span class="string">"postgres:$&#123;POSTGRES_VERSION&#125;"</span></span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/docker-compose-env/" data-id="cjhq778jf005hizq3i3amfjw4" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/">Docker</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
 
 
   <nav id="page-nav">
-    <a class="extend prev" rel="prev" href="/page/26/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/25/">25</a><a class="page-number" href="/page/26/">26</a><span class="page-number current">27</span><a class="page-number" href="/page/28/">28</a><a class="page-number" href="/page/29/">29</a><span class="space">&hellip;</span><a class="page-number" href="/page/63/">63</a><a class="extend next" rel="next" href="/page/28/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/26/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/25/">25</a><a class="page-number" href="/page/26/">26</a><span class="page-number current">27</span><a class="page-number" href="/page/28/">28</a><a class="page-number" href="/page/29/">29</a><span class="space">&hellip;</span><a class="page-number" href="/page/64/">64</a><a class="extend next" rel="next" href="/page/28/">Next &raquo;</a>
   </nav>
 </section>
 
