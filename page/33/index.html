@@ -54,6 +54,60 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-mongoose-2dsphere" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/mongoose-2dsphere/" class="article-date">
+  <time datetime="2017-11-15T05:36:07.000Z" itemprop="datePublished">2017-11-15</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/mongoose-2dsphere/">mongodb 经纬度</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <ol>
+<li><p>创建 Schema</p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> mongoose = <span class="built_in">require</span>(<span class="string">'mongoose'</span>);</span><br><span class="line"><span class="keyword">const</span> shopSchema = <span class="keyword">new</span> mongoose.Schema(&#123;</span><br><span class="line"> name: <span class="built_in">String</span>,</span><br><span class="line"> price: <span class="built_in">Number</span>,</span><br><span class="line"> location: &#123;</span><br><span class="line">     type: [ <span class="built_in">Number</span> ],</span><br><span class="line">     index: &#123;</span><br><span class="line">         type: <span class="string">'2dsphere'</span>,</span><br><span class="line">         sparse: <span class="literal">true</span></span><br><span class="line">     &#125;</span><br><span class="line"> &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>创建 Model</p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> shopModel = mongoose.model(<span class="string">'Shops'</span>, shopSchema)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>插入数据</p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line"> <span class="string">"name"</span>:<span class="string">"名字"</span>,</span><br><span class="line"> <span class="string">"price"</span>:<span class="number">12</span>,</span><br><span class="line"> <span class="string">"location"</span>:[经度，纬度]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看附近的数据</p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">shopModel.find( &#123;</span><br><span class="line">     <span class="string">'location'</span>: &#123;</span><br><span class="line">         $near: &#123;</span><br><span class="line">                 $geometry: &#123;</span><br><span class="line">                   type: <span class="string">'Point'</span>,</span><br><span class="line">                   coordinates: [ <span class="built_in">parseFloat</span>(args.longitude), <span class="built_in">parseFloat</span>(args.latitude) ]</span><br><span class="line">                 &#125;,</span><br><span class="line">                 $maxDistance: <span class="number">100</span>   <span class="comment">//100米范围内</span></span><br><span class="line">               &#125;</span><br><span class="line">             &#125;</span><br><span class="line">     &#125;</span><br><span class="line"> &#125;).limit(<span class="number">10</span>).skip(<span class="number">0</span>).lean().exec()</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/mongoose-2dsphere/" data-id="ckckn9oey00odrvser1ep5hb4" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-url-reserved-characters" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/url-reserved-characters/" class="article-date">
@@ -136,7 +190,7 @@
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/url-reserved-characters/" data-id="cjxai2njk000jjkq4b2m1y8kb" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/url-reserved-characters/" data-id="ckckn9okl00wprvsefv6zzc0q" class="article-share-link">Share</a>
      
     </footer>
   </div>
@@ -184,7 +238,7 @@
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/upgrade-mysql/" data-id="cjhq778us00isizq36u85c9if" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/upgrade-mysql/" data-id="ckckn9okm00wrrvsesq0e9npo" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
 
@@ -236,7 +290,7 @@
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/matrix-params/" data-id="cjxai2nj6000fjkq44qsfnt0w" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/matrix-params/" data-id="ckckn9oe500n5rvse1vc91m91" class="article-share-link">Share</a>
      
     </footer>
   </div>
@@ -322,7 +376,7 @@
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/angular-resolve-vs-data/" data-id="cjssqvcrj000b8uq45nqy8llv" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/angular-resolve-vs-data/" data-id="ckckn9o1g004vrvset738uekc" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Angular/">Angular</a></li></ul>
 
@@ -366,7 +420,7 @@
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/angular-random-color/" data-id="cjhq778hi0033izq3pp8w373m" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/angular-random-color/" data-id="ckckn9o1e004trvserkyns639" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
@@ -419,7 +473,7 @@
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/mongodb-aggregation-trap/" data-id="cju5m2z630007qqq4khtavdm6" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/mongodb-aggregation-trap/" data-id="ckckn9oee00njrvse3ms0y41c" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MongoDB/">MongoDB</a></li></ul>
 
@@ -476,7 +530,7 @@
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/centos-releaserver-and-basearch/" data-id="cjhq778i90045izq3f1k6ja25" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/centos-releaserver-and-basearch/" data-id="ckckn9o2r006trvsesu1v57hm" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
 
@@ -524,7 +578,7 @@
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/angular-cli-notes/" data-id="cjhq778h5002jizq31zx2bl15" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/angular-cli-notes/" data-id="ckckn9o0b003drvse2ct3je8m" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
@@ -574,57 +628,9 @@
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/import-from-vs-import-as/" data-id="cjhq778mi009eizq30cm6njmq" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/import-from-vs-import-as/" data-id="ckckn9o9000horvsez6awasja" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-mysql-join" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/mysql-join/" class="article-date">
-  <time datetime="2017-09-16T05:46:32.000Z" itemprop="datePublished">2017-09-16</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/mysql-join/">MySQL join 查询</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>现有 Student 类保存学生的姓名 (username) 和国籍 (location)，那么在数据库里面这两张表的存储结构为：</p>
-<p>Student类：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">id    location     username</span><br><span class="line">34      Australia    krkrff</span><br><span class="line">64      india        dieiei</span><br><span class="line">574     pakistan     frkfrf</span><br><span class="line">253     japan        frfffrk</span><br><span class="line">633     india        ifirf</span><br><span class="line">26      Australia    riiri</span><br><span class="line">63      Australia    frffjrr</span><br></pre></td></tr></table></figure>
-<p>这样每添加一个学生就增加一行记录。中文系的学生都要写论文，然后又建立了一个Essay类，用于保存学生写的文章话题(topic)，在数据库里面这张表的存储结构为：</p>
-<p>Essay类：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">id   student_id   topic</span><br><span class="line">1     34          love</span><br><span class="line">3     64          friendship</span><br><span class="line">35    574         romance</span><br><span class="line">32    253         games</span><br><span class="line">95    633         football</span><br><span class="line">54    26          cricket</span><br><span class="line">648    63         music</span><br></pre></td></tr></table></figure>
-<p>这样只要有学生写了一篇文章就增加一条记录。现有这样的需求：来自 Australia 的同学都写过哪些话题？查询语句为：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select e.topic from Essay e join Student s on s.id = e.student_id and s.location = &apos;Australia&apos;</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/mysql-join/" data-id="cjhq778qd00e8izq3wyxuavrt" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
 
     </footer>
   </div>

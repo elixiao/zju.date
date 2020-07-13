@@ -5,18 +5,18 @@
   
   <title>zju.date</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="JavaScript中的this和其他语言中的this不太一样，总共分为4种情况。 在全局环境下使用thisJavaScript中有一个在浏览器中就是window对象，在Node.js里叫全局对象，因此在全局代码下this就指的是这个全局对象。 使用new操作符创建的对象里面的this所有的JavaScript函数都可以使用new操作符来创建，此时this就代表新创建的这个对象，例如： 123fu">
+  <meta name="description" content="JavaScript 中的 this 有如下 5 种使用场景：  箭头函数 () =&amp;gt; {} new 调用构造函数 new F() 显式绑定 call/apply/bind 隐式绑定 obj.foo() 默认绑定 foo()  箭头函数中的this箭头函数没有自己的执行上下文，内部的 this 代表函数创建时候所在的词法作用域中的 this，与调用方式无关，例如： 123456789cons">
 <meta name="keywords" content="JavaScript">
 <meta property="og:type" content="article">
 <meta property="og:title" content="JavaScript中的this">
 <meta property="og:url" content="https://zju.date/javascript-this/index.html">
 <meta property="og:site_name" content=".">
-<meta property="og:description" content="JavaScript中的this和其他语言中的this不太一样，总共分为4种情况。 在全局环境下使用thisJavaScript中有一个在浏览器中就是window对象，在Node.js里叫全局对象，因此在全局代码下this就指的是这个全局对象。 使用new操作符创建的对象里面的this所有的JavaScript函数都可以使用new操作符来创建，此时this就代表新创建的这个对象，例如： 123fu">
+<meta property="og:description" content="JavaScript 中的 this 有如下 5 种使用场景：  箭头函数 () =&amp;gt; {} new 调用构造函数 new F() 显式绑定 call/apply/bind 隐式绑定 obj.foo() 默认绑定 foo()  箭头函数中的this箭头函数没有自己的执行上下文，内部的 this 代表函数创建时候所在的词法作用域中的 this，与调用方式无关，例如： 123456789cons">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2020-05-28T07:11:51.559Z">
+<meta property="og:updated_time" content="2020-07-12T15:57:16.851Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="JavaScript中的this">
-<meta name="twitter:description" content="JavaScript中的this和其他语言中的this不太一样，总共分为4种情况。 在全局环境下使用thisJavaScript中有一个在浏览器中就是window对象，在Node.js里叫全局对象，因此在全局代码下this就指的是这个全局对象。 使用new操作符创建的对象里面的this所有的JavaScript函数都可以使用new操作符来创建，此时this就代表新创建的这个对象，例如： 123fu">
+<meta name="twitter:description" content="JavaScript 中的 this 有如下 5 种使用场景：  箭头函数 () =&amp;gt; {} new 调用构造函数 new F() 显式绑定 call/apply/bind 隐式绑定 obj.foo() 默认绑定 foo()  箭头函数中的this箭头函数没有自己的执行上下文，内部的 this 代表函数创建时候所在的词法作用域中的 this，与调用方式无关，例如： 123456789cons">
   
     <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
   
@@ -82,44 +82,59 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <p>JavaScript中的this和其他语言中的this不太一样，总共分为4种情况。</p>
-<h2 id="在全局环境下使用this"><a href="#在全局环境下使用this" class="headerlink" title="在全局环境下使用this"></a>在全局环境下使用this</h2><p>JavaScript中有一个在浏览器中就是window对象，在Node.js里叫全局对象，因此在全局代码下this就指的是这个全局对象。</p>
-<h2 id="使用new操作符创建的对象里面的this"><a href="#使用new操作符创建的对象里面的this" class="headerlink" title="使用new操作符创建的对象里面的this"></a>使用new操作符创建的对象里面的this</h2><p>所有的JavaScript函数都可以使用new操作符来创建，此时this就代表新创建的这个对象，例如：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">F</span> (<span class="params">v</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">this</span>.val = v;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        <p>JavaScript 中的 this 有如下 5 种使用场景：</p>
+<ol>
+<li>箭头函数 <code>() =&gt; {}</code></li>
+<li>new 调用构造函数 <code>new F()</code></li>
+<li>显式绑定 <code>call/apply/bind</code></li>
+<li>隐式绑定 <code>obj.foo()</code></li>
+<li>默认绑定 <code>foo()</code></li>
+</ol>
+<h2 id="箭头函数中的this"><a href="#箭头函数中的this" class="headerlink" title="箭头函数中的this"></a>箭头函数中的this</h2><p>箭头函数没有自己的执行上下文，内部的 this 代表函数创建时候所在的词法作用域中的 this，与调用方式无关，例如：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> obj = &#123;</span><br><span class="line">  name: <span class="string">'david'</span>,</span><br><span class="line">  say: <span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="keyword">this</span>.name)</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;</span><br><span class="line">obj.say()</span><br><span class="line"><span class="keyword">const</span> say = obj.say</span><br><span class="line">say()</span><br></pre></td></tr></table></figure>
+<p>由于是箭头函数，所以 this 就是根据词法作用域往上查找，找到了全局作用域，所以打印两个 <code>undefined</code>，而如果把箭头函数改成普通的 function，那么将会打印一个 <code>david</code> 一个 <code>undefined</code>。</p>
+<blockquote>
+<p>总结：箭头函数的 this 与如何调用无关，只与创建时候的词法作用域有关。</p>
+</blockquote>
+<h2 id="构造函数中的this"><a href="#构造函数中的this" class="headerlink" title="构造函数中的this"></a>构造函数中的this</h2><p>所有的 JavaScript 函数都可以使用 new 操作符来创建新对象，此时该函数被称为构造函数。构造函数中的 this 就代表被创建的这个对象，例如：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Person</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">this</span>.age = <span class="number">10</span></span><br><span class="line">  setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="keyword">this</span>.age) </span><br><span class="line">  &#125;, <span class="number">1000</span>)</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> p = <span class="keyword">new</span> Person()</span><br></pre></td></tr></table></figure>
 <a id="more"></a>
-<p>这是一个普通的函数，如果使用new来创建：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> f = <span class="keyword">new</span> F(<span class="string">"Woohoo!"</span>);</span><br><span class="line"><span class="built_in">console</span>.log(f.val); <span class="comment">// Woohoo!</span></span><br><span class="line"><span class="built_in">console</span>.log(val); <span class="comment">// ReferenceError</span></span><br></pre></td></tr></table></figure>
-<p>由于this代表新创建的对象，所以全局对象里面并没有val属性。</p>
-<p>那如果不使用 new 创建，直接在全局环境下调用 F 方法的话：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> f = F(<span class="string">"Oops!"</span>);</span><br><span class="line"><span class="built_in">console</span>.log(val); <span class="comment">// Oops!</span></span><br><span class="line"><span class="built_in">console</span>.log(f.val); <span class="comment">// ReferenceError</span></span><br></pre></td></tr></table></figure>
-<p>这个时候函数里面的this就是指全局对象。</p>
-<h2 id="在对象的函数内使用this"><a href="#在对象的函数内使用this" class="headerlink" title="在对象的函数内使用this"></a>在对象的函数内使用this</h2><p>例如obj.foo()或obj[“foo”]，这时this代表这个函数的父对象。例如：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> counter = &#123;</span><br><span class="line">  val: <span class="number">0</span>,</span><br><span class="line">  increment: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.val += <span class="number">1</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line">counter.increment();</span><br><span class="line"><span class="built_in">console</span>.log(counter.val); <span class="comment">// 1</span></span><br><span class="line">counter[<span class="string">'increment'</span>]();</span><br><span class="line"><span class="built_in">console</span>.log(counter.val); <span class="comment">// 2</span></span><br></pre></td></tr></table></figure>
-<p>通过counter来调用increment函数，那么this就指的是counter。但是如果使用下面的写法：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> inc = counter.increment;</span><br><span class="line">inc();</span><br><span class="line"><span class="built_in">console</span>.log(val); <span class="comment">// NaN</span></span><br></pre></td></tr></table></figure>
-<p>在调用inc函数的时候是在全局环境下，因此this代表全局对象，但是此时全局并没有val属性，因此this.val就是undefined，让undefined加上1的结果就是NaN。</p>
-<h2 id="call和apply函数里面的this"><a href="#call和apply函数里面的this" class="headerlink" title="call和apply函数里面的this"></a>call和apply函数里面的this</h2><p>JavaScript的所有函数都有两个函数：call和apply。这两个函数能够让你显式的设置this的值，其中apply函数需要两个参数：</p>
+<p>由于使用了 new 操作符，Person 函数中的 this 会被绑定到新创建的对象上，由于 setTimeout 回调是箭头函数，根据上面讲的箭头函数中的 this 是创建时词法作用域中的 this，也就是函数 Person 中的 this，因此打印 10。但是如果把 setTimeout 回调的箭头函数改成 function 的话，结果就不一样了，会输出 undefined。</p>
+<blockquote>
+<p>总结：构造函数中的 this 指向被创建的对象。</p>
+</blockquote>
+<h2 id="call-apply函数中的this"><a href="#call-apply函数中的this" class="headerlink" title="call/apply函数中的this"></a>call/apply函数中的this</h2><p>call 和 apply 两个函数能够显式设置函数 this 的值，例如下面的代码：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> obj = &#123;&#125;</span><br><span class="line"><span class="keyword">var</span> add = <span class="function"><span class="keyword">function</span> (<span class="params">x, y</span>) </span>&#123;</span><br><span class="line">	<span class="keyword">this</span>.val = x + y</span><br><span class="line">&#125;</span><br><span class="line">add.apply(obj, [<span class="number">2</span>, <span class="number">8</span>])</span><br><span class="line"><span class="built_in">console</span>.log(obj.val)</span><br></pre></td></tr></table></figure>
+<p>因为 this 被指定为 obj 对象，所以 <code>this.val</code> 就相当于 <code>obj.val</code>，打印 10。call 函数的用法是一样的，只是函数的参数不是以数组的形式传，而是一个个传：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">add.call(obj, <span class="number">2</span>, <span class="number">8</span>)</span><br><span class="line"><span class="built_in">console</span>.log(obj.val)</span><br></pre></td></tr></table></figure>
+<p>另外，如果 call 和 apply 的第一个参数为空的话，默认是全局对象。</p>
+<p>而 bind 和 call/apply 的区别在于，在绑定 this 到对象参数的同时：</p>
 <ol>
-<li>函数里面的this指代的对象</li>
-<li>函数需要的参数（以数组形式）</li>
+<li>call/apply 将立即执行该函数</li>
+<li>bind 不执行函数，返回一个可供执行的新函数</li>
 </ol>
-<p>例如下面的代码：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> obj = &#123;&#125;</span><br><span class="line"><span class="keyword">var</span> add = <span class="function"><span class="keyword">function</span> (<span class="params">x, y</span>) </span>&#123;</span><br><span class="line">	<span class="keyword">this</span>.val = x + y;</span><br><span class="line">&#125;</span><br><span class="line">add.apply(obj, [<span class="number">2</span>, <span class="number">8</span>]);</span><br><span class="line"><span class="built_in">console</span>.log(obj.val); <span class="comment">// 10</span></span><br></pre></td></tr></table></figure>
-<p>那么this就指的是obj对象了。call函数的用法是一样的，只是函数的参数不是以数组的形式传，而是一个个传。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">add.call(obj, <span class="number">2</span>, <span class="number">8</span>);</span><br><span class="line"><span class="built_in">console</span>.log(obj.val); <span class="comment">// 10</span></span><br></pre></td></tr></table></figure>
-<p>如果第一个参数为null的话，默认是全局对象。</p>
-<p>总结：</p>
-<ol>
-<li>默认情况下，this指代全局变量</li>
-<li>当一个函数通过父对象来调用，this指代父对象本身</li>
-<li>当使用new操作符创建对象，this指代新创建的对象</li>
-<li>call和apply函数里面的this指代call或apply函数的第一个参数</li>
-</ol>
+<p>例如上面的代码可用 bind 改写为：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> f = add.bind(obj)</span><br><span class="line">f(<span class="number">2</span>, <span class="number">8</span>)</span><br><span class="line"><span class="built_in">console</span>.log(obj.val)</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>总结：call/apply/bind 可以指定函数中的 this，call/apply 立即执行，bind 返回新函数。</p>
+</blockquote>
+<h2 id="隐式绑定this"><a href="#隐式绑定this" class="headerlink" title="隐式绑定this"></a>隐式绑定this</h2><p>执行函数的时候，先看函数前面是否有点，如果有点的话，那么点前面是谁，this 就是谁，这就叫隐式绑定，没有点的话，在非严格模式下，this 就是 window，严格模式下是 undefined。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> name = <span class="string">'global'</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fn</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="keyword">this</span>)</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> obj = &#123;</span><br><span class="line">  name: <span class="string">'obj'</span>,</span><br><span class="line">  fn: fn</span><br><span class="line">&#125;</span><br><span class="line">fn()</span><br><span class="line">obj.fn()</span><br></pre></td></tr></table></figure>
+<p>所以默认情况下，在浏览器中会打印 global 和 obj。</p>
+<blockquote>
+<p>总结：如果函数前面有点，那么点的前面是谁，this 就是谁。</p>
+</blockquote>
+<h2 id="全局环境下的this"><a href="#全局环境下的this" class="headerlink" title="全局环境下的this"></a>全局环境下的this</h2><p>在浏览器中，全局环境就是 window 对象，全局执行上下文中的 this 就指的是 window 对象，例如：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> x = <span class="number">10</span></span><br><span class="line"><span class="keyword">var</span> f = <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="keyword">this</span>.x)</span><br><span class="line">&#125;</span><br><span class="line">f()</span><br></pre></td></tr></table></figure>
+<p>函数 f 内的 this 指向全局对象，所以输出 10。值得注意的是，setTimeout 的回调函数就是被全局所调用的，因为 setTimeout 会开启了一个新的执行环境。</p>
+<blockquote>
+<p>总结：浏览器全局执行上下文中的 this 指向 window 对象。</p>
+</blockquote>
 
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/javascript-this/" data-id="cjhq778nm00auizq3gwamijsl" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/javascript-this/" data-id="ckckn9o9x00j6rvsez6zmlo64" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 

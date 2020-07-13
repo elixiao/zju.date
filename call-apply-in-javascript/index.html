@@ -5,18 +5,18 @@
   
   <title>zju.date</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="12function f() &amp;#123;&amp;#125;f.call(context, arg1, arg2, ...) 执行函数f，把第一个参数作为函数的执行上下文，即函数绑定的this，剩下的参数作为函数f的参数。 12f(1, 2, 3);f.call(obj, 1, 2, 3) 如果在函数f内部没有用到this，那么这两种写法其实是一样的。唯一的区别是第二种写法把func里面的this设置为">
+  <meta name="description" content="call 和 apply 用于在调用函数的时候手动指定 this 指向，例如： 12function f() &amp;#123;&amp;#125;f.call(context, arg1, arg2, ...) 表示执行函数 f，并把第一个参数作函数绑定的 this，剩下的参数作为函数 f 的参数。如果在函数 f 内部没有用到 this，那么下面两种写法其实是一样的： 12f(1, 2, 3)f.call(o">
 <meta name="keywords" content="JavaScript">
 <meta property="og:type" content="article">
 <meta property="og:title" content="JavaScript中的call和apply">
 <meta property="og:url" content="https://zju.date/call-apply-in-javascript/index.html">
 <meta property="og:site_name" content=".">
-<meta property="og:description" content="12function f() &amp;#123;&amp;#125;f.call(context, arg1, arg2, ...) 执行函数f，把第一个参数作为函数的执行上下文，即函数绑定的this，剩下的参数作为函数f的参数。 12f(1, 2, 3);f.call(obj, 1, 2, 3) 如果在函数f内部没有用到this，那么这两种写法其实是一样的。唯一的区别是第二种写法把func里面的this设置为">
+<meta property="og:description" content="call 和 apply 用于在调用函数的时候手动指定 this 指向，例如： 12function f() &amp;#123;&amp;#125;f.call(context, arg1, arg2, ...) 表示执行函数 f，并把第一个参数作函数绑定的 this，剩下的参数作为函数 f 的参数。如果在函数 f 内部没有用到 this，那么下面两种写法其实是一样的： 12f(1, 2, 3)f.call(o">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2020-05-28T07:17:04.585Z">
+<meta property="og:updated_time" content="2020-07-10T15:34:56.875Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="JavaScript中的call和apply">
-<meta name="twitter:description" content="12function f() &amp;#123;&amp;#125;f.call(context, arg1, arg2, ...) 执行函数f，把第一个参数作为函数的执行上下文，即函数绑定的this，剩下的参数作为函数f的参数。 12f(1, 2, 3);f.call(obj, 1, 2, 3) 如果在函数f内部没有用到this，那么这两种写法其实是一样的。唯一的区别是第二种写法把func里面的this设置为">
+<meta name="twitter:description" content="call 和 apply 用于在调用函数的时候手动指定 this 指向，例如： 12function f() &amp;#123;&amp;#125;f.call(context, arg1, arg2, ...) 表示执行函数 f，并把第一个参数作函数绑定的 this，剩下的参数作为函数 f 的参数。如果在函数 f 内部没有用到 this，那么下面两种写法其实是一样的： 12f(1, 2, 3)f.call(o">
   
     <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
   
@@ -82,18 +82,19 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">f</span>(<span class="params"></span>) </span>&#123;&#125;</span><br><span class="line">f.call(context, arg1, arg2, ...)</span><br></pre></td></tr></table></figure>
-<p>执行函数<code>f</code>，把第一个参数作为函数的执行上下文，即函数绑定的<code>this</code>，剩下的参数作为函数<code>f</code>的参数。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">f(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>);</span><br><span class="line">f.call(obj, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>)</span><br></pre></td></tr></table></figure>
-<p>如果在函数<code>f</code>内部没有用到<code>this</code>，那么这两种写法其实是一样的。唯一的区别是第二种写法把func里面的this设置为某个obj，对于apply同理：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">f.apply(context, args)</span><br><span class="line">f(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>);</span><br><span class="line">f.apply(context, [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>])</span><br></pre></td></tr></table></figure>
-<p>下面的两种写法也是一样的：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> args = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</span><br><span class="line"></span><br><span class="line">func.call(context, ...args)</span><br><span class="line">func.apply(context, args)</span><br></pre></td></tr></table></figure>
+        <p>call 和 apply 用于在调用函数的时候手动指定 this 指向，例如：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">f</span>(<span class="params"></span>) </span>&#123;&#125;</span><br><span class="line">f.call(context, arg1, arg2, ...)</span><br></pre></td></tr></table></figure>
+<p>表示执行函数 <code>f</code>，并把第一个参数作函数绑定的 <code>this</code>，剩下的参数作为函数 <code>f</code> 的参数。如果在函数 <code>f</code> 内部没有用到 <code>this</code>，那么下面两种写法其实是一样的：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">f(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>)</span><br><span class="line">f.call(obj, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>)</span><br></pre></td></tr></table></figure>
+<p>apply 的用法和 call 是类似的，区别在于第二个参数是一个数组：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">f.apply(context, args)</span><br><span class="line">f(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>)</span><br><span class="line">f.apply(context, [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>])</span><br></pre></td></tr></table></figure>
+<p>call 和 apply 的下面两种写法是等价的：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> args = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</span><br><span class="line">func.call(context, ...args)</span><br><span class="line">func.apply(context, args)</span><br></pre></td></tr></table></figure>
 
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/call-apply-in-javascript/" data-id="cjhq778i3003yizq3wzbtpa7q" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/call-apply-in-javascript/" data-id="ckckn9o2j006hrvseozqkis1d" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 

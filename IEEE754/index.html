@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="为什么 0.1 + 0.2 !== 0.3 ？这是一道高频面试题，考查的就是应聘者基本功是否扎实，今天就来分析一下为什么计算机认为它们是不相等的。 浮点数的存储方式首先要知道浮点数在计算机中是如何存储的。JavaScript 用 8 个字节，也就是 64 个比特位来表示一个数字，这 64 个比特位，每个位置上要么是 0 要么是 1。 其次要知道计算机跟人脑最大的不同就是计算机只认识 2 进制，而人">
+<meta name="keywords" content="JavaScript">
+<meta property="og:type" content="article">
+<meta property="og:title" content="为什么0.1+0.2!==0.3">
+<meta property="og:url" content="https://zju.date/IEEE754/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="为什么 0.1 + 0.2 !== 0.3 ？这是一道高频面试题，考查的就是应聘者基本功是否扎实，今天就来分析一下为什么计算机认为它们是不相等的。 浮点数的存储方式首先要知道浮点数在计算机中是如何存储的。JavaScript 用 8 个字节，也就是 64 个比特位来表示一个数字，这 64 个比特位，每个位置上要么是 0 要么是 1。 其次要知道计算机跟人脑最大的不同就是计算机只认识 2 进制，而人">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2020-07-13T15:06:56.456Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="为什么0.1+0.2!==0.3">
+<meta name="twitter:description" content="为什么 0.1 + 0.2 !== 0.3 ？这是一道高频面试题，考查的就是应聘者基本功是否扎实，今天就来分析一下为什么计算机认为它们是不相等的。 浮点数的存储方式首先要知道浮点数在计算机中是如何存储的。JavaScript 用 8 个字节，也就是 64 个比特位来表示一个数字，这 64 个比特位，每个位置上要么是 0 要么是 1。 其次要知道计算机跟人脑最大的不同就是计算机只认识 2 进制，而人">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-IEEE754" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/IEEE754/" class="article-date">
+  <time datetime="2019-11-25T15:23:29.000Z" itemprop="datePublished">2019-11-25</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      为什么0.1+0.2!==0.3
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>为什么 <code>0.1 + 0.2 !== 0.3</code> ？这是一道高频面试题，考查的就是应聘者基本功是否扎实，今天就来分析一下为什么计算机认为它们是不相等的。</p>
+<h2 id="浮点数的存储方式"><a href="#浮点数的存储方式" class="headerlink" title="浮点数的存储方式"></a>浮点数的存储方式</h2><p>首先要知道浮点数在计算机中是如何存储的。JavaScript 用 8 个字节，也就是 64 个比特位来表示一个数字，这 64 个比特位，每个位置上要么是 0 要么是 1。</p>
+<p>其次要知道计算机跟人脑最大的不同就是计算机只认识 2 进制，而人脑用的是 10 进制，所以需要先把 0.1 和 0.2 转换成二进制来分析：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0.1</span>.toString(<span class="number">2</span>) <span class="comment">// 0.00011001100110011001100110011001100110011001100110011... 无限循环</span></span><br><span class="line"><span class="number">0.2</span>.toString(<span class="number">2</span>) <span class="comment">// 0.0011001100110011001100110011001100110011001100110011... 无限循环</span></span><br></pre></td></tr></table></figure>
+<p>正所谓 “吾生也有涯，而知也无涯。以有涯随无涯，殆已” 意思是说用有限的 64 个比特位来表示无限循环的小数那是不可能的，只能近似表示。</p>
+<p>那计算机是如何用 2 进制来近似表示 0.1 的呢？按照 IEEE 754 标准，把这 64 个比特位划分为 <code>64 = 1 + 11 + 52</code> 三个部分：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">x xxxxxxxxxxx xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</span><br><span class="line">1 ----11----- -------------------------52-------------------------</span><br></pre></td></tr></table></figure>
+<ul>
+<li>第 1 位是符号位 S(sign)，用来表示正负，0表示正数，1表示负数</li>
+<li>第 2 位到第 12 位是指数位 E(exponent)，用来储存指数部分</li>
+<li>第 13 位到第 64 位是尾数位 M(mantissa)，用来储存有效数字</li>
+</ul>
+<p>为什么要分成这三个部分呢？我们不妨先思考一下，在十进制的情况下如何统一表示整数和小数。</p>
+<a id="more"></a>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">12345 = 1 * 10^4 * 1.2345</span><br><span class="line">-0.038 = -1 * 10^(-2) * 3.8</span><br></pre></td></tr></table></figure>
+<p>有没有发现，无论是正数还是负数还是小数，都可以用这种方式来表示，即科学计数法，只要知道了符号、指数和有效数字，那么这个数就被确定下来了。在二进制当中也是类似的，例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">100110 = 1 * 2^5 * 1.0011</span><br><span class="line">-0.0001100110011 = -1 * 2^(-4) * 1.100110011</span><br></pre></td></tr></table></figure>
+<p>不过二进制中有一个特殊的地方就是有效数字部分的整数位永远都是1，所以在存储的时候可以只存储小数尾数部分，以 <code>-0.0001100110011</code> 为例：</p>
+<ul>
+<li>符号位存 1 表示负数</li>
+<li>指数为存 -4</li>
+<li>尾数部分存小数尾数部分，即 100110011</li>
+</ul>
+<p>关键是指数位置的 -4 咋存呢？我们知道 11 个比特能表示 2^11 = 2048 个不同的数字，即 0 ~ 2047，如果考虑负数的话，范围是 -1023 ~ 1024，那么存储 -4 可以有两种方案：</p>
+<ul>
+<li>把 11 位指数部分的首位设置成符号位，用后 10 位存储值</li>
+<li>统一加上 1023 之后再存储，这样的话肯定是无符号的整数了</li>
+</ul>
+<p>IEEE 754 标准采用的就是后者，所以指数部分存的是 1023 - 4 = 1019 的二进制 1111111011。</p>
+<h2 id="安全数和最大数"><a href="#安全数和最大数" class="headerlink" title="安全数和最大数"></a>安全数和最大数</h2><p>JS 中有个最大安全整数：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Number</span>.MAX_SAFE_INTEGER = <span class="number">9007199254740991</span> <span class="comment">// 2**53 - 1 </span></span><br><span class="line"><span class="comment">// 表示方式为：1 * 2^52 * 1.1111111111111111111111111111111111111111111111111111</span></span><br><span class="line"><span class="comment">// 就是尾数部分的 52 个比特位已经全是 1 了</span></span><br><span class="line"><span class="built_in">parseInt</span>(<span class="string">'11111111111111111111111111111111111111111111111111111'</span>, <span class="number">2</span>) <span class="comment">// 9007199254740991</span></span><br><span class="line"><span class="string">``</span><span class="string">` </span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">大于这个值的数就被认为是不安全的，因为如果再多 1 的话，至少要用 53 个比特位来表示，即：</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">`</span><span class="string">``</span>js</span><br><span class="line"><span class="number">1</span> * <span class="number">2</span>^<span class="number">53</span> * <span class="number">1.00000000000000000000000000000000000000000000000000000</span> <span class="comment">// 2**53</span></span><br><span class="line"><span class="number">1</span> * <span class="number">2</span>^<span class="number">53</span> * <span class="number">1.00000000000000000000000000000000000000000000000000001</span> <span class="comment">// 2**53+1</span></span><br></pre></td></tr></table></figure>
+<p>由于尾数部分只能存储 52 个比特，所以第 53 个比特位就丢掉了，也就是说 <code>2**53</code> 和 <code>2**52+1</code> 的表示方式是一样的，它们的结果也是一样的：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">2</span>**<span class="number">53</span> = <span class="number">9007199254740992</span></span><br><span class="line"><span class="number">2</span>**<span class="number">53</span>+<span class="number">1</span> = <span class="number">9007199254740992</span></span><br><span class="line"><span class="number">2</span>**<span class="number">53</span> === <span class="number">2</span>**<span class="number">53</span>+<span class="number">1</span> <span class="comment">// true</span></span><br></pre></td></tr></table></figure>
+<p>所以说：</p>
+<ul>
+<li>2^53 ~ 2^54 之间的数只能精确表示偶数，因为最后一个比特位被丢掉了</li>
+<li>2^54 ~ 2^55 之间的数只能精确表示4的倍数，因为最后两个比特位被丢掉了</li>
+<li>2^55 ~ 2^56 之间的数只能精确表示8的倍数，因为最后三个比特位被丢掉了</li>
+<li>以此类推，丢掉 N 个比特位就只能精确表示 2^N 的倍数</li>
+</ul>
+<p>由于指数位最大值为 1024，所以能表示的最大数就是：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1 * 2^1024 * 1.00000000000000000000000000000000000000000000000000000000000...</span><br></pre></td></tr></table></figure>
+<p>此时指数部分的比特位满了，位数部分的比特位也满了，任何超过这个值的数都将等于这个数，所以 JS 把这个数定义为 Infinity：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">2</span>**<span class="number">1024</span> <span class="comment">// Infinity</span></span><br></pre></td></tr></table></figure>
+<p>JS 能表示的最大数就是：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span> * <span class="number">2</span>^<span class="number">1023</span> * <span class="number">1.1111111111111111111111111111111111111111111111111111</span></span><br><span class="line"><span class="built_in">Number</span>.MAX_VALUE <span class="comment">// 1.7976931348623157e+308</span></span><br></pre></td></tr></table></figure>
+<h2 id="计算-0-1-0-2"><a href="#计算-0-1-0-2" class="headerlink" title="计算 0.1 + 0.2"></a>计算 0.1 + 0.2</h2><p>先看 0.1 和 0.2 的存储方式：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0.1</span>.toString(<span class="number">2</span>) </span><br><span class="line"><span class="comment">// 实际值：0.00011001100110011001100110011001100110011001100110011001100... 无限循环</span></span><br><span class="line"><span class="comment">// 科学计数法：1 * 2^(-4) * 1.1001100110011001100110011001100110011001100110011001  保留 52 为</span></span><br><span class="line"><span class="comment">// 也就是说存储值：0.0001100110011001100110011001100110011001100110011001101</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="number">0.2</span>.toString(<span class="number">2</span>) </span><br><span class="line"><span class="comment">// 实际值：0.0011001100110011001100110011001100110011001100110011... 无限循环</span></span><br><span class="line"><span class="comment">// 科学计数法：1 * 2^(-3) * 1.1001100110011001100110011001100110011001100110011001 保留 52 为</span></span><br><span class="line"><span class="comment">// 也就是说存储值：0.001100110011001100110011001100110011001100110011001101</span></span><br></pre></td></tr></table></figure>
+<p>计算它们的和：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">0.0001100110011001100110011001100110011001100110011001101 </span><br><span class="line">0.001100110011001100110011001100110011001100110011001101</span><br><span class="line">-----------------------------------------------------------</span><br><span class="line">0.0100110011001100110011001100110011001100110011001100111</span><br><span class="line"></span><br><span class="line">科学计数法表示为：1 * 2^(-2) * 1.0011001100110011001100110011001100110011001100110011</span><br></pre></td></tr></table></figure>
+<p>而这个结果转成十进制正好是 <code>0.30000000000000004</code></p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/IEEE754/" data-id="ckckn9nya000jrvsevzbftewc" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/flutter-tab-avoid-call-twice/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          避免flutter tab切换时监听两次
+        
+      </div>
+    </a>
+  
+  
+    <a href="/feathersjs-set-expired-dynamicly/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">feathersjs动态设置有效期</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dart/">Dart</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Elasticsearch/">Elasticsearch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Flutter/">Flutter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>
