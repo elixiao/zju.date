@@ -5,18 +5,18 @@
   
   <title>zju.date</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="本地开发时，都是在localhost上起服务，只要是在同一个局域网，就可以访问。有时候想在外网访问本机localhost，有两种办法：  通过软件ngrock 通过ssh反向代理  ngrock的使用非常简单，去官网按照demo操作就行。ssh反向代理则需要有一个云服务器，首先要登录到该服务器，修改sshd的配置文件/etc/ssh/sshd_config，修改下面的注释： 12#GatewayP">
+  <meta name="description" content="本地开发时，都是在本机上起一个服务，只要是在同一个局域网，其他机器也能访问这个接口。但有时候需要在外网访问，怎么办呢？有两种办法：  通过软件ngrock 通过 ssh 反向代理  ngrock 功能很强大，使用起来也比较简单，去官网按照 demo 操作就行。 另外一种方式是 ssh 反向代理，前提条件是自己要有一台云服务器，登录到该服务器之后，修改 sshd 的配置文件 /etc/ssh/ssh">
 <meta name="keywords" content="JavaScript">
 <meta property="og:type" content="article">
 <meta property="og:title" content="用ssh建立反向连接">
 <meta property="og:url" content="https://zju.date/reverse-ssh/index.html">
 <meta property="og:site_name" content=".">
-<meta property="og:description" content="本地开发时，都是在localhost上起服务，只要是在同一个局域网，就可以访问。有时候想在外网访问本机localhost，有两种办法：  通过软件ngrock 通过ssh反向代理  ngrock的使用非常简单，去官网按照demo操作就行。ssh反向代理则需要有一个云服务器，首先要登录到该服务器，修改sshd的配置文件/etc/ssh/sshd_config，修改下面的注释： 12#GatewayP">
+<meta property="og:description" content="本地开发时，都是在本机上起一个服务，只要是在同一个局域网，其他机器也能访问这个接口。但有时候需要在外网访问，怎么办呢？有两种办法：  通过软件ngrock 通过 ssh 反向代理  ngrock 功能很强大，使用起来也比较简单，去官网按照 demo 操作就行。 另外一种方式是 ssh 反向代理，前提条件是自己要有一台云服务器，登录到该服务器之后，修改 sshd 的配置文件 /etc/ssh/ssh">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2017-12-31T02:22:42.000Z">
+<meta property="og:updated_time" content="2020-07-14T03:58:08.243Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="用ssh建立反向连接">
-<meta name="twitter:description" content="本地开发时，都是在localhost上起服务，只要是在同一个局域网，就可以访问。有时候想在外网访问本机localhost，有两种办法：  通过软件ngrock 通过ssh反向代理  ngrock的使用非常简单，去官网按照demo操作就行。ssh反向代理则需要有一个云服务器，首先要登录到该服务器，修改sshd的配置文件/etc/ssh/sshd_config，修改下面的注释： 12#GatewayP">
+<meta name="twitter:description" content="本地开发时，都是在本机上起一个服务，只要是在同一个局域网，其他机器也能访问这个接口。但有时候需要在外网访问，怎么办呢？有两种办法：  通过软件ngrock 通过 ssh 反向代理  ngrock 功能很强大，使用起来也比较简单，去官网按照 demo 操作就行。 另外一种方式是 ssh 反向代理，前提条件是自己要有一台云服务器，登录到该服务器之后，修改 sshd 的配置文件 /etc/ssh/ssh">
   
     <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
   
@@ -82,28 +82,36 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <p>本地开发时，都是在localhost上起服务，只要是在同一个局域网，就可以访问。有时候想在外网访问本机localhost，有两种办法：</p>
+        <p>本地开发时，都是在本机上起一个服务，只要是在同一个局域网，其他机器也能访问这个接口。但有时候需要在外网访问，怎么办呢？有两种办法：</p>
 <ol>
 <li>通过软件<a href="https://ngrok.com/" target="_blank" rel="noopener">ngrock</a></li>
-<li>通过ssh反向代理</li>
+<li>通过 ssh 反向代理</li>
 </ol>
-<p>ngrock的使用非常简单，去官网按照demo操作就行。ssh反向代理则需要有一个云服务器，首先要登录到该服务器，修改<code>sshd</code>的配置文件<code>/etc/ssh/sshd_config</code>，修改下面的注释：</p>
+<p>ngrock 功能很强大，使用起来也比较简单，去<a href="https://ngrok.com/" target="_blank" rel="noopener">官网</a>按照 demo 操作就行。</p>
+<p>另外一种方式是 ssh 反向代理，前提条件是自己要有一台云服务器，登录到该服务器之后，修改 <code>sshd</code> 的配置文件 <code>/etc/ssh/sshd_config</code>：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#GatewayPorts no</span></span><br><span class="line">GatewayPorts yes <span class="comment"># 取消注释，并把no修改为yes</span></span><br></pre></td></tr></table></figure>
 <a id="more"></a>
-<p>然后重启<code>sshd</code>：</p>
+<p>然后重启 <code>sshd</code>：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">service sshd restart</span><br></pre></td></tr></table></figure>
-<p>这个选项的意思是，你通过反向代理的ip是公网ip（<code>0.0.0.0</code>），而不是loopback的ip（<code>127.0.0.1</code>）。然后<code>ssh</code>登录到<strong>内网</strong>主机，通过<code>ssh</code>来执行反向代理到<strong>公网</strong>主机，例如将<strong>内网</strong>主机的<code>3031</code>的端口反向代理到<strong>公网</strong>主机的<code>9999</code>端口：</p>
+<p>这个选项的意思是，你通过反向代理的ip是公网ip（<code>0.0.0.0</code>），而不是loopback的ip（<code>127.0.0.1</code>）。</p>
+<p>通过 <code>ssh</code> 来执行反向代理到服务器，例如将本机的 <code>3031</code> 的端口反向代理到服务器的 <code>9999</code> 端口：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ssh -R 9999:localhost:3031 &lt;用户名&gt;@公网主机ip</span><br><span class="line">ssh -NfR 9999:localhost:3031 &lt;用户名&gt;@公网主机ip</span><br></pre></td></tr></table></figure>
 <ol>
 <li><code>-N</code> ssh不执行命令</li>
 <li><code>-f</code> 后台执行</li>
 <li><code>-R</code> 反向代理</li>
 </ol>
-<p>这时候在<strong>公网</strong>主机上执行 <code>netstat</code> 命令查看监听端口，输出结果：</p>
+<p>这时候在服务器上执行 <code>netstat</code> 命令查看监听端口，输出结果：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">netstat -tnl | grep 9999</span><br><span class="line">tcp        0      0 0.0.0.0:9999                0.0.0.0:*                   LISTEN      </span><br><span class="line">tcp        0      0 :::9999                     :::*                        LISTEN</span><br></pre></td></tr></table></figure>
-<p>如果不开启<code>GatewayPorts</code>选项，就只能转发到<strong>公网</strong>主机的<code>127.0.0.1</code>网络上，即输出：</p>
+<p>如果你前面没有开启 <code>GatewayPorts</code> 选项，就只能转发到服务器的 <code>127.0.0.1</code> 而非 <code>0.0.0.0</code>：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">netstat -tnl | grep 9999</span><br><span class="line">tcp        0      0 127.0.0.1:9999              0.0.0.0:*                   LISTEN      </span><br><span class="line">tcp        0      0 ::1:9999                    :::*                        LISTEN</span><br></pre></td></tr></table></figure>
-<p>为<code>ssh</code>设置重连参数，修改<strong>内网</strong>主机的<code>~/.ssh/config</code>文件，增加如下参数：</p>
+<p>弄好之后，就可以让公网主机代理本地服务啦：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl 公网主机ip:9999 <span class="comment"># 转发到本地 3031 端口</span></span><br></pre></td></tr></table></figure>
+<p>如果发现报错：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Failed to connect to xxxx port 9999: Connection refused</span><br></pre></td></tr></table></figure>
+<p>很有可能是服务器的安全组配置导致的，一定要先确保端口被放行才可以，那如何判断端口是否被放行了呢？可以用下面两个命令之一来快速开启 http 服务：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">python -m SimpleHTTPServer 3030 <span class="comment"># 服务器有 python 环境</span></span><br><span class="line">node -e <span class="string">"require('http').createServer((req, res) =&gt; res.end('Hello World')).listen(3030)"</span> <span class="comment"># 服务器有 node 环境</span></span><br></pre></td></tr></table></figure>
+<p>有时候调试久了，ssh 可能会自动断开，此时可以为 <code>ssh</code> 设置重连参数，修改本机的 <code>~/.ssh/config</code> 文件，增加如下参数：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ServerAliveInterval 60</span><br><span class="line">ServerAliveCountMax 9999999999</span><br></pre></td></tr></table></figure>
 <ol>
 <li>第一个参数表示如果服务器（外网）没数据发来，则过60秒客户端（内网）会发送一个空包到服务器，以保持tcp长连接，默认值为0，表示不会发心跳包，所以这里设置为60秒。</li>

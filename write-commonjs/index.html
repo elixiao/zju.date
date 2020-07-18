@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="CommonJS 规范是把 Node.js 代码拆分成一个个文件，每个文件就是一个模块，有自己的作用域，在一个文件里面定义的变量、函数、类，都是私有的，对其他文件不可见。 那这是如何做到的呢？官方文档 里面能找到一些线索：  在执行模块代码之前，Node.js 会使用一个如下的函数封装器将其封装： 1234&amp;gt; (function(exports, require, module, __fil">
+<meta name="keywords" content="JavaScript">
+<meta property="og:type" content="article">
+<meta property="og:title" content="40行代码实现CommonJS规范">
+<meta property="og:url" content="https://zju.date/write-commonjs/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="CommonJS 规范是把 Node.js 代码拆分成一个个文件，每个文件就是一个模块，有自己的作用域，在一个文件里面定义的变量、函数、类，都是私有的，对其他文件不可见。 那这是如何做到的呢？官方文档 里面能找到一些线索：  在执行模块代码之前，Node.js 会使用一个如下的函数封装器将其封装： 1234&amp;gt; (function(exports, require, module, __fil">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2020-07-18T07:16:10.272Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="40行代码实现CommonJS规范">
+<meta name="twitter:description" content="CommonJS 规范是把 Node.js 代码拆分成一个个文件，每个文件就是一个模块，有自己的作用域，在一个文件里面定义的变量、函数、类，都是私有的，对其他文件不可见。 那这是如何做到的呢？官方文档 里面能找到一些线索：  在执行模块代码之前，Node.js 会使用一个如下的函数封装器将其封装： 1234&amp;gt; (function(exports, require, module, __fil">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-write-commonjs" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/write-commonjs/" class="article-date">
+  <time datetime="2019-12-09T07:08:01.000Z" itemprop="datePublished">2019-12-09</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      40行代码实现CommonJS规范
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>CommonJS 规范是把 Node.js 代码拆分成一个个文件，每个文件就是一个模块，有自己的作用域，在一个文件里面定义的变量、函数、类，都是私有的，对其他文件不可见。</p>
+<p>那这是如何做到的呢？<a href="http://nodejs.cn/api/modules.html" target="_blank" rel="noopener">官方文档</a> 里面能找到一些线索：</p>
+<blockquote>
+<p>在执行模块代码之前，Node.js 会使用一个如下的函数封装器将其封装：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&gt; (<span class="function"><span class="keyword">function</span>(<span class="params">exports, require, module, __filename, __dirname</span>) </span>&#123;</span><br><span class="line">&gt;   <span class="comment">// 模块的代码实际上在这里</span></span><br><span class="line">&gt; &#125;)</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<blockquote>
+<p>通过这样做，Node.js 实现了以下几点：</p>
+<ul>
+<li>保持了顶层的变量（用 var、 const 或 let 定义）作用在模块范围内，而不是全局对象。</li>
+<li>提供了一些看似全局的但实际上是模块特定的变量，例如 exports、__dirname 等</li>
+</ul>
+</blockquote>
+<p>也就是说 CommonJS 规范是把每个单独的文件读取出来之后，包裹成一个 function 来执行的，从而实现代码的隔离。例如，我们把一个非常简单的打印两数之和的代码强拆成三个文件：</p>
+<a id="more"></a>
+<ol>
+<li><p><code>entry.js</code> 入口文件</p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> &#123;add&#125; = <span class="built_in">require</span>(<span class="string">'./math'</span>)</span><br><span class="line">add(<span class="number">1</span>,<span class="number">2</span>)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>math.js</code> 用于两数求和</p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> print = <span class="built_in">require</span>(<span class="string">'./print'</span>)</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">add</span>(<span class="params">a, b</span>) </span>&#123;</span><br><span class="line">  print(a + b)</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">module</span>.exports = &#123; add &#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>print.js</code> 用于打印</p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">print</span>(<span class="params">value</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(value)</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">module</span>.exports = print</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>当运行 <code>node entry.js</code> 的时候控制台会输出 3，因为 CommonJS 帮我们实现了模块化。接下来我们就抛弃 CommonJS，自己纯手工打造一个能够实现 js 文件模块化的代码。</p>
+<p>首先我们新建一个 <code>commonjs.js</code> 的文件，在这个文件中实现自己的 <code>Module</code> 类：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> fs = <span class="built_in">require</span>(<span class="string">'fs'</span>)</span><br><span class="line"><span class="keyword">const</span> path = <span class="built_in">require</span>(<span class="string">'path'</span>)</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Module</span>(<span class="params">id</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">this</span>.id = id <span class="comment">// 传入的路径</span></span><br><span class="line">  <span class="keyword">this</span>.exports = &#123;&#125; <span class="comment">// 保存导出的对象</span></span><br><span class="line">  <span class="keyword">this</span>.load(Module._resolveFilename(id)) <span class="comment">// 查找文件并进行加载</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后实现 _resolveFilename 静态方法，可以把传入的 id 解析成绝对路径，并检查文件是否存在：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Module._resolveFilename = <span class="function"><span class="keyword">function</span> (<span class="params">id</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> filePath = path.resolve(__dirname, id) <span class="comment">// 解析成绝对路径</span></span><br><span class="line">  <span class="keyword">if</span> (fs.existsSync(filePath)) <span class="keyword">return</span> filePath <span class="comment">// 存在就直接返回</span></span><br><span class="line">  <span class="keyword">const</span> keys = <span class="built_in">Object</span>.keys(Module._extensions) <span class="comment">// 不存在就添加 .js 和 .json 后缀再次查找即可</span></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; keys.length; i++) &#123;</span><br><span class="line">    <span class="keyword">const</span> newFilePath = filePath + keys[i]</span><br><span class="line">    <span class="keyword">if</span> (fs.existsSync(newFilePath)) <span class="keyword">return</span> newFilePath</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">`Cannot find module '<span class="subst">$&#123;id&#125;</span>'`</span>) <span class="comment">// 都找不到则报错</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>还要实现两个静态属性，一个是 <code>_cache</code> 用于缓存已经加载过的模块，一个是 <code>_extensions</code> 用于对 <code>json</code> 和 <code>js</code> 后缀的文件分类解析：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Module._cache = &#123;&#125; <span class="comment">// 缓存</span></span><br><span class="line">Module._extensions = &#123; <span class="comment">// 按照后缀分类处理</span></span><br><span class="line">  <span class="string">'.js'</span>(<span class="built_in">module</span>, filename) &#123; <span class="comment">// js文件包裹成函数来执行</span></span><br><span class="line">    <span class="keyword">const</span> scripts = fs.readFileSync(filename, <span class="string">'utf8'</span>)</span><br><span class="line">    <span class="keyword">const</span> f = <span class="keyword">new</span> <span class="built_in">Function</span>(<span class="string">'exports'</span>, <span class="string">'require'</span>, <span class="string">'module'</span>, <span class="string">'__filename'</span>, <span class="string">'__dirname'</span>,scripts)</span><br><span class="line">    f.call(<span class="built_in">module</span>.exports, <span class="built_in">module</span>.exports, <span class="built_in">module</span>.require, <span class="built_in">module</span>, filename, path.dirname(filename))</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="string">'.json'</span>(<span class="built_in">module</span>, filename) &#123; <span class="comment">// json文件直接parse成对象返回即可</span></span><br><span class="line">    <span class="built_in">module</span>.exports = <span class="built_in">JSON</span>.parse(fs.readFileSync(filename, <span class="string">'utf8'</span>))</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>到这里，核心代码基本都写完了，再封装一个 load 实例方法来调用：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Module.prototype.load = <span class="function"><span class="keyword">function</span> (<span class="params">filename</span>) </span>&#123; <span class="comment">// 加载文件</span></span><br><span class="line">  <span class="keyword">const</span> extname = path.extname(filename)</span><br><span class="line">  Module._extensions[extname](<span class="keyword">this</span>, filename)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最后还缺少一个我们自己的 require 函数，不妨叫它 <code>_require</code>，可以从代码或缓存中取到模块加载的结果：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Module.prototype.require = _require</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">_require</span>(<span class="params">id</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> filename = Module._resolveFilename(id)</span><br><span class="line">  <span class="keyword">if</span> (Module._cache[filename]) <span class="keyword">return</span> Module._cache[filename].exports</span><br><span class="line">  <span class="keyword">const</span> <span class="built_in">module</span> = <span class="keyword">new</span> Module(filename)</span><br><span class="line">  Module._cache[filename] = <span class="built_in">module</span></span><br><span class="line">  <span class="keyword">return</span> <span class="built_in">module</span>.exports</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面的代码加起来整整 40 行，不多不少，这 40 行代码基本上实现了简易版的 CommonJS 规范了，我们不妨用自己的 <code>_require</code> 加载入口文件试试：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 在 commonjs.js 最后一行加载入口文件，然后运行：node commonjs 即可</span></span><br><span class="line">_require(<span class="string">'./entry.js'</span>)</span><br></pre></td></tr></table></figure>
+<p>可以看到同样会输出 3。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/write-commonjs/" data-id="ckcrtxdpb0004ofsegablc23e" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/dart-new-outside-main/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Dart中main函数外面的new
+        
+      </div>
+    </a>
+  
+  
+    <a href="/flutter-tab-avoid-call-twice/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">避免flutter tab切换时监听两次</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dart/">Dart</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Elasticsearch/">Elasticsearch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Flutter/">Flutter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

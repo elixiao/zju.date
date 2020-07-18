@@ -54,6 +54,91 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-public-vs-private-in-angular-componet" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/public-vs-private-in-angular-componet/" class="article-date">
+  <time datetime="2017-06-15T02:45:07.000Z" itemprop="datePublished">2017-06-15</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/public-vs-private-in-angular-componet/">angular组件中的public和private修饰符</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>angular 组件中变量的 <code>public</code> 和 <code>private</code> 修饰符会影响到 AoT 编译：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">template: <span class="string">"&lt;div&gt;&#123;&#123;hello&#125;&#125;&lt;/div&gt;"</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">someModule</span> </span>&#123;</span><br><span class="line">    private hello: string;            <span class="xml"><span class="tag">&lt;<span class="name">--</span> <span class="attr">doesn</span>'<span class="attr">t</span> <span class="attr">work</span> <span class="attr">with</span> <span class="attr">AOT</span> <span class="attr">compiler</span></span></span></span><br><span class="line"><span class="xml">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>在 AoT 模式下模板里面不允许访问组件类中的 <code>private</code> 属性，因为在 JiT 模式下是编译后的 ES5 代码，而在 JavaScript 中并没有公有属性和私有属性一说，但 AoT 模式下 typescript 会对变量的访问范围作出限制。</p>
+<p>建议所有的属性都设置为公有属性，在 <code>constructor</code> 里面注入的 <code>service</code>，因为一般只会在 <code>component</code> 中使用，故设置为私有属性。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/public-vs-private-in-angular-componet/" data-id="ckckn9ohc00rzrvse3aa3ch3u" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-mongodb-aggregate-notes" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/mongodb-aggregate-notes/" class="article-date">
+  <time datetime="2017-06-14T08:32:07.000Z" itemprop="datePublished">2017-06-14</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/mongodb-aggregate-notes/">mongodb 聚合使用笔记</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">daily</span>(<span class="params">pay</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> Model.Bill.aggregate(</span><br><span class="line">    &#123;<span class="attr">$match</span>: &#123;[target]: id, month, pay&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$group</span>: &#123;<span class="attr">_id</span>: <span class="string">'$day'</span>, <span class="attr">money</span>: &#123;<span class="attr">$sum</span>: <span class="string">'$money'</span>&#125;&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$project</span>: &#123;<span class="attr">_id</span>: <span class="number">0</span>, <span class="attr">day</span>: <span class="string">'$_id'</span>, <span class="attr">money</span>: <span class="number">1</span>&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$sort</span>: &#123;<span class="attr">day</span>: <span class="number">1</span>&#125;&#125;</span><br><span class="line">  )</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">partner</span>(<span class="params">pay</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> Model.Bill.aggregate(</span><br><span class="line">    &#123;<span class="attr">$match</span>: &#123;[target]: id, month, pay&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$group</span>: &#123;<span class="attr">_id</span>: <span class="string">'$partner'</span>, <span class="attr">money</span>: &#123;<span class="attr">$sum</span>: <span class="string">'$money'</span>&#125;&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$lookup</span>: &#123;<span class="attr">from</span>: <span class="string">'partners'</span>, <span class="attr">localField</span>: <span class="string">'_id'</span>, <span class="attr">foreignField</span>: <span class="string">'_id'</span>, <span class="attr">as</span>: <span class="string">'partner'</span>&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$unwind</span>: &#123;<span class="attr">path</span>: <span class="string">'$partner'</span>, <span class="attr">preserveNullAndEmptyArrays</span>: <span class="literal">true</span>&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$project</span>: &#123;<span class="attr">_id</span>: <span class="number">0</span>, <span class="attr">money</span>: <span class="number">1</span>, <span class="attr">name</span>: <span class="string">'$partner.name'</span>&#125;&#125;</span><br><span class="line">  )</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">book</span>(<span class="params">pay</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> Model.Bill.aggregate(</span><br><span class="line">    &#123;<span class="attr">$match</span>: &#123;[target]: id, month, pay&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$group</span>: &#123;<span class="attr">_id</span>: <span class="string">'$book'</span>, <span class="attr">money</span>: &#123;<span class="attr">$sum</span>: <span class="string">'$money'</span>&#125;&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$lookup</span>: &#123;<span class="attr">from</span>: <span class="string">'books'</span>, <span class="attr">localField</span>: <span class="string">'_id'</span>, <span class="attr">foreignField</span>: <span class="string">'_id'</span>, <span class="attr">as</span>: <span class="string">'book'</span>&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$unwind</span>: &#123;<span class="attr">path</span>: <span class="string">'$book'</span>, <span class="attr">preserveNullAndEmptyArrays</span>: <span class="literal">true</span>&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$project</span>: &#123;<span class="attr">_id</span>: <span class="number">0</span>, <span class="attr">money</span>: <span class="number">1</span>, <span class="attr">name</span>: <span class="string">'$book.name'</span>&#125;&#125;</span><br><span class="line">  )</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">account</span>(<span class="params">pay</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> Model.Bill.aggregate(</span><br><span class="line">    &#123;<span class="attr">$match</span>: &#123;[target]: id, month, pay&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$group</span>: &#123;<span class="attr">_id</span>: <span class="string">'$account'</span>, <span class="attr">money</span>: &#123;<span class="attr">$sum</span>: <span class="string">'$money'</span>&#125;&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$lookup</span>: &#123;<span class="attr">from</span>: <span class="string">'accounts'</span>, <span class="attr">localField</span>: <span class="string">'_id'</span>, <span class="attr">foreignField</span>: <span class="string">'_id'</span>, <span class="attr">as</span>: <span class="string">'account'</span>&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$unwind</span>: &#123;<span class="attr">path</span>: <span class="string">'$account'</span>, <span class="attr">preserveNullAndEmptyArrays</span>: <span class="literal">true</span>&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$project</span>: &#123;<span class="attr">_id</span>: <span class="number">0</span>, <span class="attr">money</span>: <span class="number">1</span>, <span class="attr">name</span>: <span class="string">'$account.name'</span>&#125;&#125;</span><br><span class="line">  )</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">catalog</span>(<span class="params">pay</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> Model.Bill.aggregate(</span><br><span class="line">    &#123;<span class="attr">$match</span>: &#123;[target]: id, month, pay&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$group</span>: &#123;<span class="attr">_id</span>: <span class="string">'$name'</span>, <span class="attr">money</span>: &#123;<span class="attr">$sum</span>: <span class="string">'$money'</span>&#125;&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$project</span>: &#123;<span class="attr">_id</span>: <span class="number">0</span>, <span class="attr">name</span>: <span class="string">'$_id'</span>, <span class="attr">money</span>: <span class="number">1</span>&#125;&#125;</span><br><span class="line">  )</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">total</span>(<span class="params">pay</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> Model.Bill.aggregate(</span><br><span class="line">    &#123;<span class="attr">$match</span>: &#123;year, pay&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$group</span>: &#123;<span class="attr">_id</span>: <span class="literal">null</span>, <span class="attr">money</span>: &#123;<span class="attr">$sum</span>: <span class="string">'$money'</span>&#125;, <span class="attr">count</span>: &#123;<span class="attr">$sum</span>: <span class="number">1</span>&#125;&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$project</span>: &#123;<span class="attr">_id</span>: <span class="number">0</span>, <span class="attr">money</span>: <span class="number">1</span>, <span class="attr">count</span>: <span class="number">1</span>&#125;&#125;</span><br><span class="line">  ).then(<span class="function"><span class="params">data</span> =&gt;</span> data[<span class="number">0</span>])</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">monthly</span>(<span class="params">pay</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> Model.Bill.aggregate(</span><br><span class="line">    &#123;<span class="attr">$match</span>: &#123;year, pay&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$group</span>: &#123;<span class="attr">_id</span>: <span class="string">'$month'</span>, <span class="attr">money</span>: &#123;<span class="attr">$sum</span>: <span class="string">'$money'</span>&#125;&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$project</span>: &#123;<span class="attr">_id</span>: <span class="number">0</span>, <span class="attr">month</span>: <span class="string">'$_id'</span>, <span class="attr">money</span>: <span class="number">1</span>&#125;&#125;</span><br><span class="line">  )</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">catalogTop6</span>(<span class="params">pay</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> Model.Bill.aggregate(</span><br><span class="line">    &#123;<span class="attr">$match</span>: &#123;year, pay&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$group</span>: &#123;<span class="attr">_id</span>: <span class="string">'$name'</span>, <span class="attr">money</span>: &#123;<span class="attr">$sum</span>: <span class="string">'$money'</span>&#125;&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$project</span>: &#123;<span class="attr">_id</span>: <span class="number">0</span>, <span class="attr">day</span>: <span class="string">'$_id'</span>, <span class="attr">money</span>: <span class="number">1</span>&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$sort</span>: &#123;<span class="attr">money</span>: <span class="number">-1</span>&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$limit</span>: <span class="number">6</span>&#125;</span><br><span class="line">  )</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">partner</span>(<span class="params">pay</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> Model.Bill.aggregate(</span><br><span class="line">    &#123;<span class="attr">$match</span>: &#123;year, pay&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$group</span>: &#123;<span class="attr">_id</span>: <span class="string">'$partner'</span>, <span class="attr">money</span>: &#123;<span class="attr">$sum</span>: <span class="string">'$money'</span>&#125;&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$lookup</span>: &#123;<span class="attr">from</span>: <span class="string">'partners'</span>, <span class="attr">localField</span>: <span class="string">'_id'</span>, <span class="attr">foreignField</span>: <span class="string">'_id'</span>, <span class="attr">as</span>: <span class="string">'partner'</span>&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$unwind</span>: &#123;<span class="attr">path</span>: <span class="string">'$partner'</span>, <span class="attr">preserveNullAndEmptyArrays</span>: <span class="literal">true</span>&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$project</span>: &#123;<span class="attr">_id</span>: <span class="number">0</span>, <span class="attr">money</span>: <span class="number">1</span>, <span class="attr">name</span>: <span class="string">'$partner.name'</span>&#125;&#125;</span><br><span class="line">  )</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">book</span>(<span class="params">pay</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> Model.Bill.aggregate(</span><br><span class="line">    &#123;<span class="attr">$match</span>: &#123;year, pay&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$group</span>: &#123;<span class="attr">_id</span>: <span class="string">'$book'</span>, <span class="attr">money</span>: &#123;<span class="attr">$sum</span>: <span class="string">'$money'</span>&#125;&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$lookup</span>: &#123;<span class="attr">from</span>: <span class="string">'books'</span>, <span class="attr">localField</span>: <span class="string">'_id'</span>, <span class="attr">foreignField</span>: <span class="string">'_id'</span>, <span class="attr">as</span>: <span class="string">'book'</span>&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$unwind</span>: &#123;<span class="attr">path</span>: <span class="string">'$book'</span>, <span class="attr">preserveNullAndEmptyArrays</span>: <span class="literal">true</span>&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$project</span>: &#123;<span class="attr">_id</span>: <span class="number">0</span>, <span class="attr">money</span>: <span class="number">1</span>, <span class="attr">name</span>: <span class="string">'$book.name'</span>&#125;&#125;</span><br><span class="line">  )</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">account</span>(<span class="params">pay</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> Model.Bill.aggregate(</span><br><span class="line">    &#123;<span class="attr">$match</span>: &#123;account, pay&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$group</span>: &#123;<span class="attr">_id</span>: <span class="string">'$account'</span>, <span class="attr">money</span>: &#123;<span class="attr">$sum</span>: <span class="string">'$money'</span>&#125;&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$lookup</span>: &#123;<span class="attr">from</span>: <span class="string">'accounts'</span>, <span class="attr">localField</span>: <span class="string">'_id'</span>, <span class="attr">foreignField</span>: <span class="string">'_id'</span>, <span class="attr">as</span>: <span class="string">'account'</span>&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$unwind</span>: &#123;<span class="attr">path</span>: <span class="string">'$account'</span>, <span class="attr">preserveNullAndEmptyArrays</span>: <span class="literal">true</span>&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$project</span>: &#123;<span class="attr">_id</span>: <span class="number">0</span>, <span class="attr">money</span>: <span class="number">1</span>, <span class="attr">name</span>: <span class="string">'$account.name'</span>&#125;&#125;</span><br><span class="line">  )</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">billsAndDays</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> Model.Bill.aggregate(</span><br><span class="line">    &#123;<span class="attr">$match</span>: &#123;year&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$group</span>: &#123;<span class="attr">_id</span>: <span class="string">'$day'</span>, <span class="attr">bill</span>: &#123;<span class="attr">$sum</span>: <span class="number">1</span>&#125;, <span class="attr">day</span>: &#123;<span class="attr">$first</span>: <span class="number">1</span>&#125;&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$group</span>: &#123;<span class="attr">_id</span>: <span class="literal">null</span>, <span class="attr">bills</span>: &#123;<span class="attr">$sum</span>: <span class="string">'$bill'</span>&#125;, <span class="attr">days</span>: &#123;<span class="attr">$sum</span>: <span class="string">'$day'</span>&#125;&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$project</span>: &#123;<span class="attr">_id</span>: <span class="number">0</span>, <span class="attr">bills</span>: <span class="number">1</span>, <span class="attr">days</span>: <span class="number">1</span>&#125;&#125;</span><br><span class="line">  ).then(<span class="function"><span class="params">data</span> =&gt;</span> data[<span class="number">0</span>])</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/mongodb-aggregate-notes/" data-id="ckckn9oe800n9rvseq1jwx96i" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-mongodb-data-migration" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/mongodb-data-migration/" class="article-date">
@@ -480,7 +565,7 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <p>创建对象有很多种方法，例如：</p>
+            <p>下面三种方式都可以创建一个 JS 对象：</p>
 <ol>
 <li><p>Object 函数</p>
  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">var obj = new Object()</span><br></pre></td></tr></table></figure>
@@ -492,7 +577,7 @@
  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">var obj = Object.create(null)</span><br></pre></td></tr></table></figure>
 </li>
 </ol>
-<p>那<code>var obj = {}</code>和<code>var obj = Object.create(null)</code>一样吗？如果不一样，那它们有什么区别？</p>
+<p>那 <code>var obj = {}</code> 和 <code>var obj = Object.create(null)</code> 一样吗？如果不一样，那它们有什么区别？</p>
         </div>
         
           <p class="article-more-link">
@@ -503,101 +588,6 @@
     </div>
     <footer class="article-footer">
      <a data-url="https://zju.date/javascript-create-object/" data-id="ckckn9o9n00iqrvse80wroel2" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-mongoose-lean" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/mongoose-lean/" class="article-date">
-  <time datetime="2017-05-23T15:07:07.000Z" itemprop="datePublished">2017-05-23</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/mongoose-lean/">mongoose lean 的作用</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Model.find(&#123;&#125;).exec()</span><br></pre></td></tr></table></figure>
-<p>平均执行时间 218 毫秒，如果使用 <code>lean()</code></p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Model.find(&#123;&#125;).exec().lean()</span><br></pre></td></tr></table></figure>
-<p>执行时间变成 71 毫秒。那 <code>lean()</code> 到底做了什么？</p>
-<blockquote>
-<p>不加 lean 查出来的是 Mongoose 文档，加 lean 查询出来的文档是普通的 JavaScript 对象，从而没有 save 方法，没有 getters 和 setters，因此会有更高的性能。</p>
-</blockquote>
-<p>而创建对象的时候，总是返回 Mongoose 文档，没有 lean() 方法，例如下面的语法是不正确的：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Model.create().lean()</span><br></pre></td></tr></table></figure>
-<p>创建之后如果想返回一个普通的对象，可以用 toObject 方法：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> instance = <span class="keyword">await</span> Model.create()</span><br><span class="line">instance.toObject()</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/mongoose-lean/" data-id="ckckn9ofb00ozrvseciig8erx" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-seneca-fatal-error" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/seneca-fatal-error/" class="article-date">
-  <time datetime="2017-05-23T15:07:07.000Z" itemprop="datePublished">2017-05-23</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/seneca-fatal-error/">Seneca Fatal Error</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>今天遇到一个错误：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Seneca Fatal Error</span><br><span class="line">==================</span><br><span class="line"></span><br><span class="line">Message: seneca: Action xxxx</span><br></pre></td></tr></table></figure>
-<p>需要加下面的语句才行：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">seneca.fixedargs[<span class="string">'fatal$'</span>] = <span class="literal">false</span>;</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/seneca-fatal-error/" data-id="ckckn9oir00u1rvsec6swze3k" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 

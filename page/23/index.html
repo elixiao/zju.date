@@ -54,6 +54,105 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-mongodb-restrict-ip" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/mongodb-restrict-ip/" class="article-date">
+  <time datetime="2018-03-26T09:38:07.000Z" itemprop="datePublished">2018-03-26</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/mongodb-restrict-ip/">mongodb 指定 IP 访问</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>MongoDB 可以限制只允许某一特定 IP 来访问，有两种方法：</p>
+<ul>
+<li><p>方法一：在启动时加参数：<code>mongod --bind_ip 127.0.0.1,10.0.133.14</code></p>
+</li>
+<li><p>方法二：在 <code>/etc/mongodb.conf</code> 文件中添加以下内容：<code>bind_ip = 127.0.0.1,10.0.133.14</code></p>
+</li>
+</ul>
+<p>默认情况下不会加载任何配置文件，可以通过下面的命令指定：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">--config /path/to/some/file.conf <span class="comment"># 或者</span></span><br><span class="line">-f /path/to/some/file.conf</span><br></pre></td></tr></table></figure>
+<p>但是在 docker mongodb 中，配置文件被重名了：</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">RUN</span><span class="bash"> <span class="built_in">set</span> -x \</span></span><br><span class="line"><span class="bash">	&amp;&amp; apt-get update \</span></span><br><span class="line"><span class="bash">	&amp;&amp; apt-get install -y \</span></span><br><span class="line"><span class="bash">		<span class="variable">$&#123;MONGO_PACKAGE&#125;</span>=<span class="variable">$MONGO_VERSION</span> \</span></span><br><span class="line"><span class="bash">		<span class="variable">$&#123;MONGO_PACKAGE&#125;</span>-server=<span class="variable">$MONGO_VERSION</span> \</span></span><br><span class="line"><span class="bash">		<span class="variable">$&#123;MONGO_PACKAGE&#125;</span>-shell=<span class="variable">$MONGO_VERSION</span> \</span></span><br><span class="line"><span class="bash">		<span class="variable">$&#123;MONGO_PACKAGE&#125;</span>-mongos=<span class="variable">$MONGO_VERSION</span> \</span></span><br><span class="line"><span class="bash">		<span class="variable">$&#123;MONGO_PACKAGE&#125;</span>-tools=<span class="variable">$MONGO_VERSION</span> \</span></span><br><span class="line"><span class="bash">	&amp;&amp; rm -rf /var/lib/apt/lists/* \</span></span><br><span class="line"><span class="bash">	&amp;&amp; rm -rf /var/lib/mongodb \</span></span><br><span class="line"><span class="bash">	&amp;&amp; mv /etc/mongod.conf /etc/mongod.conf.orig</span></span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/mongodb-restrict-ip/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/mongodb-restrict-ip/" data-id="ckckn9oez00ofrvseh4b03137" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-nginx-static-assets-403" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/nginx-static-assets-403/" class="article-date">
+  <time datetime="2018-03-25T01:54:57.000Z" itemprop="datePublished">2018-03-25</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/nginx-static-assets-403/">nginx静态图片403错误排查</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>上传了一些图片到服务器上，然后用 nginx 来 serve 静态图片，结果总是有一部分图片访问不了，报 403 错，而另外一些又是好的，经过半天的排查终于发现原来是文件权限的问题：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">-rw------- 1 root root 411K 5月  12 14:56 advantage.png</span><br><span class="line">-rw-r--r-- 1 root root 1.3M 5月  12 14:56 agency.png</span><br><span class="line">-rw-r--r-- 1 root root 8.5K 5月  12 14:56 copy_url.png</span><br><span class="line">-rw------- 1 root root 439K 5月  12 14:56 credit_invite.png</span><br><span class="line">-rw-r--r-- 1 root root 266K 5月  12 14:56 download_bg.png</span><br><span class="line">-rw-r--r-- 1 root root  15K 5月  12 14:56 download_logo.png</span><br><span class="line">-rw------- 1 root root  11K 5月  12 14:56 download_shortcut.png</span><br><span class="line">-rw-r--r-- 1 root root 278K 5月  12 14:56 download_top1.png</span><br><span class="line">-rw-r--r-- 1 root root 9.7K 5月  12 14:56 friends_circle.png</span><br><span class="line">-rw-r--r-- 1 root root 1.3M 5月  12 14:56 invite.png</span><br><span class="line">-rw-r--r-- 1 root root  780 5月  12 14:56 ios.png</span><br><span class="line">-rw-r--r-- 1 root root  13K 5月  12 14:56 logo.png</span><br><span class="line">-rw-r--r-- 1 root root  989 5月  12 14:56 message.png</span><br><span class="line">-rw-r--r-- 1 root root  815 5月  12 14:56 open.svg</span><br><span class="line">-rw-r--r-- 1 root root 858K 5月  12 14:56 recruit.png</span><br><span class="line">-rw------- 1 root root 113K 5月  12 14:56 register_cover.jpeg</span><br><span class="line">-rw------- 1 root root 447K 5月  12 14:56 register_cover.png</span><br><span class="line">-rw-r--r-- 1 root root 6.5K 5月  12 14:56 success.png</span><br><span class="line">-rw-r--r-- 1 root root 491K 5月  12 14:56 top2.png</span><br><span class="line">-rw-r--r-- 1 root root 8.6K 5月  12 14:56 wechatpay.png</span><br></pre></td></tr></table></figure>
+<p>可以看到，有些文件是 600 有些是 644，访问不了的图片都是那些 600 的，于是用下面的命令把权限改一下就好了：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod 644 xxx.png</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/nginx-static-assets-403/" data-id="ckckn9og500q2rvsezilqifrb" class="article-share-link">Share</a>
+     
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-quickly-setup-node-env" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/quickly-setup-node-env/" class="article-date">
@@ -495,113 +594,6 @@
      <a data-url="https://zju.date/docker-foreground/" data-id="ckckn9o4i009orvse0kjrfdir" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/">Docker</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-alpine-pros-and-cons" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/alpine-pros-and-cons/" class="article-date">
-  <time datetime="2018-03-08T15:36:07.000Z" itemprop="datePublished">2018-03-08</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/alpine-pros-and-cons/">Alpine Linux的优势和问题</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <ol>
-<li><p>优势</p>
-<ul>
-<li>Alpine Linux的Docker镜像特点是轻巧（大小只有5M）且有完整的包管理工具(APK)。</li>
-<li>Docker 官方镜像可能会用 Alpine Linux 替 换Ubuntu。</li>
-</ul>
-</li>
-<li><p>问题</p>
-<ul>
-<li>Alpine Linux 使用了 musl，可能和其他 Linux 发行版使用的 glibc 实现会有些不同。</li>
-<li>Alpine 里面没有 bash，只有 sh</li>
-</ul>
-</li>
-</ol>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/alpine-pros-and-cons/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/alpine-pros-and-cons/" data-id="ckckn9o060036rvse02zw0xbx" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-centos-install-nginx" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/centos-install-nginx/" class="article-date">
-  <time datetime="2018-03-06T09:40:25.000Z" itemprop="datePublished">2018-03-06</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/centos-install-nginx/">centos 安装 nginx</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>在 centos 中尝试安装 nginx，报错：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">yum install nginx</span><br><span class="line">已加载插件：fastestmirror</span><br><span class="line">Loading mirror speeds from cached hostfile</span><br><span class="line"> * base: mirror.bit.edu.cn</span><br><span class="line"> * extras: mirror.bit.edu.cn</span><br><span class="line"> * updates: mirror.bit.edu.cn</span><br><span class="line">没有可用软件包 nginx。</span><br><span class="line">错误：无须任何处理</span><br></pre></td></tr></table></figure>
-<p>因为默认的源里面没有 nginx，这里推荐使用 EPEL，它是 <code>yum</code> 的一个软件源，里面包含了许多基本源里没有的软件。一些软件如 <strong>PHP</strong>、<strong>Redis</strong>、<strong>Nginx</strong>，必须添加 EPEL 源之后，才能用 <code>yum</code> 来安装。</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install epel-release</span><br></pre></td></tr></table></figure>
-<p>检查软件源：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum repolist</span><br></pre></td></tr></table></figure>
-<p>再安装就成功了。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/centos-install-nginx/" data-id="ckckn9o2v006zrvsei9zonhg8" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
 
     </footer>
   </div>

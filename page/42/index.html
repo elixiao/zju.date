@@ -54,6 +54,129 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-firebase-notes" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/firebase-notes/" class="article-date">
+  <time datetime="2017-07-15T02:01:07.000Z" itemprop="datePublished">2017-07-15</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/firebase-notes/">firebase 搭建静态网站</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <h1 id="firebase"><a href="#firebase" class="headerlink" title="firebase"></a>firebase</h1><ul>
+<li><p>Firebase Realtime Database </p>
+<blockquote>
+<p>可以存储 JSON 应用数据（例如游戏状态或聊天消息），并立即在所有已连接设备间同步更改。</p>
+</blockquote>
+</li>
+<li><p>Firebase Remote Config </p>
+<blockquote>
+<p>可以在不要求用户下载更新的情况下存储开发者指定的键值对来更改您的应用的行为和外观。</p>
+</blockquote>
+</li>
+<li><p>Firebase Hosting</p>
+<blockquote>
+<p>可以托管您的网站的 HTML、CSS 和 JavaScript，以及开发者提供的其他资产，例如图形、字体和图标。</p>
+</blockquote>
+</li>
+</ul>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/firebase-notes/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/firebase-notes/" data-id="ckckn9o6800curvse7ceddt2i" class="article-share-link">Share</a>
+     
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-why-return-killed" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/why-return-killed/" class="article-date">
+  <time datetime="2017-07-14T02:31:47.000Z" itemprop="datePublished">2017-07-14</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/why-return-killed/">服务器返回killed</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在服务器上运行命令时突然中断，返回一个消息：<code>killed</code>，莫名其妙，网上查了下发现是服务器内存不足导致的，例如你的服务器只有512M的RAM，但是webpack的uglify插件需要2G的内存空间，超出限制，就会报上述错误。</p>
+<p>有时候 <code>npm install</code> 的时候也是，服务器只有500M的内存。而且该项目会用到一些底层的npm包，会编译一些代码。这就导致了内存不够用。可以查一下相应的系统log，在路径 /var/log之下，确认自己的问题。如/var/log/syslog 和 /var/log/messages等。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[root@vultr]<span class="comment"># tail /var/log/messages</span></span><br><span class="line">Jan  7 00:20:41 guest kernel: [11139]     0 11139   317738    20745     200        0             0 node</span><br><span class="line">Jan  7 00:20:41 guest kernel: [11146]     0 11146   319231    22503     211        0             0 node</span><br><span class="line">Jan  7 00:20:41 guest kernel: [11151]     0 11151   318210    21638     207        0             0 node</span><br><span class="line">Jan  7 00:20:41 guest kernel: [11158]     0 11158   301921    21184     203        0             0 node</span><br><span class="line">Jan  7 00:20:41 guest kernel: [23397]    89 23397    22286      259      42        0             0 pickup</span><br><span class="line">Jan  7 00:20:41 guest kernel: [23753]     0 23753    36948      335      75        0             0 sshd</span><br><span class="line">Jan  7 00:20:41 guest kernel: [23756]     0 23756    28868      103      15        0             0 bash</span><br><span class="line">Jan  7 00:20:41 guest kernel: [23967]     0 23967   323412    32707     256        0             0 npm</span><br><span class="line">Jan  7 00:20:41 guest kernel: Out of memory: Kill process 23967 (npm) score 67 or sacrifice child</span><br><span class="line">Jan  7 00:20:41 guest kernel: Killed process 23967 (npm) total-vm:1293648kB, anon-rss:130828kB, file-rss:0kB, shmem-rss:0kB</span><br></pre></td></tr></table></figure>
+<p>那如何解决呢？使用swap file实现虚拟内存。首先查看系统是否配置了交换区域：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo swapon -s</span><br></pre></td></tr></table></figure>
+<p>没有的话， 便直接开始创建swap file，创建一个2G的文件。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo fallocate -l 2G /swapfile</span><br></pre></td></tr></table></figure>
+<p>然后使用</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls -lh /swapfile</span><br></pre></td></tr></table></figure>
+<p>确认是否是自己所需要的文件大小。然后调整文件的权限，若该文件能被其他用户随意的读写，则会产生很大的安全隐患。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo chmod 600 /swapfile</span><br></pre></td></tr></table></figure>
+<p>现在安全多了，可以让系统开始设置交换区域了。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo mkswap /swapfile</span><br></pre></td></tr></table></figure>
+<p>启用该文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo swapon /swapfile</span><br></pre></td></tr></table></figure>
+<p>可以使用最初的命令验证swap file是否正确使用。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo swapon -s</span><br><span class="line"></span><br><span class="line">Filename                    Type          Size     Used     Priority</span><br><span class="line">/swapfile                               file          1048572     0     -1</span><br></pre></td></tr></table></figure>
+<p>交换分区已经成功设置，系统会在必要的时候使用它。现在已经启用了swap文件，但当我们重启的时候，系统不会自动地启用该swap文件。可以通过修改<code>fstab</code>文件实现开机使用swap文件。用root权限编辑</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vim /etc/fstab</span><br></pre></td></tr></table></figure>
+<p>在文件的最后，需要添加一行告诉操作系统自动使用swap文件。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/swapfile   none    swap    sw    0   0</span><br></pre></td></tr></table></figure>
+<p>如此再<code>npm install</code> 的时候，便解决了所有的问题了。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/why-return-killed/" data-id="ckckn9olw00yfrvsebwma1v7e" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-canvas-notes" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/canvas-notes/" class="article-date">
@@ -499,91 +622,6 @@
     </div>
     <footer class="article-footer">
      <a data-url="https://zju.date/install-node.js-and-mongodb-on-linux/" data-id="ckckn9o9e00icrvse8u6lo22x" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-public-vs-private-in-angular-componet" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/public-vs-private-in-angular-componet/" class="article-date">
-  <time datetime="2017-06-15T02:45:07.000Z" itemprop="datePublished">2017-06-15</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/public-vs-private-in-angular-componet/">angular组件中的public和private修饰符</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>angular 组件中变量的 <code>public</code> 和 <code>private</code> 修饰符会影响到 AoT 编译：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">template: <span class="string">"&lt;div&gt;&#123;&#123;hello&#125;&#125;&lt;/div&gt;"</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">someModule</span> </span>&#123;</span><br><span class="line">    private hello: string;            <span class="xml"><span class="tag">&lt;<span class="name">--</span> <span class="attr">doesn</span>'<span class="attr">t</span> <span class="attr">work</span> <span class="attr">with</span> <span class="attr">AOT</span> <span class="attr">compiler</span></span></span></span><br><span class="line"><span class="xml">&#125;</span></span><br></pre></td></tr></table></figure>
-<p>在 AoT 模式下模板里面不允许访问组件类中的 <code>private</code> 属性，因为在 JiT 模式下是编译后的 ES5 代码，而在 JavaScript 中并没有公有属性和私有属性一说，但 AoT 模式下 typescript 会对变量的访问范围作出限制。</p>
-<p>建议所有的属性都设置为公有属性，在 <code>constructor</code> 里面注入的 <code>service</code>，因为一般只会在 <code>component</code> 中使用，故设置为私有属性。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/public-vs-private-in-angular-componet/" data-id="ckckn9ohc00rzrvse3aa3ch3u" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-mongodb-aggregate-notes" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/mongodb-aggregate-notes/" class="article-date">
-  <time datetime="2017-06-14T08:32:07.000Z" itemprop="datePublished">2017-06-14</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/mongodb-aggregate-notes/">mongodb 聚合使用笔记</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">daily</span>(<span class="params">pay</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> Model.Bill.aggregate(</span><br><span class="line">    &#123;<span class="attr">$match</span>: &#123;[target]: id, month, pay&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$group</span>: &#123;<span class="attr">_id</span>: <span class="string">'$day'</span>, <span class="attr">money</span>: &#123;<span class="attr">$sum</span>: <span class="string">'$money'</span>&#125;&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$project</span>: &#123;<span class="attr">_id</span>: <span class="number">0</span>, <span class="attr">day</span>: <span class="string">'$_id'</span>, <span class="attr">money</span>: <span class="number">1</span>&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$sort</span>: &#123;<span class="attr">day</span>: <span class="number">1</span>&#125;&#125;</span><br><span class="line">  )</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">partner</span>(<span class="params">pay</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> Model.Bill.aggregate(</span><br><span class="line">    &#123;<span class="attr">$match</span>: &#123;[target]: id, month, pay&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$group</span>: &#123;<span class="attr">_id</span>: <span class="string">'$partner'</span>, <span class="attr">money</span>: &#123;<span class="attr">$sum</span>: <span class="string">'$money'</span>&#125;&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$lookup</span>: &#123;<span class="attr">from</span>: <span class="string">'partners'</span>, <span class="attr">localField</span>: <span class="string">'_id'</span>, <span class="attr">foreignField</span>: <span class="string">'_id'</span>, <span class="attr">as</span>: <span class="string">'partner'</span>&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$unwind</span>: &#123;<span class="attr">path</span>: <span class="string">'$partner'</span>, <span class="attr">preserveNullAndEmptyArrays</span>: <span class="literal">true</span>&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$project</span>: &#123;<span class="attr">_id</span>: <span class="number">0</span>, <span class="attr">money</span>: <span class="number">1</span>, <span class="attr">name</span>: <span class="string">'$partner.name'</span>&#125;&#125;</span><br><span class="line">  )</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">book</span>(<span class="params">pay</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> Model.Bill.aggregate(</span><br><span class="line">    &#123;<span class="attr">$match</span>: &#123;[target]: id, month, pay&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$group</span>: &#123;<span class="attr">_id</span>: <span class="string">'$book'</span>, <span class="attr">money</span>: &#123;<span class="attr">$sum</span>: <span class="string">'$money'</span>&#125;&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$lookup</span>: &#123;<span class="attr">from</span>: <span class="string">'books'</span>, <span class="attr">localField</span>: <span class="string">'_id'</span>, <span class="attr">foreignField</span>: <span class="string">'_id'</span>, <span class="attr">as</span>: <span class="string">'book'</span>&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$unwind</span>: &#123;<span class="attr">path</span>: <span class="string">'$book'</span>, <span class="attr">preserveNullAndEmptyArrays</span>: <span class="literal">true</span>&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$project</span>: &#123;<span class="attr">_id</span>: <span class="number">0</span>, <span class="attr">money</span>: <span class="number">1</span>, <span class="attr">name</span>: <span class="string">'$book.name'</span>&#125;&#125;</span><br><span class="line">  )</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">account</span>(<span class="params">pay</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> Model.Bill.aggregate(</span><br><span class="line">    &#123;<span class="attr">$match</span>: &#123;[target]: id, month, pay&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$group</span>: &#123;<span class="attr">_id</span>: <span class="string">'$account'</span>, <span class="attr">money</span>: &#123;<span class="attr">$sum</span>: <span class="string">'$money'</span>&#125;&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$lookup</span>: &#123;<span class="attr">from</span>: <span class="string">'accounts'</span>, <span class="attr">localField</span>: <span class="string">'_id'</span>, <span class="attr">foreignField</span>: <span class="string">'_id'</span>, <span class="attr">as</span>: <span class="string">'account'</span>&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$unwind</span>: &#123;<span class="attr">path</span>: <span class="string">'$account'</span>, <span class="attr">preserveNullAndEmptyArrays</span>: <span class="literal">true</span>&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$project</span>: &#123;<span class="attr">_id</span>: <span class="number">0</span>, <span class="attr">money</span>: <span class="number">1</span>, <span class="attr">name</span>: <span class="string">'$account.name'</span>&#125;&#125;</span><br><span class="line">  )</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">catalog</span>(<span class="params">pay</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> Model.Bill.aggregate(</span><br><span class="line">    &#123;<span class="attr">$match</span>: &#123;[target]: id, month, pay&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$group</span>: &#123;<span class="attr">_id</span>: <span class="string">'$name'</span>, <span class="attr">money</span>: &#123;<span class="attr">$sum</span>: <span class="string">'$money'</span>&#125;&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$project</span>: &#123;<span class="attr">_id</span>: <span class="number">0</span>, <span class="attr">name</span>: <span class="string">'$_id'</span>, <span class="attr">money</span>: <span class="number">1</span>&#125;&#125;</span><br><span class="line">  )</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">total</span>(<span class="params">pay</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> Model.Bill.aggregate(</span><br><span class="line">    &#123;<span class="attr">$match</span>: &#123;year, pay&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$group</span>: &#123;<span class="attr">_id</span>: <span class="literal">null</span>, <span class="attr">money</span>: &#123;<span class="attr">$sum</span>: <span class="string">'$money'</span>&#125;, <span class="attr">count</span>: &#123;<span class="attr">$sum</span>: <span class="number">1</span>&#125;&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$project</span>: &#123;<span class="attr">_id</span>: <span class="number">0</span>, <span class="attr">money</span>: <span class="number">1</span>, <span class="attr">count</span>: <span class="number">1</span>&#125;&#125;</span><br><span class="line">  ).then(<span class="function"><span class="params">data</span> =&gt;</span> data[<span class="number">0</span>])</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">monthly</span>(<span class="params">pay</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> Model.Bill.aggregate(</span><br><span class="line">    &#123;<span class="attr">$match</span>: &#123;year, pay&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$group</span>: &#123;<span class="attr">_id</span>: <span class="string">'$month'</span>, <span class="attr">money</span>: &#123;<span class="attr">$sum</span>: <span class="string">'$money'</span>&#125;&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$project</span>: &#123;<span class="attr">_id</span>: <span class="number">0</span>, <span class="attr">month</span>: <span class="string">'$_id'</span>, <span class="attr">money</span>: <span class="number">1</span>&#125;&#125;</span><br><span class="line">  )</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">catalogTop6</span>(<span class="params">pay</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> Model.Bill.aggregate(</span><br><span class="line">    &#123;<span class="attr">$match</span>: &#123;year, pay&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$group</span>: &#123;<span class="attr">_id</span>: <span class="string">'$name'</span>, <span class="attr">money</span>: &#123;<span class="attr">$sum</span>: <span class="string">'$money'</span>&#125;&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$project</span>: &#123;<span class="attr">_id</span>: <span class="number">0</span>, <span class="attr">day</span>: <span class="string">'$_id'</span>, <span class="attr">money</span>: <span class="number">1</span>&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$sort</span>: &#123;<span class="attr">money</span>: <span class="number">-1</span>&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$limit</span>: <span class="number">6</span>&#125;</span><br><span class="line">  )</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">partner</span>(<span class="params">pay</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> Model.Bill.aggregate(</span><br><span class="line">    &#123;<span class="attr">$match</span>: &#123;year, pay&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$group</span>: &#123;<span class="attr">_id</span>: <span class="string">'$partner'</span>, <span class="attr">money</span>: &#123;<span class="attr">$sum</span>: <span class="string">'$money'</span>&#125;&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$lookup</span>: &#123;<span class="attr">from</span>: <span class="string">'partners'</span>, <span class="attr">localField</span>: <span class="string">'_id'</span>, <span class="attr">foreignField</span>: <span class="string">'_id'</span>, <span class="attr">as</span>: <span class="string">'partner'</span>&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$unwind</span>: &#123;<span class="attr">path</span>: <span class="string">'$partner'</span>, <span class="attr">preserveNullAndEmptyArrays</span>: <span class="literal">true</span>&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$project</span>: &#123;<span class="attr">_id</span>: <span class="number">0</span>, <span class="attr">money</span>: <span class="number">1</span>, <span class="attr">name</span>: <span class="string">'$partner.name'</span>&#125;&#125;</span><br><span class="line">  )</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">book</span>(<span class="params">pay</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> Model.Bill.aggregate(</span><br><span class="line">    &#123;<span class="attr">$match</span>: &#123;year, pay&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$group</span>: &#123;<span class="attr">_id</span>: <span class="string">'$book'</span>, <span class="attr">money</span>: &#123;<span class="attr">$sum</span>: <span class="string">'$money'</span>&#125;&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$lookup</span>: &#123;<span class="attr">from</span>: <span class="string">'books'</span>, <span class="attr">localField</span>: <span class="string">'_id'</span>, <span class="attr">foreignField</span>: <span class="string">'_id'</span>, <span class="attr">as</span>: <span class="string">'book'</span>&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$unwind</span>: &#123;<span class="attr">path</span>: <span class="string">'$book'</span>, <span class="attr">preserveNullAndEmptyArrays</span>: <span class="literal">true</span>&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$project</span>: &#123;<span class="attr">_id</span>: <span class="number">0</span>, <span class="attr">money</span>: <span class="number">1</span>, <span class="attr">name</span>: <span class="string">'$book.name'</span>&#125;&#125;</span><br><span class="line">  )</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">account</span>(<span class="params">pay</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> Model.Bill.aggregate(</span><br><span class="line">    &#123;<span class="attr">$match</span>: &#123;account, pay&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$group</span>: &#123;<span class="attr">_id</span>: <span class="string">'$account'</span>, <span class="attr">money</span>: &#123;<span class="attr">$sum</span>: <span class="string">'$money'</span>&#125;&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$lookup</span>: &#123;<span class="attr">from</span>: <span class="string">'accounts'</span>, <span class="attr">localField</span>: <span class="string">'_id'</span>, <span class="attr">foreignField</span>: <span class="string">'_id'</span>, <span class="attr">as</span>: <span class="string">'account'</span>&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$unwind</span>: &#123;<span class="attr">path</span>: <span class="string">'$account'</span>, <span class="attr">preserveNullAndEmptyArrays</span>: <span class="literal">true</span>&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$project</span>: &#123;<span class="attr">_id</span>: <span class="number">0</span>, <span class="attr">money</span>: <span class="number">1</span>, <span class="attr">name</span>: <span class="string">'$account.name'</span>&#125;&#125;</span><br><span class="line">  )</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">billsAndDays</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> Model.Bill.aggregate(</span><br><span class="line">    &#123;<span class="attr">$match</span>: &#123;year&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$group</span>: &#123;<span class="attr">_id</span>: <span class="string">'$day'</span>, <span class="attr">bill</span>: &#123;<span class="attr">$sum</span>: <span class="number">1</span>&#125;, <span class="attr">day</span>: &#123;<span class="attr">$first</span>: <span class="number">1</span>&#125;&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$group</span>: &#123;<span class="attr">_id</span>: <span class="literal">null</span>, <span class="attr">bills</span>: &#123;<span class="attr">$sum</span>: <span class="string">'$bill'</span>&#125;, <span class="attr">days</span>: &#123;<span class="attr">$sum</span>: <span class="string">'$day'</span>&#125;&#125;&#125;,</span><br><span class="line">    &#123;<span class="attr">$project</span>: &#123;<span class="attr">_id</span>: <span class="number">0</span>, <span class="attr">bills</span>: <span class="number">1</span>, <span class="attr">days</span>: <span class="number">1</span>&#125;&#125;</span><br><span class="line">  ).then(<span class="function"><span class="params">data</span> =&gt;</span> data[<span class="number">0</span>])</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/mongodb-aggregate-notes/" data-id="ckckn9oe800n9rvseq1jwx96i" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
 

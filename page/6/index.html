@@ -54,6 +54,148 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-mongodb-capped-collection" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/mongodb-capped-collection/" class="article-date">
+  <time datetime="2019-05-13T06:49:36.000Z" itemprop="datePublished">2019-05-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/mongodb-capped-collection/">MongoDB定容集合</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>MongoDB定容集合（capped collection） 用于定义一个大小固定的集合：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">db.createCollection(<span class="string">"coll_name"</span>, &#123;<span class="attr">capped</span>: <span class="literal">true</span>, <span class="attr">size</span>:<span class="number">100000</span>&#125;)</span><br></pre></td></tr></table></figure>
+<p>当插入新的数据导致存储空间超出预设大小时，旧的数据会被清除。但这个表里面的文档是不能被手动删除的，只有 drop 整个表才行。不许删除的原因是为了保持每个文档在磁盘上的位置不变。另外，文档的更新是有限制的，即必须在不增加文档占用空间的前提下才能生效，比如减少字段或减少值的长度，如果更新后的文档比原文档占据更多的空间，就会更新失败。Capped Collection主要用于存储日志信息和缓存一些少用的文档。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/mongodb-capped-collection/" data-id="ckckn9oei00nprvse9kzl9fir" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MongoDB/">MongoDB</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-flutter-h-file-not-found" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/flutter-h-file-not-found/" class="article-date">
+  <time datetime="2019-05-13T06:41:29.000Z" itemprop="datePublished">2019-05-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/flutter-h-file-not-found/">Flutter.h file not found</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>今天打包到 iPhone 上的时候，提示报错：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&apos;Flutter/Flutter.h&apos; file not found</span><br><span class="line">#import &lt;Flutter/Flutter.h&gt;</span><br></pre></td></tr></table></figure>
+<p>意思是说插件中的 Flutter 找不到，网上查了一下说是 cocoapods 的问题，解决办法就是：</p>
+<blockquote>
+<p>用 <code>flutter create my_app</code> 创建一个新的项目，然后用这个新项目中的 ios/Flutter 文件夹替换报错项目即可。</p>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/flutter-h-file-not-found/" data-id="ckckn9o6i00dervseqy3lvdov" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flutter/">Flutter</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-unit8array-to-string" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/unit8array-to-string/" class="article-date">
+  <time datetime="2019-05-13T06:28:07.000Z" itemprop="datePublished">2019-05-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/unit8array-to-string/">unit8array转换为字符串</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>unit8array 格式是8字节无符号整数数组，如果把它转换为 string 类型呢？</p>
+<ol>
+<li><p>如果不是 utf8 编码的话，可以用下面的方法：</p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">uint8arrToStr</span>(<span class="params">uint8arr</span>)</span>&#123;</span><br><span class="line">   <span class="keyword">return</span> <span class="built_in">String</span>.fromCharCode.apply(<span class="literal">null</span>, uint8arr)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>如果使用了 utf8 编码，在浏览器上可以用下面的方法：</p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 把 Uint8Array 转换为 String</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">uint8arrToStr</span>(<span class="params">uint8arr</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> TextDecoder(<span class="string">"utf-8"</span>).decode(uint8arr)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 把 String 转换为 Uint8Array</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">str2Uint8arr</span>(<span class="params">str</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> TextEncoder(<span class="string">"utf-8"</span>).encode(str)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/unit8array-to-string/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/unit8array-to-string/" data-id="ckckn9okk00wnrvsecrzb7b8v" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-yarn-node-sass-slow" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/yarn-node-sass-slow/" class="article-date">
@@ -397,137 +539,6 @@
     <footer class="article-footer">
      <a data-url="https://zju.date/thermal-printer/" data-id="ckckn9ojt00vprvsendbj61xi" class="article-share-link">Share</a>
      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-cannot-recover-key" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/cannot-recover-key/" class="article-date">
-  <time datetime="2019-03-27T11:56:28.000Z" itemprop="datePublished">2019-03-27</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/cannot-recover-key/">cannot recover key</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Android studio 运行项目报错 can not recover key，找了半天发现 keystore 和 key password 必须保持一致才行。可以找到刚才生成的 jks 文件，然后用下面两条命令把密码改成一致：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">keytool -storepasswd -new [新的 keystore 密码] -keystore [jks文件路径]</span><br><span class="line">keytool -keypasswd -<span class="built_in">alias</span> [新别名] -new [新密码] -keystore [jks文件路径]</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/cannot-recover-key/" data-id="ckckn9o2h006frvsent6u6ly2" class="article-share-link">Share</a>
-     
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-flutter-padding-vs-container" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/flutter-padding-vs-container/" class="article-date">
-  <time datetime="2019-03-12T05:25:51.000Z" itemprop="datePublished">2019-03-12</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/flutter-padding-vs-container/">Flutter中的padding和container</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>给一个组件添加边距，有两种方式：</p>
-<ol>
-<li>上层包裹 Padding 组件</li>
-<li>上层包裹 Container 组件，并设置其 padding</li>
-</ol>
-<p>那这两种方式有什么区别呢？</p>
-<p>答案是没有任何区别，如果只是给 container 设置了一个 padding 属性，flutter 会自动把这个 Container 转换成 Padding。本质上 Container 组件就是把一系列简单的组件组合在一起方便使用而已，例如设置了 decoration 属性，就相当于外层又嵌套了一个 DecoratedBox 组件。所以不用纠结，喜欢 Container 就用 Container，喜欢 Padding 就用 Padding。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/flutter-padding-vs-container/" data-id="ckckn9o6x00e0rvse024fra04" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flutter/">Flutter</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-axios-https-certificate-expired" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/axios-https-certificate-expired/" class="article-date">
-  <time datetime="2019-01-25T01:32:07.000Z" itemprop="datePublished">2019-01-25</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/axios-https-certificate-expired/">axios忽略https证书错误</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>使用 axios 请求 https 网站的数据时，如果证书已过期，会报错：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Error: certificate has expired</span><br></pre></td></tr></table></figure>
-<p>可以使用下面的方法忽略证书错误：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">process.env.NODE_TLS_REJECT_UNAUTHORIZED = <span class="string">'0'</span> <span class="comment">// 不拒绝过期的和无效的证书</span></span><br><span class="line"><span class="keyword">const</span> agent = <span class="keyword">new</span> https.Agent(&#123;  </span><br><span class="line">  rejectUnauthorized: <span class="literal">false</span></span><br><span class="line">&#125;)</span><br><span class="line">axios.get(<span class="string">'https://something.com/foo'</span>, &#123; <span class="attr">httpsAgent</span>: agent &#125;)</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/axios-https-certificate-expired/" data-id="ckckn9o24005rrvse43ua1s0q" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
     </footer>
   </div>
   
