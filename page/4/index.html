@@ -54,6 +54,60 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-browser-eventloop" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/browser-eventloop/" class="article-date">
+  <time datetime="2019-10-31T09:15:09.000Z" itemprop="datePublished">2019-10-31</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/browser-eventloop/">浏览器中的消息队列和事件循环</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="事件循环是如何产生的"><a href="#事件循环是如何产生的" class="headerlink" title="事件循环是如何产生的"></a>事件循环是如何产生的</h2><p>在浏览器中，JS 的主线程是单线程的，异步的代码被放到了任务队列中，JS 主线程不断地轮询任务队列，每次从队首取出一个任务并进行处理，从而构成了事件环。</p>
+<h2 id="任务队列的类型"><a href="#任务队列的类型" class="headerlink" title="任务队列的类型"></a>任务队列的类型</h2><p>任务队列有两种，分别是宏任务（macrotask）队列和微任务（microtask）队列，用于存放不同的任务：</p>
+<ul>
+<li>宏任务主要有：script（用户代码）、setTimeout、setInterval、I/O、UI 交互事件、postMessage、MessageChannel 等</li>
+<li>微任务主要有：Promise.then、 MutationObserver 等</li>
+</ul>
+<h2 id="事件环的工作流程"><a href="#事件环的工作流程" class="headerlink" title="事件环的工作流程"></a>事件环的工作流程</h2><ul>
+<li>JS 引擎首先从上而下执行用户 script 代码（宏任务）</li>
+<li>如果遇到 setTimeout、promise、click事件等，按照分类放入宏任务队列或微任务队列中</li>
+<li>继续执行后面的代码，script 执行完毕后，会清空所有的微任务</li>
+<li>微任务清空后可能会进行一次 UI 渲染（不是每次都会）</li>
+<li>然后再去宏任务队列中取出一个执行，循环往复</li>
+</ul>
+<h2 id="图示"><a href="#图示" class="headerlink" title="图示"></a>图示</h2><p><img src="http://img.zlib.cn/blog/eventloop.svg?a=1" alt="浏览器中的事件环"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/browser-eventloop/" data-id="ckckn9o2c0068rvsec96bamwk" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-webview-fontsize-too-small" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/webview-fontsize-too-small/" class="article-date">
@@ -516,48 +570,6 @@
      <a data-url="https://zju.date/flutter-conditionly-render-child/" data-id="ckckn9o6w00dyrvseljzc4rpf" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flutter/">Flutter</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-dart-get-http-request-body" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/dart-get-http-request-body/" class="article-date">
-  <time datetime="2019-08-06T14:27:58.000Z" itemprop="datePublished">2019-08-06</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/dart-get-http-request-body/">Dart 服务端获取请求 body</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Dart 服务端获取 http request body 的示例代码：</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">'dart:io'</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="string">'dart:convert'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">void</span> main() &#123;</span><br><span class="line">  HttpServer.bind(InternetAddress.anyIPv4, <span class="number">3000</span>).then((server) &#123;</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">'Listening on localhost:<span class="subst">$&#123;server.port&#125;</span>'</span>);</span><br><span class="line">    server.listen((HttpRequest request) &#123;</span><br><span class="line">      <span class="keyword">if</span> (request.contentLength == <span class="number">-1</span>) &#123;</span><br><span class="line">        _sendResponse(request, <span class="string">''</span>);</span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        utf8.decodeStream(request).then((data) =&gt; _sendResponse(request, data));</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">_sendResponse(HttpRequest request, <span class="built_in">String</span> requestData) &#123;</span><br><span class="line">  request.response</span><br><span class="line">    ..headers.contentType = ContentType.json</span><br><span class="line">    ..write(jsonEncode(&#123;</span><br><span class="line">      <span class="string">'method'</span>: request.method,</span><br><span class="line">      <span class="string">'content length'</span>: request.contentLength,</span><br><span class="line">      <span class="string">'content'</span>: requestData</span><br><span class="line">    &#125;))</span><br><span class="line">    ..close();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/dart-get-http-request-body/" data-id="ckckn9o470094rvsegv8kh79j" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Dart/">Dart</a></li></ul>
 
     </footer>
   </div>

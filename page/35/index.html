@@ -54,6 +54,72 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-nginx-gzip" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/nginx-gzip/" class="article-date">
+  <time datetime="2017-09-03T09:58:20.000Z" itemprop="datePublished">2017-09-03</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/nginx-gzip/">nginx 配置 gzip 压缩</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>直接修改 nginx.conf 文件，添加下面内容：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">sendfile            on;</span><br><span class="line">tcp_nopush          on;</span><br><span class="line">tcp_nodelay         on;</span><br><span class="line">keepalive_timeout   65;</span><br><span class="line">types_hash_max_size 2048;</span><br><span class="line">gzip  on;</span><br><span class="line">gzip_min_length 1k;</span><br><span class="line">gzip_buffers 4 16k;</span><br><span class="line">gzip_http_version 1.1;</span><br><span class="line">gzip_comp_level 9;</span><br><span class="line">gzip_types text/plain application/x-javascript application/javascript text/css application/xml text/javascript application/x-httpd-php image/jpeg image/gif image/png;</span><br><span class="line">gzip_disable <span class="string">"MSIE [1-6]\."</span>;</span><br></pre></td></tr></table></figure>
+<p>或者在 <code>/etc/nginx/conf.d</code> 下面创建一个 <code>gzip.conf</code> 文件，然后输入下面的内容</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">gzip on;</span><br><span class="line">gzip_disable &quot;msie6&quot;;</span><br><span class="line"></span><br><span class="line">gzip_vary on;</span><br><span class="line">gzip_proxied any;</span><br><span class="line">gzip_comp_level 6;</span><br><span class="line">gzip_http_version 1.1;</span><br><span class="line">gzip_min_length 256;</span><br><span class="line">gzip_types text/plain text/css application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript application/javascript application/vnd.ms-fontobject application/x-font-ttf font/opentype image/svg+xml image/x-icon;</span><br></pre></td></tr></table></figure>
+<p>配置项的含义：</p>
+<ul>
+<li><code>gzip on</code>  启用gzip</li>
+<li><code>gzip_disable &quot;msie6&quot;</code>  排除IE6浏览器上对文件压缩，因为IE6不再支持gzip压缩的.</li>
+<li><code>gzip_vary</code>  <code>和`</code>gzip_proxied` 是让代理服务器上的浏览器和服务器能正确辨认gzip压缩功能.</li>
+<li><code>gzip_comp_level 6</code> 设置文件压缩的级别，数字越大，压缩越高，一般6是最合适的.</li>
+<li><code>gzip_http_version 1.1</code> 用来限制 <code>gzip</code> 是否支持浏览器HTTP/1.1  协议的 ，一般浏览器不支持的话，gzip很可能就不能支持</li>
+<li><code>gzip_min_length 256</code>  让Nginx对小于256kb的文件不压缩.小的文件一般也不用压缩的.</li>
+<li><code>gzip_types</code>  列出所有的需要压缩的MIME类型文件. 我们配置的就有, HTML 页面, CSS stylesheets, Javascript 和JSON 文件, XML 文件爱你, icons, SVG 镜像, 和web字体.</li>
+</ul>
+<p>重启Nginx让配置生效.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl restart nginx</span><br></pre></td></tr></table></figure>
+<p>## </p>
+<p>下面就来测试下我们的配置是否生效</p>
+<p>我们还是安装步骤2那样来测试，看看头信息里面有没有 <code>Content-Encoding: gzip</code> .</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -H &quot;Accept-Encoding: gzip&quot; -I http://localhost/test.html</span><br></pre></td></tr></table></figure>
+<p>在相应头信息中我们找下是否有<code>Content-Encoding: gzip</code></p>
+<p>Nginx response headers</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">HTTP/1.1 200 OK</span><br><span class="line">Server: nginx/1.6.3</span><br><span class="line">Date: Fri, 11 Mar 2016 13:19:16 GMT</span><br><span class="line">Content-Type: text/html</span><br><span class="line">Last-Modified: Fri, 11 Mar 2016 12:48:02 GMT</span><br><span class="line">Connection: keep-alive</span><br><span class="line">Vary: Accept-Encoding</span><br><span class="line">Content-Encoding: gzip</span><br></pre></td></tr></table></figure>
+<p>同样测试其他文件:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">curl -H &quot;Accept-Encoding: gzip&quot; -I http://localhost/test.jpg </span><br><span class="line">curl -H &quot;Accept-Encoding: gzip&quot; -I http://localhost/test.css </span><br><span class="line">curl -H &quot;Accept-Encoding: gzip&quot; -I http://localhost/test.js</span><br></pre></td></tr></table></figure>
+<p>当我们找到<code>Content-Encoding: gzip</code> 后就说明gzip功能已开启了</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/nginx-gzip/" data-id="ckckn9ofx00pqrvserohizr4m" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Nginx/">Nginx</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-js-perfect-square" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/js-perfect-square/" class="article-date">
@@ -568,54 +634,6 @@
      <a data-url="https://zju.date/gulp-uncss/" data-id="ckckn9o8a00girvseyx4yokzu" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CSS/">CSS</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-url-in-express" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/url-in-express/" class="article-date">
-  <time datetime="2017-08-18T05:07:07.000Z" itemprop="datePublished">2017-08-18</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/url-in-express/">express 里面的各种 url</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>express 中 <code>req</code> 对象有 <code>baseUrl</code>, <code>originalUrl</code>, <code>url</code> 属性，它们有何区别与联系？</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> express = <span class="built_in">require</span>(<span class="string">'express'</span>)</span><br><span class="line"><span class="keyword">const</span> app = express()</span><br><span class="line"><span class="keyword">const</span> router1 = express.Router()</span><br><span class="line"><span class="keyword">const</span> router2 = express.Router()</span><br><span class="line"></span><br><span class="line">app.use(<span class="string">'/a'</span>, router1)</span><br><span class="line">router1.use(<span class="string">'/b'</span>, router2)</span><br><span class="line">router2.get(<span class="string">'/c'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">req, res</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> obj = &#123;</span><br><span class="line">        path: req.path,</span><br><span class="line">        baseUrl: req.baseUrl,</span><br><span class="line">        originalUrl: req.originalUrl,</span><br><span class="line">        url: req.url</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">console</span>.log(obj)</span><br><span class="line">    res.send(obj)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> server = app.listen(<span class="number">3030</span>, <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> host = server.address().address</span><br><span class="line">    <span class="keyword">const</span> port = server.address().port</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'Example app listening at http://%s:%s'</span>, host, port)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/url-in-express/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/url-in-express/" data-id="ckckn9oko00wsrvses5jyurow" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
     </footer>
   </div>

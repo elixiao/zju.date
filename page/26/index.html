@@ -54,6 +54,55 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-nginx-alias-vs-root" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/nginx-alias-vs-root/" class="article-date">
+  <time datetime="2018-02-02T14:04:07.000Z" itemprop="datePublished">2018-02-02</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/nginx-alias-vs-root/">nginx alias 和 root</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>alias 语法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">location /abc/ &#123;</span><br><span class="line">    alias /home/html/abc/;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>/abc/a.html</code> 就指的是 <code>/home/html/abc/a.html</code>，与下面的配置相同：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">location /abc/ &#123;</span><br><span class="line">    root /home/html/;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>使用 root 设置目录的绝对路径时，少了 /abc,也就是说，使用 root 来设置前端非根目录时，nginx 会组合 root 和 location 的路径。例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">location /static/ &#123;</span><br><span class="line">	root /var/www/app/static/;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>表示 <code>/var/www/app/static/static</code>，而：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">location /static/ &#123;</span><br><span class="line"> alias /var/www/app/static/;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>表示 <code>/var/www/app/static</code></p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/nginx-alias-vs-root/" data-id="ckckn9ofk00pbrvsektes304k" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Nginx/">Nginx</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-zsh" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/zsh/" class="article-date">
@@ -522,65 +571,6 @@
      <a data-url="https://zju.date/nfs-notes/" data-id="ckckn9ofp00phrvsex0egrx7m" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-react-redux" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/react-redux/" class="article-date">
-  <time datetime="2018-01-23T01:11:33.000Z" itemprop="datePublished">2018-01-23</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/react-redux/">在react中使用redux</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>掌握了 redux 的思想之后，尝试在 react 项目使用 redux，首先引入 react-redux 包：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn add react-redux</span><br></pre></td></tr></table></figure>
-<p>这里面最重要的函数是 connect，它连接了 react 组件和 redux 存储。connect 接收四个参数：</p>
-<ul>
-<li>mapStateToProps 函数</li>
-<li>mapDispatchToProps 函数</li>
-<li>mergeProps</li>
-<li>options</li>
-</ul>
-<p>用的最多的就是第一个函数，这个函数允许我们将 store 中的数据作为 props 绑定到组件上：</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mapStateToProps(state, ownProps) : stateProps</span><br></pre></td></tr></table></figure>
-<p>connect 的第二个参数是 mapDispatchToProps ，它的功能是将 action 作为 props 绑定到组件上（如果没有传入这个参数，会直接把 dispatch 函数当作 props 传入）：</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mapDispatchToProps(dispatch, ownProps): dispatchProps</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/react-redux/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/react-redux/" data-id="ckckn9oi400t1rvse8zch4kif" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
     </footer>
   </div>
