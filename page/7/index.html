@@ -54,6 +54,56 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-docker-letsencrypt" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/docker-letsencrypt/" class="article-date">
+  <time datetime="2019-04-04T08:47:23.000Z" itemprop="datePublished">2019-04-04</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/docker-letsencrypt/">用docker申请letsencrypt通配符证书</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>用 docker 申请 letsencrypt 证书的好处就是不需要在宿主机上安装依赖，只要用下面的命令即可：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">docker run -it --rm \</span><br><span class="line">--name certbot \</span><br><span class="line">-v /mnt/letsencrypt:/etc/letsencrypt \</span><br><span class="line">-v /mnt/bak/letsencrypt:/var/lib/letsencrypt \</span><br><span class="line">certbot/certbot \</span><br><span class="line">certonly --manual --agree-tos --server https://acme-v02.api.letsencrypt.org/directory --preferred-challenges dns -d *.YOUR-DOMAIN.com -d YOUR-DOMAIN.com</span><br></pre></td></tr></table></figure>
+<p>具体的命令释义如下：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">-v /mnt/letsencrypt:/etc/letsencrypt -v /mnt/bak/letsencrypt:/var/lib/letsencrypt <span class="comment"># 挂载目录，certbot申请到的或备份的证书会放在这两个目录</span></span><br><span class="line">--manual <span class="comment"># 交互模式</span></span><br><span class="line">--agree-tos <span class="comment"># 同意服务协议</span></span><br><span class="line">--server https://acme-v02.api.letsencrypt.org/directory <span class="comment"># 指定使用acmev2协议的服务器，因为通配符证书的申请需要这个协议</span></span><br><span class="line">–preferred-challenges dns <span class="comment"># 使用dns检验来证明你拥有这个域名</span></span><br><span class="line">-d *.YOUR-DOMAIN.com -d YOUR-DOMAIN.com <span class="comment"># 指定了需要申请证书的通配符域名，根域名要额外再写一次</span></span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/docker-letsencrypt/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/docker-letsencrypt/" data-id="ckckn9o4r00a6rvseibmimj37" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-thermal-printer" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/thermal-printer/" class="article-date">
@@ -481,56 +531,6 @@
      <a data-url="https://zju.date/openresty-notes/" data-id="ckckn9ogq00r2rvsejkj9zuot" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Nginx/">Nginx</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-angular-video-autoPlay" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/angular-video-autoPlay/" class="article-date">
-  <time datetime="2019-01-08T02:41:47.000Z" itemprop="datePublished">2019-01-08</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/angular-video-autoPlay/">Angular 中 video 自动静音播放</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>在页面里面加了一个 video，想让这个视频在页面加载之后自动播放，用下面的写法：</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"> <span class="tag">&lt;<span class="name">video</span></span></span><br><span class="line"><span class="tag">        <span class="attr">id</span>=<span class="string">"officeVideo"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">preload</span>=<span class="string">"metadata"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">poster</span>=<span class="string">"assets/media/office.jpg"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">playsinline</span></span></span><br><span class="line"><span class="tag">        <span class="attr">autoplay</span></span></span><br><span class="line"><span class="tag">        <span class="attr">muted</span></span></span><br><span class="line"><span class="tag">        <span class="attr">loop</span></span></span><br><span class="line"><span class="tag">      &gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">source</span> <span class="attr">src</span>=<span class="string">"assets/media/office.mp4"</span> <span class="attr">type</span>=<span class="string">"video/mp4"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">video</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>但是在谷歌浏览器下测试，发现第一次可以自动播放，再刷新就暂停了，很奇怪，网上找了一些<a href="https://stackoverflow.com/questions/17994666/video-auto-play-is-not-working-in-safari-and-chrome-desktop-browser" target="_blank" rel="noopener">解决方案</a>开始尝试，例如下面的代码用 jQuery 找到这个 video 元素，手动调用 play 函数：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> el = $(<span class="string">'#officeVideo'</span>)</span><br><span class="line"><span class="keyword">const</span> video = el.get(<span class="number">0</span>)</span><br><span class="line">video.play()</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/angular-video-autoPlay/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/angular-video-autoPlay/" data-id="ckckn9o20005lrvse6ja7ete1" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Angular/">Angular</a></li></ul>
 
     </footer>
   </div>

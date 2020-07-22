@@ -54,6 +54,54 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-mongoose-create-if-not-exists" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/mongoose-create-if-not-exists/" class="article-date">
+  <time datetime="2018-02-02T14:04:07.000Z" itemprop="datePublished">2018-02-02</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/mongoose-create-if-not-exists/">mongoose “没有则创建”语法</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>如果没有就创建：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> query = &#123;&#125;,</span><br><span class="line">  update = &#123; <span class="attr">expire</span>: <span class="keyword">new</span> <span class="built_in">Date</span>() &#125;,</span><br><span class="line">  options = &#123; <span class="attr">upsert</span>: <span class="literal">true</span>, <span class="attr">new</span>: <span class="literal">true</span>, <span class="attr">setDefaultsOnInsert</span>: <span class="literal">true</span> &#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Find the document</span></span><br><span class="line">Model.findOneAndUpdate(query, update, options, <span class="function"><span class="keyword">function</span>(<span class="params">error, result</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (error) <span class="keyword">return</span>;</span><br><span class="line">  <span class="comment">// do something with the document</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>注意这些参数：</p>
+<ul>
+<li><code>new</code> 代表返回更新后的值</li>
+<li><code>upsert</code> 代表如果没有就创建</li>
+<li><code>setDefaultsOnInsert</code> 设置默认值。</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/mongoose-create-if-not-exists/" data-id="ckckn9of400onrvsemjcn0gh1" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-nginx-alias-vs-root" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/nginx-alias-vs-root/" class="article-date">
@@ -516,59 +564,6 @@
     </div>
     <footer class="article-footer">
      <a data-url="https://zju.date/private-docker-registery/" data-id="ckckn9oh800rvrvse919mapbh" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-nfs-notes" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/nfs-notes/" class="article-date">
-  <time datetime="2018-01-23T08:04:07.000Z" itemprop="datePublished">2018-01-23</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/nfs-notes/">NFS笔记</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>NFS (network file system) 网络文件系统，类似 Windows 中的文件夹共享，多台机器可以访问同一个目录。</p>
-<h2 id="服务端"><a href="#服务端" class="headerlink" title="服务端"></a>服务端</h2><p>NFS 其实可以被视为一个 RPC 服务，可以通过下面的命令开启：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">systemctl start rpcbind <span class="comment"># 开启 rpcbind</span></span><br><span class="line">systemctl start nfs <span class="comment"># 开启 nfs</span></span><br></pre></td></tr></table></figure>
-<p>如果系统没安装的话，使用下面的命令安装：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">yum install nfs-utils</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加开启启动</span></span><br><span class="line">systemctl <span class="built_in">enable</span> rpcbind.service</span><br><span class="line">systemctl <span class="built_in">enable</span> nfs-server.service</span><br></pre></td></tr></table></figure>
-<p>然后就可以添加从机了，假如我们想共享本地文件夹 /home/nfs：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">vim  /etc/exports</span><br><span class="line">/home/nfs 192.168.120.8(rw,all_squash,anonuid=1000,anongid=1000) 192.168.120.9(rw,all_squash,anonuid=1000,anongid=1000) </span><br><span class="line"><span class="comment"># 或者</span></span><br><span class="line">/home/nfs 192.168.120.8(rw,sync,fsid=0,anonuid=0,anongid=0) 192.168.120.9(rw,sync,fsid=0,anonuid=0,anongid=0)</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/nfs-notes/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/nfs-notes/" data-id="ckckn9ofp00phrvsex0egrx7m" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
 

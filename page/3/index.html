@@ -353,6 +353,65 @@
 
 
   
+    <article id="post-write-koa" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/write-koa/" class="article-date">
+  <time datetime="2019-11-21T06:00:53.000Z" itemprop="datePublished">2019-11-21</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/write-koa/">80行代码实现Koa</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>Koa 是轻量级的 HTTP 框架，用法非常简单，下面 4 行代码就写了一个 hello world 的接口：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> Koa = <span class="built_in">require</span>(<span class="string">'koa'</span>)</span><br><span class="line"><span class="keyword">const</span> app = <span class="keyword">new</span> Koa()</span><br><span class="line">app.use(<span class="function">(<span class="params">ctx, next</span>) =&gt;</span> ctx.body = <span class="string">'hello world'</span>)</span><br><span class="line">app.listen(<span class="number">3000</span>, () =&gt; <span class="built_in">console</span>.log(<span class="string">`server start at localhost:3000`</span>))</span><br></pre></td></tr></table></figure>
+<p>接下来就实现一个简易版的 Koa，首先 Koa 是基于 Node.js 中的 http 模块和 events 模块的，基本结构如下：</p>
+<ul>
+<li>listen 方法监听端口</li>
+<li>use 方法添加中间件</li>
+<li>内部 middlewares 数组保存中间件函数</li>
+</ul>
+<p>接下来进行完善，核心在于 Koa 把 http 模块里面的 req 和 res 两个参数封装成了一个强大的 ctx 上下文参数，保留了原有所有 API 并扩充了自己的方法。首先要写两个对象：</p>
+<ul>
+<li>request 封装后的请求对象，扩充 createServer 的回调参数 req</li>
+<li>response 封装后的相应对象，扩充 createServer 的回调参数 res</li>
+</ul>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/write-koa/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/write-koa/" data-id="ckcxjsoip0002r6seg4cgppe1" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-dart-get-days-of-month" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/dart-get-days-of-month/" class="article-date">
@@ -493,54 +552,6 @@
     <footer class="article-footer">
      <a data-url="https://zju.date/风寒和风热感冒/" data-id="ckckn9ome00z6rvsemmg7dcvu" class="article-share-link">Share</a>
      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-never-use-flutter-listtile" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/never-use-flutter-listtile/" class="article-date">
-  <time datetime="2019-11-12T13:39:02.000Z" itemprop="datePublished">2019-11-12</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/never-use-flutter-listtile/">千万不要用ListTile组件</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>最初，在 Flutter 项目中用 ListTile 实现了列表项的布局，速度很快，而且代码比较简单，例如：</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">ListTile(</span><br><span class="line">  leading: Icon(</span><br><span class="line">    Icons.account_box,</span><br><span class="line">    color: Colors.red,</span><br><span class="line">  ),</span><br><span class="line">  title: Text(</span><br><span class="line">    <span class="string">'账户'</span>,</span><br><span class="line">    textAlign: TextAlign.left,</span><br><span class="line">    style: TextStyle(</span><br><span class="line">      color: Colors.grey,</span><br><span class="line">    ),</span><br><span class="line">  ),</span><br><span class="line">  trailing: Icon(Icons.keyboard_arrow_right),</span><br><span class="line">  onTap: () &#123;</span><br><span class="line">    <span class="comment">// 响应点击事件</span></span><br><span class="line">  &#125;,</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/never-use-flutter-listtile/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/never-use-flutter-listtile/" data-id="ckckn9ofn00pfrvsedekn7whe" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flutter/">Flutter</a></li></ul>
-
     </footer>
   </div>
   

@@ -54,6 +54,59 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-mongodb-aggregation-trap" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/mongodb-aggregation-trap/" class="article-date">
+  <time datetime="2017-10-12T03:23:23.000Z" itemprop="datePublished">2017-10-12</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/mongodb-aggregation-trap/">MongoDB 聚合的坑</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>mongodb 聚合的时候几个坑：</p>
+<ol>
+<li><p>_id 必须是 ObjectId 类型</p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$match: &#123; <span class="attr">item</span>: mongoose.Types.ObjectId(item.id) &#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<ol>
+<li><p>日期必须是 Date 类型</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$match: &#123; createdAt: &#123; $gt: new Date(&apos;xxxxx&apos;) &#125; &#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>返回的是一个 cursor ，不能当做数组取值，也没有 toArray 方法</p>
+</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/mongodb-aggregation-trap/" data-id="ckckn9oee00njrvse3ms0y41c" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MongoDB/">MongoDB</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-centos-releaserver-and-basearch" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/centos-releaserver-and-basearch/" class="article-date">
@@ -495,66 +548,6 @@
     </div>
     <footer class="article-footer">
      <a data-url="https://zju.date/node-module-mjs/" data-id="ckckn9og900q8rvseg304msqu" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-js-object-vs-function" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/js-object-vs-function/" class="article-date">
-  <time datetime="2017-09-05T15:30:25.000Z" itemprop="datePublished">2017-09-05</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/js-object-vs-function/">js 中的对象和函数</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>instanceof 操作符可用于判断一个对象是什么类型，如果使用 instanceof 来检测基本类型的值，则始终返回 false，因为基本类型不是对象，而如果变量是给定引用类型的实例，就会返回 true，所有引用类型的值都是 Object 的实例。</p>
-<p>Object 的每个实例都具有下面的属性和方法：</p>
-<ul>
-<li><code>constructor</code>：构造函数（即创建当前对象的函数）</li>
-<li><code>hasOwnProperty(name)</code>：检查属性是否在当前对象而非原型当中</li>
-<li><code>isPrototypeOf(object)</code>：检查当前对象是否是被传入对象object的原型</li>
-<li><code>propertyIsEnumerable(name)</code>：检查属性是否可枚举</li>
-<li><code>toString()</code>：返回对象的字符串表示</li>
-<li><code>toLocaleString()</code>：返回对象的本地字符串表示</li>
-<li><code>valueOf()</code>：返回对象的数值表示</li>
-</ul>
-<p>函数实际上是对象，每个函数都是Function类型的实例，函数名是指向函数对象的指针。</p>
-<p>下面三种写法是等价的：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">sum</span>(<span class="params">a,b</span>) </span>&#123; <span class="keyword">return</span> a+b &#125;</span><br><span class="line"><span class="keyword">var</span> sum = <span class="function"><span class="keyword">function</span>(<span class="params">a,b</span>) </span>&#123; <span class="keyword">return</span> a+b &#125;</span><br><span class="line"><span class="keyword">var</span> sum = <span class="keyword">new</span> <span class="built_in">Function</span>(<span class="string">'a'</span>,<span class="string">'b'</span>,<span class="string">'return a+b'</span>)</span><br></pre></td></tr></table></figure>
-<p>Function 是 javascript 里最常用的一个概念，javascript 里的 function 是最容易入手的一个功能，但它也是 javascript 最难理解最难掌握的一个概念。今天我们来尝试理解 Function 和 Object。因为这个里面有些人前期可能会搞糊涂，他们之间到底是什么关系，官方定义: 在Javascript中，每一个函数实际上都是一个函数对象.</p>
-<p>我们先来看最简单的两个代码,也是最容易理解的.</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">func</span>(<span class="params"></span>)</span>&#123;&#125;</span><br><span class="line"><span class="keyword">var</span> obj = &#123;&#125;</span><br><span class="line"><span class="built_in">console</span>.log(func <span class="keyword">instanceof</span> <span class="built_in">Function</span>) <span class="comment">//true</span></span><br><span class="line"><span class="built_in">console</span>.log(obj <span class="keyword">instanceof</span> <span class="built_in">Object</span>) <span class="comment">//true</span></span><br><span class="line"><span class="built_in">console</span>.log(func <span class="keyword">instanceof</span> <span class="built_in">Object</span>) <span class="comment">//true</span></span><br><span class="line"><span class="built_in">console</span>.log(obj <span class="keyword">instanceof</span> <span class="built_in">Function</span>) <span class="comment">//false</span></span><br></pre></td></tr></table></figure>
-<p>前面两个打印的效果容易理解.后面 fn instanceof Object 是为 true 的原因是: 在javascript中一切函数实际都是函数对象。我们再来看一个代码</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(<span class="built_in">Function</span> <span class="keyword">instanceof</span> <span class="built_in">Object</span>) <span class="comment">// true</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="built_in">Object</span> <span class="keyword">instanceof</span> <span class="built_in">Function</span>) <span class="comment">// true</span></span><br></pre></td></tr></table></figure>
-<p>函数实际也是一个函数对象，所以第一个为true，而 Object 也是函数，因为 Object的 结构是 <code>function Object(){native code}</code>，当然就是函数了，所以两个都是为true.</p>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/js-object-vs-function/" data-id="ckckn9oal00kbrvsewjk40505" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 

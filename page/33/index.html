@@ -54,6 +54,83 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-docker-notes" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/docker-notes/" class="article-date">
+  <time datetime="2017-11-22T01:21:07.000Z" itemprop="datePublished">2017-11-22</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/docker-notes/">docker 笔记</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <h2 id="基础"><a href="#基础" class="headerlink" title="基础"></a>基础</h2><ol>
+<li>检查 Docker 是否启动：<code>docker info</code></li>
+<li>help 选项：<code>docker help</code> 和 <code>docker &lt;command&gt; —help</code></li>
+</ol>
+<h2 id="镜像"><a href="#镜像" class="headerlink" title="镜像"></a>镜像</h2><ol>
+<li><p>搜索仓库：<code>docker search &lt;image&gt;</code></p>
+</li>
+<li><p>查看镜像：<code>docker images</code></p>
+</li>
+<li><p>下载镜像：<code>docker pull &lt;image&gt;</code></p>
+<blockquote>
+<p>  如果你使用的是 Docker for Mac 版本，那么所有的docker images 保存在下面这个文件里：</p>
+  <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt;   ~/Library/Containers/com.docker.docker/Data/com.docker.driver.amd64-linux/Docker.qcow2</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+</blockquote>
+</li>
+<li><p>获取镜像历史：<code>docker history &lt;image&gt;</code></p>
+<blockquote>
+<p>  注：只能对本地存在的 Docker 镜像执行这个命令。例如： docker history busybox</p>
+</blockquote>
+</li>
+<li><p>删除镜像：<code>docker rmi &lt;image&gt;</code> </p>
+<blockquote>
+<p>  如果该镜像创建的 container 正在运行，则不能删除这个镜像。另外，可能会有很多层的依赖，所以有时候需要用 <code>-f</code> 参数进行删除。</p>
+</blockquote>
+</li>
+<li><p>推送镜像： <code>docker push &lt;user&gt;/&lt;repo_name&gt;</code></p>
+<blockquote>
+<p>  注：不能直接使用 <code>docker push repo_name</code>，所有推送命令的格式必须是 <code>docker push &lt;user&gt;/&lt;repo_name&gt;</code>，不加 <code>&lt;user&gt;</code> 无法推送到 Docker registry。</p>
+</blockquote>
+</li>
+</ol>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/docker-notes/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/docker-notes/" data-id="ckckn9o4q00a4rvse0txranfh" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/">Docker</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-promise-check" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/promise-check/" class="article-date">
@@ -567,59 +644,6 @@
      <a data-url="https://zju.date/angular-random-color/" data-id="ckckn9o1e004trvserkyns639" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-mongodb-aggregation-trap" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/mongodb-aggregation-trap/" class="article-date">
-  <time datetime="2017-10-12T03:23:23.000Z" itemprop="datePublished">2017-10-12</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/mongodb-aggregation-trap/">MongoDB 聚合的坑</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>mongodb 聚合的时候几个坑：</p>
-<ol>
-<li><p>_id 必须是 ObjectId 类型</p>
- <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$match: &#123; <span class="attr">item</span>: mongoose.Types.ObjectId(item.id) &#125;</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<ol>
-<li><p>日期必须是 Date 类型</p>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$match: &#123; createdAt: &#123; $gt: new Date(&apos;xxxxx&apos;) &#125; &#125;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>返回的是一个 cursor ，不能当做数组取值，也没有 toArray 方法</p>
-</li>
-</ol>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/mongodb-aggregation-trap/" data-id="ckckn9oee00njrvse3ms0y41c" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MongoDB/">MongoDB</a></li></ul>
 
     </footer>
   </div>

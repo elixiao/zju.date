@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Koa 是轻量级的 HTTP 框架，用法非常简单，下面 4 行代码就写了一个 hello world 的接口： 1234const Koa = require(&apos;koa&apos;)const app = new Koa()app.use((ctx, next) =&amp;gt; ctx.body = &apos;hello world&apos;)app.listen(3000, () =&amp;gt; console.log(`ser">
+<meta name="keywords" content="JavaScript">
+<meta property="og:type" content="article">
+<meta property="og:title" content="80行代码实现Koa">
+<meta property="og:url" content="https://zju.date/write-koa/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="Koa 是轻量级的 HTTP 框架，用法非常简单，下面 4 行代码就写了一个 hello world 的接口： 1234const Koa = require(&apos;koa&apos;)const app = new Koa()app.use((ctx, next) =&amp;gt; ctx.body = &apos;hello world&apos;)app.listen(3000, () =&amp;gt; console.log(`ser">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2020-07-22T09:33:07.081Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="80行代码实现Koa">
+<meta name="twitter:description" content="Koa 是轻量级的 HTTP 框架，用法非常简单，下面 4 行代码就写了一个 hello world 的接口： 1234const Koa = require(&apos;koa&apos;)const app = new Koa()app.use((ctx, next) =&amp;gt; ctx.body = &apos;hello world&apos;)app.listen(3000, () =&amp;gt; console.log(`ser">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-write-koa" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/write-koa/" class="article-date">
+  <time datetime="2019-11-21T06:00:53.000Z" itemprop="datePublished">2019-11-21</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      80行代码实现Koa
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Koa 是轻量级的 HTTP 框架，用法非常简单，下面 4 行代码就写了一个 hello world 的接口：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> Koa = <span class="built_in">require</span>(<span class="string">'koa'</span>)</span><br><span class="line"><span class="keyword">const</span> app = <span class="keyword">new</span> Koa()</span><br><span class="line">app.use(<span class="function">(<span class="params">ctx, next</span>) =&gt;</span> ctx.body = <span class="string">'hello world'</span>)</span><br><span class="line">app.listen(<span class="number">3000</span>, () =&gt; <span class="built_in">console</span>.log(<span class="string">`server start at localhost:3000`</span>))</span><br></pre></td></tr></table></figure>
+<p>接下来就实现一个简易版的 Koa，首先 Koa 是基于 Node.js 中的 http 模块和 events 模块的，基本结构如下：</p>
+<ul>
+<li>listen 方法监听端口</li>
+<li>use 方法添加中间件</li>
+<li>内部 middlewares 数组保存中间件函数</li>
+</ul>
+<p>接下来进行完善，核心在于 Koa 把 http 模块里面的 req 和 res 两个参数封装成了一个强大的 ctx 上下文参数，保留了原有所有 API 并扩充了自己的方法。首先要写两个对象：</p>
+<ul>
+<li>request 封装后的请求对象，扩充 createServer 的回调参数 req</li>
+<li>response 封装后的相应对象，扩充 createServer 的回调参数 res</li>
+</ul>
+<a id="more"></a>
+<p>在写这两个对象之前，先写两个辅助函数：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">defineGetter</span>(<span class="params">obj, target, keys</span>) </span>&#123; <span class="comment">// 访问 A.x 被代理到返回 B.x</span></span><br><span class="line">  keys.forEach(<span class="function">(<span class="params">key</span>) =&gt;</span> <span class="built_in">Object</span>.defineProperty(obj, key, &#123;</span><br><span class="line">    configurable: <span class="literal">true</span>,</span><br><span class="line">    get() &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">this</span>[target][key]</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;))</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">defineSetter</span>(<span class="params">obj, target, keys</span>) </span>&#123; <span class="comment">// 设置 A.x 被代理到设置 B.x</span></span><br><span class="line">  keys.forEach(<span class="function">(<span class="params">key</span>) =&gt;</span> <span class="built_in">Object</span>.defineProperty(obj, key, &#123;</span><br><span class="line">    configurable: <span class="literal">true</span>,</span><br><span class="line">    set(value) &#123;</span><br><span class="line">      <span class="keyword">this</span>[target][key] = value</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接下来定义 request 对象，对于 req 的一些属性，例如 method、url、headers 直接保留，扩充了 query 和 path 属性</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> url = <span class="built_in">require</span>(<span class="string">'url'</span>)</span><br><span class="line"><span class="keyword">const</span> request = &#123;</span><br><span class="line">  get query() &#123; <span class="keyword">return</span> url.parse(<span class="keyword">this</span>.req.url, <span class="literal">true</span>).query &#125;, <span class="comment">// 请求参数对象</span></span><br><span class="line">  get path() &#123; <span class="keyword">return</span> url.parse(<span class="keyword">this</span>.req.url, <span class="literal">true</span>).pathname &#125;, <span class="comment">// 请求路径</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">const</span> baseKeys = [<span class="string">'method'</span>, <span class="string">'url'</span>, <span class="string">'headers'</span>] <span class="comment">// 原生 req 对象的属性</span></span><br><span class="line">defineGetter(request, <span class="string">'req'</span>, baseKeys) <span class="comment">// 访问 request 的属性时，代理到 req 对象</span></span><br></pre></td></tr></table></figure>
+<p>然后定义 resposne 对象，这里最核心的就是定义 body 访问器属性：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> response = &#123;</span><br><span class="line">  get body() &#123; <span class="keyword">return</span> <span class="keyword">this</span>._body &#125;, <span class="comment">// 获取返回值</span></span><br><span class="line">  set body(body) &#123; <span class="keyword">this</span>._body = body &#125;, <span class="comment">// 设置返回值</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接下来就是 context 对象，把 request 和 response 对象封装在了一起：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> context = &#123;&#125;</span><br><span class="line">defineGetter(context, <span class="string">'request'</span>, baseKeys.concat([<span class="string">'query'</span>, <span class="string">'path'</span>])) <span class="comment">// 访问 context 代理到 request</span></span><br><span class="line">defineGetter(context, <span class="string">'response'</span>, [<span class="string">'body'</span>]) <span class="comment">// 访问 context 代理到 response</span></span><br><span class="line">defineSetter(context, <span class="string">'response'</span>, [<span class="string">'body'</span>]) <span class="comment">// 设置 context 代理到 resposne</span></span><br></pre></td></tr></table></figure>
+<p>最后实现 Koa：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> http = <span class="built_in">require</span>(<span class="string">'http'</span>)</span><br><span class="line"><span class="keyword">const</span> events = <span class="built_in">require</span>(<span class="string">'events'</span>)</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Koa</span> <span class="keyword">extends</span> <span class="title">events</span>.<span class="title">EventEmitter</span> </span>&#123;</span><br><span class="line">  request = <span class="built_in">Object</span>.create(request) <span class="comment">// 每次 new Koa 创建全新 request</span></span><br><span class="line">  response = <span class="built_in">Object</span>.create(response) <span class="comment">// 每次 new Koa 创建全新 response</span></span><br><span class="line">  context = <span class="built_in">Object</span>.create(context) <span class="comment">// 每次 new Koa 创建全新上下文</span></span><br><span class="line">  middlewares = [] <span class="comment">// 保存中间件</span></span><br><span class="line">  listen(...args) &#123; <span class="comment">// 监听端口</span></span><br><span class="line">    <span class="keyword">return</span> http.createServer(<span class="keyword">this</span>.handleRequest.bind(<span class="keyword">this</span>)).listen(...args)</span><br><span class="line">  &#125;</span><br><span class="line">  handleRequest(req, res) &#123; <span class="comment">// 处理请求</span></span><br><span class="line">    <span class="keyword">const</span> ctx = <span class="keyword">this</span>.createContext(req, res)</span><br><span class="line">    <span class="keyword">this</span>.compose(ctx).then(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">      <span class="keyword">const</span> body = ctx.body</span><br><span class="line">      <span class="keyword">if</span> (body) &#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">typeof</span> body === <span class="string">'object'</span>) &#123;</span><br><span class="line">          res.setHeader(<span class="string">'Content-Type'</span>, <span class="string">'application/json'</span>)</span><br><span class="line">          res.end(<span class="built_in">JSON</span>.stringify(body))</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">          res.end(body.toString())</span><br><span class="line">        &#125;</span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        res.statusCode = <span class="number">404</span></span><br><span class="line">        res.end(<span class="string">`Not Found`</span>)</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;</span><br><span class="line">  createContext(req, res) &#123; <span class="comment">// 每次请求创建全新上下文</span></span><br><span class="line">    <span class="keyword">const</span> ctx = <span class="built_in">Object</span>.create(<span class="keyword">this</span>.context)</span><br><span class="line">    <span class="keyword">const</span> request = <span class="built_in">Object</span>.create(<span class="keyword">this</span>.request)</span><br><span class="line">    <span class="keyword">const</span> response = <span class="built_in">Object</span>.create(<span class="keyword">this</span>.response)</span><br><span class="line">    ctx.request = request</span><br><span class="line">    ctx.req = ctx.request.req = req</span><br><span class="line">    ctx.response = response</span><br><span class="line">    ctx.res = ctx.response.res = res</span><br><span class="line">    <span class="keyword">return</span> ctx</span><br><span class="line">  &#125;</span><br><span class="line">  use(fn) &#123;</span><br><span class="line">    <span class="keyword">this</span>.middlewares.push(fn) <span class="comment">// 添加到中间件队列</span></span><br><span class="line">  &#125;</span><br><span class="line">  compose(ctx) &#123; <span class="comment">// 实现洋葱模型</span></span><br><span class="line">    <span class="keyword">const</span> dispatch = <span class="function">(<span class="params">i</span>) =&gt;</span> &#123;</span><br><span class="line">      <span class="keyword">if</span> (i === <span class="keyword">this</span>.middlewares.length) <span class="keyword">return</span> <span class="built_in">Promise</span>.resolve()</span><br><span class="line">      <span class="keyword">return</span> <span class="built_in">Promise</span>.resolve(<span class="keyword">this</span>.middlewares[i](ctx, () =&gt; dispatch(i + <span class="number">1</span>)))</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> dispatch(<span class="number">0</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面的代码加起来只有 80 行，涵盖了 Koa 的核心思想，可以实现 Koa 的基础功能了。实际上，Koa 的源码只有  4 个文件：</p>
+<ul>
+<li>application.js 定义了 Koa 类</li>
+<li>context.js 定义上下文 ctx 对象</li>
+<li>request.js 扩充 req 对象</li>
+<li>response.js 扩充 res 对象</li>
+</ul>
+<p>代码非常精简，感兴趣的可以看下。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/write-koa/" data-id="ckcxjsoip0002r6seg4cgppe1" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/nestjs-notes/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          5分钟快速上手nestjs
+        
+      </div>
+    </a>
+  
+  
+    <a href="/dart-get-days-of-month/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Dart获取指定月份的天数</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dart/">Dart</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Elasticsearch/">Elasticsearch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Flutter/">Flutter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>
