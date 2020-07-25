@@ -54,6 +54,61 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-change-docker-volume-folder" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/change-docker-volume-folder/" class="article-date">
+  <time datetime="2018-09-23T06:23:23.000Z" itemprop="datePublished">2018-09-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/change-docker-volume-folder/">修改 docker 默认存储位置</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>docker 默认的存储位置是 <code>/var/lib/docker</code>，有三种方式可以实现修改 docker 默认存储位置的目的：</p>
+<ol>
+<li><p>指定启动参数</p>
+<p> 可以通过指定 docker 的启动参数 <code>data-root</code> 来设置 docker 的存储目录，这个文件一般位于 <code>/lib/systemd/system/docker.service</code></p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 旧的写法</span></span><br><span class="line">ExecStart=/usr/bin/dockerd</span><br><span class="line"><span class="comment"># 新的写法</span></span><br><span class="line">ExecStart=/usr/bin/dockerd --data-root /new_location/</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<pre><code>那么当再使用 `docker volume create xxx` 创建新的数据卷时，存储的目录就变成了：`/new_location/volumes/{volume_name}/_data`
+</code></pre>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/change-docker-volume-folder/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/change-docker-volume-folder/" data-id="ckckn9o2u006xrvserm0trj64" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-nginx-implicit-upstream" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/nginx-implicit-upstream/" class="article-date">
@@ -633,88 +688,6 @@
      <a data-url="https://zju.date/mask-subnet/" data-id="ckckn9oe000mwrvsefglunmrh" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-docker-ip-segment" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/docker-ip-segment/" class="article-date">
-  <time datetime="2018-09-15T11:31:48.000Z" itemprop="datePublished">2018-09-15</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/docker-ip-segment/">docker中的IP网段</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>一般情况下，容器中可以直接访问的宿主机暴露的端口，今天换了一台机器却发现 docker 容器不能访问宿主机了，经过查阅资料，最终找到了原因，涉及到一些基础概念，这里记录如下：</p>
-<h2 id="IP-网段"><a href="#IP-网段" class="headerlink" title="IP 网段"></a>IP 网段</h2><p>IP地址分为五类:</p>
-<ul>
-<li>A类保留给政府或大型企业</li>
-<li>B类分配给中等规模的公司</li>
-<li>C类分配给小公司或个人</li>
-<li>D类用于组播</li>
-<li>E类用于实验</li>
-</ul>
-<p>其中最常见的就是前三类A、B和C，当将 IP 地址写成二进制形式时，他们有如下特征：</p>
-<ol>
-<li><p>A 类地址</p>
-<ul>
-<li>第一位总是 0，如 <code>10.0.0.1==00001010-00000000-00000000-00000001</code></li>
-<li>范围：<code>1.0.0.0-127.255.255.255</code></li>
-<li>默认子网掩码为 <code>255.0.0.0</code></li>
-<li>最多可容纳 16777215 台计算机</li>
-</ul>
-</li>
-<li><p>B 类地址</p>
-<ul>
-<li>前两位总是 10，如 <code>172.16.0.1==10101100-00010000-00000000-00000001</code></li>
-<li>范围：<code>128.0.0.0-191.255.255.255</code></li>
-<li>默认子网掩码为 255.255.0.0</li>
-<li>最多可容纳 65535 台计算机</li>
-</ul>
-</li>
-<li><p>C 类地址</p>
-<ul>
-<li>前三位总是 110，如 <code>192.168.0.1==11000000-10101000-00000000-00000001</code></li>
-<li>范围：<code>192.0.0.0-223.255.255.255</code></li>
-<li>默认子网掩码是 <code>255.255.255.0</code></li>
-<li>最多可容纳 254 台计算机</li>
-</ul>
-</li>
-</ol>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/docker-ip-segment/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/docker-ip-segment/" data-id="ckckn9o4p00a2rvsespulvujo" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/">Docker</a></li></ul>
 
     </footer>
   </div>

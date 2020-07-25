@@ -54,6 +54,53 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-风寒和风热感冒" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/风寒和风热感冒/" class="article-date">
+  <time datetime="2019-11-13T07:42:05.000Z" itemprop="datePublished">2019-11-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/风寒和风热感冒/">风寒与风热感冒</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>感冒分风寒感冒和风热感冒，这两种感冒病因病机、症状、治疗原则及用药差别很大。风寒感冒是风寒之邪外袭、肺气失宣所致。风热感冒是风热之邪犯表、肺气失和所致。</p>
+<ul>
+<li><p>风寒感冒症状和疗法</p>
+<p>  恶寒重、发热轻、无汗、头痛身痛、鼻塞流清涕、咳嗽吐稀白痰、口不渴或渴喜热饮、苔薄白。治疗药物：风寒感冒颗粒、感冒清热颗粒、正柴胡饮冲剂、头痛严重用川芎茶调散、咳嗽严重用通宣理肺丸。风寒感冒要多喝水、盖好被子、热水泡脚、喝姜茶，发汗有助于康复。</p>
+</li>
+<li><p>风热感冒症状和疗法</p>
+<p>  发热重、微恶风、头胀痛、有汗、咽喉红肿疼痛、咳嗽、痰粘或黄、鼻塞黄涕、口渴喜饮、舌尖边红、苔薄白微黄。治疗药物：感冒灵颗粒、连花清瘟胶囊、柴芩清宁胶囊、维C银翘片、双黄连等。</p>
+</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/风寒和风热感冒/" data-id="ckckn9ome00z6rvsemmg7dcvu" class="article-share-link">Share</a>
+     
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-never-use-flutter-listtile" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/never-use-flutter-listtile/" class="article-date">
@@ -141,6 +188,25 @@
 <li>然后再去宏任务队列中取出一个执行，循环往复</li>
 </ul>
 <h2 id="图示"><a href="#图示" class="headerlink" title="图示"></a>图示</h2><p><img src="http://img.zlib.cn/blog/eventloop.svg?a=1" alt="浏览器中的事件环"></p>
+<h2 id="备注"><a href="#备注" class="headerlink" title="备注"></a>备注</h2><p>其实在浏览器中，宏任务队列是可以有多个的，微任务队列只能有一个，上面的图把所有的宏任务都放到一个队列当中并不严谨，但是定时器、事件和 ajax 类型的宏任务是放到一个宏任务队列中的，还有一些其他的宏任务，<a href="https://html.spec.whatwg.org/multipage/webappapis.html#task-queue" target="_blank" rel="noopener">规范</a> 里面的原话是这么说的：</p>
+<blockquote>
+<p>An event loop has one or more task queues. A task queue is a set of tasks.</p>
+</blockquote>
+<p>这里<a href="https://blog.risingstack.com/writing-a-javascript-framework-execution-timing-beyond-settimeout" target="_blank" rel="noopener">盗用</a>一张图：</p>
+<p><img src="http://img.zlib.cn/blog/task_queues.svg" alt="任务队列"></p>
+<p>如果出现多个宏任务队列，应该如何取宏任务呢？这个是比较灵活的，完全交给浏览器自己来实现，规范里面不做限制，但是只要保证下面两点即可：</p>
+<ul>
+<li>相同来源的宏任务都放到一个宏任务队列中</li>
+<li>每个宏任务队列都是按照先进先出的顺序取出</li>
+</ul>
+<p>规范里面也给出了说明：</p>
+<blockquote>
+<p>For example, a user agent could have one task queue for mouse and key events (to which the user interaction task source is associated), and another to which all other task sources are associated. Then, using the freedom granted in the initial step of the event loop processing model, it could give keyboard and mouse events preference over other tasks three-quarters of the time, keeping the interface responsive but not starving other task queues. Note that in this setup, the processing model still enforces that the user agent would never process events from any one task source out of order.</p>
+</blockquote>
+<p>事件循环的逻辑可以用下面的代码来描述：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span> (eventLoop.waitForTask()) &#123;</span><br><span class="line">  <span class="keyword">const</span> taskQueue = eventLoop.selectTaskQueue() <span class="comment">// 选择宏任务队列</span></span><br><span class="line">  <span class="keyword">if</span> (taskQueue.hasNextTask()) &#123;</span><br><span class="line">    taskQueue.processNextTask() <span class="comment">// 取出宏任务并执行</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> microtaskQueue = eventLoop.microTaskQueue</span><br><span class="line">  <span class="keyword">while</span> (microtaskQueue.hasNextMicrotask()) &#123; <span class="comment">// 清空微任务队列</span></span><br><span class="line">    microtaskQueue.processNextMicrotask()</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (shouldRender()) &#123; <span class="comment">// 浏览器决定是否渲染，如果是，则执行下面的逻辑</span></span><br><span class="line">    applyScrollResizeAndCSS()</span><br><span class="line">    runAnimationFrames()</span><br><span class="line">    render()</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><a href="https://blog.risingstack.com/writing-a-javascript-framework-execution-timing-beyond-settimeout" target="_blank" rel="noopener">图示</a>如下：</p>
+<p><img src="http://img.zlib.cn/blog/browser-event-loop.svg" alt="浏览器中的事件环"></p>
 
       
     </div>
@@ -519,55 +585,6 @@
      <a data-url="https://zju.date/download-subfolder-in-github/" data-id="ckckn9o5400asrvse8v7rpwjx" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/">Git</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-promisify" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/promisify/" class="article-date">
-  <time datetime="2019-08-21T03:07:16.000Z" itemprop="datePublished">2019-08-21</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/promisify/">把回调转换为promise</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>Promise 用起来比回调简单，但 node.js 中还有很多 API 是回调的形式，例如 fs 模块里面 <code>readFile/writeFile</code>：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> fs = <span class="built_in">require</span>(<span class="string">"fs"</span>)</span><br><span class="line"></span><br><span class="line">fs.writeFile(<span class="string">"文件名.txt"</span>, <span class="string">"文件内容"</span>, error =&gt; &#123;</span><br><span class="line">    <span class="keyword">if</span> (error) <span class="built_in">console</span>.error(error)</span><br><span class="line">    <span class="keyword">else</span> <span class="built_in">console</span>.log(<span class="string">"文件创建成功！（来自回调函数）"</span>)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
-<p>不过可以很方便转换为 promise，例如自己写一个封装函数：</p>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/promisify/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/promisify/" data-id="ckckn9oha00rxrvseqy1arcu6" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
     </footer>
   </div>

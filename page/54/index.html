@@ -54,6 +54,58 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-javascript-function-decorator" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/javascript-function-decorator/" class="article-date">
+  <time datetime="2016-05-05T05:10:20.000Z" itemprop="datePublished">2016-05-05</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/javascript-function-decorator/">JavaScript语言中的函数装饰器</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>装饰器能够在不修改原函数的基础上拓展函数的功能，例如最简单的案例——对函数进行权限封装：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">f</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">	<span class="comment">// do something</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>经过装饰器修饰之后的结果为：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">checkPermissionDecorator</span>(<span class="params">f</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (user.isAdmin()) f() </span><br><span class="line">    <span class="keyword">else</span> alert(<span class="string">'Not an admin yet'</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>再举个例子：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">f</span>(<span class="params">a,b</span>) </span>&#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">3</span>*a + <span class="built_in">Math</span>.sqrt(b) + a*b <span class="comment">// some logic you don't known</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>现在需求改为：如果a,b都为正数，返回2*f(a+b)，否则返回-1，可以用装饰器实现如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">df</span>(<span class="params">a,b</span>) </span>&#123;</span><br><span class="line">	<span class="keyword">if</span>(a&gt;<span class="number">0</span>&amp;&amp;b&gt;<span class="number">0</span>) <span class="keyword">return</span> <span class="number">2</span>*f(a,b)</span><br><span class="line">	<span class="keyword">else</span> <span class="keyword">return</span> <span class="number">-1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果同样的需求要应用到其他算法上，但应用逻辑没变，例如：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">g</span>(<span class="params">a,b</span>) </span>&#123;</span><br><span class="line">	<span class="keyword">return</span> a*a + a%b + b/<span class="number">10</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 装饰器修饰后</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">dg</span>(<span class="params">a,b</span>) </span>&#123;</span><br><span class="line">	<span class="keyword">if</span>(a&gt;<span class="number">0</span>&amp;&amp;b&gt;<span class="number">0</span>) <span class="keyword">return</span> <span class="number">2</span>*g(a,b)</span><br><span class="line">	<span class="keyword">else</span> <span class="keyword">return</span> <span class="number">-1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>岂不是又要写一个函数，其实有更好的方法：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">decorator</span>(<span class="params">f</span>) </span>&#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">		<span class="keyword">for</span>(<span class="keyword">var</span> i=<span class="number">0</span>;i&lt;<span class="built_in">arguments</span>.length;i++) &#123;</span><br><span class="line">			<span class="keyword">if</span>(<span class="built_in">arguments</span>[i]&lt;=<span class="number">0</span>) <span class="keyword">return</span> <span class="number">-1</span></span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">2</span>*f.apply(<span class="keyword">this</span>, <span class="built_in">arguments</span>)</span><br><span class="line">	&#125; </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> df = decorator(f) </span><br><span class="line"><span class="keyword">var</span> dg = decorator(g) </span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(df(<span class="number">1</span>,<span class="number">2</span>)) </span><br><span class="line"><span class="built_in">console</span>.log(dg(<span class="number">2</span>,<span class="number">3</span>))</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/javascript-function-decorator/" data-id="ckckn9o9f00iervsetseykhwr" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-angular-directives" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/angular-directives/" class="article-date">
@@ -492,57 +544,6 @@
      <a data-url="https://zju.date/svg-sprite-notes/" data-id="ckckn9ojm00vfrvse5l4vxubx" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CSS/">CSS</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-linux-progress-status" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/linux-progress-status/" class="article-date">
-  <time datetime="2016-04-10T05:42:32.000Z" itemprop="datePublished">2016-04-10</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/linux-progress-status/">Linux进程状态</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <ul>
-<li>LISTEN:正在监听,只有tcp端口才可以这样</li>
-<li>ESTABLISHED:正在共享,表示两者连接着</li>
-<li>CLOSE_WAIT:有过连接，现在已经结束了</li>
-</ul>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/linux-progress-status/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/linux-progress-status/" data-id="ckckn9obb00ljrvse9ual4z88" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
 
     </footer>
   </div>

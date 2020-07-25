@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="在前端开发过程中，不可避免地会遇到表单，即 multipart/form-data，你是否知道：  HTTP 如何传输 multipart/form-data 服务端如何解析 multipart/form-data 浏览器如何组装 multipart/form-data  我们来看一个简单的 form 表单： 12345&amp;lt;form action=&quot;/submit&quot; method=&quot;POST&quot;">
+<meta name="keywords" content="JavaScript">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深入浅出 multipart&#x2F;form-data">
+<meta property="og:url" content="https://zju.date/js-formdata/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="在前端开发过程中，不可避免地会遇到表单，即 multipart/form-data，你是否知道：  HTTP 如何传输 multipart/form-data 服务端如何解析 multipart/form-data 浏览器如何组装 multipart/form-data  我们来看一个简单的 form 表单： 12345&amp;lt;form action=&quot;/submit&quot; method=&quot;POST&quot;">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2020-07-25T07:47:43.963Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="深入浅出 multipart&#x2F;form-data">
+<meta name="twitter:description" content="在前端开发过程中，不可避免地会遇到表单，即 multipart/form-data，你是否知道：  HTTP 如何传输 multipart/form-data 服务端如何解析 multipart/form-data 浏览器如何组装 multipart/form-data  我们来看一个简单的 form 表单： 12345&amp;lt;form action=&quot;/submit&quot; method=&quot;POST&quot;">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-js-formdata" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/js-formdata/" class="article-date">
+  <time datetime="2019-11-25T08:07:55.000Z" itemprop="datePublished">2019-11-25</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      深入浅出 multipart/form-data
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在前端开发过程中，不可避免地会遇到表单，即 <code>multipart/form-data</code>，你是否知道：</p>
+<ul>
+<li>HTTP 如何传输 <code>multipart/form-data</code></li>
+<li>服务端如何解析 <code>multipart/form-data</code></li>
+<li>浏览器如何组装 <code>multipart/form-data</code></li>
+</ul>
+<p>我们来看一个简单的 form 表单：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">"/submit"</span> <span class="attr">method</span>=<span class="string">"POST"</span> <span class="attr">enctype</span>=<span class="string">"multipart/form-data"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"text"</span> <span class="attr">name</span>=<span class="string">"username"</span>&gt;</span><span class="tag">&lt;<span class="name">br</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"text"</span> <span class="attr">name</span>=<span class="string">"password"</span>&gt;</span><span class="tag">&lt;<span class="name">br</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">button</span>&gt;</span>提交<span class="tag">&lt;/<span class="name">button</span>&gt;</span> </span><br><span class="line"><span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>当提交的时候，查看浏览器的网络请求：</p>
+<p>请求头：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">POST /submit HTTP/1.1</span><br><span class="line">Host: localhost:3000</span><br><span class="line">Accept-Encoding: gzip, deflate</span><br><span class="line">Content-Type: multipart/form-data; boundary=---------------------------340073633417401055292887335273</span><br><span class="line">Content-Length: 303</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<p>请求体：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">-----------------------------340073633417401055292887335273</span><br><span class="line">Content-Disposition: form-data; name=<span class="string">"username"</span></span><br><span class="line"></span><br><span class="line">张三</span><br><span class="line">-----------------------------340073633417401055292887335273</span><br><span class="line">Content-Disposition: form-data; name=<span class="string">"password"</span></span><br><span class="line"></span><br><span class="line">123456</span><br><span class="line">-----------------------------340073633417401055292887335273--</span><br></pre></td></tr></table></figure>
+<p>这就是 <code>multipart/form-data</code> 的传输过程了，但是这里面有三个大坑：</p>
+<ul>
+<li><p>请求头 Content-Type 里面的 boundary 分隔符比请求体用的分隔符少了两个杠(-)</p>
+<blockquote>
+<p>从请求头中取分隔符之后，一定要在之前加两个 - 再对请求体进行分割</p>
+</blockquote>
+</li>
+<li><p>请求头 Content-Length 的换行用的是 <code>\r\n</code> 而不是 <code>\n</code></p>
+<blockquote>
+<p>请求体的真实面目是下面的字符串：<br>“—————————–340073633417401055292887335273\r\nContent-Disposition: form-data; name=\”username\”\r\n\r\n张三\r\n—————————–340073633417401055292887335273\r\nContent-Disposition: form-data; name=\”password\”\r\n\r\n123456\r\n—————————–340073633417401055292887335273–\r\n”</p>
+</blockquote>
+</li>
+<li><p>请求头 Content-Length 的值表示字节的长度，而不是字符串的长度</p>
+<blockquote>
+<p>因为字节的长度跟编码无关，而字符串的长度往往跟编码有关，举个例子，在 utf8 编码下：</p>
+</blockquote>
+<blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&gt; console.log(&apos;a1&apos;.length) // 2</span><br><span class="line">&gt; console.log(Buffer.from(&apos;a1&apos;).length) // 2</span><br><span class="line">&gt; console.log(&apos;张三&apos;.length) // 2</span><br><span class="line">&gt; console.log(Buffer.from(&apos;张三&apos;).length) // 6</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+</blockquote>
+</li>
+</ul>
+<p>如果仅仅是基本的字符串类型，完全可以用 <code>www-form-urlencoded</code> 来进行传输，<code>multipart/form-data</code> 强大的地方是其能够传输二进制文件的能力，我们看一下如果包含二进制文件的话应该如何处理。我们增加一个 file 类型的 input，上传一张图片作为头像，发现请求体多出了一部分：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">-----------------------------114007818631328932362459060915</span><br><span class="line">Content-Disposition: form-data; name=<span class="string">"avatar"</span>; filename=<span class="string">"1.jpg"</span></span><br><span class="line">Content-Type: image/jpeg</span><br><span class="line"></span><br><span class="line">xxxxxx文件的二进制数据xxxxx</span><br></pre></td></tr></table></figure>
+<p>可以发现，文件类型的 part 跟之前字符串的格式有所不同了，head 部分有两个头字段，多出一个 Content-Type 头，而且 Content-Disposition 头多出来 filename 字段，body 部分是文件的二进制数据。</p>
+<p>了解这这些规律之后，接下来就可以在服务端对 <code>multipart/form-data</code> 进行解码了：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> http = <span class="built_in">require</span>(<span class="string">'http'</span>)</span><br><span class="line"><span class="keyword">const</span> fs = <span class="built_in">require</span>(<span class="string">'fs'</span>)</span><br><span class="line">http</span><br><span class="line">  .createServer(<span class="function"><span class="keyword">function</span> (<span class="params">req, res</span>) </span>&#123;</span><br><span class="line">    <span class="comment">// 获取 content-type 头，格式为： multipart/form-data; boundary=--------------------------754404743474233185974315</span></span><br><span class="line">    <span class="keyword">const</span> contentType = req.headers[<span class="string">'content-type'</span>]</span><br><span class="line">    <span class="keyword">const</span> headBoundary = contentType.slice(contentType.lastIndexOf(<span class="string">'='</span>) + <span class="number">1</span>) <span class="comment">// 截取 header 里面的 boundary 部分</span></span><br><span class="line">    <span class="keyword">const</span> bodyBoundary = <span class="string">'--'</span> + headBoundary <span class="comment">// 前面加两个 - 才是 body 里面真实的分隔符</span></span><br><span class="line">    <span class="keyword">const</span> arr = [], obj = &#123;&#125;</span><br><span class="line">    req.on(<span class="string">'data'</span>, (chunk) =&gt; arr.push(chunk))</span><br><span class="line">    req.on(<span class="string">'end'</span>, <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">      <span class="keyword">const</span> parts = Buffer.concat(arr).split(bodyBoundary).slice(<span class="number">1</span>, <span class="number">-1</span>) <span class="comment">// 根据分隔符进行分割</span></span><br><span class="line">      <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; parts.length; i++) &#123;</span><br><span class="line">        <span class="keyword">const</span> &#123; key, value &#125; = handlePart(parts[i])</span><br><span class="line">        obj[key] = value</span><br><span class="line">      &#125;</span><br><span class="line">      res.end(<span class="built_in">JSON</span>.stringify(obj))</span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;)</span><br><span class="line">  .listen(<span class="number">3000</span>)</span><br></pre></td></tr></table></figure>
+<p>其中关键的就是 handlePart 部分，即对分隔出来的每一部分单独处理，如果是二进制的就保存到文件，是字符串就返回键值对：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">handlePart</span>(<span class="params">part</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> [head, body] = part.split(<span class="string">'\r\n\r\n'</span>) <span class="comment">// buffer 分割</span></span><br><span class="line">  <span class="keyword">const</span> headStr = head.toString()</span><br><span class="line">  <span class="keyword">const</span> key = headStr.match(<span class="regexp">/name="(.+?)"/</span>)[<span class="number">1</span>]</span><br><span class="line">  <span class="keyword">const</span> match = headStr.match(<span class="regexp">/filename="(.+?)"/</span>)</span><br><span class="line">  <span class="keyword">if</span> (!match) &#123;</span><br><span class="line">    <span class="keyword">const</span> value = body.toString().slice(<span class="number">0</span>, <span class="number">-2</span>) <span class="comment">// 把末尾的 \r\n 去掉</span></span><br><span class="line">    <span class="keyword">return</span> &#123; key, value &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">const</span> filename = match[<span class="number">1</span>]</span><br><span class="line">  <span class="keyword">const</span> content = part.slice(head.length + <span class="number">4</span>, <span class="number">-2</span>) <span class="comment">// 文件二进制部分是 head + \r\n\r\n 再去掉最后的 \r\n</span></span><br><span class="line">  fs.writeFileSync(filename, content)</span><br><span class="line">  <span class="keyword">return</span> &#123; key, <span class="attr">value</span>: filename &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里面涉及到 buffer 的分割，nodejs 中并没有提供 split 方法，可根据 slice 方法自己实现：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Buffer.prototype.split = <span class="function"><span class="keyword">function</span> (<span class="params">sep</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">let</span> sepLength = sep.length, arr = [], offset = <span class="number">0</span>, currentIndex = <span class="number">0</span></span><br><span class="line">  <span class="keyword">while</span> ((currentIndex = <span class="keyword">this</span>.indexOf(sep, offset)) !== <span class="number">-1</span>) &#123;</span><br><span class="line">    arr.push(<span class="keyword">this</span>.slice(offset, currentIndex))</span><br><span class="line">    offset = currentIndex + sepLength</span><br><span class="line">  &#125;</span><br><span class="line">  arr.push(<span class="keyword">this</span>.slice(offset))</span><br><span class="line">  <span class="keyword">return</span> arr</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在浏览器端，我们可以按照这种规则自己写一个 formData 的 pollyfill，关键就是请求体的拼接，核心逻辑如下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> boundary = <span class="string">'blob'</span> <span class="comment">// 分隔符</span></span><br><span class="line"><span class="keyword">var</span> data = <span class="string">''</span></span><br><span class="line"><span class="keyword">if</span> (file.dom.files[<span class="number">0</span>]) &#123; <span class="comment">// 如果是文件</span></span><br><span class="line">  data += <span class="string">'--'</span> + boundary + <span class="string">'\r\n'</span></span><br><span class="line">  data += </span><br><span class="line">    <span class="string">'Content-Disposition: form-data; '</span> +</span><br><span class="line">    <span class="string">'name="'</span> + file.dom.name + <span class="string">'"; '</span> +</span><br><span class="line">    <span class="string">'filename="'</span> + file.dom.files[<span class="number">0</span>].name + <span class="string">'"\r\n'</span></span><br><span class="line">  data += <span class="string">'Content-Type: '</span> + file.dom.files[<span class="number">0</span>].type + <span class="string">'\r\n'</span></span><br><span class="line">  data += <span class="string">'\r\n'</span></span><br><span class="line">  data += file.binary + <span class="string">'\r\n'</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 文本数据</span></span><br><span class="line">data += <span class="string">'--'</span> + boundary + <span class="string">'\r\n'</span></span><br><span class="line">data += <span class="string">'Content-Disposition: form-data; name="'</span> + text.name + <span class="string">'"\r\n'</span></span><br><span class="line">data += <span class="string">'\r\n'</span></span><br><span class="line">data += text.value + <span class="string">'\r\n'</span></span><br><span class="line">data += <span class="string">'--'</span> + boundary + <span class="string">'--'</span></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/js-formdata/" data-id="ckd1crkx30000j9se9ra1d6yq" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/IEEE754/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          为什么0.1+0.2!==0.3
+        
+      </div>
+    </a>
+  
+  
+    <a href="/feathersjs-set-expired-dynamicly/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">feathersjs动态设置有效期</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dart/">Dart</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Elasticsearch/">Elasticsearch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Flutter/">Flutter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

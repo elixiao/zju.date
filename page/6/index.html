@@ -54,6 +54,71 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-flutter-vs-wxminiapp" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/flutter-vs-wxminiapp/" class="article-date">
+  <time datetime="2019-07-24T01:30:51.000Z" itemprop="datePublished">2019-07-24</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/flutter-vs-wxminiapp/">Flutter和小程序的下拉刷新和上拉加载功能</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Flutter 和 微信小程序都有下拉刷新和上拉加载更多的功能，具体实现如下：</p>
+<h2 id="Flutter"><a href="#Flutter" class="headerlink" title="Flutter"></a>Flutter</h2><ol>
+<li><p>下拉刷新</p>
+<p> 只需要在 ListView 最外层包装一个 RefreshIndicator 即可：</p>
+ <figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">RefreshIndicator(</span><br><span class="line">  onRefresh: () =&gt; _fetchCreditLogs(<span class="keyword">false</span>),</span><br><span class="line">  child: ListView.builder(</span><br><span class="line">    physics: AlwaysScrollableScrollPhysics(),</span><br><span class="line">    controller: _scrollController,</span><br><span class="line">    itemCount: _list.length,</span><br><span class="line">    itemBuilder: (BuildContext context, <span class="built_in">int</span> index) &#123;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">  ),</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<p> 这里需要注意的是：当列表内容未占满整屏的时候，ListView 不会触发滚动，会导致下拉刷新和上拉加载都无效。添加 <code>physics: const AlwaysScrollableScrollPhysics()</code> 之后，能够解决这个问题。</p>
+</li>
+<li><p>上拉加载</p>
+<p> ListView 有一个 ScrollController 属性，专门来控制 ListView 滑动事件，在这里可以根据 ListView 的位置来判断是否滑动到了底部：</p>
+ <figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">_scrollController.addListener(() &#123;</span><br><span class="line">  <span class="keyword">if</span> (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) &#123;</span><br><span class="line">    _getMore();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h2 id="微信小程序"><a href="#微信小程序" class="headerlink" title="微信小程序"></a>微信小程序</h2><ol>
+<li><p>下拉刷新</p>
+<p> 需要在.json文件里设置 <code>&quot;enablePullDownRefresh&quot;: true</code>，当前页设置也可以全局设置；</p>
+ <figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"enablePullDownRefresh"</span>: <span class="literal">true</span> //当前页</span><br><span class="line">    <span class="string">"backgroundTextStyle"</span>: <span class="string">"dark"</span> //顶部显示颜色为深色的三个点</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> 具体的逻辑写在页面的 <code>onPullDownRefresh</code> 函数里面：</p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">onPullDownRefresh: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.fetchArticleList(<span class="literal">false</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> 下拉刷新的时候，顶部会有一个三个点的动效，可以在合适的时候使用 <code>wx.stopPullDownRefresh()</code> 停止该动效。</p>
+</li>
+<li><p>上拉加载</p>
+<p> 上拉加载在小程序里面就更简单了，逻辑直接在 <code>onReachBottom</code> 函数里即可：</p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">onReachBottom: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.fetchArticleList(<span class="literal">true</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/flutter-vs-wxminiapp/" data-id="ckckn9o6u00durvseg91kewsg" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flutter/">Flutter</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-nodejs-ssl-unsupported-protocol" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/nodejs-ssl-unsupported-protocol/" class="article-date">
@@ -484,54 +549,6 @@
      <a data-url="https://zju.date/adb-notes/" data-id="ckckn9nzz002wrvseatk1oede" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/">Android</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-package-json-resolutions" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/package-json-resolutions/" class="article-date">
-  <time datetime="2019-04-04T15:04:37.000Z" itemprop="datePublished">2019-04-04</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/package-json-resolutions/">package.json中的resolution</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>开发过程中经常会遇到下面两个场景：</p>
-<ol>
-<li>项目依赖一个不常更新的包，但这个包又依赖另一个包，而这个包由于各种原因需要立即升级，例如紧急安全更新等。</li>
-<li>项目的直接依赖定义了过于宽泛的子依赖版本范围，恰巧这其中的某个版本有问题，需要把子依赖限制在某些正常工作的版本范围里。</li>
-</ol>
-<p>这个时候就很头疼，因为项目 package.json 不能指定依赖的依赖的版本，它是在依赖的 package.json 中指定的，要么坐等作者升级，要么手动编辑 package-lock.json。如果用 yarn 作为包管理工具的话，就好办了，只需要在 package.json 文件里添加 resolutions 字段，就能覆盖版本定义，例如：</p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"name"</span>: <span class="string">"project"</span>,</span><br><span class="line">  <span class="attr">"version"</span>: <span class="string">"1.0.0"</span>,</span><br><span class="line">  <span class="attr">"dependencies"</span>: &#123;</span><br><span class="line">    <span class="attr">"left-pad"</span>: <span class="string">"1.0.0"</span>,</span><br><span class="line">    <span class="attr">"c"</span>: <span class="string">"file:../c-1"</span>,</span><br><span class="line">    <span class="attr">"d2"</span>: <span class="string">"file:../d2-1"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">"resolutions"</span>: &#123;</span><br><span class="line">    <span class="attr">"d2/left-pad"</span>: <span class="string">"1.1.1"</span>,</span><br><span class="line">    <span class="attr">"c/**/left-pad"</span>: <span class="string">"1.1.2"</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>意思是说可以直接指定依赖 d2 所依赖的 left-pad 版本为 1.1.1。可惜 npm 官方并不支持这个参数，不过 github 上有一个<a href="https://github.com/rogeriochaves/npm-force-resolutions" target="_blank" rel="noopener">第三方库</a>支持了这个功能。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/package-json-resolutions/" data-id="ckckn9ogu00r8rvseszmdgt47" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
     </footer>
   </div>
