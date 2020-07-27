@@ -54,6 +54,56 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-shell-alias-with-params" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/shell-alias-with-params/" class="article-date">
+  <time datetime="2018-07-12T03:04:07.000Z" itemprop="datePublished">2018-07-12</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/shell-alias-with-params/">带参数的alias</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>解压 MongoDB 之后，进入到 <code>bin</code> 目录可以看到 <code>mongod</code> 命令，执行该命令的时候，后面要带参数，能不能在 .bashrc 中定义别名，同时也能接收参数呢？就像下面这样：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">alias</span> mongod=<span class="string">"./path/to/mongodb/<span class="variable">$1</span>"</span></span><br></pre></td></tr></table></figure>
+<p>这样是行不通的，alias 并不能把后面的参数动态放到 <code>$1</code> 中，alias 仅仅是字符串替换而已，例如：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">alias</span> foo=<span class="string">'/path/to/bar'</span></span><br><span class="line">$ foo some args</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/shell-alias-with-params/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/shell-alias-with-params/" data-id="ckckn9ois00u3rvsee5tpieq8" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-node-get-parent-file-path" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/node-get-parent-file-path/" class="article-date">
@@ -493,82 +543,6 @@
      <a data-url="https://zju.date/handle-array-in-mongodb-aggregation/" data-id="ckckn9o8h00gwrvsey7lqwxcs" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MongoDB/">MongoDB</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-handle-string-in-mongodb-aggregation" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/handle-string-in-mongodb-aggregation/" class="article-date">
-  <time datetime="2018-06-26T04:59:49.000Z" itemprop="datePublished">2018-06-26</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/handle-string-in-mongodb-aggregation/">mongodb 聚合语法中的字符串处理</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>js 有很多字符串处理函数，如何在 mongodb 聚合语法中使用呢？官方也提供了一些操作符，例如：</p>
-<ol>
-<li><p><code>$split</code></p>
-<p>同 js 的 split 函数，把字符串按照分隔符转换为数组，语法为：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123; <span class="attr">$split</span>: [ <span class="xml"><span class="tag">&lt;<span class="name">字符串</span>&gt;</span>, <span class="tag">&lt;<span class="name">分隔符</span>&gt;</span> ] &#125;</span></span><br></pre></td></tr></table></figure>
-<p>例如：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123; <span class="attr">$split</span>: [ <span class="string">"June-15-2013"</span>, <span class="string">"-"</span> ] &#125; <span class="comment">// [ "June", "15", "2013" ]</span></span><br></pre></td></tr></table></figure>
-<p>得到数组之后可以配合 <code>$unwind</code> 操作符使用。</p>
-</li>
-<li><p><code>$substr</code></p>
-<p>同 js 的 substr 函数，对字符串进行截取，语法为：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123; <span class="attr">$substr</span>: [ <span class="xml"><span class="tag">&lt;<span class="name">字符串</span>&gt;</span>, <span class="tag">&lt;<span class="name">开始位置</span>&gt;</span>, <span class="tag">&lt;<span class="name">截取长度</span>&gt;</span> ] &#125;</span></span><br></pre></td></tr></table></figure>
-<p>例如：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="attr">firstname</span>: &#123; <span class="attr">$substr</span>: [<span class="string">"$fullname"</span>, <span class="number">0</span>, <span class="number">2</span>]&#125;&#125;</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<pre><code>&lt;!--more--&gt;
-</code></pre><ol>
-<li><p><code>$slice</code></p>
-<p>同 js 的 slice 函数</p>
-</li>
-<li><p><code>$concat</code></p>
-<p>同 js 的 concat 函数，能把两个字段拼接成一个：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123; <span class="attr">itemDescription</span>: &#123;<span class="attr">$concat</span>: [<span class="string">"$item"</span>, <span class="string">"-"</span>, <span class="string">"$description"</span>]&#125;&#125;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p><code>toLower</code> 和 <code>toUpper</code></p>
-<p> 转换大小写：</p>
- <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="attr">item</span>: &#123; <span class="attr">$toLower</span>: <span class="string">"$item"</span> &#125;&#125;</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<ol>
-<li><p><code>dateFromString</code></p>
-<p> 把字符串转换为日期类型：</p>
- <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  $dateFromString: &#123;</span><br><span class="line">    dateString: <span class="string">'2017-02-08T12:10:40.787'</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/handle-string-in-mongodb-aggregation/" data-id="ckckn9o8c00gmrvse78tnime4" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
 
     </footer>
   </div>

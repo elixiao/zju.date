@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="jwt 的组成jwt 由以下三个部分组成：  头部（header）  用于描述元信息，例如加密算法等：  1234&amp;#123;  typ: &apos;JWT&apos;,  // 类型 JWT，固定的  alg: &apos;HS256&apos;, // 哈希算法，例如 HS256、RS512 等&amp;#125;    载荷（payload）  这是 jwt 的主体部分，包含三个部分：  标准声明（Registered Claim Na">
+<meta name="keywords" content="JavaScript">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深入浅出 jwt">
+<meta property="og:url" content="https://zju.date/node-jwt/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="jwt 的组成jwt 由以下三个部分组成：  头部（header）  用于描述元信息，例如加密算法等：  1234&amp;#123;  typ: &apos;JWT&apos;,  // 类型 JWT，固定的  alg: &apos;HS256&apos;, // 哈希算法，例如 HS256、RS512 等&amp;#125;    载荷（payload）  这是 jwt 的主体部分，包含三个部分：  标准声明（Registered Claim Na">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2020-07-27T08:11:41.841Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="深入浅出 jwt">
+<meta name="twitter:description" content="jwt 的组成jwt 由以下三个部分组成：  头部（header）  用于描述元信息，例如加密算法等：  1234&amp;#123;  typ: &apos;JWT&apos;,  // 类型 JWT，固定的  alg: &apos;HS256&apos;, // 哈希算法，例如 HS256、RS512 等&amp;#125;    载荷（payload）  这是 jwt 的主体部分，包含三个部分：  标准声明（Registered Claim Na">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-node-jwt" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/node-jwt/" class="article-date">
+  <time datetime="2019-12-23T06:51:22.000Z" itemprop="datePublished">2019-12-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      深入浅出 jwt
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="jwt-的组成"><a href="#jwt-的组成" class="headerlink" title="jwt 的组成"></a>jwt 的组成</h2><p>jwt 由以下三个部分组成：</p>
+<ol>
+<li><p>头部（header）</p>
+<p> 用于描述元信息，例如加密算法等：</p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  typ: <span class="string">'JWT'</span>,  <span class="comment">// 类型 JWT，固定的</span></span><br><span class="line">  alg: <span class="string">'HS256'</span>, <span class="comment">// 哈希算法，例如 HS256、RS512 等</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<ol>
+<li><p>载荷（payload）</p>
+<p> 这是 jwt 的主体部分，包含三个部分：</p>
+<ul>
+<li>标准声明（Registered Claim Names）</li>
+<li>公共声明（Public Claim Names）</li>
+<li><p>私有声明（Private Claim Names）</p>
+<p>标准声明有：</p>
+</li>
+<li><p><code>iss</code> 签发者</p>
+</li>
+<li><code>sub</code> 面向的用户</li>
+<li><code>aud</code> 接收方</li>
+<li><code>exp</code> 有效期</li>
+<li><code>nbf</code> 此时间前不可用</li>
+<li><code>iat</code> 颁发时间</li>
+<li><p><code>jti</code> 唯一标识，防止重复使用</p>
+<p>这些声明是建议使用但并不强制要求。</p>
+<p>公共的声明可以添加任何信息，一般添加用户的相关信息或其他业务需要的必要信息，例如 userId 等，但是不要添加敏感信息，因为 base64 是对称解密的，放在载荷里面的可以归类为明文信息。</p>
+<p>私有的声明提供者和消费者所共同定义的声明，同样不应该存放敏感信息。</p>
+</li>
+</ul>
+</li>
+<li><p>签名（signature）</p>
+<p> 签名由 header、payload 和密钥计算而来，算法如下：</p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">signature = sign(base64(header) + <span class="string">'.'</span> + base64(payload), secret)</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<pre><code>也就是说把头部和载荷先转成 base64 编码，用 . 拼接起来，然后按照头部指定的算法进行加密。但是这里要注意，要把 base64 编码中的 3 个特殊字符做转换，确保传输过程中是 URL safe 的：
+
+- `+` 转换为中划线 `-`
+- `/` 转换为下划线 `_`
+- `=` 转换为空字符 `&apos;&apos;`
+</code></pre><a id="more"></a>
+<h2 id="手写-jwt"><a href="#手写-jwt" class="headerlink" title="手写 jwt"></a>手写 jwt</h2><p>这里写了一个工具类来进行 jwt 的生成、验证和解码：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> crypto = <span class="built_in">require</span>(<span class="string">'crypto'</span>)</span><br><span class="line"><span class="keyword">const</span> jwt = &#123;</span><br><span class="line">  </span><br><span class="line">  stringToBase64(str) &#123; <span class="comment">// 字符串转base64</span></span><br><span class="line">    <span class="keyword">return</span> Buffer.from(str).toString(<span class="string">'base64'</span>)</span><br><span class="line">  &#125;,</span><br><span class="line">  </span><br><span class="line">  base64ToString(str) &#123; <span class="comment">// base64还原字符串</span></span><br><span class="line">    <span class="keyword">return</span> Buffer.from(str, <span class="string">'base64'</span>).toString()</span><br><span class="line">  &#125;,</span><br><span class="line">  </span><br><span class="line">  stringToSafeBase64(str) &#123; <span class="comment">// 字符串转url安全的base64（即替换+/=三个字符）</span></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>.stringToBase64(str)</span><br><span class="line">      .replace(<span class="regexp">/\+/g</span>, <span class="string">'-'</span>)</span><br><span class="line">      .replace(<span class="regexp">/\//g</span>, <span class="string">'_'</span>)</span><br><span class="line">      .replace(<span class="regexp">/\=/g</span>, <span class="string">''</span>)</span><br><span class="line">  &#125;,</span><br><span class="line">  </span><br><span class="line">  safeBase64ToString(str) &#123; <span class="comment">// url安全的base64还原字符串</span></span><br><span class="line">    str += <span class="keyword">new</span> <span class="built_in">Array</span>(<span class="number">5</span> - (str.length % <span class="number">4</span>)).join(<span class="string">'='</span>)</span><br><span class="line">    <span class="keyword">const</span> base64 = str.replace(<span class="regexp">/\-/g</span>, <span class="string">'+'</span>).replace(<span class="regexp">/_/g</span>, <span class="string">'/'</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>.base64ToString(base64)</span><br><span class="line">  &#125;,</span><br><span class="line">  </span><br><span class="line">  sign(content, secret) &#123; <span class="comment">// sha256签名</span></span><br><span class="line">    <span class="keyword">const</span> str = crypto</span><br><span class="line">      .createHmac(<span class="string">'sha256'</span>, secret)</span><br><span class="line">      .update(content)</span><br><span class="line">      .digest(<span class="string">'base64'</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>.stringToSafeBase64(str)</span><br><span class="line">  &#125;,</span><br><span class="line">  </span><br><span class="line">  encode(header, payload, secret) &#123; <span class="comment">// jwt编码</span></span><br><span class="line">    <span class="keyword">const</span> headerStr = <span class="keyword">this</span>.stringToSafeBase64(<span class="built_in">JSON</span>.stringify(header))</span><br><span class="line">    <span class="keyword">const</span> payloadStr = <span class="keyword">this</span>.stringToSafeBase64(<span class="built_in">JSON</span>.stringify(payload))</span><br><span class="line">    <span class="keyword">const</span> signature = <span class="keyword">this</span>.sign(headerStr + <span class="string">'.'</span> + payloadStr, secret)</span><br><span class="line">    <span class="keyword">return</span> [headerStr, payloadStr, signature].join(<span class="string">'.'</span>)</span><br><span class="line">  &#125;,</span><br><span class="line">  </span><br><span class="line">  verify(token, secret) &#123; <span class="comment">// jwt验证</span></span><br><span class="line">    <span class="keyword">const</span> [headerStr, payloadStr, signature] = token.split(<span class="string">'.'</span>)</span><br><span class="line">    <span class="keyword">const</span> newSignature = <span class="keyword">this</span>.sign([headerStr, payloadStr].join(<span class="string">'.'</span>), secret)</span><br><span class="line">    <span class="keyword">return</span> signature === newSignature</span><br><span class="line">  &#125;,</span><br><span class="line"> </span><br><span class="line">  decode(token) &#123;  <span class="comment">// jwt解码</span></span><br><span class="line">    <span class="keyword">const</span> [headerStr, payloadStr] = token.split(<span class="string">'.'</span>)</span><br><span class="line">    <span class="keyword">const</span> header = <span class="built_in">JSON</span>.parse(<span class="keyword">this</span>.safeBase64ToString(headerStr))</span><br><span class="line">    <span class="keyword">const</span> payload = <span class="built_in">JSON</span>.parse(<span class="keyword">this</span>.safeBase64ToString(payloadStr))</span><br><span class="line">    <span class="keyword">return</span> &#123; header, payload &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>使用方法如下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> header = &#123;</span><br><span class="line">  typ: <span class="string">'JWT'</span>,</span><br><span class="line">  alg: <span class="string">'HS256'</span>,</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">const</span> payload = &#123;</span><br><span class="line">  iat: <span class="number">1580601600000</span>, <span class="comment">// 颁发时间，例如 2020-02-02</span></span><br><span class="line">  exp: <span class="string">'2d'</span>, <span class="comment">// 有效期，例如 2 天</span></span><br><span class="line">  uerId: <span class="string">'123456'</span>, <span class="comment">// 用户id</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">const</span> secret = <span class="string">'123456'</span></span><br><span class="line"><span class="keyword">const</span> token = jwt.encode(header, payload, secret)</span><br></pre></td></tr></table></figure>
+<p>这样就得到 token 了：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE1ODA2MDE2MDAwMDAsImV4cCI6IjJkIiwidWVySWQiOiIxMjM0NTYifQ.ZWNVNzA5R0FybnZ2SjZkb1lweklDcUtJTWZYTnF4T2pleHI4RFFUQlBucz0</span><br></pre></td></tr></table></figure>
+<p>解码和验证：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(jwt.decode(token))</span><br><span class="line"><span class="built_in">console</span>.log(jwt.verify(token, secret))</span><br></pre></td></tr></table></figure>
+<h2 id="摘要算法"><a href="#摘要算法" class="headerlink" title="摘要算法"></a>摘要算法</h2><p>这里用到了 HS256 摘要算法，摘要算法又称哈希/散列算法，它通过一个函数，把任意长度的数据转换为一个长度固定的数据串。摘要一般用作验证内容的完整性，真实性。最常用的就是 md5 和 sha1，使用 crypto 模块进行 md5 加密非常简单，只有一句话：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">crypto.createHash(<span class="string">'md5'</span>).update(<span class="string">'helloworld'</span>).digest(<span class="string">'hex'</span>)</span><br></pre></td></tr></table></figure>
+<p>这里的 <code>update()</code> 方法可以追加内容字符串，追加后得到的摘要结果和上面得到的结果是一样的，例如：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">crypto.createHash(<span class="string">'md5'</span>).update(<span class="string">'hello'</span>).update(<span class="string">'world'</span>).digest(<span class="string">'hex'</span>)</span><br></pre></td></tr></table></figure>
+<p>其中 digest 可以接收 <code>latin1</code>、<code>hex</code> 或 <code>base64</code> 作为参数。</p>
+<p>如果要计算 sha1，只需要把 <code>md5</code> 改成 <code>sha1</code> 即可。</p>
+<p>这两种哈希算法都是不需要密钥的，而 sha256 属于 Hmac 算法，只要密钥发生了变化，即使同样的输入也会得到不同的签名，更加保密，不易破解。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">crypto.createHmac(<span class="string">'sha256'</span>, secret).update(content).digest(<span class="string">'base64'</span>)</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/node-jwt/" data-id="ckd4oy8sh00008xsebeo1ikgh" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/nodejs-eventloop/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          typescript装饰器
+        
+      </div>
+    </a>
+  
+  
+    <a href="/nodejs-request-decode/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">node.js中字符编码转换</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dart/">Dart</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Elasticsearch/">Elasticsearch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Flutter/">Flutter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

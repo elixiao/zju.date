@@ -54,6 +54,50 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-mongodb-query-empty-array-or-undefined" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/mongodb-query-empty-array-or-undefined/" class="article-date">
+  <time datetime="2017-09-15T14:34:23.000Z" itemprop="datePublished">2017-09-15</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/mongodb-query-empty-array-or-undefined/">mongodb 数组字段相关查询</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>查询的时候，匹配某个数组字段至少包含一个以上元素的方法：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">db.xxx.find(&#123;<span class="attr">field</span>: &#123;<span class="attr">$exists</span>: <span class="literal">true</span>, <span class="attr">$gt</span>: &#123;<span class="attr">$size</span>: <span class="number">0</span>&#125;&#125;&#125;)</span><br><span class="line">db.xxx.find(&#123;<span class="attr">field</span>: &#123;<span class="attr">$exists</span>: <span class="literal">true</span>, <span class="attr">$not</span>: &#123;<span class="attr">$size</span>: <span class="number">0</span>&#125;&#125;&#125;)</span><br><span class="line">db.xxx.find(&#123;<span class="string">'field.0'</span>: &#123;<span class="attr">$exists</span>: <span class="literal">true</span>&#125;&#125;)</span><br></pre></td></tr></table></figure>
+<p>反过来，匹配字段不存在或者为空数组的写法：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">db.xxx.find(&#123;<span class="string">'field.0'</span>: &#123;<span class="attr">$exists</span>: <span class="literal">false</span>&#125;&#125;)</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/mongodb-query-empty-array-or-undefined/" data-id="ckckn9oet00o7rvseeqsmtv2q" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MongoDB/">MongoDB</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-node-module-mjs" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/node-module-mjs/" class="article-date">
@@ -572,81 +616,6 @@
     </div>
     <footer class="article-footer">
      <a data-url="https://zju.date/wechat-pay/" data-id="ckckn9oln00y3rvseiv167fpk" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-feathersjs-hook" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/feathersjs-hook/" class="article-date">
-  <time datetime="2017-08-20T04:07:12.000Z" itemprop="datePublished">2017-08-20</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/feathersjs-hook/">feathersjs hook</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>feathersjs hook 对象里面究竟都有什么？</p>
-<ol>
-<li><p><code>hook.app</code></p>
-<p> 只读属性，是 feathersjs 对象，可用于获取其他 service，例如：<code>hook.app.service(&#39;name&#39;)</code></p>
-</li>
-</ol>
-<ol>
-<li><p><code>hook.service</code></p>
-<p> 只读属性，当前 hook 执行所在的 service</p>
-</li>
-<li><p><code>hook.path</code></p>
-<p> 只读属性，表示当前 service 的路径</p>
-</li>
-<li><p><code>hook.method</code></p>
-<p> 只读属性，是 <code>find</code>, <code>get</code>, <code>create</code>, <code>update</code>, <code>patch</code>, <code>remove</code> 中的一个</p>
-</li>
-<li><p><code>hook.type</code></p>
-<p> 只读属性，是 <code>before</code>, <code>after</code>, <code>error</code> 中的一个</p>
-</li>
-<li><p><code>hook.params</code></p>
-<p> 可写属性，包含客户端传过来的参数，例如 <code>params.query</code></p>
-</li>
-<li><p><code>hook.id</code></p>
-<p> 可写属性， <code>get</code>, <code>remove</code>, <code>update</code> 和 <code>patch</code> 方法才有</p>
-</li>
-<li><p><code>hook.data</code></p>
-<p> 可写属性，<code>create</code>, <code>update</code> 和 <code>patch</code> 方法才有</p>
-</li>
-<li><p><code>hook.error</code></p>
-<p> 可写属性，只有当 <code>hook.type = error</code> 时才有</p>
-</li>
-<li><p><code>hook.result</code></p>
-<p>可写属性，只有当 <code>hook.type = after</code> 时才有，但是可以在 before 或 error hooks 中设置它。</p>
-</li>
-</ol>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/feathersjs-hook/" data-id="ckckn9o5z00ccrvseoi7zrdmz" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 

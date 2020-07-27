@@ -54,6 +54,71 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-docker-container-static-ip" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/docker-container-static-ip/" class="article-date">
+  <time datetime="2018-04-05T14:18:23.000Z" itemprop="datePublished">2018-04-05</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/docker-container-static-ip/">Linux 上安装 rar 和 unrar</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>Docker 每次重启后，容器的IP地址会变化，如何设置固定IP呢？Docker 安装后，默认会创建下面三种网络类型：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ docker network ls</span><br><span class="line">NETWORK ID          NAME                DRIVER              SCOPE</span><br><span class="line">9781b1f585ae        bridge              bridge              local</span><br><span class="line">1252da701e55        host                host                local</span><br><span class="line">237ea3d5cfbf        none                null                local</span><br></pre></td></tr></table></figure>
+<p>启动 Docker的时候，用 <code>--network</code> 参数，可以指定网络类型，如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ docker run -itd --name test1 --network bridge --ip 172.17.0.10 centos:latest /bin/bash</span><br></pre></td></tr></table></figure>
+<p>可以定义如下几种网络类型：</p>
+<ul>
+<li><p>桥接网络（bridge）</p>
+<p>  默认都是使用 bridge，每次 Docker 容器重启时，会按照顺序获取对应的 IP 地址，于是 IP 地址就变了。</p>
+</li>
+<li><p>无指定网络（none）</p>
+<p>  使用 <code>--network=none</code> ，docker 容器就不会分配局域网的IP。</p>
+</li>
+<li><p>宿主机网络（host）</p>
+<p>  使用 <code>--network=host</code>，此时，Docker 容器的网络会附属在主机上，两者互通。</p>
+</li>
+<li><p>创建自定义网络</p>
+<p>  指定网段和每个容器在这个网段中的具体IP。</p>
+</li>
+</ul>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/docker-container-static-ip/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/docker-container-static-ip/" data-id="ckckn9o4h009mrvsesvxlh15i" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-install-rar-on-linux" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/install-rar-on-linux/" class="article-date">
@@ -513,69 +578,6 @@
     </div>
     <footer class="article-footer">
      <a data-url="https://zju.date/sass-notes/" data-id="ckckn9oip00tzrvsejtpkhew4" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-insert-code-in-ppt" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/insert-code-in-ppt/" class="article-date">
-  <time datetime="2018-03-27T06:40:08.000Z" itemprop="datePublished">2018-03-27</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/insert-code-in-ppt/">在 PPT 中插入高亮代码</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <h2 id="基本用法"><a href="#基本用法" class="headerlink" title="基本用法"></a>基本用法</h2><ol>
-<li><p>安装 highlight</p>
- <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install highlight</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>复制为 rtf 格式</p>
- <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">highlight -l -O rtf code.js | pbcopy</span><br></pre></td></tr></table></figure>
-<blockquote>
-<ul>
-<li><code>hightlight —help</code> 可以查看文档帮助</li>
-<li><code>-l</code> 显示行号，<code>-O rtf</code> 为格式化输出 rtf 格式文本</li>
-<li>pbcopy 是内置剪贴板</li>
-</ul>
-</blockquote>
-</li>
-<li><p>在 PPT 里粘贴</p>
-</li>
-</ol>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/insert-code-in-ppt/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/insert-code-in-ppt/" data-id="ckckn9o8r00hervsexw6fdg0e" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 

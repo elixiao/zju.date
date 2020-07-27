@@ -54,6 +54,59 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-react-native-common-errors" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/react-native-common-errors/" class="article-date">
+  <time datetime="2017-08-16T02:25:52.000Z" itemprop="datePublished">2017-08-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/react-native-common-errors/">react-native常见错误记录</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>记录一些开发过程中的错误，方便日后查阅，比较琐碎。</p>
+<h4 id="import-时大括号使用错误"><a href="#import-时大括号使用错误" class="headerlink" title="import 时大括号使用错误"></a>import 时大括号使用错误</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Uncaught Error: Invariant Violation: Element type is invalid: expected a string (for built-in components) or a class/function but got: object</span><br></pre></td></tr></table></figure>
+<p>如果export default就不需要大括号，否则需要大括号：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123;MyComponent&#125; <span class="keyword">from</span> <span class="string">'../components/xyz.js'</span>;</span><br><span class="line"><span class="keyword">import</span> MyComponent <span class="keyword">from</span> <span class="string">'../components/xyz.js'</span>;</span><br></pre></td></tr></table></figure>
+<p>如果第二个是对的，那么第一个会报上面的错。</p>
+<h4 id="在-render-中更新-props-和-state"><a href="#在-render-中更新-props-和-state" class="headerlink" title="在 render 中更新 props 和 state"></a>在 render 中更新 props 和 state</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Warning: setState(...): Cannot update during an existing state transition (such as within `render` or another component&apos;s constructor) Render methods should be a pure function of props and state; constructor side-effects are an anti-pattern, but can be moved to &apos;componentWillMount&apos;</span><br></pre></td></tr></table></figure>
+<p>大体意思就是在 render 这种需要 props 和 state 进行渲染的方法中，不能再对 props 和 state 进行更新。因为React 会在 props 和 state 改变的时候调用 render 进行 DOM diff 然后渲染，如果在渲染过程中再对 props 和 state 进行更改，就陷入死循环了。onPress 应该传递进一个函数，这个函数会在点击的时候执行。一种可行的写法是使用匿名函数封装：</p>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/react-native-common-errors/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/react-native-common-errors/" data-id="ckckn9ohx00sprvsexvaha8gr" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-generate-DOM-using-LaTeX" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/generate-DOM-using-LaTeX/" class="article-date">
@@ -556,67 +609,6 @@
     </div>
     <footer class="article-footer">
      <a data-url="https://zju.date/ubuntu-add-icon-to-dash/" data-id="ckckn9ok400w6rvseh4ay6b59" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-linux-tee" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/linux-tee/" class="article-date">
-  <time datetime="2017-08-13T03:47:42.000Z" itemprop="datePublished">2017-08-13</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/linux-tee/">Linux命令之tee</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><code>ls &gt; a.txt</code>可以把输出保存到文件，但这时我们就不能看到输出了，如果我们既想把输出保存到文件中，又想在屏幕上看到输出内容，就要使用tee命令。</p>
-<ol>
-<li><p><code>tee</code></p>
-<p> 只输出到标准输出。</p>
-</li>
-<li><p><code>tee file</code></p>
-<p> 保存到文件并输出到标准输出，如果文件不存在，则创建；如果已经存在，则覆盖。</p>
-</li>
-<li><p><code>tee -a file</code></p>
-<p> 输出到标准输出的同时，追加到文件file中。如果文件不存在，则创建；如果已经存在，就在末尾追加内容，而不是覆盖。</p>
-</li>
-<li><p><code>tee -</code></p>
-<p> 输出到标准输出两次，例如：</p>
- <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> 12345 | tee -</span><br><span class="line">12345</span><br><span class="line">12345</span><br></pre></td></tr></table></figure>
-</li>
-<li><p><code>tee file1 file2 -</code></p>
-<p> 输出到标准输出两次，同时保存到file1和file2中。</p>
-</li>
-</ol>
-<p>要注意的是：在使用管道线时，前一个命令的标准错误输出不会被tee读取，如果想把错误也保存到文件可以用：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls <span class="string">"*"</span> 2&gt;&amp;1 | tee ls.txt</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/linux-tee/" data-id="ckckn9oba00lhrvsei361msv7" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
 

@@ -54,6 +54,54 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-angular-eject" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/angular-eject/" class="article-date">
+  <time datetime="2017-08-07T15:07:07.000Z" itemprop="datePublished">2017-08-07</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/angular-eject/">Angular eject</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>angular-cli 封装了 webpack，省事的同时也失去了配置的灵活性，下面的命令可以自定义 webpack 配置：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ng eject</span><br></pre></td></tr></table></figure>
+<p>上面的命令会创建一个 <code>webpack.config.js</code> 文件，原来的命令 <code>$ ng serve</code> 需要被替换为 <code>$ npm run build &amp; npm run start</code>，因为一旦 <code>eject</code> 了就不能使用 angular 自己的命令，在<a href="https://github.com/angular/angular-cli/blob/master/packages/%40angular/cli/tasks/build.ts#L27" target="_blank" rel="noopener">代码</a>中能看到：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">if (config.project &amp;&amp; config.project.ejected) &#123;</span><br><span class="line">  throw new SilentError(&apos;An ejected project cannot use the build command anymore.&apos;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>项目被 <code>ejected</code> 之后，<code>package.json</code> 文件会被自动修改，换了新的 <code>npm scripts</code>, <code>webpack.config.js</code> 文件被添加或替换，<code>angular.cli.json</code> 文件也添加了标识：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">"project": &#123;</span><br><span class="line">  "name": "YOUR PROJECT NAME",</span><br><span class="line">  "ejected": true</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果想还原被 <code>eject</code> 的项目，只需改成 false 即可。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">"project": &#123;</span><br><span class="line">  "name": "YOUR PROJECT NAME",</span><br><span class="line">  "ejected": false</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/angular-eject/" data-id="ckckn9o0t0041rvsewolxizmt" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-logic-operator-in-querySelectAll" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/logic-operator-in-querySelectAll/" class="article-date">
@@ -473,50 +521,6 @@
      <a data-url="https://zju.date/eslint-switch/" data-id="ckckn9o5p00bwrvse1cm1alry" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-linux-alias" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/linux-alias/" class="article-date">
-  <time datetime="2017-08-07T08:32:07.000Z" itemprop="datePublished">2017-08-07</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/linux-alias/">取消别名</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>有些系统中 <code>cp</code> 命令被映射到 <code>cp -i</code>，下面的命令可以查看所有别名：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">alias</span></span><br><span class="line"><span class="built_in">alias</span> cp=<span class="string">'cp -i'</span></span><br><span class="line"><span class="built_in">alias</span> diff=<span class="string">'diff -u'</span></span><br><span class="line">....</span><br></pre></td></tr></table></figure>
-<p>可以临时取消别名使用原先的命令，例如使用 zsh，gm 是 <code>git merge</code> 的别名。但按照了 graphic magic 之后呢，gm 代表图片剪裁命令，此时使用 <code>\gm</code> 就能取消别名，使用本身：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">$ alias gm</span><br><span class="line">gm=&apos;git merge&apos;</span><br><span class="line">$ gm</span><br><span class="line">fatal: Not a git repository (or any of the parent directories): .git</span><br><span class="line">$ \gm</span><br><span class="line">GraphicsMagick 1.3.23 2015-11-07 Q8 http://www.GraphicsMagick.org/</span><br><span class="line">Copyright (C) 2002-2015 GraphicsMagick Group.</span><br><span class="line">Additional copyrights and licenses apply to this software.</span><br><span class="line">See http://www.GraphicsMagick.org/www/Copyright.html for details.</span><br><span class="line">Usage: gm command [options ...]</span><br><span class="line"></span><br><span class="line">Where commands include: </span><br><span class="line">      batch - issue multiple commands in interactive or batch mode</span><br><span class="line">  benchmark - benchmark one of the other commands</span><br><span class="line">    compare - compare two images</span><br><span class="line">  composite - composite images together</span><br><span class="line">    conjure - execute a Magick Scripting Language (MSL) XML script</span><br><span class="line">    convert - convert an image or sequence of images</span><br><span class="line">       help - obtain usage message for named command</span><br><span class="line">   identify - describe an image or image sequence</span><br><span class="line">    mogrify - transform an image or sequence of images</span><br><span class="line">    montage - create a composite image (in a grid) from separate images</span><br><span class="line">       time - time one of the other commands</span><br><span class="line">    version - obtain release version</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/linux-alias/" data-id="ckckn9oax00kvrvset7tj7ww1" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
 
     </footer>
   </div>

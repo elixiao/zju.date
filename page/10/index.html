@@ -54,6 +54,65 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-react-keep-alive" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/react-keep-alive/" class="article-date">
+  <time datetime="2018-09-28T23:17:31.000Z" itemprop="datePublished">2018-09-29</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/react-keep-alive/">react保存路由状态</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>在一个 React 项目中，客户希望切换路由再回来的时候，能够保持之前的状态。而保存状态有两种场景：</p>
+<ol>
+<li>只保留数据状态，不保留交互状态</li>
+<li>既保留数据状态，又保留交互状态</li>
+</ol>
+<p>所谓交互状态，就是连滚动位置、input 框里面输入到一半的文字等状态也要保留。上面两种场景对应的实现方法往往是：</p>
+<ol>
+<li>状态管理器中保存初始化数据，在 componentDidMount 时调用</li>
+<li>把页面隐藏掉，即设置：display: none</li>
+</ol>
+<p>对于第一种情况，一个简单的实现是把某个页面的状态参数放到 url 的 query 参数里面，同时也在全局状态对象中也存一份，组件初始化的时候先尝试从参数里面加载，如果没有参数，就从全局状态对象中取出来，示例代码如下：</p>
+<p>首先在 utils 中写暴露两个函数：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">getURLState</span>(<span class="params">opts</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> &#123; search, history, data = &#123;&#125; &#125; = opts</span><br><span class="line">  <span class="keyword">const</span> params = <span class="keyword">new</span> URLSearchParams(search)</span><br><span class="line">  <span class="keyword">const</span> fields = <span class="built_in">Object</span>.keys(data), ret = &#123;&#125;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; fields.length; i++) &#123;</span><br><span class="line">    <span class="keyword">const</span> field = fields[i]</span><br><span class="line">    ret[field] = params.get(field) || data[field]</span><br><span class="line">  &#125;</span><br><span class="line">  history.replace(<span class="built_in">window</span>.location.pathname + search)</span><br><span class="line">  <span class="keyword">return</span> ret</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">setURLState</span>(<span class="params">opts</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> &#123; search, history, data = &#123;&#125; &#125; = opts</span><br><span class="line">  <span class="keyword">const</span> currentUrlParams = <span class="keyword">new</span> URLSearchParams(search)</span><br><span class="line">  <span class="keyword">const</span> fields = <span class="built_in">Object</span>.keys(data), ret = &#123;&#125;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; fields.length; i++) &#123;</span><br><span class="line">    <span class="keyword">const</span> field = fields[i]</span><br><span class="line">    <span class="keyword">if</span> (field <span class="keyword">in</span> data) currentUrlParams.set(field, data[field])</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">const</span> newSearch = <span class="string">'?'</span> + currentUrlParams.toString()</span><br><span class="line">  history.push(<span class="built_in">window</span>.location.pathname + newSearch)</span><br><span class="line">  <span class="keyword">return</span> newSearch</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/react-keep-alive/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/react-keep-alive/" data-id="ckckn9oht00sjrvse7jrkidty" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-sudo-keep-env" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/sudo-keep-env/" class="article-date">
@@ -535,50 +594,6 @@
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-android-develop-notes" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/android-develop-notes/" class="article-date">
-  <time datetime="2018-09-23T07:29:47.000Z" itemprop="datePublished">2018-09-23</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/android-develop-notes/">React-Native安卓开发笔记</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="如何打开-android-模拟器中的-menu-键"><a href="#如何打开-android-模拟器中的-menu-键" class="headerlink" title="如何打开 android 模拟器中的 menu 键"></a>如何打开 android 模拟器中的 menu 键</h3><ul>
-<li>windows: <code>ctrl + M</code></li>
-<li>macOS: <code>command + M</code></li>
-</ul>
-<h3 id="如何进行-android-真机调试"><a href="#如何进行-android-真机调试" class="headerlink" title="如何进行 android 真机调试"></a>如何进行 android 真机调试</h3><p>先找到找到 vendor id ，例如： 0x12d1，再修改  <code>~/.android/adb_usb.ini</code> 文件</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">system_profiler SPUSBDataType # 找到 vendor id</span><br><span class="line">vim ~/.android/adb_usb.ini # 将上述 id 复制进去</span><br><span class="line"># 打开手机的调试模式</span><br><span class="line">adb kill-server</span><br><span class="line">adb devices</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/android-develop-notes/" data-id="ckckn9o080038rvsex4ykk0u0" class="article-share-link">Share</a>
-     
     </footer>
   </div>
   
