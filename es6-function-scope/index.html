@@ -8,14 +8,14 @@
   <meta name="description" content="ES6 中的函数（非箭头函数）跟 ES5 的函数是有本质区别的，核心在于作用域，先看一道题： 1234567let x = 0function b(y = x, x) &amp;#123;  x = 3  console.log(x, y)  var y = 4&amp;#125;b() 应该打印出什么呢？大家不妨亲自运行一下，看看跟自己想的是否一致。这里总结了两点 ES6 函数中比较特殊的地方：">
 <meta name="keywords" content="JavaScript">
 <meta property="og:type" content="article">
-<meta property="og:title" content="ES6函数中的作用域">
+<meta property="og:title" content="ES6函数作用域">
 <meta property="og:url" content="https://zju.date/es6-function-scope/index.html">
 <meta property="og:site_name" content=".">
 <meta property="og:description" content="ES6 中的函数（非箭头函数）跟 ES5 的函数是有本质区别的，核心在于作用域，先看一道题： 1234567let x = 0function b(y = x, x) &amp;#123;  x = 3  console.log(x, y)  var y = 4&amp;#125;b() 应该打印出什么呢？大家不妨亲自运行一下，看看跟自己想的是否一致。这里总结了两点 ES6 函数中比较特殊的地方：">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2020-07-06T03:02:45.683Z">
+<meta property="og:updated_time" content="2020-07-29T15:43:37.186Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="ES6函数中的作用域">
+<meta name="twitter:title" content="ES6函数作用域">
 <meta name="twitter:description" content="ES6 中的函数（非箭头函数）跟 ES5 的函数是有本质区别的，核心在于作用域，先看一道题： 1234567let x = 0function b(y = x, x) &amp;#123;  x = 3  console.log(x, y)  var y = 4&amp;#125;b() 应该打印出什么呢？大家不妨亲自运行一下，看看跟自己想的是否一致。这里总结了两点 ES6 函数中比较特殊的地方：">
   
     <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
@@ -71,7 +71,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      ES6函数中的作用域
+      ES6函数作用域
     </h1>
   
 
@@ -86,7 +86,7 @@
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> x = <span class="number">0</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">b</span>(<span class="params">y = x, x</span>) </span>&#123;</span><br><span class="line">  x = <span class="number">3</span></span><br><span class="line">  <span class="built_in">console</span>.log(x, y)</span><br><span class="line">  <span class="keyword">var</span> y = <span class="number">4</span></span><br><span class="line">&#125;</span><br><span class="line">b()</span><br></pre></td></tr></table></figure>
 <p>应该打印出什么呢？大家不妨亲自运行一下，看看跟自己想的是否一致。这里总结了两点 ES6 函数中比较特殊的地方：</p>
 <a id="more"></a>
-<h2 id="ES6-中的函数可能存在两个作用域"><a href="#ES6-中的函数可能存在两个作用域" class="headerlink" title="ES6 中的函数可能存在两个作用域"></a>ES6 中的函数可能存在两个作用域</h2><p>在 ES5 中，函数只有一个作用域，但是在 ES6 中，如果给函数参数设置了默认值，那么就会创建两个作用域：</p>
+<h2 id="ES6-函数可能存在两个作用域"><a href="#ES6-函数可能存在两个作用域" class="headerlink" title="ES6 函数可能存在两个作用域"></a>ES6 函数可能存在两个作用域</h2><p>在 ES5 中，函数只有一个作用域，但是在 ES6 中，如果给函数参数设置了默认值，那么就会创建两个作用域：</p>
 <ul>
 <li>函数参数作用域</li>
 <li>函数体作用域</li>
@@ -112,7 +112,7 @@
 <p>但是下面的代码就有意思了：</p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a = <span class="number">1</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fn</span>(<span class="params">a = <span class="number">2</span></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(a)</span><br><span class="line">  <span class="keyword">var</span> a = <span class="number">3</span></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">a</span>(<span class="params"></span>) </span>&#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line">fn(a)</span><br></pre></td></tr></table></figure>
 <p>不同 JS 引擎下的结果是不一致的，在 Chrome 下打印 1，在 Firefox 下打印 function a，大家可以试试看，希望有大佬可以解释下原因。</p>
-<h2 id="ES6-中的函数参数可能存在暂时性死区"><a href="#ES6-中的函数参数可能存在暂时性死区" class="headerlink" title="ES6 中的函数参数可能存在暂时性死区"></a>ES6 中的函数参数可能存在暂时性死区</h2><p>暂时性死区这个概念是 ES6 中提出来的，大家对其印象和应用场景可能仅限于下面的代码：</p>
+<h2 id="ES6-函数参数可能存在暂时性死区"><a href="#ES6-函数参数可能存在暂时性死区" class="headerlink" title="ES6 函数参数可能存在暂时性死区"></a>ES6 函数参数可能存在暂时性死区</h2><p>暂时性死区这个概念是 ES6 中提出来的，大家对其印象和应用场景可能仅限于下面的代码：</p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">f</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(x); <span class="comment">// ReferenceError: Cannot access 'x' before initialization</span></span><br><span class="line">  <span class="keyword">let</span> x = <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line">f()</span><br></pre></td></tr></table></figure>
 <p>但是在函数参数中也可能会出现这种问题，也就是开头的那段代码：</p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> x = <span class="number">0</span> <span class="comment">// 全局作用域下的 x</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">b</span>(<span class="params">y = x, x</span>) </span>&#123; <span class="comment">// 函数参数作用域下定义了 x 和 y</span></span><br><span class="line">  x = <span class="number">3</span> <span class="comment">// 函数体作用域下定义了 y</span></span><br><span class="line">  <span class="built_in">console</span>.log(x, y)</span><br><span class="line">  <span class="keyword">var</span> y = <span class="number">4</span></span><br><span class="line">&#125;</span><br><span class="line">b()</span><br></pre></td></tr></table></figure>

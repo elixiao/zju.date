@@ -54,6 +54,131 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-git-branch-manage" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/git-branch-manage/" class="article-date">
+  <time datetime="2018-02-01T07:50:13.000Z" itemprop="datePublished">2018-02-01</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/git-branch-manage/">git 分支管理</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <h2 id="Git-分支管理"><a href="#Git-分支管理" class="headerlink" title="Git 分支管理"></a>Git 分支管理</h2><p>首先要明确下面两个分支的概念：</p>
+<table>
+<thead>
+<tr>
+<th>分支</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>develop</td>
+<td>包含的是下个版本需要发布的内容</td>
+</tr>
+<tr>
+<td>master</td>
+<td>包含的是可以部署到生产环境中的代码</td>
+</tr>
+</tbody>
+</table>
+<p>意思是说：</p>
+<ul>
+<li>develop 分支，是用于随时可以发布到 <code>develop</code> 的代码，便于线上测试；</li>
+<li>master 分支，是用于随时可以发布到 <code>master.com</code> 生产环境的代码。</li>
+</ul>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/git-branch-manage/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/git-branch-manage/" data-id="ckckn9o7600ehrvsej4r1vevf" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/">Git</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-load-balance" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/load-balance/" class="article-date">
+  <time datetime="2018-01-27T01:57:07.000Z" itemprop="datePublished">2018-01-27</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/load-balance/">负载均衡配置</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>负载均衡，单从字面上的意思来理解就可以解释N台服务器平均分担负载，不会因为某台服务器负载高宕机和某台服务器闲置的情况，那么负载均衡的前提就是要2台以上服务器才能实现。假设我现在有三个 server，分别是：</p>
+<ul>
+<li>master（192.168.120.7）</li>
+<li>minion1 （192.168.120.8）</li>
+<li>minion2（192.168.120.9）</li>
+</ul>
+<p>我们把域名解析到 master 服务器的 80 端口，然后由 master 服务器的 80 端口转发到 minion1 服务器的 8080 端口和 minion2 服务器的 8081 端口。如果没有多台服务器，也可以用一台进行测试，使用不同端口即可。下面使用 nginx 和 haproxy 来实现负载均衡。</p>
+<h2 id="nginx"><a href="#nginx" class="headerlink" title="nginx"></a>nginx</h2><p>单配置：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">upstream anyname &#123;</span><br><span class="line">      server minion1:8080;</span><br><span class="line">      server minion2:8081;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">server&#123; </span><br><span class="line">    listen 80; </span><br><span class="line">    server_name 192.168.120.7; </span><br><span class="line">    location / &#123; </span><br><span class="line">        proxy_pass         http://anyname; </span><br><span class="line">        proxy_set_header   Host             $host; </span><br><span class="line">        proxy_set_header   X-Real-IP        $remote_addr; </span><br><span class="line">        proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for; </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/load-balance/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/load-balance/" data-id="ckckn9obe00lnrvseixfj70jp" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-angular-ie9" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/angular-ie9/" class="article-date">
@@ -469,134 +594,6 @@
     </div>
     <footer class="article-footer">
      <a data-url="https://zju.date/js-base64/" data-id="ckckn9oa800jqrvseo633jf2x" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-js-get-function-name-inside-function" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/js-get-function-name-inside-function/" class="article-date">
-  <time datetime="2018-01-18T05:33:33.000Z" itemprop="datePublished">2018-01-18</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/js-get-function-name-inside-function/">js 在函数内部获取函数名称</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>如何在函数内部获取当前函数的名称呢？</p>
-<p>如果不是 strict 模式，可以使用：<code>arguments.callee</code>.</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">foo</span>(<span class="params"></span>) </span>&#123; </span><br><span class="line">    <span class="built_in">console</span>.log(<span class="built_in">arguments</span>.callee.name)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/js-get-function-name-inside-function/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/js-get-function-name-inside-function/" data-id="ckckn9oah00k4rvse9vvrnuqd" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-package-json-dependencies" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/package-json-dependencies/" class="article-date">
-  <time datetime="2018-01-18T05:17:36.000Z" itemprop="datePublished">2018-01-18</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/package-json-dependencies/">package.json中的各种依赖</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>package.json 中有各种 dependencies ：</p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"devDependencies"</span>: &#123;</span><br><span class="line">    <span class="attr">"webpack"</span>: <span class="string">"^3.6.0"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">"dependencies"</span>: &#123;</span><br><span class="line">    <span class="attr">"jquery"</span>: <span class="string">"^3.4.1"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">"peerDependencies"</span>: &#123;</span><br><span class="line">    <span class="attr">"gulp"</span>: <span class="string">"3.x"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">"optionalDependencies"</span>: &#123;</span><br><span class="line">    <span class="attr">"usb"</span>: <span class="string">"*"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">"bundledDependencies"</span>: [</span><br><span class="line">    <span class="string">"yargs"</span></span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>他们的关系是：</p>
-<table>
-<thead>
-<tr>
-<th>字段名</th>
-<th>中文翻译</th>
-<th>含义</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>dependencies</td>
-<td>业务依赖</td>
-<td>执行业务所必需的包</td>
-</tr>
-<tr>
-<td>devDependencies</td>
-<td>开发环境依赖</td>
-<td>里面的包只用于开发环境，通常是单元测试或者打包工具等</td>
-</tr>
-<tr>
-<td>peerDependencies</td>
-<td>同伴依赖</td>
-<td>指定当前包兼容的宿主版本</td>
-</tr>
-<tr>
-<td>optionalDependencies</td>
-<td>可选依赖</td>
-<td>如果有一些依赖包即使安装失败，项目仍然能够运行或者希望<code>npm</code>继续运行。（需要注意<code>optionalDependencies</code>会覆盖<code>dependencies</code>中的同名依赖包，所以不要在两个地方都写）</td>
-</tr>
-<tr>
-<td>bundledDependencies</td>
-<td>打包依赖</td>
-<td>执行打包命令<code>npm pack</code>, 在生成的<code>tgz</code>包中将包含数组里面的依赖。（ 需要注意这些包必须先在<code>devDependencies</code>或<code>dependencies</code>声明过，否则打包会报错）</td>
-</tr>
-</tbody>
-</table>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/package-json-dependencies/" data-id="ckckn9ogw00rbrvse1aqfgqv3" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
