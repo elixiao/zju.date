@@ -54,6 +54,58 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-mac-sed" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/mac-sed/" class="article-date">
+  <time datetime="2018-03-22T05:51:07.000Z" itemprop="datePublished">2018-03-22</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/mac-sed/">Mac 中的 sed 命令</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>使用 sed 做文件替换，删除指定匹配模式以及后面5行：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sed -e <span class="string">'/pattern/,+5d'</span> file.txt</span><br></pre></td></tr></table></figure>
+<p>和不含匹配模式行的后面5行：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sed -e <span class="string">'/pattern/&#123;n;N;N;N;N;d&#125;'</span> file.txt</span><br></pre></td></tr></table></figure>
+<p>在 Linux 下没问题，但是在 Mac 下报错：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sed: 1: <span class="string">"/pattern/,+5d</span></span><br><span class="line"><span class="string">"</span>: expected context address</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/mac-sed/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/mac-sed/" data-id="ckckn9odt00mkrvsexoauif6x" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-git-subtree" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/git-subtree/" class="article-date">
@@ -544,61 +596,10 @@
 
 
   
-    <article id="post-tmux-copy-paste" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/tmux-copy-paste/" class="article-date">
-  <time datetime="2018-03-06T01:48:07.000Z" itemprop="datePublished">2018-03-06</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/tmux-copy-paste/">Mac 中 tmux 的复制粘贴</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>在 Mac 下使用 tmux，希望能够复制到系统粘贴板，可以通过下面的方式实现：</p>
-<ol>
-<li><p>安装 <code>rettach-to-user-namespace</code></p>
- <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install reattach-to-user-namespace</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>修改 <code>~/.tmux.conf</code></p>
- <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">set</span>-option -g default-command <span class="string">"reattach-to-user-namespace -l zsh"</span></span><br><span class="line"><span class="comment"># buffer缓存复制到Mac系统粘贴板</span></span><br><span class="line"><span class="built_in">bind</span> y run <span class="string">"tmux save-buffer - | reattach-to-user-namespace pbcopy"</span> \; display-message <span class="string">"Copied tmux buffer to system clipboard"</span></span><br><span class="line"><span class="comment"># Mac系统粘贴板内容复制到会话</span></span><br><span class="line"><span class="built_in">bind</span> C-v run <span class="string">"reattach-to-user-namespace pbpaste | tmux load-buffer - \; paste-buffer -d"</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>在 tmux 中复制之后，按 <code>prefix + y</code> 就可以把 tmux 内复制的内容放到系统粘贴板了</p>
-</li>
-</ol>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/tmux-copy-paste/" data-id="ckckn9ojz00vyrvsema3axa5o" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Mac/">Mac</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
 
 
   <nav id="page-nav">
-    <a class="extend prev" rel="prev" href="/page/23/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/22/">22</a><a class="page-number" href="/page/23/">23</a><span class="page-number current">24</span><a class="page-number" href="/page/25/">25</a><a class="page-number" href="/page/26/">26</a><span class="space">&hellip;</span><a class="page-number" href="/page/64/">64</a><a class="extend next" rel="next" href="/page/25/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/23/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/22/">22</a><a class="page-number" href="/page/23/">23</a><span class="page-number current">24</span><a class="page-number" href="/page/25/">25</a><a class="page-number" href="/page/26/">26</a><span class="space">&hellip;</span><a class="page-number" href="/page/65/">65</a><a class="extend next" rel="next" href="/page/25/">Next &raquo;</a>
   </nav>
 </section>
 

@@ -54,6 +54,58 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-git-submodule" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/git-submodule/" class="article-date">
+  <time datetime="2018-01-10T07:53:07.000Z" itemprop="datePublished">2018-01-10</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/git-submodule/">git submodule</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>只 pull 指定子模块：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git submodule foreach &apos;[ &quot;$path&quot; == &quot;submodule-name&quot; ] &amp;&amp; git pull origin master || :;&apos;</span><br></pre></td></tr></table></figure>
+<p>不 pull 指定子模块：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git submodule foreach &apos;[ &quot;$path&quot; == &quot;submodule-to-exclude&quot; ] || git pull origin master&apos;</span><br></pre></td></tr></table></figure>
+<p>使用环境变量：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">export project_name=base</span><br><span class="line">git submodule foreach &apos;[ &quot;$path&quot; == &quot;$project_name&quot; ] &amp;&amp; echo hello || :;&apos;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>$name</code> 是 <code>.gitmodules</code> 里面相关模块的名称</li>
+<li><code>$path</code> 是子模块相对于父模块的路径 </li>
+<li><code>$sha1</code> 是 commit</li>
+<li><code>$toplevel</code> 是父模块的绝对路径</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/git-submodule/" data-id="ckckn9o7n00fdrvse46pvgakd" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/">Git</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-gitlab-hook-master-only" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/gitlab-hook-master-only/" class="article-date">
@@ -475,64 +527,10 @@
 
 
   
-    <article id="post-install-docker-on-centos" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/install-docker-on-centos/" class="article-date">
-  <time datetime="2018-01-04T01:11:02.000Z" itemprop="datePublished">2018-01-04</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/install-docker-on-centos/">在centos上安装docker</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <h2 id="centos7"><a href="#centos7" class="headerlink" title="centos7"></a>centos7</h2><p>先卸载旧版本：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ yum remove docker docker-client docker-client-latest docker-common \</span><br><span class="line">                  docker-latest docker-latest-logrotate docker-logrotate \</span><br><span class="line">                  docker-selinux docker-engine-selinux docker-engine</span><br></pre></td></tr></table></figure>
-<p>或者：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ yum list installed | grep docker <span class="comment"># 找到所有docker相关</span></span><br><span class="line">docker-ce.x86_64                           17.03.2.ce-1.el7.centos  @/docker-ce-17.03.2.ce-1.el7.centos.x86_64</span><br><span class="line">docker-ce-selinux.noarch                   17.03.2.ce-1.el7.centos  @/docker-ce-selinux-17.03.2.ce-1.el7.centos.noarch</span><br><span class="line"></span><br><span class="line">$ yum remove -y docker-ce.x86_64</span><br><span class="line">$ yum remove -y docker-ce-selinux.noarch</span><br><span class="line">$ rm -rf /var/lib/docker  <span class="comment"># 如果需要完全卸载</span></span><br></pre></td></tr></table></figure>
-<p>安装新版本：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ yum install -y yum-utils device-mapper-persistent-data lvm2</span><br><span class="line">$ yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo</span><br><span class="line">$ yum install -y docker-ce</span><br></pre></td></tr></table></figure>
-<p>启动docker：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ systemctl start docker</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/install-docker-on-centos/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/install-docker-on-centos/" data-id="ckckn9o9800i2rvselp0d2j9x" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
 
 
   <nav id="page-nav">
-    <a class="extend prev" rel="prev" href="/page/29/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/28/">28</a><a class="page-number" href="/page/29/">29</a><span class="page-number current">30</span><a class="page-number" href="/page/31/">31</a><a class="page-number" href="/page/32/">32</a><span class="space">&hellip;</span><a class="page-number" href="/page/64/">64</a><a class="extend next" rel="next" href="/page/31/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/29/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/28/">28</a><a class="page-number" href="/page/29/">29</a><span class="page-number current">30</span><a class="page-number" href="/page/31/">31</a><a class="page-number" href="/page/32/">32</a><span class="space">&hellip;</span><a class="page-number" href="/page/65/">65</a><a class="extend next" rel="next" href="/page/31/">Next &raquo;</a>
   </nav>
 </section>
 

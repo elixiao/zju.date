@@ -54,6 +54,97 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-url-reserved-characters" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/url-reserved-characters/" class="article-date">
+  <time datetime="2017-11-02T15:07:07.000Z" itemprop="datePublished">2017-11-02</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/url-reserved-characters/">URL中的保留字</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>URL中有很多保留字，但是保留字出现在路径、查询或段的部分时，往往很难完全梳理清楚，例如 <code>+</code> 在路径部分是被允许的并且特指正号而不是空格。其他类似的有：</p>
+<ul>
+<li><code>?</code> 在查询部分允许不被转义</li>
+<li><code>/</code> 在查询部分允许不被转义</li>
+<li><code>=</code> 在作为路径参数或者查询参数值以及在路径部分允许不被转义</li>
+<li><code>:@-._~!$&amp;&#39;()*+,;=</code> 等字符在路径部分允许不被转义</li>
+<li><code>/?:@-._~!$&amp;&#39;()*+,;=</code> 等字符在任何段中允许不被转义</li>
+</ul>
+<p>这样下面的地址虽然看起来有点混乱：</p>
+<p><code>http://example.com/:@-._~!$&amp;&#39;()*+,=;:@-._~!$&amp;&#39;()*+,=:@-._~!$&amp;&#39;()*+,==?/?:@-._~!$&#39;()*+,;=/?:@-._~!$&#39;()*+,;==#/?:@-._~!$&amp;&#39;()*+,;=</code></p>
+<p>按照上面的规则，其实上是一个合法的地址，上面路径可以被解析为：</p>
+<table>
+<thead>
+<tr>
+<th>部分</th>
+<th>值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>协议</td>
+<td>http</td>
+</tr>
+<tr>
+<td>主机</td>
+<td>example.com</td>
+</tr>
+<tr>
+<td>路径</td>
+<td><code>/:@-._~!$&amp;&#39;()*+,=</code></td>
+</tr>
+<tr>
+<td>路径参数名</td>
+<td><code>:@-._~!$&amp;&#39;()*+,</code></td>
+</tr>
+<tr>
+<td>路径参数值</td>
+<td><code>:@-._~!$&amp;&#39;()*+,==</code></td>
+</tr>
+<tr>
+<td>查询参数名</td>
+<td><code>/?:@-._~!$&#39;()* ,;</code></td>
+</tr>
+<tr>
+<td>查询参数值</td>
+<td><code>/?:@-._~!$&#39;()* ,;==</code></td>
+</tr>
+<tr>
+<td>段</td>
+<td><code>/?:@-._~!$&amp;&#39;()*+,;=</code></td>
+</tr>
+</tbody>
+</table>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/url-reserved-characters/" data-id="ckckn9okl00wprvsefv6zzc0q" class="article-share-link">Share</a>
+     
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-upgrade-mysql" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/upgrade-mysql/" class="article-date">
@@ -542,61 +633,10 @@
 
 
   
-    <article id="post-change-system-environment" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/change-system-environment/" class="article-date">
-  <time datetime="2017-09-16T05:17:07.000Z" itemprop="datePublished">2017-09-16</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/change-system-environment/">修改系统环境变量</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>当在 Linux 或 Mac 下的 shell 里面运行命令的时候，shell会去PATH环境变量指定的路径下寻找可执行文件。也就是说如果把可执行文件所在的目录保存在PATH环境变量里面，每次运行这个程序的时候就不需要跑到该程序所在的文件夹了。</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> PATH=/opt/<span class="built_in">local</span>/bin:/opt/<span class="built_in">local</span>/sbin:<span class="variable">$PATH</span></span><br></pre></td></tr></table></figure>
-<p>注意，如果路径里面包含空格（例如文件夹的名字里面出现空格），必须在后面加上引号：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> PATH=<span class="string">"/your path/here"</span></span><br></pre></td></tr></table></figure>
-<p>export关键字很重要，如果定义了一个变量但没有export，那么这个变量只在当前shell下有效，例如：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ A=4</span><br><span class="line">$ <span class="built_in">echo</span> <span class="variable">$A</span></span><br><span class="line">4</span><br></pre></td></tr></table></figure>
-<p>如果再打开一个shell，这个变量就不存在了，也许你觉得这样也行啊，反正我就在当前shell下工作，但是如果你运行一个shell脚本的时候就无法使用该变量。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> PATH=/mightyq/bin:/opt/<span class="built_in">local</span>/bin:/opt/<span class="built_in">local</span>/sbin:<span class="variable">$PATH</span></span><br><span class="line"><span class="built_in">export</span> PATH=/opt/<span class="built_in">local</span>/bin:/mightyq/bin:/opt/<span class="built_in">local</span>/sbin:<span class="variable">$PATH</span></span><br><span class="line"><span class="built_in">export</span> PATH=/opt/<span class="built_in">local</span>/bin:/opt/<span class="built_in">local</span>/sbin:<span class="variable">$PATH</span>:/mightyq/bin</span><br></pre></td></tr></table></figure>
-<p>使用文件中设置的环境变量：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">. ./.profile echo $PATH</span><br></pre></td></tr></table></figure>
-<p>这里的 <code>.</code> 是 <code>source</code> 的简写。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/change-system-environment/" data-id="ckckn9o2z0075rvse1uhy3sih" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
 
 
   <nav id="page-nav">
-    <a class="extend prev" rel="prev" href="/page/33/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/32/">32</a><a class="page-number" href="/page/33/">33</a><span class="page-number current">34</span><a class="page-number" href="/page/35/">35</a><a class="page-number" href="/page/36/">36</a><span class="space">&hellip;</span><a class="page-number" href="/page/64/">64</a><a class="extend next" rel="next" href="/page/35/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/33/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/32/">32</a><a class="page-number" href="/page/33/">33</a><span class="page-number current">34</span><a class="page-number" href="/page/35/">35</a><a class="page-number" href="/page/36/">36</a><span class="space">&hellip;</span><a class="page-number" href="/page/65/">65</a><a class="extend next" rel="next" href="/page/35/">Next &raquo;</a>
   </nav>
 </section>
 

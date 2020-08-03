@@ -54,6 +54,64 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-debounce-vs-throttle" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/debounce-vs-throttle/" class="article-date">
+  <time datetime="2018-02-01T09:23:13.000Z" itemprop="datePublished">2018-02-01</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/debounce-vs-throttle/">在 Angular 中使用 debounce 和 throttle</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <h2 id="debounce-防抖"><a href="#debounce-防抖" class="headerlink" title="debounce 防抖"></a>debounce 防抖</h2><ol>
+<li><p>名词释义</p>
+<p> 对于某事件流，自触发时刻开始，若持续指定时间内未有事件发生，则触发该事件，否则更新该事件，直到满足持续指定时间未有事件发生的条件后再触发最后更新的这个事件。</p>
+<p> 防抖的原理就是：你尽管触发事件，但是我一定在事件触发 n 秒后才执行，如果你在一个事件触发的 n 秒内又触发了这个事件，那我就以新的事件的时间为准，n 秒后才执行，总之，就是要等你触发完事件 n 秒内不再触发事件，我才执行!</p>
+</li>
+<li><p>应用场景</p>
+<p> 搜索手牌或商品的时候，keyup事件并不需要每次都触发请求，而是当用户某两次keyup中间的间隔超过指定时间才去请求，否则用户噼里啪啦打字，你发了几十个请求，浪费资源。</p>
+</li>
+<li><p>代码：</p>
+ <figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123;Directive, EventEmitter, HostListener, Input, OnInit, Output&#125; <span class="keyword">from</span> <span class="string">'@angular/core'</span></span><br><span class="line"><span class="keyword">import</span> &#123;Subject&#125; <span class="keyword">from</span> <span class="string">'rxjs/Subject'</span></span><br><span class="line"><span class="keyword">import</span> &#123;debounceTime&#125; <span class="keyword">from</span> <span class="string">'rxjs/operators'</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@Directive</span>(&#123;</span><br><span class="line">  selector: <span class="string">'[debounce]'</span></span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> DebounceDirective <span class="keyword">implements</span> OnInit &#123;</span><br><span class="line">  <span class="meta">@Input</span>() debounce</span><br><span class="line">  <span class="meta">@Output</span>() debounceKeyup = <span class="keyword">new</span> EventEmitter()</span><br><span class="line">  <span class="keyword">private</span> keyupSubject = <span class="keyword">new</span> Subject()</span><br><span class="line"></span><br><span class="line">  <span class="keyword">constructor</span>(<span class="params"></span>) &#123;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  ngOnInit() &#123;</span><br><span class="line">    <span class="keyword">this</span>.keyupSubject</span><br><span class="line">      .pipe(debounceTime(<span class="keyword">this</span>.debounce || <span class="number">500</span>))</span><br><span class="line">      .subscribe(<span class="function"><span class="params">e</span> =&gt;</span> <span class="keyword">this</span>.debounceKeyup.emit(e))</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@HostListener</span>(<span class="string">'keyup'</span>, [<span class="string">'$event'</span>])</span><br><span class="line">  keyupEvent(event) &#123;</span><br><span class="line">    event.preventDefault()</span><br><span class="line">    event.stopPropagation()</span><br><span class="line">    <span class="keyword">this</span>.keyupSubject.next(event)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/debounce-vs-throttle/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/debounce-vs-throttle/" data-id="ckckn9o4f009irvse4ird9unu" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-git-branch-manage" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/git-branch-manage/" class="article-date">
@@ -552,62 +610,10 @@
 
 
   
-    <article id="post-js-base64" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/js-base64/" class="article-date">
-  <time datetime="2018-01-18T09:08:45.000Z" itemprop="datePublished">2018-01-18</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/js-base64/">JavaScript 转换 base64</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>下面的代码可以将字符串转换为 base64，也可以将 base64 还原为字符串：</p>
-<ol>
-<li><p>浏览器端</p>
- <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> str = <span class="string">'Hello World!'</span></span><br><span class="line"><span class="keyword">const</span> encodedString = btoa(str)</span><br><span class="line"><span class="built_in">console</span>.log(encodedString) <span class="comment">// 输出: "SGVsbG8gV29ybGQh"</span></span><br><span class="line"><span class="keyword">const</span> decodedString = atob(encodedString)</span><br><span class="line"><span class="built_in">console</span>.log(decodedString) <span class="comment">// 输出: "Hello World!"</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>nodejs端</p>
- <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> str = <span class="string">'Hello World!'</span></span><br><span class="line"><span class="keyword">const</span> encodedString = Buffer.from(str).toString(<span class="string">'base64'</span>)</span><br><span class="line"><span class="built_in">console</span>.log(encodedString) <span class="comment">// 输出: "SGVsbG8gV29ybGQh"</span></span><br><span class="line"><span class="keyword">const</span> decodedString = Buffer.from(encodedString, <span class="string">'base64'</span>).toString()</span><br><span class="line"><span class="built_in">console</span>.log(decodedString) <span class="comment">// 输出: "Hello World!"</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>跨平台通用函数</p>
- <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> Base64=&#123;<span class="attr">_keyStr</span>:<span class="string">"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/="</span>,<span class="attr">encode</span>:<span class="function"><span class="keyword">function</span>(<span class="params">e</span>)</span>&#123;<span class="keyword">var</span> t=<span class="string">""</span>;<span class="keyword">var</span> n,r,i,s,o,u,a;<span class="keyword">var</span> f=<span class="number">0</span>;e=Base64._utf8_encode(e);<span class="keyword">while</span>(f&lt;e.length)&#123;n=e.charCodeAt(f++);r=e.charCodeAt(f++);i=e.charCodeAt(f++);s=n&gt;&gt;<span class="number">2</span>;o=(n&amp;<span class="number">3</span>)&lt;&lt;<span class="number">4</span>|r&gt;&gt;<span class="number">4</span>;u=(r&amp;<span class="number">15</span>)&lt;&lt;<span class="number">2</span>|i&gt;&gt;<span class="number">6</span>;a=i&amp;<span class="number">63</span>;<span class="keyword">if</span>(<span class="built_in">isNaN</span>(r))&#123;u=a=<span class="number">64</span>&#125;<span class="keyword">else</span> <span class="keyword">if</span>(<span class="built_in">isNaN</span>(i))&#123;a=<span class="number">64</span>&#125;t=t+<span class="keyword">this</span>._keyStr.charAt(s)+<span class="keyword">this</span>._keyStr.charAt(o)+<span class="keyword">this</span>._keyStr.charAt(u)+<span class="keyword">this</span>._keyStr.charAt(a)&#125;<span class="keyword">return</span> t&#125;,<span class="attr">decode</span>:<span class="function"><span class="keyword">function</span>(<span class="params">e</span>)</span>&#123;<span class="keyword">var</span> t=<span class="string">""</span>;<span class="keyword">var</span> n,r,i;<span class="keyword">var</span> s,o,u,a;<span class="keyword">var</span> f=<span class="number">0</span>;e=e.replace(<span class="regexp">/[^A-Za-z0-9+/=]/g</span>,<span class="string">""</span>);<span class="keyword">while</span>(f&lt;e.length)&#123;s=<span class="keyword">this</span>._keyStr.indexOf(e.charAt(f++));o=<span class="keyword">this</span>._keyStr.indexOf(e.charAt(f++));u=<span class="keyword">this</span>._keyStr.indexOf(e.charAt(f++));a=<span class="keyword">this</span>._keyStr.indexOf(e.charAt(f++));n=s&lt;&lt;<span class="number">2</span>|o&gt;&gt;<span class="number">4</span>;r=(o&amp;<span class="number">15</span>)&lt;&lt;<span class="number">4</span>|u&gt;&gt;<span class="number">2</span>;i=(u&amp;<span class="number">3</span>)&lt;&lt;<span class="number">6</span>|a;t=t+<span class="built_in">String</span>.fromCharCode(n);<span class="keyword">if</span>(u!=<span class="number">64</span>)&#123;t=t+<span class="built_in">String</span>.fromCharCode(r)&#125;<span class="keyword">if</span>(a!=<span class="number">64</span>)&#123;t=t+<span class="built_in">String</span>.fromCharCode(i)&#125;&#125;t=Base64._utf8_decode(t);<span class="keyword">return</span> t&#125;,<span class="attr">_utf8_encode</span>:<span class="function"><span class="keyword">function</span>(<span class="params">e</span>)</span>&#123;e=e.replace(<span class="regexp">/rn/g</span>,<span class="string">"n"</span>);<span class="keyword">var</span> t=<span class="string">""</span>;<span class="keyword">for</span>(<span class="keyword">var</span> n=<span class="number">0</span>;n&lt;e.length;n++)&#123;<span class="keyword">var</span> r=e.charCodeAt(n);<span class="keyword">if</span>(r&lt;<span class="number">128</span>)&#123;t+=<span class="built_in">String</span>.fromCharCode(r)&#125;<span class="keyword">else</span> <span class="keyword">if</span>(r&gt;<span class="number">127</span>&amp;&amp;r&lt;<span class="number">2048</span>)&#123;t+=<span class="built_in">String</span>.fromCharCode(r&gt;&gt;<span class="number">6</span>|<span class="number">192</span>);t+=<span class="built_in">String</span>.fromCharCode(r&amp;<span class="number">63</span>|<span class="number">128</span>)&#125;<span class="keyword">else</span>&#123;t+=<span class="built_in">String</span>.fromCharCode(r&gt;&gt;<span class="number">12</span>|<span class="number">224</span>);t+=<span class="built_in">String</span>.fromCharCode(r&gt;&gt;<span class="number">6</span>&amp;<span class="number">63</span>|<span class="number">128</span>);t+=<span class="built_in">String</span>.fromCharCode(r&amp;<span class="number">63</span>|<span class="number">128</span>)&#125;&#125;<span class="keyword">return</span> t&#125;,<span class="attr">_utf8_decode</span>:<span class="function"><span class="keyword">function</span>(<span class="params">e</span>)</span>&#123;<span class="keyword">var</span> t=<span class="string">""</span>;<span class="keyword">var</span> n=<span class="number">0</span>;<span class="keyword">var</span> r=c1=c2=<span class="number">0</span>;<span class="keyword">while</span>(n&lt;e.length)&#123;r=e.charCodeAt(n);<span class="keyword">if</span>(r&lt;<span class="number">128</span>)&#123;t+=<span class="built_in">String</span>.fromCharCode(r);n++&#125;<span class="keyword">else</span> <span class="keyword">if</span>(r&gt;<span class="number">191</span>&amp;&amp;r&lt;<span class="number">224</span>)&#123;c2=e.charCodeAt(n+<span class="number">1</span>);t+=<span class="built_in">String</span>.fromCharCode((r&amp;<span class="number">31</span>)&lt;&lt;<span class="number">6</span>|c2&amp;<span class="number">63</span>);n+=<span class="number">2</span>&#125;<span class="keyword">else</span>&#123;c2=e.charCodeAt(n+<span class="number">1</span>);c3=e.charCodeAt(n+<span class="number">2</span>);t+=<span class="built_in">String</span>.fromCharCode((r&amp;<span class="number">15</span>)&lt;&lt;<span class="number">12</span>|(c2&amp;<span class="number">63</span>)&lt;&lt;<span class="number">6</span>|c3&amp;<span class="number">63</span>);n+=<span class="number">3</span>&#125;&#125;<span class="keyword">return</span> t&#125;&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> str = <span class="string">'Hello World!'</span></span><br><span class="line"><span class="keyword">const</span> encodedString = Base64.encode(str)</span><br><span class="line"><span class="built_in">console</span>.log(encodedString) <span class="comment">// 输出: "SGVsbG8gV29ybGQh"</span></span><br><span class="line"><span class="keyword">const</span> decodedString = Base64.decode(encodedString)</span><br><span class="line"><span class="built_in">console</span>.log(decodedString) <span class="comment">// 输出: "Hello World!"</span></span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/js-base64/" data-id="ckckn9oa800jqrvseo633jf2x" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
 
 
   <nav id="page-nav">
-    <a class="extend prev" rel="prev" href="/page/26/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/25/">25</a><a class="page-number" href="/page/26/">26</a><span class="page-number current">27</span><a class="page-number" href="/page/28/">28</a><a class="page-number" href="/page/29/">29</a><span class="space">&hellip;</span><a class="page-number" href="/page/64/">64</a><a class="extend next" rel="next" href="/page/28/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/26/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/25/">25</a><a class="page-number" href="/page/26/">26</a><span class="page-number current">27</span><a class="page-number" href="/page/28/">28</a><a class="page-number" href="/page/29/">29</a><span class="space">&hellip;</span><a class="page-number" href="/page/65/">65</a><a class="extend next" rel="next" href="/page/28/">Next &raquo;</a>
   </nav>
 </section>
 

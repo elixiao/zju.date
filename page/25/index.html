@@ -54,6 +54,57 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-tmux-copy-paste" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/tmux-copy-paste/" class="article-date">
+  <time datetime="2018-03-06T01:48:07.000Z" itemprop="datePublished">2018-03-06</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/tmux-copy-paste/">Mac 中 tmux 的复制粘贴</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在 Mac 下使用 tmux，希望能够复制到系统粘贴板，可以通过下面的方式实现：</p>
+<ol>
+<li><p>安装 <code>rettach-to-user-namespace</code></p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install reattach-to-user-namespace</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>修改 <code>~/.tmux.conf</code></p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">set</span>-option -g default-command <span class="string">"reattach-to-user-namespace -l zsh"</span></span><br><span class="line"><span class="comment"># buffer缓存复制到Mac系统粘贴板</span></span><br><span class="line"><span class="built_in">bind</span> y run <span class="string">"tmux save-buffer - | reattach-to-user-namespace pbcopy"</span> \; display-message <span class="string">"Copied tmux buffer to system clipboard"</span></span><br><span class="line"><span class="comment"># Mac系统粘贴板内容复制到会话</span></span><br><span class="line"><span class="built_in">bind</span> C-v run <span class="string">"reattach-to-user-namespace pbpaste | tmux load-buffer - \; paste-buffer -d"</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在 tmux 中复制之后，按 <code>prefix + y</code> 就可以把 tmux 内复制的内容放到系统粘贴板了</p>
+</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/tmux-copy-paste/" data-id="ckckn9ojz00vyrvsema3axa5o" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Mac/">Mac</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-mac-@" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/mac-@/" class="article-date">
@@ -537,55 +588,10 @@
 
 
   
-    <article id="post-disk-full" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/disk-full/" class="article-date">
-  <time datetime="2018-02-07T06:16:23.000Z" itemprop="datePublished">2018-02-07</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/disk-full/">磁盘空间检查</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>在服务器上安装了 gitlab，有一天突然发现挂了，重启也没用，输入命令 <code>df -h</code> 看到：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ df -h</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">文件系统	      容量   已用  可用   已用%% 挂载点</span><br><span class="line">/dev/vda1        20G   19G   0G     100%   /</span><br><span class="line">tmpfs            3.9G  4.0K  3.9G   1%     /dev/shm</span><br><span class="line">/dev/vdb1        99G   16G   79G    17%    /mnt</span><br></pre></td></tr></table></figure>
-<p>磁盘空间不够，进入跟目录，使用命令：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">du -sh *</span><br></pre></td></tr></table></figure>
-<p>逐步定位大文件，删除了一些无用的文件，特别是 tomcat 日志，3.5G，删掉之后系统恢复正常。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/disk-full/" data-id="ckckn9o4a0099rvseb4hxyxf3" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
 
 
   <nav id="page-nav">
-    <a class="extend prev" rel="prev" href="/page/24/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/23/">23</a><a class="page-number" href="/page/24/">24</a><span class="page-number current">25</span><a class="page-number" href="/page/26/">26</a><a class="page-number" href="/page/27/">27</a><span class="space">&hellip;</span><a class="page-number" href="/page/64/">64</a><a class="extend next" rel="next" href="/page/26/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/24/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/23/">23</a><a class="page-number" href="/page/24/">24</a><span class="page-number current">25</span><a class="page-number" href="/page/26/">26</a><a class="page-number" href="/page/27/">27</a><span class="space">&hellip;</span><a class="page-number" href="/page/65/">65</a><a class="extend next" rel="next" href="/page/26/">Next &raquo;</a>
   </nav>
 </section>
 
