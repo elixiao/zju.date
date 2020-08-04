@@ -54,6 +54,65 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-write-koa" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/write-koa/" class="article-date">
+  <time datetime="2019-11-21T06:00:53.000Z" itemprop="datePublished">2019-11-21</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/write-koa/">80行代码实现Koa</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>Koa 是轻量级的 HTTP 框架，用法非常简单，下面 4 行代码就写了一个 hello world 的接口：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> Koa = <span class="built_in">require</span>(<span class="string">'koa'</span>)</span><br><span class="line"><span class="keyword">const</span> app = <span class="keyword">new</span> Koa()</span><br><span class="line">app.use(<span class="function">(<span class="params">ctx, next</span>) =&gt;</span> ctx.body = <span class="string">'hello world'</span>)</span><br><span class="line">app.listen(<span class="number">3000</span>, () =&gt; <span class="built_in">console</span>.log(<span class="string">`server start at localhost:3000`</span>))</span><br></pre></td></tr></table></figure>
+<p>接下来就实现一个简易版的 Koa，首先 Koa 是基于 Node.js 中的 http 模块和 events 模块的，基本结构如下：</p>
+<ul>
+<li>listen 方法监听端口</li>
+<li>use 方法添加中间件</li>
+<li>内部 middlewares 数组保存中间件函数</li>
+</ul>
+<p>接下来进行完善，核心在于 Koa 把 http 模块里面的 req 和 res 两个参数封装成了一个强大的 ctx 上下文参数，保留了原有所有 API 并扩充了自己的方法。首先要写两个对象：</p>
+<ul>
+<li>request 封装后的请求对象，扩充 createServer 的回调参数 req</li>
+<li>response 封装后的相应对象，扩充 createServer 的回调参数 res</li>
+</ul>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/write-koa/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/write-koa/" data-id="ckcxjsoip0002r6seg4cgppe1" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-dart-get-days-of-month" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/dart-get-days-of-month/" class="article-date">
@@ -492,75 +551,6 @@
     </div>
     <footer class="article-footer">
      <a data-url="https://zju.date/flutter-listview-with-header/" data-id="ckckn9o6h00dcrvse7kctc9ns" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flutter/">Flutter</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-wxss-background" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/wxss-background/" class="article-date">
-  <time datetime="2019-10-09T09:05:19.000Z" itemprop="datePublished">2019-10-09</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/wxss-background/">小程序wxss背景图片</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>在 CSS 中我们可以用 background 添加背景图片，但是小程序中的本地资源无法在 wxss 中获取，也就是说不能像 CSS 那样通过 <code>url(/assets/xxx.png)</code> 来引用本地图片来设置背景，不过有两种折中的方案：</p>
-<ol>
-<li><p>把图片转成base64</p>
- <figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-class">.base64-image</span> &#123;</span><br><span class="line">  <span class="attribute">background</span>: <span class="built_in">url</span>(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA...);</span><br><span class="line">  <span class="attribute">background-size</span>: contain;</span><br><span class="line">  <span class="attribute">background-repeat</span>: no-repeat;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<pre><code>这个[地址](janedan-base64)可以把图片在线转成 base64 格式。
-</code></pre><ol>
-<li><p>把本地资源上传到网络，然后引用网络图片</p>
- <figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-class">.network-image</span> &#123;</span><br><span class="line">  <span class="attribute">background</span>: <span class="built_in">url</span>(http://xxxxx);</span><br><span class="line">  <span class="attribute">background-size</span>: contain;</span><br><span class="line">  <span class="attribute">background-repeat</span>: no-repeat;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<p>但是上面两种方式都不尽如人意，因为转成 base64 会导致文件体积会增大，且 base64 是一大串字符，无法本地直观地看到图片；用网络图片的话，页面渲染上又会有延迟，用户体验不好。所以只能采用 <code>&lt;image&gt;</code> 组件加绝对定位的方式来模拟背景图：</p>
-<p><code>&lt;image&gt;</code> 组件中的 mode 取值有：</p>
-<ol>
-<li><code>scaleToFill</code>：拉伸图片填满 image 元素</li>
-<li><code>aspectFit</code>：保持纵横比缩放图片，长边能完全显示出来，短边有空白</li>
-<li><code>aspectFill</code>：保持纵横比缩放图片，短边能完全显示出来，长边有截断</li>
-<li><code>widthFix</code>：宽度不变，高度自动变化，保持原图宽高比不变</li>
-</ol>
-<p>但是注意上面的选项并不能达到与CSS background 属性中完全相同的效果，对应的 <code>background-size</code> 的属性有：</p>
-<ol>
-<li><code>auto</code>：默认值，不改变原始图片的大小。</li>
-<li>px：自定义设置图片的大小，一般为成对出现例如 100px,50px,当设置一个值的时候，将其作为图片的宽度只进行等比缩放。</li>
-<li>百分比：0%-100%的任意值，一般也是成对出现，当设置一个值的时候，就成了正方形了。</li>
-<li><code>cover</code>：覆盖，用背景图等比例缩放填满整个容器。（推荐使用）</li>
-<li><code>contain</code>：容纳，即将背景图片等比缩放至<strong>某一边紧贴容器边缘为止。</strong></li>
-</ol>
-<p><code>mode=aspectFill</code> 和 <code>background-size:cover</code> 的区别是前者保证图片中心位置跟容器区域重合，后者保证图片的左上角跟容器的左上角重合。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/wxss-background/" data-id="ckckn9om200yprvseih31ep7j" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flutter/">Flutter</a></li></ul>
 

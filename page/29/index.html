@@ -54,6 +54,57 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-docker-mount-volume" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/docker-mount-volume/" class="article-date">
+  <time datetime="2018-01-11T14:56:07.000Z" itemprop="datePublished">2018-01-11</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/docker-mount-volume/">docker mount 和 volume</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>mount 和 volume 的区别：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ docker run -d -it --name devtest -v myvol2:/app nginx:latest</span><br></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ docker run -d -it --name devtest --mount <span class="built_in">source</span>=myvol2,target=/app nginx:latest</span><br></pre></td></tr></table></figure>
+<p>最开始的时候 <code>-v</code> 和 <code>--volume</code> 标识用于单独的容器， <code>--mount</code> 标识用于 swarm 服务，从 Docker 17.06 开始也可以将 <code>--mount</code> 用于单独的容器了。总的来说，<code>--mount</code> 语义更加清楚，跟 <code>-v</code> 语法的区别就在于把冒号分离的存储分成了 source 和 target 两部分，除此之外，如果需要指定存储介质选项，则必须使用 <code>--mount</code> 语法。例如：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ docker run -d --name=<span class="built_in">test</span> \</span><br><span class="line">  --mount <span class="built_in">source</span>=nginx-vol,destination=/usr/share/nginx/html,<span class="built_in">readonly</span> \</span><br><span class="line">  nginx:latest</span><br></pre></td></tr></table></figure>
+<p>创建数据卷：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ docker volume create my-vol</span><br></pre></td></tr></table></figure>
+<p>数据卷详情：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$ docker volume inspect my-vol</span><br><span class="line">[</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="string">"Driver"</span>: <span class="string">"local"</span>,</span><br><span class="line">        <span class="string">"Labels"</span>: &#123;&#125;,</span><br><span class="line">        <span class="string">"Mountpoint"</span>: <span class="string">"/var/lib/docker/volumes/my-vol/_data"</span>,</span><br><span class="line">        <span class="string">"Name"</span>: <span class="string">"my-vol"</span>,</span><br><span class="line">        <span class="string">"Options"</span>: &#123;&#125;,</span><br><span class="line">        <span class="string">"Scope"</span>: <span class="string">"local"</span></span><br><span class="line">    &#125;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+<p>删除数据卷：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ docker volume rm my-vol</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/docker-mount-volume/" data-id="ckckn9o4o00a0rvsesf1f364l" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/">Docker</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-docker-network" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/docker-network/" class="article-date">
@@ -515,56 +566,6 @@
      <a data-url="https://zju.date/git-config/" data-id="ckckn9o7e00evrvse6u5nbjsv" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/">Git</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-esclient-notes" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/esclient-notes/" class="article-date">
-  <time datetime="2018-01-11T01:23:49.000Z" itemprop="datePublished">2018-01-11</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/esclient-notes/">esclient学习笔记</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>在 node.js 中，通过官方提供的 esclient 来操作 es，首先建立连接：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> elasticsearch = <span class="built_in">require</span>(<span class="string">'elasticsearch'</span>)</span><br><span class="line"><span class="keyword">const</span> client = <span class="keyword">new</span> elasticsearch.Client(&#123;</span><br><span class="line">  host: <span class="string">'es-host'</span>,</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
-<p>获取集群健康状态：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">client.cluster.health()</span><br></pre></td></tr></table></figure>
-<p>根据id 检索文档：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">client.search(&#123;</span><br><span class="line">  index: <span class="string">'bank'</span>,</span><br><span class="line">  id: <span class="string">'1'</span></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
-<p>根据指定字段搜索文档：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">client.search(&#123;</span><br><span class="line">  index: <span class="string">'bank'</span>,</span><br><span class="line">  size: <span class="number">50</span>,</span><br><span class="line">  body: &#123;</span><br><span class="line">    query: &#123;</span><br><span class="line">      match: &#123;</span><br><span class="line">        firstname: <span class="string">'Leonard'</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
-<p>添加文档：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> data = &#123;</span><br><span class="line">  title: <span class="string">'test!'</span>,</span><br><span class="line">  content: <span class="string">'It all started when...'</span>,</span><br><span class="line">  date: <span class="string">'2018-03-11'</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 建立索引, 添加数据</span></span><br><span class="line">client.index(&#123;</span><br><span class="line">  index: <span class="string">'blog'</span>,</span><br><span class="line">  type: <span class="string">'post'</span>,</span><br><span class="line">  id: <span class="number">1</span>,</span><br><span class="line">  body: data</span><br><span class="line">&#125;)</span><br><span class="line">  .then(<span class="function"><span class="params">res</span> =&gt;</span> &#123;</span><br><span class="line">    log(res)</span><br><span class="line">  &#125;)</span><br><span class="line">  .catch(<span class="function"><span class="params">e</span> =&gt;</span> &#123;</span><br><span class="line">    log(e)</span><br><span class="line">  &#125;)</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/esclient-notes/" data-id="ckckn9o5y00carvse0mtb7rjs" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Elasticsearch/">Elasticsearch</a></li></ul>
 
     </footer>
   </div>

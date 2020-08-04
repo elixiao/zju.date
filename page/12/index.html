@@ -54,6 +54,66 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-count-cpu" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/count-cpu/" class="article-date">
+  <time datetime="2018-09-20T09:13:20.000Z" itemprop="datePublished">2018-09-20</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/count-cpu/">查看服务器CPU个数</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <ol>
+<li><p>查看物理CPU的个数</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat /proc/cpuinfo | grep <span class="string">"physical id"</span> | sort | uniq | wc -l</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<ol>
+<li><p>查看逻辑CPU的个数</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat /proc/cpuinfo | grep <span class="string">"processor"</span> | wc -l</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<ol>
+<li><p>查看CPU是几核</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat /proc/cpuinfo | grep <span class="string">"cores"</span> | uniq</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<ol>
+<li><p>查看CPU的主频</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat /proc/cpuinfo | grep MHz | uniq</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/count-cpu/" data-id="ckckn9o3j0084rvseinosurel" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-hundreds-of-if" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/hundreds-of-if/" class="article-date">
@@ -637,59 +697,6 @@
     <footer class="article-footer">
      <a data-url="https://zju.date/logstash-grok/" data-id="ckckn9obl00m1rvses9g45kvb" class="article-share-link">Share</a>
      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-es-compare" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/es-compare/" class="article-date">
-  <time datetime="2018-09-11T02:04:05.000Z" itemprop="datePublished">2018-09-11</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/es-compare/">ES新老写法的一些对比</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>2.x 版本只有 string 字段，5.x 版本引入 text 和 keyword 字段，并且抛弃 string。</p>
-<ul>
-<li>keyword：存储数据时候，不会分词建立索引</li>
-<li>text：存储数据时候，会自动分词，并生成索引</li>
-</ul>
-<p>新老写法对比：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 2.x 写法</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">"foo"</span>: &#123;</span><br><span class="line">        <span class="string">"type"</span>: <span class="string">"string"</span>,</span><br><span class="line">        <span class="string">"index"</span>: <span class="string">"analyzed"</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 5.x 写法</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">"foo"</span>: &#123;</span><br><span class="line">        <span class="string">"type"</span>: <span class="string">"text"</span>,</span><br><span class="line">        <span class="string">"index"</span>: <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 2.x 写法</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">"foo"</span>: &#123;</span><br><span class="line">        <span class="string">"type"</span>: <span class="string">"string"</span>,</span><br><span class="line">        <span class="string">"index"</span>: <span class="string">"not_analyzed"</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 5.x 写法</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">"foo"</span>: &#123;</span><br><span class="line">        <span class="string">"type"</span>: <span class="string">"keyword"</span>,</span><br><span class="line">        <span class="string">"index"</span>: <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/es-compare/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/es-compare/" data-id="ckckn9o5m00bqrvsertkmpbch" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
-
     </footer>
   </div>
   

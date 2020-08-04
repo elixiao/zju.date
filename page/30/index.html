@@ -54,6 +54,56 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-esclient-notes" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/esclient-notes/" class="article-date">
+  <time datetime="2018-01-11T01:23:49.000Z" itemprop="datePublished">2018-01-11</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/esclient-notes/">esclient学习笔记</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在 node.js 中，通过官方提供的 esclient 来操作 es，首先建立连接：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> elasticsearch = <span class="built_in">require</span>(<span class="string">'elasticsearch'</span>)</span><br><span class="line"><span class="keyword">const</span> client = <span class="keyword">new</span> elasticsearch.Client(&#123;</span><br><span class="line">  host: <span class="string">'es-host'</span>,</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>获取集群健康状态：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">client.cluster.health()</span><br></pre></td></tr></table></figure>
+<p>根据id 检索文档：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">client.search(&#123;</span><br><span class="line">  index: <span class="string">'bank'</span>,</span><br><span class="line">  id: <span class="string">'1'</span></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>根据指定字段搜索文档：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">client.search(&#123;</span><br><span class="line">  index: <span class="string">'bank'</span>,</span><br><span class="line">  size: <span class="number">50</span>,</span><br><span class="line">  body: &#123;</span><br><span class="line">    query: &#123;</span><br><span class="line">      match: &#123;</span><br><span class="line">        firstname: <span class="string">'Leonard'</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>添加文档：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> data = &#123;</span><br><span class="line">  title: <span class="string">'test!'</span>,</span><br><span class="line">  content: <span class="string">'It all started when...'</span>,</span><br><span class="line">  date: <span class="string">'2018-03-11'</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 建立索引, 添加数据</span></span><br><span class="line">client.index(&#123;</span><br><span class="line">  index: <span class="string">'blog'</span>,</span><br><span class="line">  type: <span class="string">'post'</span>,</span><br><span class="line">  id: <span class="number">1</span>,</span><br><span class="line">  body: data</span><br><span class="line">&#125;)</span><br><span class="line">  .then(<span class="function"><span class="params">res</span> =&gt;</span> &#123;</span><br><span class="line">    log(res)</span><br><span class="line">  &#125;)</span><br><span class="line">  .catch(<span class="function"><span class="params">e</span> =&gt;</span> &#123;</span><br><span class="line">    log(e)</span><br><span class="line">  &#125;)</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/esclient-notes/" data-id="ckckn9o5y00carvse0mtb7rjs" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Elasticsearch/">Elasticsearch</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-git-submodule" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/git-submodule/" class="article-date">
@@ -474,52 +524,6 @@
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
 
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-docker-volumn" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/docker-volumn/" class="article-date">
-  <time datetime="2018-01-07T01:55:33.000Z" itemprop="datePublished">2018-01-07</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/docker-volumn/">docker 目录挂载</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Volume 在 docker 中就是存在于宿主机上目录或者文件，它可以将容器以及容器产生的数据分离开来，当用户使用 <code>docker rm container</code> 删除容器时，不会影响相关的数据。</p>
-<p>Volume可以使用以下两种方式创建：</p>
-<ul>
-<li>在 Dockerfile 中指定 <code>VOLUME /some/dir</code></li>
-<li>执行 <code>docker run -v /some/dir</code> 命令来指定</li>
-</ul>
-<p>Docker 会在宿主机上 <code>/var/lib/docker</code> 目录的下面创建一个新的目录，然后将其挂载到容器内指定的路径中，如果在容器中不存在指定的路径，那么该目录将会被自动创建。当删除使用该 Volume 的容器时，Volume 本身不会受到影响，它可以一直存在下去。不过也可以同时删除容器和 Volume：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker rm -v my_container</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/docker-volumn/" data-id="ckckn9o4x00agrvseyo2uzyz8" class="article-share-link">Share</a>
-     
     </footer>
   </div>
   
