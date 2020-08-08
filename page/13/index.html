@@ -54,6 +54,60 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-logstash-grok" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/logstash-grok/" class="article-date">
+  <time datetime="2018-09-13T06:59:07.000Z" itemprop="datePublished">2018-09-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/logstash-grok/">grok 语法</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>grok 语法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">%&#123;SYNTAX:SEMANTIC&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>SYNTAX：代表匹配值的类型，例如NUMBER能匹配3.14，IP能匹配127.0.0.1</li>
+<li>SEMANTIC：代表存储该值的变量名</li>
+</ul>
+<p>例如下面的语法表示匹配NUMBER类型的数据，存到 duration 变量中，匹配IP类型的数据，存到 ip 变量中。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">%&#123;NUMBER:duration&#125; %&#123;IP:ip&#125;</span><br></pre></td></tr></table></figure>
+<p>默认情况下，所有语义都保存为字符串，也可以转变数据类型，目前支持的转换只有 int 和 float 两种类型，例如将 duration 从一个字符串转换为一个整数。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">%&#123;NUMBER:duration:int&#125;</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/logstash-grok/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/logstash-grok/" data-id="ckckn9obl00m1rvses9g45kvb" class="article-share-link">Share</a>
+     
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-es-compare" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/es-compare/" class="article-date">
@@ -393,6 +447,84 @@
 
 
   
+    <article id="post-double-pointer" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/double-pointer/" class="article-date">
+  <time datetime="2018-09-03T08:34:48.000Z" itemprop="datePublished">2018-09-03</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/double-pointer/">双指针在算法题中的应用</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>双指针是一种巧妙的解题思路，我们通过几道题来体验一下：</p>
+<h2 id="求链表的中间结点"><a href="#求链表的中间结点" class="headerlink" title="求链表的中间结点"></a>求链表的中间结点</h2><p><strong><a href="https://leetcode-cn.com/problems/middle-of-the-linked-list" target="_blank" rel="noopener">题目描述</a></strong>：给定一个带有头结点 head 的非空单链表，返回链表的中间结点。如果有两个中间结点，则返回第二个中间结点。</p>
+<p>此题并不难，假设链表中有 N 个节点，就是需要找到索引为 <code>Math.floor(N/2)</code> 的节点即可，例如：</p>
+<ul>
+<li>[1,2,3,4,5] 返回 3，即第 2 个节点</li>
+<li>[1,2,3,4,5,6] 返回 4，即第 3 个节点</li>
+</ul>
+<p>所以最容易想到的就是遍历一次链表，把长度得到，然后用上面的公式找到中间的节点，代码如下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> middleNode = <span class="function"><span class="keyword">function</span> (<span class="params">head</span>) </span>&#123;</span><br><span class="line">  <span class="comment">// 遍历链表，得到总长度</span></span><br><span class="line">  <span class="keyword">let</span> size = <span class="number">0</span>, current = head</span><br><span class="line">  <span class="keyword">while</span> (current) &#123;</span><br><span class="line">    size++</span><br><span class="line">    current = current.next</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 找到中间节点的索引，再次遍历得到中间节点</span></span><br><span class="line">  <span class="keyword">let</span> index = <span class="built_in">Math</span>.floor(size / <span class="number">2</span>), i = <span class="number">0</span></span><br><span class="line">  current = head</span><br><span class="line">  <span class="keyword">while</span> (i &lt; index) &#123;</span><br><span class="line">    i++</span><br><span class="line">    current = current.next</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> current</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其实更好的解法是使用双指针，更准确叫「快慢指针」，fast 和 slow 指针开始都指向 head，然后：</p>
+<ul>
+<li>fast 移动两步</li>
+<li>slow 移动一步 </li>
+</ul>
+<p>那么 fast 指针和 slow 指针所在索引的对应关系为：</p>
+<ul>
+<li>fast=0, slow=0，示例 [0]</li>
+<li>fast=2, slow=1，示例 [0, 1, 2]</li>
+<li>fast=4, slow=2，示例 [0, 1, 2, 3, 4]</li>
+<li>fast=6, slow=3，示例 [0, 1, 2, 3, 4, 5, 6]</li>
+<li>….</li>
+</ul>
+<p>如果 fast 指针已经到达链表的尾部，那么 slow 指针指向的位置就是我们要的中间节点，由于 fast 每次移动两步，只有当 fast 和 fast.next 存在的时候才能移动，所以代码如下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> middleNode = <span class="function"><span class="keyword">function</span> (<span class="params">head</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">let</span> fast = head, slow = head</span><br><span class="line">  <span class="keyword">while</span> (fast &amp;&amp; fast.next) &#123;</span><br><span class="line">    fast = fast.next.next</span><br><span class="line">    slow = slow.next</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> slow</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>是不是代码更简洁，思路也更容易理解了呢？这是双指针的典型应用。与之类似题目还有<a href="https://leetcode-cn.com/problems/remove-nth-node-from-end-of-list" target="_blank" rel="noopener">删除链表的倒数第N个节点</a></p>
+<h2 id="盛水最多的容器"><a href="#盛水最多的容器" class="headerlink" title="盛水最多的容器"></a>盛水最多的容器</h2><p><strong><a href="https://leetcode-cn.com/problems/container-with-most-water" target="_blank" rel="noopener">题目描述</a></strong>：给你 n 个非负整数 <code>[a1，a2，...，an]</code>，每个数代表坐标中的一个点 <code>(i, ai)</code> 。在坐标内画 n 条垂直线，垂直线 i 的两个端点分别为 <code>(i, ai)</code> 和 <code>(i, 0)</code>。找出其中的两条线，使得它们与 x 轴共同构成的容器可以容纳最多的水。例如：</p>
+<ul>
+<li>输入：[1,8,6,2,5,4,8,3,7]</li>
+<li>输出：49</li>
+</ul>
+<p>也就是说，要从数组中找到两个值 <code>ai</code> 和 <code>aj</code>，使得 <code>Min(ai, aj)*(j-i)</code> 最大。</p>
+<p>这道题当然也是可以用穷举法来做的，算出所有可能的值，但是时间复杂度为 <code>O(n^2)</code>，更好的解决方案就是双指针，更准确的说是「头尾指针」，一开始的时候，让头指针指向数组开始元素，尾指针指向数组最后元素，计算其容量。接下来只可能出现两种移动方式：</p>
+<ul>
+<li>头指针右移一步</li>
+<li>尾指针左移一步</li>
+</ul>
+<p>无论是哪种移动方式，<code>j-i</code> 的值是相同的，且比之前小 1，所以只要比较 <code>ai</code> 和 <code>aj</code>，哪个小就移哪个，直到两指针相遇，代码如下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> maxArea = <span class="function"><span class="keyword">function</span> (<span class="params">arr</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">let</span> i = <span class="number">0</span>, j = arr.length - <span class="number">1</span>, max = <span class="number">0</span></span><br><span class="line">  <span class="keyword">while</span> (i &lt; j) &#123;</span><br><span class="line">    <span class="keyword">let</span> head = arr[i], tail = arr[j]</span><br><span class="line">    max = <span class="built_in">Math</span>.max(max, <span class="built_in">Math</span>.min(head, tail) * (j - i))</span><br><span class="line">    head &lt; tail ? i++ : j--</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> max</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/double-pointer/" data-id="ckdlq0qgb00007sseayyrx1dy" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-upgrade-bootstrap4" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/upgrade-bootstrap4/" class="article-date">
@@ -585,109 +717,6 @@
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MongoDB/">MongoDB</a></li></ul>
 
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-docker-volume-copy" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/docker-volume-copy/" class="article-date">
-  <time datetime="2018-08-31T10:25:55.000Z" itemprop="datePublished">2018-08-31</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/docker-volume-copy/">docker拷贝数据卷</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>把旧数据卷 old_volume 里面的内容放到新数据卷 new_volume 里面：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker volume create --name &lt;new_volume&gt;</span><br><span class="line">docker run --rm -it -v &lt;old_volume&gt;:/from -v &lt;new_volume&gt;:/to alpine ash -c <span class="string">"cd /from ; cp -av . /to"</span></span><br><span class="line">docker volume rm &lt;old_volume&gt;</span><br></pre></td></tr></table></figure>
-<p>可以写一个函数</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#/bin/bash</span></span><br><span class="line">docker volume create --name <span class="variable">$2</span></span><br><span class="line">docker run --rm -it -v <span class="variable">$1</span>:/from -v <span class="variable">$2</span>:/to alpine ash -c <span class="string">"cd /from ; cp -av . /to"</span></span><br><span class="line">[ $? -eq 0 ] &amp;&amp; docker volume rm <span class="variable">$1</span></span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/docker-volume-copy/" data-id="ckckn9o4u00aarvseb9yxwbr6" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/">Docker</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-micro-service-notes" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/micro-service-notes/" class="article-date">
-  <time datetime="2018-08-24T13:51:23.000Z" itemprop="datePublished">2018-08-24</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/micro-service-notes/">微服务学习笔记</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>把传统业务拆分成微服务的时候，要注意下面的要点：</p>
-<ol>
-<li>区分边界服务和内部服务。边界服务是会接受公网流量的服务，比如处理HTTP请求的服务；反之就是内部服务。边界服务和内部服务在安全方面的考虑是不一样的，例如边界服务需要做针对User的鉴权等等。</li>
-<li>区分基础和业务服务。业务服务追求变化，feature，基础服务追求稳定，性能。</li>
-<li>一定要考虑调用失败的场景。微服务的提供方，一定要考虑调用可能会有bug，比如出现死循环。</li>
-<li>没有把握的做到合理拆分的时候可以选择先不拆，等到发现瓶颈了自然就知道怎么拆了。</li>
-</ol>
-<p>从通信类型的角度看，大概有三种类型：</p>
-<ol>
-<li>同步调用</li>
-<li>异步调用</li>
-<li>广播</li>
-</ol>
-<p>在微服务的设计之初要想清楚调用关系以及调用方式，哪些需要同步，哪些可以异步，哪些需要广播，最好团队内部要有统一的认识。然后就是要确定好调用协议了，例如常见的选择有：</p>
-<ul>
-<li>同步调用：HTTP REST, gRPC, thrift, etc.</li>
-<li>异步调用：Sidekiq, Celery, etc. 对应的backend有 Redis, 各类 AMQP 实现, Kafka 等等</li>
-<li>广播：各类 AMQP 实现, Kafka，etc.</li>
-</ul>
-<p>微服务除了是个技术活，更是个管理活。一定得有和微服务相融的团队组织方式和工作流程。首先就是要成立架构组。架构组要负责微服务的基础设施的建设，例如 CI/CD 系统， Kubernetes 集群，Service Mesh 集群，监控报警系统，日志手机系统，基础的工具和库的构建和维护。在我们的实践中，每个微服务团队由2-3人组成，有一个master，负责 DevOps 流程的建设，权限的分配等等一系列工作。例如我们的DevOps是基于 GitLab CI 和 kubernetes 的，所以 master 要负责 .gitlab-ci.yml ，以及所有自己服务相关的 k8s 的 deployment, job, service 等等的编写维护。</p>
-<p>【备注】此笔记中的观点来自网络收集，用于记录微服务最佳实践，学习共勉。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/micro-service-notes/" data-id="ckckn9oe600n7rvsew0tsft2x" class="article-share-link">Share</a>
-     
     </footer>
   </div>
   

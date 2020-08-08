@@ -54,6 +54,101 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-mongoose-lean" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/mongoose-lean/" class="article-date">
+  <time datetime="2017-05-23T15:07:07.000Z" itemprop="datePublished">2017-05-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/mongoose-lean/">mongoose lean 的作用</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Model.find(&#123;&#125;).exec()</span><br></pre></td></tr></table></figure>
+<p>平均执行时间 218 毫秒，如果使用 <code>lean()</code></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Model.find(&#123;&#125;).exec().lean()</span><br></pre></td></tr></table></figure>
+<p>执行时间变成 71 毫秒。那 <code>lean()</code> 到底做了什么？</p>
+<blockquote>
+<p>不加 lean 查出来的是 Mongoose 文档，加 lean 查询出来的文档是普通的 JavaScript 对象，从而没有 save 方法，没有 getters 和 setters，因此会有更高的性能。</p>
+</blockquote>
+<p>而创建对象的时候，总是返回 Mongoose 文档，没有 lean() 方法，例如下面的语法是不正确的：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Model.create().lean()</span><br></pre></td></tr></table></figure>
+<p>创建之后如果想返回一个普通的对象，可以用 toObject 方法：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> instance = <span class="keyword">await</span> Model.create()</span><br><span class="line">instance.toObject()</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/mongoose-lean/" data-id="ckckn9ofb00ozrvseciig8erx" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-seneca-fatal-error" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/seneca-fatal-error/" class="article-date">
+  <time datetime="2017-05-23T15:07:07.000Z" itemprop="datePublished">2017-05-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/seneca-fatal-error/">Seneca Fatal Error</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>今天遇到一个错误：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Seneca Fatal Error</span><br><span class="line">==================</span><br><span class="line"></span><br><span class="line">Message: seneca: Action xxxx</span><br></pre></td></tr></table></figure>
+<p>需要加下面的语句才行：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">seneca.fixedargs[<span class="string">'fatal$'</span>] = <span class="literal">false</span>;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/seneca-fatal-error/" data-id="ckckn9oir00u1rvsec6swze3k" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-webpack-noParse" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/webpack-noParse/" class="article-date">
@@ -473,100 +568,6 @@
     </div>
     <footer class="article-footer">
      <a data-url="https://zju.date/js-trim-non-ascii/" data-id="ckckn9ob000l1rvse6vy7mcp0" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-linux-du" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/linux-du/" class="article-date">
-  <time datetime="2017-05-09T02:01:01.000Z" itemprop="datePublished">2017-05-09</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/linux-du/">du 的使用</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>du的使用</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">du -h -d 0 *</span><br></pre></td></tr></table></figure>
-<p>只看隐藏文件夹：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">du -h -d 0 .[^.]*</span><br><span class="line">du -hs .[^.]*</span><br></pre></td></tr></table></figure>
-<p>排序</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">du -h -d 0 .[^.]* | sort -nr</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/linux-du/" data-id="ckckn9obg00lrrvsezq84i9io" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-call-apply-in-javascript" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/call-apply-in-javascript/" class="article-date">
-  <time datetime="2017-05-09T01:20:10.000Z" itemprop="datePublished">2017-05-09</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/call-apply-in-javascript/">JavaScript中的call和apply</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>call 和 apply 用于在调用函数的时候手动指定 this 指向，例如：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">f</span>(<span class="params"></span>) </span>&#123;&#125;</span><br><span class="line">f.call(context, arg1, arg2, ...)</span><br></pre></td></tr></table></figure>
-<p>表示执行函数 <code>f</code>，并把第一个参数作函数绑定的 <code>this</code>，剩下的参数作为函数 <code>f</code> 的参数。如果在函数 <code>f</code> 内部没有用到 <code>this</code>，那么下面两种写法其实是一样的：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">f(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>)</span><br><span class="line">f.call(obj, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>)</span><br></pre></td></tr></table></figure>
-<p>apply 的用法和 call 是类似的，区别在于第二个参数是一个数组：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">f.apply(context, args)</span><br><span class="line">f(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>)</span><br><span class="line">f.apply(context, [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>])</span><br></pre></td></tr></table></figure>
-<p>call 和 apply 的下面两种写法是等价的：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> args = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</span><br><span class="line">func.call(context, ...args)</span><br><span class="line">func.apply(context, args)</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/call-apply-in-javascript/" data-id="ckckn9o2j006hrvseozqkis1d" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 

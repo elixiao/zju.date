@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="双指针是一种巧妙的解题思路，我们通过几道题来体验一下： 求链表的中间结点题目描述：给定一个带有头结点 head 的非空单链表，返回链表的中间结点。如果有两个中间结点，则返回第二个中间结点。 此题并不难，假设链表中有 N 个节点，就是需要找到索引为 Math.floor(N/2) 的节点即可，例如：  [1,2,3,4,5] 返回 3，即第 2 个节点 [1,2,3,4,5,6] 返回 4，即第 3">
+<meta name="keywords" content="JavaScript">
+<meta property="og:type" content="article">
+<meta property="og:title" content="双指针在算法题中的应用">
+<meta property="og:url" content="https://zju.date/double-pointer/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="双指针是一种巧妙的解题思路，我们通过几道题来体验一下： 求链表的中间结点题目描述：给定一个带有头结点 head 的非空单链表，返回链表的中间结点。如果有两个中间结点，则返回第二个中间结点。 此题并不难，假设链表中有 N 个节点，就是需要找到索引为 Math.floor(N/2) 的节点即可，例如：  [1,2,3,4,5] 返回 3，即第 2 个节点 [1,2,3,4,5,6] 返回 4，即第 3">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2020-08-07T02:57:21.968Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="双指针在算法题中的应用">
+<meta name="twitter:description" content="双指针是一种巧妙的解题思路，我们通过几道题来体验一下： 求链表的中间结点题目描述：给定一个带有头结点 head 的非空单链表，返回链表的中间结点。如果有两个中间结点，则返回第二个中间结点。 此题并不难，假设链表中有 N 个节点，就是需要找到索引为 Math.floor(N/2) 的节点即可，例如：  [1,2,3,4,5] 返回 3，即第 2 个节点 [1,2,3,4,5,6] 返回 4，即第 3">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-double-pointer" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/double-pointer/" class="article-date">
+  <time datetime="2018-09-03T08:34:48.000Z" itemprop="datePublished">2018-09-03</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      双指针在算法题中的应用
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>双指针是一种巧妙的解题思路，我们通过几道题来体验一下：</p>
+<h2 id="求链表的中间结点"><a href="#求链表的中间结点" class="headerlink" title="求链表的中间结点"></a>求链表的中间结点</h2><p><strong><a href="https://leetcode-cn.com/problems/middle-of-the-linked-list" target="_blank" rel="noopener">题目描述</a></strong>：给定一个带有头结点 head 的非空单链表，返回链表的中间结点。如果有两个中间结点，则返回第二个中间结点。</p>
+<p>此题并不难，假设链表中有 N 个节点，就是需要找到索引为 <code>Math.floor(N/2)</code> 的节点即可，例如：</p>
+<ul>
+<li>[1,2,3,4,5] 返回 3，即第 2 个节点</li>
+<li>[1,2,3,4,5,6] 返回 4，即第 3 个节点</li>
+</ul>
+<p>所以最容易想到的就是遍历一次链表，把长度得到，然后用上面的公式找到中间的节点，代码如下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> middleNode = <span class="function"><span class="keyword">function</span> (<span class="params">head</span>) </span>&#123;</span><br><span class="line">  <span class="comment">// 遍历链表，得到总长度</span></span><br><span class="line">  <span class="keyword">let</span> size = <span class="number">0</span>, current = head</span><br><span class="line">  <span class="keyword">while</span> (current) &#123;</span><br><span class="line">    size++</span><br><span class="line">    current = current.next</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 找到中间节点的索引，再次遍历得到中间节点</span></span><br><span class="line">  <span class="keyword">let</span> index = <span class="built_in">Math</span>.floor(size / <span class="number">2</span>), i = <span class="number">0</span></span><br><span class="line">  current = head</span><br><span class="line">  <span class="keyword">while</span> (i &lt; index) &#123;</span><br><span class="line">    i++</span><br><span class="line">    current = current.next</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> current</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其实更好的解法是使用双指针，更准确叫「快慢指针」，fast 和 slow 指针开始都指向 head，然后：</p>
+<ul>
+<li>fast 移动两步</li>
+<li>slow 移动一步 </li>
+</ul>
+<p>那么 fast 指针和 slow 指针所在索引的对应关系为：</p>
+<ul>
+<li>fast=0, slow=0，示例 [0]</li>
+<li>fast=2, slow=1，示例 [0, 1, 2]</li>
+<li>fast=4, slow=2，示例 [0, 1, 2, 3, 4]</li>
+<li>fast=6, slow=3，示例 [0, 1, 2, 3, 4, 5, 6]</li>
+<li>….</li>
+</ul>
+<p>如果 fast 指针已经到达链表的尾部，那么 slow 指针指向的位置就是我们要的中间节点，由于 fast 每次移动两步，只有当 fast 和 fast.next 存在的时候才能移动，所以代码如下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> middleNode = <span class="function"><span class="keyword">function</span> (<span class="params">head</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">let</span> fast = head, slow = head</span><br><span class="line">  <span class="keyword">while</span> (fast &amp;&amp; fast.next) &#123;</span><br><span class="line">    fast = fast.next.next</span><br><span class="line">    slow = slow.next</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> slow</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>是不是代码更简洁，思路也更容易理解了呢？这是双指针的典型应用。与之类似题目还有<a href="https://leetcode-cn.com/problems/remove-nth-node-from-end-of-list" target="_blank" rel="noopener">删除链表的倒数第N个节点</a></p>
+<h2 id="盛水最多的容器"><a href="#盛水最多的容器" class="headerlink" title="盛水最多的容器"></a>盛水最多的容器</h2><p><strong><a href="https://leetcode-cn.com/problems/container-with-most-water" target="_blank" rel="noopener">题目描述</a></strong>：给你 n 个非负整数 <code>[a1，a2，...，an]</code>，每个数代表坐标中的一个点 <code>(i, ai)</code> 。在坐标内画 n 条垂直线，垂直线 i 的两个端点分别为 <code>(i, ai)</code> 和 <code>(i, 0)</code>。找出其中的两条线，使得它们与 x 轴共同构成的容器可以容纳最多的水。例如：</p>
+<ul>
+<li>输入：[1,8,6,2,5,4,8,3,7]</li>
+<li>输出：49</li>
+</ul>
+<p>也就是说，要从数组中找到两个值 <code>ai</code> 和 <code>aj</code>，使得 <code>Min(ai, aj)*(j-i)</code> 最大。</p>
+<p>这道题当然也是可以用穷举法来做的，算出所有可能的值，但是时间复杂度为 <code>O(n^2)</code>，更好的解决方案就是双指针，更准确的说是「头尾指针」，一开始的时候，让头指针指向数组开始元素，尾指针指向数组最后元素，计算其容量。接下来只可能出现两种移动方式：</p>
+<ul>
+<li>头指针右移一步</li>
+<li>尾指针左移一步</li>
+</ul>
+<p>无论是哪种移动方式，<code>j-i</code> 的值是相同的，且比之前小 1，所以只要比较 <code>ai</code> 和 <code>aj</code>，哪个小就移哪个，直到两指针相遇，代码如下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> maxArea = <span class="function"><span class="keyword">function</span> (<span class="params">arr</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">let</span> i = <span class="number">0</span>, j = arr.length - <span class="number">1</span>, max = <span class="number">0</span></span><br><span class="line">  <span class="keyword">while</span> (i &lt; j) &#123;</span><br><span class="line">    <span class="keyword">let</span> head = arr[i], tail = arr[j]</span><br><span class="line">    max = <span class="built_in">Math</span>.max(max, <span class="built_in">Math</span>.min(head, tail) * (j - i))</span><br><span class="line">    head &lt; tail ? i++ : j--</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> max</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/double-pointer/" data-id="ckdlq0qgb00007sseayyrx1dy" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/mongodb-optimize/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          MongoDB 慢查询和性能优化
+        
+      </div>
+    </a>
+  
+  
+    <a href="/upgrade-bootstrap4/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">bootstrap语义等价表</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dart/">Dart</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Elasticsearch/">Elasticsearch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Flutter/">Flutter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>
