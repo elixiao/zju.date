@@ -54,6 +54,107 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-pm2-conflict-vs-node-config" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/pm2-conflict-vs-node-config/" class="article-date">
+  <time datetime="2017-05-13T02:06:07.000Z" itemprop="datePublished">2017-05-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/pm2-conflict-vs-node-config/">pm2与node-config冲突原因</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在同一个项目中使用 <code>pm2</code> 与 <code>node-config</code> 的时候发现它们之间冲突。原因是pm2启动的时候会开多个线程（process），每个线程都配置了一个环境变量，名字叫NODE_APP_INSTANCE，值从0开始，如果有8个线程，就是0-7，这样做的好处是可以动态监听端口：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">server.listen(<span class="number">8000</span> + process.env.NODE_APP_INSTANCE)</span><br></pre></td></tr></table></figure>
+<p>但问题来了，<code>node-config</code> 会根据当前线程的环境变量去 <code>config</code> 文件夹下面寻找对应的 json 文件，因为：</p>
+<ul>
+<li>如果设置了 <code>NODE_ENV = development</code> 就去找 <code>development.json</code> 或者 <code>dev.json</code></li>
+<li>如果设置了 <code>NODE_ENV = production</code> 就去找 <code>production.json</code> 或者 <code>prod.json</code></li>
+<li>如果 <code>NODE_ENV</code> 是 <code>undefined</code> 就会去找 <code>config/development.json</code>，然后是 <code>config/dev.json</code>，最后是<code>default.json</code></li>
+<li><p>如果指定一个具体的名称，例如 <code>NODE_ENV=apple</code>，那么就会去找 <code>config/apple.json</code>，如果找不到就会给下面的提示：</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">WARNING: NODE_ENV value of <span class="string">'asf'</span> did not match any deployment config file names.</span><br><span class="line">WARNING: See https://github.com/lorenwest/node-config/wiki/Strict-Mode</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>所以冲突的原因是<code>node-config</code>和<code>pm2</code>都用了 <code>NODE_APP_INSTANCE</code> 这个环境变量名但是并没有对应的json文件。解决方案是通过 instance_var 配置来对 <code>NODE_APP_INSTANCE</code> 进行重命名：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">  apps : [</span><br><span class="line">      &#123;</span><br><span class="line">        name: <span class="string">"myapp"</span>,</span><br><span class="line">        script: <span class="string">"./app.js"</span>,</span><br><span class="line">        watch: <span class="literal">true</span>,</span><br><span class="line">        instance_var: <span class="string">'INSTANCE_ID'</span>,</span><br><span class="line">        env: &#123;</span><br><span class="line">            <span class="string">"PORT"</span>: <span class="number">3000</span>,</span><br><span class="line">            <span class="string">"NODE_ENV"</span>: <span class="string">"development"</span></span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>参考文章：<a href="http://pm2.keymetrics.io/docs/usage/environment/#specific-environment-variables" target="_blank" rel="noopener">官方文档</a>、<a href="https://github.com/lorenwest/node-config/issues/244" target="_blank" rel="noopener">github issue</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/pm2-conflict-vs-node-config/" data-id="ckckn9oh300rnrvse6iftz3qz" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-js-trim-non-ascii" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/js-trim-non-ascii/" class="article-date">
+  <time datetime="2017-05-09T08:50:23.000Z" itemprop="datePublished">2017-05-09</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/js-trim-non-ascii/">js 去除非 ascii 字符</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>下面的正则可以去掉字符串中的非 ascii 字符：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">str.replace(<span class="regexp">/[^\x00-\x7E]/g</span>, <span class="string">""</span>)</span><br></pre></td></tr></table></figure>
+<p>其中 <code>\x20-\x7E</code> 包含 ascii 表的主要部分。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">str.replace(<span class="regexp">/[^ -~]+/g</span>, <span class="string">""</span>)</span><br></pre></td></tr></table></figure>
+<p>ascii 表的主要部分从空格开始到波浪符结束，不过与上面不同的是，会把换行也替换成空字符串。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">str.replace(<span class="regexp">/[^a-zA-Z0-9.?!]/</span>,<span class="string">''</span>)</span><br></pre></td></tr></table></figure>
+<p>上面的这个更通用一些，可以指定白名单，在白名单之外的都保留，其他的都过滤掉。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/js-trim-non-ascii/" data-id="ckckn9ob000l1rvse6vy7mcp0" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-linux-du" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/linux-du/" class="article-date">
@@ -443,104 +544,6 @@
     </div>
     <footer class="article-footer">
      <a data-url="https://zju.date/feathersjs-notes/" data-id="ckckn9o6b00d0rvsem3vhfk9l" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-typescript-cannot-call-a-namespace" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/typescript-cannot-call-a-namespace/" class="article-date">
-  <time datetime="2017-04-30T07:45:07.000Z" itemprop="datePublished">2017-04-30</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/typescript-cannot-call-a-namespace/">cannot call a namespace</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>使用下面的方式引用moment日期处理包：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> moment <span class="keyword">from</span> <span class="string">'moment'</span></span><br><span class="line"><span class="keyword">import</span> mongoose, &#123;Schema&#125; <span class="keyword">from</span> <span class="string">'mongoose'</span></span><br></pre></td></tr></table></figure>
-<p><code>ng serve</code> 编译报错：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">node_modules/moment/moment&quot;&apos; has no default export</span><br><span class="line">Module &apos;&quot;mongoose&quot;&apos; has no default export.</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/typescript-cannot-call-a-namespace/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/typescript-cannot-call-a-namespace/" data-id="ckckn9ok100w0rvsev2shjpnu" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-javascript-task" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/javascript-task/" class="article-date">
-  <time datetime="2017-04-30T02:45:07.000Z" itemprop="datePublished">2017-04-30</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/javascript-task/">JavaScript中的任务</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>题目1：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">setImmediate(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="number">1</span>)</span><br><span class="line">&#125;, <span class="number">0</span>)</span><br><span class="line">setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="number">2</span>)</span><br><span class="line">&#125;, <span class="number">0</span>)</span><br><span class="line"><span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="params">resolve</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="number">3</span>)</span><br><span class="line">    resolve()</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="number">4</span>)</span><br><span class="line">&#125;).then(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="number">5</span>)</span><br><span class="line">&#125;)</span><br><span class="line"><span class="built_in">console</span>.log(<span class="number">6</span>)</span><br><span class="line">process.nextTick(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="number">7</span>)</span><br><span class="line">&#125;)</span><br><span class="line"><span class="built_in">console</span>.log(<span class="number">8</span>)</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/javascript-task/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/javascript-task/" data-id="ckckn9o9y00j8rvsee21e2p9q" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 

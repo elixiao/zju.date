@@ -54,6 +54,121 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-ubuntu-sublime-cjk" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/ubuntu-sublime-cjk/" class="article-date">
+  <time datetime="2017-03-24T02:06:07.000Z" itemprop="datePublished">2017-03-24</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/ubuntu-sublime-cjk/">ubuntu sublime 无法输入中文</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在 Ubuntu 上安装 sublime 之后发现无法输入中文，很是烦恼，网上找了很多教程，要么修改很多配置，要么非常繁琐。</p>
+<p>后来在 github 上发现一个库：<a href="https://github.com/lyfeyaj/sublime-text-imfix" target="_blank" rel="noopener">sublime-text-imfix</a> ，能够用一条命令就解决中文输入的问题了。</p>
+<p>不过需要注意的是，上面的库无法找到电脑中解压即用的绿色版 sublime ，所以需要用包管理工具安装：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">wget -qO - https://download.sublimetext.com/sublimehq-pub.gpg | sudo apt-key add -</span><br><span class="line">sudo apt-get install apt-transport-https</span><br><span class="line"><span class="built_in">echo</span> <span class="string">"deb https://download.sublimetext.com/ apt/stable/"</span> | sudo tee /etc/apt/sources.list.d/sublime-text.list</span><br><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install sublime-text</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/ubuntu-sublime-cjk/" data-id="ckckn9ok900wbrvsehh6wt05h" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-nginx-https" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/nginx-https/" class="article-date">
+  <time datetime="2017-03-24T02:02:07.000Z" itemprop="datePublished">2017-03-24</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/nginx-https/">nginx 添加 https 支持</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>为 nginx 配置 https 支持，只需如下两步：</p>
+<h2 id="生成证书"><a href="#生成证书" class="headerlink" title="生成证书"></a>生成证书</h2><ol>
+<li><p>进入目录</p>
+<p> 首先进入你想创建证书和私钥的目录，例如：</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ cd /usr/local/nginx/conf</span><br><span class="line">$ ls</span><br><span class="line">fastcgi.conf           koi-utf                nginx.conf             uwsgi_params</span><br><span class="line">fastcgi.conf.default   koi-win                nginx.conf.default     uwsgi_params.default</span><br><span class="line">fastcgi_params         mime.types             scgi_params            win-utf</span><br><span class="line">fastcgi_params.default mime.types.default     scgi_params.default</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>生成私钥</p>
+<p> 然后创建服务器私钥（KEY），命令会让你输入一个口令，例如：lixiao：</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ openssl genrsa -des3 -out server.key 1024</span><br><span class="line">Generating RSA private key, 1024 bit long modulus</span><br><span class="line">..........++++++</span><br><span class="line">................++++++</span><br><span class="line">e is 65537 (0x10001)</span><br><span class="line">Enter pass phrase for server.key:</span><br><span class="line">Verifying - Enter pass phrase for server.key:</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>根据私钥创建证书</p>
+<p> 然后创建签名请求的证书（CSR）：</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">$ openssl req -new -key server.key -out server.csr</span><br><span class="line">Enter pass phrase for server.key:</span><br><span class="line">You are about to be asked to enter information that will be incorporated</span><br><span class="line">into your certificate request.</span><br><span class="line">What you are about to enter is what is called a Distinguished Name or a DN.</span><br><span class="line">There are quite a few fields but you can leave some blank</span><br><span class="line">For some fields there will be a default value,</span><br><span class="line">If you enter &apos;.&apos;, the field will be left blank.</span><br><span class="line">-----</span><br><span class="line">Country Name (2 letter code) []:cn</span><br><span class="line">State or Province Name (full name) []:jiangsu</span><br><span class="line">Locality Name (eg, city) []:nanjing</span><br><span class="line">Organization Name (eg, company) []:lx</span><br><span class="line">Organizational Unit Name (eg, section) []:</span><br><span class="line">Common Name (eg, fully qualified host name) []:.</span><br><span class="line">Email Address []:</span><br><span class="line"></span><br><span class="line">Please enter the following &apos;extra&apos; attributes</span><br><span class="line">to be sent with your certificate request</span><br><span class="line">A challenge password []:LiXiao520$</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>去除口令</p>
+</li>
+</ol>
+<pre><code>在加载SSL支持的Nginx并使用上述私钥时除去必须的口令：
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ cp server.key server.key.org</span><br><span class="line">$ openssl rsa -in server.key.org -out server.key</span><br></pre></td></tr></table></figure>
+</code></pre><ol>
+<li><p>标记证书</p>
+<p> 最后标记证书使用上述私钥和CSR：</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ openssl x509 -req -days 365 -in server.csr -signkey server.key -out server.crt</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>总结一下，上述5个步骤：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mkdir your_dir</span><br><span class="line">cd your_dir</span><br><span class="line">openssl genrsa -des3 -out server.key 1024 # 会提示输入key</span><br><span class="line">openssl req -new -key server.key -out server.csr # 会提示输入组织信息 CN BeiJing HaiDian XXX</span><br><span class="line">cp server.key server.key.org</span><br><span class="line">openssl rsa -in server.key.org -out server.key </span><br><span class="line">openssl x509 -req -days 365 -in server.csr -signkey server.key -out server.crt</span><br></pre></td></tr></table></figure>
+<h2 id="配置nginx"><a href="#配置nginx" class="headerlink" title="配置nginx"></a>配置nginx</h2><p>修改Nginx配置文件，让其包含新标记的证书和私钥：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    server_name YOUR_DOMAINNAME_HERE;</span><br><span class="line">    listen 443;</span><br><span class="line">    ssl on;</span><br><span class="line">    ssl_certificate /usr/local/nginx/conf/server.crt;</span><br><span class="line">    ssl_certificate_key /usr/local/nginx/conf/server.key;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>重启nginx即可。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/nginx-https/" data-id="ckckn9ofr00pjrvse9xifecvm" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-mongodb-advance-query" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/mongodb-advance-query/" class="article-date">
@@ -444,95 +559,6 @@
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/">Git</a></li></ul>
 
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-typescript-cannot-find-name-require" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/typescript-cannot-find-name-require/" class="article-date">
-  <time datetime="2017-03-02T02:50:07.000Z" itemprop="datePublished">2017-03-02</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/typescript-cannot-find-name-require/">Cannot find name &#39;require&#39;</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>在typescript项目中使用 <code>require</code> 报错：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">app.component.ts (3,17): Cannot find name <span class="string">'require'</span>.</span><br></pre></td></tr></table></figure>
-<p>在 <code>tsconfig.app.ts</code> 中增加 <code>typeRoots</code> 选项：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">"typeRoots"</span>: [</span><br><span class="line">      <span class="string">"../node_modules/@types"</span></span><br><span class="line">    ]</span><br></pre></td></tr></table></figure>
-<p>但是记住一定要去掉 <code>types</code> 选项：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">"types"</span>: [],</span><br></pre></td></tr></table></figure>
-<p>什么意思呢？因为 <code>typeRoots</code> 指定了包含 <code>type</code> 定义的文件夹，<code>type</code> 指定了需要包含定义的名称，如果指定了 <code>typeRoots</code>，那么只有 <code>typeRoots</code> 文件夹下面的包才会被收录，如果指定了 <code>types</code> 那么只有那些在 <code>typeRoots</code> 文件夹下面存在的指定的包才会被收录，也就是说可能<code>typeRoots</code> 文件夹里面有：<code>&quot;node&quot;, &quot;lodash&quot;, &quot;express&quot;</code> 3个包，如果只指定 <code>node</code> 那么就忽略另外两个。而可怕的是 <code>&quot;types&quot;: []</code> 是禁止自动引入任何包，它竟然是 angular-cli 项目中默认的选项，会给初学者带来很多烦恼。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/typescript-cannot-find-name-require/" data-id="ckckn9ok300w4rvsexyed60hi" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-mysql-utf8mb4" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/mysql-utf8mb4/" class="article-date">
-  <time datetime="2017-02-23T09:32:33.000Z" itemprop="datePublished">2017-02-23</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/mysql-utf8mb4/">mysql添加表情字符集</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>mysql 查询的时候报错了：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">16:46:14	select * from emoji.emoji where code = &apos;😖&apos; LIMIT 0, 100	Error Code: 1267. Illegal mix of collations (utf8mb4_general_ci,IMPLICIT) and (utf8_general_ci,COERCIBLE) for operation &apos;=&apos;	0.0026 sec</span><br></pre></td></tr></table></figure>
-<p>原因是字符集导致的，无法显示表情的时候用这个字符集：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">set</span> character_set_results =utf8mb4;</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/mysql-utf8mb4/" data-id="ckckn9ofh00p8rvserpvnbvrc" class="article-share-link">Share</a>
-     
     </footer>
   </div>
   

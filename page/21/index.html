@@ -54,6 +54,98 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-openvpn-nopull" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/openvpn-nopull/" class="article-date">
+  <time datetime="2018-04-19T08:34:52.000Z" itemprop="datePublished">2018-04-19</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/openvpn-nopull/">vpn分发指定ip的流量</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>连接 vpn 之后所有请求都走 vpn 了，下面的配置可以让正常的公网请求不经过 vpn，只有内网和指定的 IP 走 vpn：</p>
+<ol>
+<li>打开 vpn 配置文件 xxx.ovpn</li>
+<li>定位到 verb 3 和 <ca> 中间</ca></li>
+<li><p>插入下面的语句并保存</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">route-nopull</span><br><span class="line">route 172.31.0.0 255.255.0.0 vpn_gateway # 其中 172.31.0.0 是本机内网网段</span><br><span class="line">route 147.100.0.0 255.255.0.0 vpn_gateway # 其中 147.100.0.0 是指定的ip网段</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>删除原来的vpn配置，重新导入新配置即可</p>
+</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/openvpn-nopull/" data-id="ckckn9ogs00r6rvsej91oyiea" class="article-share-link">Share</a>
+     
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-speed-measure-webpack-plugin" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/speed-measure-webpack-plugin/" class="article-date">
+  <time datetime="2018-04-18T11:11:07.000Z" itemprop="datePublished">2018-04-18</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/speed-measure-webpack-plugin/">计算 webpack 插件/加载器的运行时间</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>webpack 有时候打包很慢，用了很多 plugin 和 loader，想知道到底是哪个环节慢，下面这个插件可以计算 plugin 和 loader 的耗时。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn add -D speed-measure-webpack-plugin</span><br></pre></td></tr></table></figure>
+<p>使用方法很简单，把 webpack 配置对象包裹起来即可：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> SpeedMeasurePlugin = <span class="built_in">require</span>(<span class="string">"speed-measure-webpack-plugin"</span>);</span><br><span class="line"><span class="keyword">const</span> smp = <span class="keyword">new</span> SpeedMeasurePlugin();</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> webpackConfig = smp.wrap(&#123;</span><br><span class="line">  entry: &#123;</span><br><span class="line">    app: [<span class="string">"./app.js"</span>]</span><br><span class="line">  &#125;,</span><br><span class="line">  output: <span class="string">"./public"</span>,</span><br><span class="line">  <span class="built_in">module</span>: &#123;</span><br><span class="line">    rules: [</span><br><span class="line">      &#123;</span><br><span class="line">        test: <span class="regexp">/\.js$/</span>,</span><br><span class="line">        use: [&#123; <span class="attr">loader</span>: <span class="string">"babel-loader"</span> &#125;]</span><br><span class="line">      &#125;</span><br><span class="line">    ]</span><br><span class="line">  &#125;,</span><br><span class="line">  plugins: [</span><br><span class="line">    <span class="keyword">new</span> MyPlugin(),</span><br><span class="line">    <span class="keyword">new</span> MyOtherPlugin()</span><br><span class="line">  ]</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/speed-measure-webpack-plugin/" data-id="ckckn9oj400unrvse1pakkdjq" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-shorten-angular-import" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/shorten-angular-import/" class="article-date">
@@ -480,113 +572,6 @@
      <a data-url="https://zju.date/css-white-space/" data-id="ckckn9o3q008irvsernnknc0v" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CSS/">CSS</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-URLSearchParams-notes" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/URLSearchParams-notes/" class="article-date">
-  <time datetime="2018-04-12T01:26:07.000Z" itemprop="datePublished">2018-04-12</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/URLSearchParams-notes/">URLSearchParams 使用说明</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>可以用 URLSearchParams 解析查询参数，例如：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> params = <span class="keyword">new</span> URLSearchParams(location.search)</span><br><span class="line"><span class="keyword">const</span> sign = params.get(<span class="string">'sign'</span>)</span><br><span class="line"><span class="built_in">console</span>.log(sign)</span><br></pre></td></tr></table></figure>
-<p>也可以用来组装参数：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> params = <span class="keyword">new</span> URLSearchParams()</span><br><span class="line">params.append(<span class="string">'param1'</span>, <span class="string">'value1'</span>)</span><br><span class="line">params.append(<span class="string">'param2'</span>, <span class="string">'value2'</span>)</span><br><span class="line">axios.post(<span class="string">'/foo'</span>, params)</span><br></pre></td></tr></table></figure>
-<p>但遗憾的是，并非所有浏览器都支持 URLSearchParams，不过可以使用 <a href="https://github.com/jerrybendy/url-search-params-polyfill" target="_blank" rel="noopener">url-search-params-polyfill</a> 垫片。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/URLSearchParams-notes/" data-id="ckckn9nzn002hrvsezpj4okfx" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-jwt-notes" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/jwt-notes/" class="article-date">
-  <time datetime="2018-04-11T12:47:39.000Z" itemprop="datePublished">2018-04-11</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/jwt-notes/">jwt 学习笔记</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>一个JWT实际上就是一个字符串，长这样：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xxx.yyy.zzz</span><br></pre></td></tr></table></figure>
-<p>被 <code>.</code> 分隔的三部分是：</p>
-<ol>
-<li>头部（Header）</li>
-<li>负荷（Payload）</li>
-<li>签名（Signature）</li>
-</ol>
-<p>详细解释：</p>
-<ol>
-<li><p>头部</p>
-<p> 头部用于描述关于该JWT的最基本的信息，例如其类型以及签名所用的算法，例如：</p>
- <figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"typ"</span>: <span class="string">"JWT"</span>,</span><br><span class="line">  <span class="attr">"alg"</span>: <span class="string">"HS256"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p> 这个JSON通过 <strong>Base64Url</strong> 编码为JWT的第一部分。</p>
-</li>
-</ol>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/jwt-notes/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/jwt-notes/" data-id="ckckn9oay00kxrvseiduwmkfd" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
     </footer>
   </div>

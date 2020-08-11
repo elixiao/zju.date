@@ -54,6 +54,97 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-es-case-sensitive" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/es-case-sensitive/" class="article-date">
+  <time datetime="2018-09-14T14:34:05.000Z" itemprop="datePublished">2018-09-14</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/es-case-sensitive/">es查询时匹配大小写</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>今天遇到一个在 ES 中使用 term 关键词进行查询时，大小写不能正确匹配的坑。例如用官方提供的示例库bank，下面的查询竟然查不到任何数据：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">escurl -XGET <span class="variable">$ES</span>/bank/_search?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "query": &#123;</span></span><br><span class="line"><span class="string">    "term": &#123;</span></span><br><span class="line"><span class="string">        "state": "ND"</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#125;'</span></span><br></pre></td></tr></table></figure>
+<p>如果把 ND 换成小写的话，就能查出来了，而且查出来的结果都是大写的。另外，如果把 term 换成 match 的话，无论 ND 是大小写，都是可以查到的。这是为什么呢？让我们来还原一下具体的场景：</p>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/es-case-sensitive/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/es-case-sensitive/" data-id="ckckn9o5a00b4rvseoafkepxc" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Elasticsearch/">Elasticsearch</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-distinct-array" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/distinct-array/" class="article-date">
+  <time datetime="2018-09-14T10:11:07.000Z" itemprop="datePublished">2018-09-14</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/distinct-array/">数组去重</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>数组去重的问题经常遇到，下面总结了几个比较实用的方法：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 对数组进行去重，原数组发生改变</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">unique</span>(<span class="params">arr, field</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">let</span> i = arr.length; i; i--) &#123;</span><br><span class="line">    <span class="keyword">const</span> item = arr[i - <span class="number">1</span>]</span><br><span class="line">    <span class="keyword">const</span> dup = arr.slice(<span class="number">0</span>, i - <span class="number">1</span>).find(<span class="function"><span class="params">it</span> =&gt;</span> field ? it[field] === item[field] : it === item)</span><br><span class="line">    <span class="keyword">if</span> (dup) arr.splice(i - <span class="number">1</span>, <span class="number">1</span>)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> arr</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 获取去重后新数组，不影响原数组</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getUnique</span>(<span class="params">arr, field</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (!field) <span class="keyword">return</span> arr.filter(<span class="function">(<span class="params">it, i</span>) =&gt;</span> arr.indexOf(it) === i)</span><br><span class="line">  <span class="keyword">return</span> arr.filter(<span class="function">(<span class="params">it, i</span>) =&gt;</span> arr.map(<span class="function"><span class="params">it</span> =&gt;</span> it[field]).indexOf(it[field]) === i)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 获取数组中的重复值</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getDuplicates</span>(<span class="params">arr, field</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (!field) <span class="keyword">return</span> arr.filter(<span class="function">(<span class="params">it, i</span>) =&gt;</span> arr.indexOf(it) !== i)</span><br><span class="line">  <span class="keyword">return</span> arr.filter(<span class="function">(<span class="params">it, i</span>) =&gt;</span> arr.map(<span class="function"><span class="params">it</span> =&gt;</span> it[field]).indexOf(it[field]) !== i)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// ES6写法</span></span><br><span class="line">[...new <span class="built_in">Set</span>(arr)]</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/distinct-array/" data-id="ckckn9o4j009qrvse5na0uaod" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-logstash-grok" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/logstash-grok/" class="article-date">
@@ -517,205 +608,6 @@
      <a data-url="https://zju.date/double-pointer/" data-id="ckdlq0qgb00007sseayyrx1dy" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-upgrade-bootstrap4" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/upgrade-bootstrap4/" class="article-date">
-  <time datetime="2018-09-03T03:46:13.000Z" itemprop="datePublished">2018-09-03</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/upgrade-bootstrap4/">bootstrap语义等价表</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>升级到 bootstrap4 之后 <code>hidden-*</code>、<code>visible-*</code> 类以及 <code>-xs</code> 中缀都不存在了，可以使用 <code>d-*</code> 类来代替，下表是等价关系：</p>
-<table>
-<thead>
-<tr>
-<th>语义</th>
-<th>bootstrap3</th>
-<th>bootstrap4</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>xs 以下隐藏</td>
-<td><code>hidden-xs-down</code></td>
-<td><code>d-none d-sm-block</code></td>
-</tr>
-<tr>
-<td>sm 以下隐藏</td>
-<td><code>hidden-sm-down</code></td>
-<td><code>d-none d-md-block</code></td>
-</tr>
-<tr>
-<td>md 以下隐藏</td>
-<td><code>hidden-md-down</code></td>
-<td><code>d-none d-lg-block</code></td>
-</tr>
-<tr>
-<td>lg 以下隐藏</td>
-<td><code>hidden-lg-down</code></td>
-<td><code>d-none d-xl-block</code></td>
-</tr>
-<tr>
-<td>xl 以下隐藏</td>
-<td><code>hidden-xl-down</code></td>
-<td><code>d-none</code></td>
-</tr>
-<tr>
-<td>xs 以上隐藏</td>
-<td><code>hidden-xs-up</code></td>
-<td><code>d-none</code></td>
-</tr>
-<tr>
-<td>sm 以上隐藏</td>
-<td><code>hidden-sm-up</code></td>
-<td><code>d-sm-none</code></td>
-</tr>
-<tr>
-<td>md 以上隐藏</td>
-<td><code>hidden-md-up</code></td>
-<td><code>d-md-none</code></td>
-</tr>
-<tr>
-<td>lg 以上隐藏</td>
-<td><code>hidden-lg-up</code></td>
-<td><code>d-lg-none</code></td>
-</tr>
-<tr>
-<td>xl 以上隐藏</td>
-<td><code>hidden-xl-up</code></td>
-<td><code>d-xl-none</code></td>
-</tr>
-<tr>
-<td>只隐藏 xs</td>
-<td><code>hidden-xs</code></td>
-<td><code>d-none d-sm-block</code></td>
-</tr>
-<tr>
-<td>只隐藏 sm</td>
-<td><code>hidden-sm</code></td>
-<td><code>d-block d-sm-none d-md-block</code></td>
-</tr>
-<tr>
-<td>只隐藏 md</td>
-<td><code>hidden-md</code></td>
-<td><code>d-block d-md-none d-lg-block</code></td>
-</tr>
-<tr>
-<td>只隐藏 lg</td>
-<td><code>hidden-lg</code></td>
-<td><code>d-block d-lg-none d-xl-block</code></td>
-</tr>
-<tr>
-<td>只隐藏 xl</td>
-<td><code>hidden-xl</code></td>
-<td><code>d-block d-xl-none</code></td>
-</tr>
-<tr>
-<td>只显示 xs</td>
-<td><code>visible-xs</code></td>
-<td><code>d-block d-sm-none</code></td>
-</tr>
-<tr>
-<td>只显示 sm</td>
-<td><code>visible-sm</code></td>
-<td><code>d-none d-sm-block d-md-none</code></td>
-</tr>
-<tr>
-<td>只显示 md</td>
-<td><code>visible-md</code></td>
-<td><code>d-none d-md-block d-lg-none</code></td>
-</tr>
-<tr>
-<td>只显示 lg</td>
-<td><code>visible-lg</code></td>
-<td><code>d-none d-lg-block d-xl-none</code></td>
-</tr>
-<tr>
-<td>只显示 xl</td>
-<td><code>visible-xl</code></td>
-<td><code>d-none d-xl-block</code></td>
-</tr>
-</tbody>
-</table>
-<p>col-sm-</p>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/upgrade-bootstrap4/" data-id="ckckn9oku00x2rvse3nb9rze1" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CSS/">CSS</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-mongodb-bulk" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/mongodb-bulk/" class="article-date">
-  <time datetime="2018-09-01T13:52:22.000Z" itemprop="datePublished">2018-09-01</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/mongodb-bulk/">MongoDB 批量操作</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>批量写入的速度比 promise.all 单个写入速度快多了：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">use YOUR_DB</span><br><span class="line">var bulk = db.collection.initializeUnorderedBulkOp()</span><br><span class="line">bulk.find( &#123; _id : 1 &#125; ).upsert().update( &#123; $set: &#123; &quot;text&quot;: &quot;something else&quot; &#125; &#125; )</span><br><span class="line">bulk.find( &#123; _id : 4 &#125; ).upsert().update( &#123; $set: &#123; &quot;text&quot;: &quot;baz&quot; &#125; &#125; )</span><br><span class="line">bulk.find( &#123; _id : 99 &#125; ).upsert().update( &#123; $set: &#123; &quot;text&quot;: &quot;mrga&quot; &#125; &#125; )</span><br><span class="line">bulk.execute()</span><br></pre></td></tr></table></figure>
-<ul>
-<li><strong>Orderred</strong>: 按照添加的顺序执行，如果发生错误将停止批处理，并返回错误。</li>
-<li><strong>UnOrderred</strong>: 并行执行，遇到错误不返回。</li>
-</ul>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/mongodb-bulk/" data-id="ckckn9oeh00nnrvseq5wfo4mm" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MongoDB/">MongoDB</a></li></ul>
 
     </footer>
   </div>

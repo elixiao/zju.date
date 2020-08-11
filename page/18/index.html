@@ -54,6 +54,126 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-angular-dirty-touched-changed" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/angular-dirty-touched-changed/" class="article-date">
+  <time datetime="2018-05-24T11:57:12.000Z" itemprop="datePublished">2018-05-24</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/angular-dirty-touched-changed/">Angular 判断表单是否真的 dirty</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>Angular 的动态表单验证，有 dirty 和 touched 属性可以用来判断是否被修改和是否失去焦点等状态，但是遗憾的是即使修改后撤销修改（改回原值），Angular 也认为已经 dirty 了。</p>
+<p>有人认为这样不合理，理由是：</p>
+<blockquote>
+<p>input 中原本是 3，你改成 4 之后自然 dirty，然后你再改回 3，就不应该是 dirty，只有值变化才能算 dirty。</p>
+</blockquote>
+<p>也有人认为这样很合理，给出的理由是：</p>
+<blockquote>
+<p>假如你面前有一杯白开水，你端起来喝了，然后又倒上一杯，虽然新的水跟之前喝掉的一样，但是由于你触碰了杯子，被子上已经粘上了你的指纹，所以 dirty 了，这里的杯子就是 input，水就是 3，当然你可以用洗洁精把指纹抹掉还原为 pristine，这就是 angular 提供的 <code>markAsPristine()</code> 方法。</p>
+</blockquote>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/angular-dirty-touched-changed/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/angular-dirty-touched-changed/" data-id="ckckn9o0k003nrvsex0dkmrxn" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-angular-reactive-form" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/angular-reactive-form/" class="article-date">
+  <time datetime="2018-05-24T02:01:12.000Z" itemprop="datePublished">2018-05-24</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/angular-reactive-form/">Angular 中的响应式表单</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <h2 id="基础概念"><a href="#基础概念" class="headerlink" title="基础概念"></a>基础概念</h2><ol>
+<li><p>FormControl</p>
+<p>代表 form 中的一个具体的元件，例如 input、select、radio、dropdown 等，是表单中不可分割的最小单元。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; FormControl &#125; <span class="keyword">from</span> <span class="string">'@angular/forms'</span>;</span><br><span class="line">myName: FormControl;</span><br><span class="line"><span class="keyword">this</span>.myName = <span class="keyword">new</span> FormControl(<span class="string">'初始值'</span>);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>FormGroup</p>
+<p>一组 FormControl 的合集，如果 FormControl 的值发生变化，那么 FormGroup 也发生变化。FormGroup 本身有很多 API，例如表单验证等，注意这里的验证器是针对 FormGroup 本身，而不是里面的 FormControl。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; FormGroup &#125; <span class="keyword">from</span> <span class="string">'@angular/forms'</span>;</span><br><span class="line">myName: FormGroup;</span><br><span class="line"><span class="keyword">this</span>.myForm = <span class="keyword">new</span> FormGroup(&#123;</span><br><span class="line">  name: <span class="keyword">new</span> FormControl(<span class="string">'名字'</span>)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>这里面隐含的逻辑关系是：</p>
+<ol>
+<li>只要任何一个 FormControl 验证失败，整个 FormGroup 就验证失败</li>
+<li>即使所有 FormControl 验证通过，但 FormGroup 验证失败，那结果也是失败</li>
+<li>所有 FormControl 验证通过且 FormGroup 验证通过，才算通过</li>
+</ol>
+</li>
+<li><p>FormArray</p>
+<p>一组 FormControl/FormGroup/FormArray 的合集。</p>
+</li>
+</ol>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/angular-reactive-form/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/angular-reactive-form/" data-id="ckckn9o1o0057rvsezvrbwjth" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-js-regex-multiline" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/js-regex-multiline/" class="article-date">
@@ -418,122 +538,6 @@
      <a data-url="https://zju.date/js-deep-merge/" data-id="ckckn9oa700jorvsehsjhzwx5" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-js-module" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/js-module/" class="article-date">
-  <time datetime="2018-05-15T06:36:12.000Z" itemprop="datePublished">2018-05-15</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/js-module/">JS 模块化</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>随着 ES6 的普及，Webpack、Parcel 等打包工具的出现，模块化 JS 开发模式已经成为主流模式，但是当我们习以为常的时候，千万别忘记其实 JS 模块化的过程其实是很曲折的，让我们再回顾一下相关的概念：</p>
-<ol>
-<li><p>什么是模块？</p>
-<p>模块就是可复用的代码片段，封装了具体的实现细节，暴露公开的API，从而方便自己或他人调用。</p>
-</li>
-<li><p>为什么要模块化？</p>
-<p>没有模块，我们照样写代码，但是模块化有下面几个好处：</p>
-<ul>
-<li>代码抽象：只需要知道某个模块封装的功能、调用时需要传递的参数和返回格式即可，不用关系实现细节。</li>
-<li>代码封装：隐藏代码，不会被轻易变更。</li>
-<li>代码复用：避免重复劳动。</li>
-<li>依赖管理：在代码无需改动的情况下轻松更换依赖。</li>
-</ul>
-</li>
-</ol>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/js-module/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/js-module/" data-id="ckckn9oac00jwrvse8pld3lg3" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-angular-module" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/angular-module/" class="article-date">
-  <time datetime="2018-05-15T02:06:21.000Z" itemprop="datePublished">2018-05-15</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/angular-module/">Angular中的模块</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>Angular 框架有自己的模块系统，叫做 NgModule，模块是独立的方便复用，也就是说完全可以把一个 Angular 模块抽离出来放到另外一个 Angular 项目中。每个 Angular 应用都至少有一个 NgModule 类，就像树一样，至少有一个根节点，由模块构成的 Angular 应用本身也是一种树状结构，叫做模块树（Module Tree），其中 AppModule 就是根模块，位于 app.module.ts 文件中，引导这个根模块就可以启动整个 Angular 应用。</p>
-<h2 id="什么是-NgModule"><a href="#什么是-NgModule" class="headerlink" title="什么是 NgModule"></a>什么是 NgModule</h2><p>本质上来讲，NgModule 就是一个类，和组件Component和服务Service一样，更准确地说，NgModule 是一个带有 <code>@NgModule()</code> 装饰器的类。<code>@NgModule()</code> 装饰器是一个函数，它接受一个元数据对象，这个对象只有几个属性，例如基本的 app.module.ts 的结构如下：</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; BrowserModule &#125; <span class="keyword">from</span> <span class="string">'@angular/platform-browser'</span></span><br><span class="line"><span class="keyword">import</span> &#123; NgModule &#125; <span class="keyword">from</span> <span class="string">'@angular/core'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> &#123; AppComponent &#125; <span class="keyword">from</span> <span class="string">'./app.component'</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@NgModule</span>(&#123;</span><br><span class="line">  declarations: [AppComponent], <span class="comment">// 模块内用到的组件、服务和管道等必须在此声明注册，否则Angular找不到</span></span><br><span class="line">  imports: [BrowserModule], <span class="comment">// 引入其他模块</span></span><br><span class="line">  providers: [], <span class="comment">// 应用层面的服务提供商</span></span><br><span class="line">  exports: [], <span class="comment">// 导出的组件、服务、管道等等</span></span><br><span class="line">  bootstrap: [AppComponent], <span class="comment">// 只在根模块中才会用到</span></span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> AppModule &#123;&#125;</span><br></pre></td></tr></table></figure>
-<p>可以通过下面的命令创建一个 NgModule</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ng generate module [name]</span><br></pre></td></tr></table></figure>
-<p>一个 Angular 项目中一般包含三大模块：核心模块（CoreModule）、特性模块（FeatureModule）和共享模块（SharedModule）。</p>
-<h2 id="核心模块（CoreModule）"><a href="#核心模块（CoreModule）" class="headerlink" title="核心模块（CoreModule）"></a>核心模块（CoreModule）</h2><p>CoreModule 用于存储每个应用程序上有且仅有一个的服务，例如用户认证等。</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; NgModule, Optional, SkipSelf &#125; <span class="keyword">from</span> <span class="string">'@angular/core'</span></span><br><span class="line"><span class="keyword">import</span> &#123; HttpClientModule &#125; <span class="keyword">from</span> <span class="string">'@angular/common/http'</span></span><br><span class="line"><span class="comment">/* 定制的全局服务  */</span></span><br><span class="line"><span class="keyword">import</span> &#123; UserService &#125; <span class="keyword">from</span> <span class="string">'./user/user.service'</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@NgModule</span>(&#123;</span><br><span class="line">  imports: [</span><br><span class="line">    HttpClientModule</span><br><span class="line">  ],</span><br><span class="line">  providers: [</span><br><span class="line">    UserService</span><br><span class="line">  ]</span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> CoreModule &#123;</span><br><span class="line">  <span class="comment">/* 确保CoreModule只能在AppModule导入 */</span></span><br><span class="line">  constructor (@Optional() @SkipSelf() parentModule: CoreModule) &#123;</span><br><span class="line">    <span class="keyword">if</span> (parentModule) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">'CoreModule is already loaded. Import only in AppModule'</span>);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>CoreModule 应包含单例的 service、单例的 components 和 AppModule 中用到的第三方模块，例如 BrowserAnimationsModule。</p>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/angular-module/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/angular-module/" data-id="ckckn9o1c004rrvsegwwid3wc" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Angular/">Angular</a></li></ul>
 
     </footer>
   </div>

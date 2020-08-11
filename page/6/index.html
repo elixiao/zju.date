@@ -54,6 +54,107 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-node_module_dependency" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/node_module_dependency/" class="article-date">
+  <time datetime="2019-08-06T02:07:06.000Z" itemprop="datePublished">2019-08-06</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/node_module_dependency/">node_module中的依赖问题</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>依赖管理中会有如下的问题，刚开始的时候一起安装了两个依赖 A 和 B，其中 B 依赖 A。</p>
+<p>后来 A 升级了，一定要注意 B 所依赖的 A 的版本保持不变。</p>
+<p>例如最初 A 和 B 一起安装的，当时 A 的最新版本是4.5.1，而 B 依赖的 A 也是这个版本，于是 A 的位置在 <code>node_modules/A</code>，其版本是 4.5.1。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">"dependencies": &#123;</span><br><span class="line">    "A": "^4.4.1",</span><br><span class="line">    "B": "^5.0.2",</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>后来 A 升级到 4.5.2 了，其实会有两个 A，一个在 <code>node_modules/A</code> 一个在 <code>node_modules/B/node_modules/A</code>，前者的版本是 4.5.2，后者的版本是 4.5.1。这一点可以从 yarn.lock 文件中看到：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&quot;A@^4.4.1&quot;, &quot;A@^4.5.1&quot;:</span><br><span class="line">  version &quot;4.5.1&quot;</span><br><span class="line"></span><br><span class="line">&quot;A@^4.5.2&quot;:</span><br><span class="line">  version &quot;4.5.2&quot;</span><br></pre></td></tr></table></figure>
+<p>这样的好处就是能够确保 B 的 API 不会因为 A 的升级突然不可用。但也会带来一个问题是 typescript 的声明文件如果变了，参数会报错，解决方法就是重新安装一次 B 即可。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/node_module_dependency/" data-id="ckckn9ogj00qqrvsecxhptazy" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-mac-apache-php" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/mac-apache-php/" class="article-date">
+  <time datetime="2019-08-01T08:57:42.000Z" itemprop="datePublished">2019-08-01</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/mac-apache-php/">Mac中使用Apache运行PHP</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>PHP文件需要在 Apache 下运行，Mac 上自带 Apache，默认是关闭的，需要按照下面的方式开启：</p>
+<ul>
+<li>打开 <code>/etc/apache2/httpd.conf</code></li>
+<li><p>找到下面两行，把 # 去掉</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#LoadModule userdir_module libexec/apache2/mod_userdir.so</span><br><span class="line">#LoadModule php7_module libexec/apache2/libphp7.so</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>启动 <code>sudo apachectl start</code></p>
+</li>
+</ul>
+<p>然后浏览器中输入<a href="http://localhost，如果出现It" target="_blank" rel="noopener">http://localhost，如果出现It</a> works!就表示成功了。</p>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/mac-apache-php/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/mac-apache-php/" data-id="ckckn9obn00m4rvsehpjhbh5c" class="article-share-link">Share</a>
+     
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-bodyparser-unsupported-encoding" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/bodyparser-unsupported-encoding/" class="article-date">
@@ -440,95 +541,6 @@
      <a data-url="https://zju.date/siege-notes/" data-id="ckckn9oj200ujrvsen5322k2n" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-mongodb-capped-collection" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/mongodb-capped-collection/" class="article-date">
-  <time datetime="2019-05-13T06:49:36.000Z" itemprop="datePublished">2019-05-13</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/mongodb-capped-collection/">MongoDB定容集合</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>MongoDB定容集合（capped collection） 用于定义一个大小固定的集合：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">db.createCollection(<span class="string">"coll_name"</span>, &#123;<span class="attr">capped</span>: <span class="literal">true</span>, <span class="attr">size</span>:<span class="number">100000</span>&#125;)</span><br></pre></td></tr></table></figure>
-<p>当插入新的数据导致存储空间超出预设大小时，旧的数据会被清除。但这个表里面的文档是不能被手动删除的，只有 drop 整个表才行。不许删除的原因是为了保持每个文档在磁盘上的位置不变。另外，文档的更新是有限制的，即必须在不增加文档占用空间的前提下才能生效，比如减少字段或减少值的长度，如果更新后的文档比原文档占据更多的空间，就会更新失败。Capped Collection主要用于存储日志信息和缓存一些少用的文档。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/mongodb-capped-collection/" data-id="ckckn9oei00nprvse9kzl9fir" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MongoDB/">MongoDB</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-flutter-h-file-not-found" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/flutter-h-file-not-found/" class="article-date">
-  <time datetime="2019-05-13T06:41:29.000Z" itemprop="datePublished">2019-05-13</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/flutter-h-file-not-found/">Flutter.h file not found</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>今天打包到 iPhone 上的时候，提示报错：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&apos;Flutter/Flutter.h&apos; file not found</span><br><span class="line">#import &lt;Flutter/Flutter.h&gt;</span><br></pre></td></tr></table></figure>
-<p>意思是说插件中的 Flutter 找不到，网上查了一下说是 cocoapods 的问题，解决办法就是：</p>
-<blockquote>
-<p>用 <code>flutter create my_app</code> 创建一个新的项目，然后用这个新项目中的 ios/Flutter 文件夹替换报错项目即可。</p>
-</blockquote>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/flutter-h-file-not-found/" data-id="ckckn9o6i00dervseqy3lvdov" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flutter/">Flutter</a></li></ul>
 
     </footer>
   </div>

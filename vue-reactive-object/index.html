@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="在 Vue 中，data 对象是响应式的，即对 data 中属性的修改会触发视图更新，今天就来分析一下这是如何做到的。 首先定义一个普通的 JS 对象，例如：{ name: &amp;#39;keliq&amp;#39; }，我们希望当 name 发生变化时，能收到通知。 在 Vue 当中，有三个非常重要的概念：Observer、Dep 和 Watcher，它们的功能是：  Observer：把普通对象变成响应式">
+<meta name="keywords" content="JavaScript">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Vue响应式原理之「对象属性劫持」">
+<meta property="og:url" content="https://zju.date/vue-reactive-object/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="在 Vue 中，data 对象是响应式的，即对 data 中属性的修改会触发视图更新，今天就来分析一下这是如何做到的。 首先定义一个普通的 JS 对象，例如：{ name: &amp;#39;keliq&amp;#39; }，我们希望当 name 发生变化时，能收到通知。 在 Vue 当中，有三个非常重要的概念：Observer、Dep 和 Watcher，它们的功能是：  Observer：把普通对象变成响应式">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://img.zlib.cn/blog/vue-reactive-object.svg">
+<meta property="og:updated_time" content="2020-08-11T15:56:05.388Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Vue响应式原理之「对象属性劫持」">
+<meta name="twitter:description" content="在 Vue 中，data 对象是响应式的，即对 data 中属性的修改会触发视图更新，今天就来分析一下这是如何做到的。 首先定义一个普通的 JS 对象，例如：{ name: &amp;#39;keliq&amp;#39; }，我们希望当 name 发生变化时，能收到通知。 在 Vue 当中，有三个非常重要的概念：Observer、Dep 和 Watcher，它们的功能是：  Observer：把普通对象变成响应式">
+<meta name="twitter:image" content="http://img.zlib.cn/blog/vue-reactive-object.svg">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-vue-reactive-object" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/vue-reactive-object/" class="article-date">
+  <time datetime="2020-01-07T07:14:29.000Z" itemprop="datePublished">2020-01-07</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Vue响应式原理之「对象属性劫持」
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在 Vue 中，data 对象是响应式的，即对 data 中属性的修改会触发视图更新，今天就来分析一下这是如何做到的。</p>
+<p>首先定义一个普通的 JS 对象，例如：<code>{ name: &#39;keliq&#39; }</code>，我们希望当 name 发生变化时，能收到通知。</p>
+<p>在 Vue 当中，有三个非常重要的概念：Observer、Dep 和 Watcher，它们的功能是：</p>
+<ul>
+<li>Observer：把普通对象变成响应式对象，实现原理就是递归地对属性进行劫持，在 get 的时候把依赖收集到 dep.subs 里面，从而在 set 的时候能够逐个通知</li>
+<li>Dep：用于存放 Observer 收集到的依赖</li>
+<li>Watcher：创建观察者，即订阅响应式通知，当目标发生变化时执行回调</li>
+</ul>
+<a id="more"></a>
+<h2 id="Dep"><a href="#Dep" class="headerlink" title="Dep"></a>Dep</h2><p>Dep 用于收集依赖和通知更新。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Dep</span> </span>&#123;</span><br><span class="line">  <span class="keyword">constructor</span>() &#123;</span><br><span class="line">    <span class="keyword">this</span>.subs = []</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  depend() &#123;</span><br><span class="line">    <span class="keyword">if</span>(Dep.target) <span class="keyword">this</span>.subs.push(Dep.target) <span class="comment">// 收集依赖</span></span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  notify(newVal, val) &#123;</span><br><span class="line">    <span class="keyword">this</span>.subs.forEach(<span class="function">(<span class="params">sub</span>) =&gt;</span> sub.update(newVal, val)) <span class="comment">// 通知依赖</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到，依赖被赋值给了 Dep.target ，每次收集的时候只需要把 Dep.target 存入 subs 中即可。</p>
+<h2 id="Observer"><a href="#Observer" class="headerlink" title="Observer"></a>Observer</h2><p>Observer 会对 obj 中的属性进行拦截，在 get 中收集依赖，在 set 中通知更新。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Observer</span> </span>&#123;</span><br><span class="line">  <span class="keyword">static</span> observe(value) &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">typeof</span> value !== <span class="string">'object'</span> || value == <span class="literal">null</span>) <span class="keyword">return</span></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> Observer(value)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">constructor</span>(value) &#123;</span><br><span class="line">    <span class="keyword">this</span>.value = value</span><br><span class="line">    <span class="keyword">this</span>.walk(value)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  walk(obj) &#123;</span><br><span class="line">    <span class="keyword">const</span> keys = <span class="built_in">Object</span>.keys(obj)</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; keys.length; i++) &#123;</span><br><span class="line">      <span class="keyword">this</span>.intercept(obj, keys[i], obj[keys[i]]) <span class="comment">// 劫持对象所有属性</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  intercept(data, key, val) &#123;</span><br><span class="line">    Observer.observe(val) <span class="comment">// 递归响应式</span></span><br><span class="line">    <span class="keyword">const</span> dep = <span class="keyword">new</span> Dep()</span><br><span class="line">    <span class="built_in">Object</span>.defineProperty(data, key, &#123;</span><br><span class="line">      enumerable: <span class="literal">true</span>,</span><br><span class="line">      configurable: <span class="literal">true</span>,</span><br><span class="line">      get: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">        dep.depend()</span><br><span class="line">        <span class="keyword">return</span> val</span><br><span class="line">      &#125;,</span><br><span class="line">      set: <span class="function"><span class="keyword">function</span> (<span class="params">newVal</span>) </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (val === newVal) <span class="keyword">return</span></span><br><span class="line">        dep.notify(newVal, val) <span class="comment">// 通知观察者</span></span><br><span class="line">        val = newVal</span><br><span class="line">      &#125;,</span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>walk 的目的是对 obj 的所有属性进行递归响应式处理，也就是说如果 obj 的属性还是一个对象的话，这个对象属性的变更也是能检测出来的。</p>
+<h2 id="Watcher"><a href="#Watcher" class="headerlink" title="Watcher"></a>Watcher</h2><p>Watcher 是观察者，其中 update 方法接收属性变化时的新旧值，然后执行回调函数，get 方法用于把自己放到观察属性的依赖列表中。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Watcher</span> </span>&#123;</span><br><span class="line">  <span class="keyword">constructor</span>(obj, expOrFn, cb) &#123;</span><br><span class="line">    <span class="keyword">this</span>.obj = obj</span><br><span class="line">    <span class="keyword">if</span>(<span class="keyword">typeof</span> expOrFn === <span class="string">'function'</span>) <span class="keyword">this</span>.getter = expOrFn</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">this</span>.getter = <span class="function"><span class="params">obj</span> =&gt;</span> expOrFn.split(<span class="string">'.'</span>).reduce(<span class="function">(<span class="params">it, k</span>) =&gt;</span> it &amp;&amp; it[k], obj) <span class="comment">// 取 obj.a.b.c.d 这种深层的属性</span></span><br><span class="line">    <span class="keyword">this</span>.cb = cb</span><br><span class="line">    <span class="keyword">this</span>.value = <span class="keyword">this</span>.get()</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  get() &#123;</span><br><span class="line">    Dep.target = <span class="keyword">this</span></span><br><span class="line">    <span class="keyword">const</span> value = <span class="keyword">this</span>.getter(<span class="keyword">this</span>.obj) <span class="comment">// 调用 getter 取属性值</span></span><br><span class="line">    Dep.target = <span class="literal">undefined</span></span><br><span class="line">    <span class="keyword">return</span> value</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  update(newVal, val) &#123;</span><br><span class="line">    <span class="keyword">this</span>.cb.call(<span class="keyword">this</span>.obj, newVal, val) <span class="comment">// 调用 cb 函数</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当 new Watcher 的时候，传递三个参数：</p>
+<ul>
+<li>观测哪个对象</li>
+<li>观测对象的哪个属性（或自定义观测逻辑）</li>
+<li>该属性发生变化时的回调函数</li>
+</ul>
+<p>到这里代码就写完了，快来试试效果吧，大家把控制台打开，然后把上面的 Dep、Observer 和 Watcher 类复制进去，然后再运行下面代码：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> obj = &#123; <span class="attr">name</span>: <span class="string">'keliq'</span>, <span class="attr">age</span>: <span class="number">12</span> &#125;</span><br><span class="line">Observer.observe(obj)</span><br><span class="line"><span class="keyword">new</span> Watcher(obj, <span class="string">'name'</span>, (newVal, val) =&gt;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">`name发生变化：<span class="subst">$&#123;val&#125;</span>-&gt;<span class="subst">$&#123;newVal&#125;</span>`</span>)</span><br><span class="line">)</span><br><span class="line">obj.name = <span class="string">'qiao'</span></span><br></pre></td></tr></table></figure>
+<p>控制台能打印出 <code>keliq-&gt;qiao</code> 的同学请举爪🙋。如果 Watcher 的第二个参数是个函数，会更灵活一些：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> Watcher(</span><br><span class="line">  obj,</span><br><span class="line">  <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    obj.name</span><br><span class="line">    obj.age</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="function"><span class="keyword">function</span> (<span class="params">newVal, val</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">`发生变化：<span class="subst">$&#123;val&#125;</span>-&gt;<span class="subst">$&#123;newVal&#125;</span>`</span>)</span><br><span class="line">  &#125;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">obj.name = <span class="string">'qiao'</span></span><br><span class="line">obj.age = <span class="number">15</span></span><br></pre></td></tr></table></figure>
+<p>最后给出 Vue 响应式原理中「对象属性劫持」的整体流程图：</p>
+<p><img src="http://img.zlib.cn/blog/vue-reactive-object.svg" alt="Vue对象属性劫持"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/vue-reactive-object/" data-id="ckdq4n5800000rgse5dzvoym0" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/same-wifi-ping-failed/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          同一WiF无法ping通
+        
+      </div>
+    </a>
+  
+  
+    <a href="/flutter-safe-string/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Flutter字符串处理</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dart/">Dart</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Elasticsearch/">Elasticsearch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Flutter/">Flutter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>
