@@ -54,6 +54,57 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-docker-crontab-env" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/docker-crontab-env/" class="article-date">
+  <time datetime="2018-03-13T07:07:07.000Z" itemprop="datePublished">2018-03-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/docker-crontab-env/">crontab 中使用环境变量</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>如果遇到 crontab 的定时任务执行失败，但是手动执行却又成功，一般是因为脚本里用了系统的环境变量导致的。由于 crontab 的机制，通过定时任务执行的脚本无法直接使用环境变量，下面的方法可以帮助我们避免上述情况：</p>
+<ol>
+<li>脚本中涉及文件路径时写绝对路径</li>
+<li><p>脚本执行要用到环境变量时，通过 source 命令引入：</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cat restart.sh</span><br><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line"><span class="built_in">source</span> /etc/profile</span><br><span class="line"><span class="built_in">export</span> abc=/home/abc</span><br><span class="line">/usr/<span class="built_in">local</span>/run.sh -c hello &amp;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在crontab中直接引入环境变量：</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0 * * * * . /etc/profile;/bin/sh /path/to/your/shell/restart.sh</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>另外 crontab 最后一定要有换行，否则可能报错！</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/docker-crontab-env/" data-id="ckckn9o4n009yrvsevht10lls" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-shell-echo-cmd" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/shell-echo-cmd/" class="article-date">
@@ -522,56 +573,6 @@
     </div>
     <footer class="article-footer">
      <a data-url="https://zju.date/tar/" data-id="ckckn9ojx00vvrvseqby9xvl1" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-echo" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/echo/" class="article-date">
-  <time datetime="2018-03-01T02:11:03.000Z" itemprop="datePublished">2018-03-01</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/echo/">echo 命令</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>echo 默认会换行，例如：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ echo 123;echo 456</span><br><span class="line">123</span><br><span class="line">456</span><br></pre></td></tr></table></figure>
-<p>使用 echo -n 可以不换行输出</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ echo -n 123;echo 456</span><br><span class="line">123456</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/echo/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/echo/" data-id="ckckn9o5500aurvsevac7l9p7" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
 

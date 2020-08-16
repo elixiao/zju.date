@@ -54,6 +54,66 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-feathersjs-notes" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/feathersjs-notes/" class="article-date">
+  <time datetime="2017-05-05T05:31:20.000Z" itemprop="datePublished">2017-05-05</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/feathersjs-notes/">feathersjs学习笔记</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>feathersjs 是基于 express 的轻量级 node.js 框架，借助 websocket 提供实时通信功能，是面向切片编程（AOP：Aspect Oriented Programming）思想的一种实现。</p>
+<p>在 feathersjs 中，最核心的概念就是 service 和 hook，hook 就是小的中间件函数，能够在应用在 service 方法的前后。hook 和协议无关，无论是 http 还是 websocket 都支持，同时 hooks 和 service 也没有绑定关系，可以应用于任何 service。</p>
+<h2 id="Service"><a href="#Service" class="headerlink" title="Service"></a>Service</h2><p>Service提供了如下方法：</p>
+<ul>
+<li>find</li>
+<li>get</li>
+<li>create</li>
+<li>update</li>
+<li>patch</li>
+<li>remove</li>
+<li>setup</li>
+</ul>
+<p>Service可以作为express中间件，例如：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> messageService = &#123;</span><br><span class="line">  find(params [, callback]) &#123;&#125;, <span class="comment">// GET /messages 获取资源列表</span></span><br><span class="line">  get(id, params [, callback]) &#123;&#125;, <span class="comment">// GET /messages/&lt;id&gt; 获取指定id资源</span></span><br><span class="line">  create(data, params [, callback]) &#123;&#125;, <span class="comment">// POST /messages 创建新资源</span></span><br><span class="line">  update(id, data, params [, callback]) &#123;&#125;, <span class="comment">// PUT /messages[/&lt;id&gt;] 更新指定id资源</span></span><br><span class="line">  patch(id, data, params [, callback]) &#123;&#125;, <span class="comment">// PATCH /messages[/&lt;id&gt;] 为指定id资源增删数据</span></span><br><span class="line">  remove(id, params [, callback]) &#123;&#125;, <span class="comment">// DELETE /messages[/&lt;id&gt;] 删除指定id资源</span></span><br><span class="line">  setup(app, path) &#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">app.use(<span class="string">'/messages'</span>, messageService);</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/feathersjs-notes/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/feathersjs-notes/" data-id="ckckn9o6b00d0rvsem3vhfk9l" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-typescript-cannot-call-a-namespace" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/typescript-cannot-call-a-namespace/" class="article-date">
@@ -451,7 +511,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/json-stringify/">JSON.stringify详解</a>
+      <a class="article-title" href="/json-stringify/">你不知道的 JSON.stringify</a>
     </h1>
   
 
@@ -463,13 +523,16 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <p><code>JSON.stringify</code> 有三个参数：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">JSON</span>.stringify(value, replacer, space)</span><br></pre></td></tr></table></figure>
-<p>第一个参数 <code>value</code> 就是需要被序列化的对象。后面两个参数是可选的，<code>replacer</code>可以是函数、数组或null：</p>
+            <p><code>JSON.stringify</code> 在日常开发中是经常遇到，但是你知道它其实有三个参数吗？</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">JSON</span>.stringify(value, replacer, space)</span><br></pre></td></tr></table></figure>
+<p>我们一般只会用到第一个参数，即 <code>value</code>（被序列化的对象），后面两个参数是可选的。但是后面两个参数才是 <code>JSON.stringify</code> 有趣的地方。</p>
+<h2 id="replacer"><a href="#replacer" class="headerlink" title="replacer"></a>replacer</h2><blockquote>
+<p>第二个参数 <code>replacer</code> 可以让我们<strong>定制序列化的逻辑</strong>。</p>
+</blockquote>
+<p>默认情况下（该参数为 null 或 undefined），对象所有的属性都会被序列化，但是 <code>replacer</code> 还可以是函数或数组：</p>
 <ul>
-<li>如果是一个函数，则在序列化过程中，被序列化的值的每个属性都会经过该函数的转换和处理；</li>
-<li>如果是一个数组，则只有包含在这个数组中的属性名才会被序列化到最终的 JSON 字符串中；</li>
-<li>如果该参数为 null 或者未提供，则对象所有的属性都会被序列化；</li>
+<li>如果 <code>replacer</code> 是一个函数，则在序列化过程中，被序列化的值的每个属性都会经过该函数的转换和处理；</li>
+<li>如果 <code>replacer</code> 是一个数组，则只有包含在这个数组中的属性名才会被序列化到最终的 JSON 字符串中；</li>
 </ul>
         </div>
         
@@ -483,54 +546,6 @@
      <a data-url="https://zju.date/json-stringify/" data-id="ckckn9oau00krrvseqrgmxpif" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-mongodb-update" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/mongodb-update/" class="article-date">
-  <time datetime="2017-03-30T01:17:25.000Z" itemprop="datePublished">2017-03-30</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/mongodb-update/">mongodb update</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>查询 course 表中，存在 lectures_count 字段的记录信息</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">db.course.find( &#123; <span class="string">"lectures.lectures_count"</span>: &#123; <span class="attr">$exists</span>: <span class="literal">true</span> &#125; &#125; )</span><br></pre></td></tr></table></figure>
-<p>删除 course 表中，所有的 lectures.lectures_count 字段</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">db.course.update(&#123;&#125;,&#123;$unset:&#123;&quot;lectures.lectures_count&quot;:&quot;&quot;&#125;&#125;,&#123;multi:true&#125;)</span><br></pre></td></tr></table></figure>
-<p>根据条件往表里插入一个字段</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">db.lecture.update(&#123;<span class="string">"course_id"</span>:<span class="string">"5352d5ab92fc7705666ae8c9"</span>&#125;,&#123;<span class="attr">$set</span>:&#123;<span class="string">"file_type"</span>:<span class="string">"PDF"</span>&#125;&#125;,&#123;<span class="attr">multi</span>:<span class="literal">true</span>&#125;)</span><br></pre></td></tr></table></figure>
-<p>完全删除某个键</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">db.users.update(&#123;<span class="string">"name"</span> : <span class="string">"joe"</span>&#125;,&#123;<span class="string">"$unset"</span> : &#123;<span class="string">"favorite book"</span> : <span class="number">1</span>&#125;&#125;)</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/mongodb-update/" data-id="ckckn9of900ovrvsetpektv5n" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
 
     </footer>
   </div>

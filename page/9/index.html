@@ -54,6 +54,58 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-mongodb-query-empty" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/mongodb-query-empty/" class="article-date">
+  <time datetime="2019-01-07T06:08:51.000Z" itemprop="datePublished">2019-01-07</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/mongodb-query-empty/">MongoDB查询空值</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>JavaScript 中有 undefined 和 null 两种表示空的类型，在用 MongoDB 查询的时候，也会遇到这种情况，例如插入下面的文档：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">db.getCollection(<span class="string">'products'</span>).insertMany([</span><br><span class="line">   &#123; <span class="attr">name</span>: <span class="string">"巧克力"</span>, <span class="attr">department</span>: <span class="literal">null</span> &#125;,</span><br><span class="line">   &#123; <span class="attr">name</span>: <span class="string">"牛奶"</span> &#125;,</span><br><span class="line">   &#123; <span class="attr">name</span>: <span class="string">"蛋糕"</span>, <span class="attr">department</span>: <span class="string">"糕点类"</span> &#125;</span><br><span class="line">])</span><br></pre></td></tr></table></figure>
+<p>如果用 <code>$exists</code> 操作符查询 department 不存在的商品：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">db.getCollection(<span class="string">'products'</span>).find(&#123;<span class="attr">department</span>:&#123;<span class="attr">$exists</span>: <span class="literal">false</span>&#125;&#125;)</span><br></pre></td></tr></table></figure>
+<p>我们发现就只会得到牛奶：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="string">"name"</span> : <span class="string">"牛奶"</span></span><br><span class="line">    &#125;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/mongodb-query-empty/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/mongodb-query-empty/" data-id="ckckn9oer00o3rvsed08xso49" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MongoDB/">MongoDB</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-syslog-notes" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/syslog-notes/" class="article-date">
@@ -516,55 +568,6 @@
      <a data-url="https://zju.date/rpc-vs-asynchronous-message/" data-id="ckckn9oih00torvsenk3lhhzr" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/">Docker</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-logstash-multi-input" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/logstash-multi-input/" class="article-date">
-  <time datetime="2018-10-21T08:41:56.000Z" itemprop="datePublished">2018-10-21</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/logstash-multi-input/">logstash 多数据源</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>单个数据源：</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">input &#123;</span><br><span class="line">    <span class="comment"># 输入配置</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">filter &#123;</span><br><span class="line">    <span class="comment"># 过滤器逻辑</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">output &#123;</span><br><span class="line">    <span class="comment"># 输出配置</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>如果有多个数据源，而且给不同的数据源采用不同的 filter 和 output 应该怎么办呢？</p>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/logstash-multi-input/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/logstash-multi-input/" data-id="ckckn9obh00ltrvsegv8c495o" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
     </footer>
   </div>
