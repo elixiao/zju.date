@@ -54,6 +54,107 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-flutter-tab-avoid-call-twice" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/flutter-tab-avoid-call-twice/" class="article-date">
+  <time datetime="2019-12-06T05:49:01.000Z" itemprop="datePublished">2019-12-06</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/flutter-tab-avoid-call-twice/">避免flutter tab切换时监听两次</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>flutter tab 切换的时候会调用两次监听函数，可以用下面的方法避免：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">_tabController.addListener(() &#123;</span><br><span class="line">    <span class="keyword">if</span> (_tabController.indexIsChanging) &#123;</span><br><span class="line">      <span class="keyword">this</span>.getAds();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/flutter-tab-avoid-call-twice/" data-id="ckckn9o6o00dmrvseabpczfia" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flutter/">Flutter</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-IEEE754" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/IEEE754/" class="article-date">
+  <time datetime="2019-11-25T15:23:29.000Z" itemprop="datePublished">2019-11-25</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/IEEE754/">为什么0.1+0.2!==0.3</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>为什么 <code>0.1 + 0.2 !== 0.3</code> ？这是一道高频面试题，考查的就是应聘者基本功是否扎实，今天就来分析一下为什么计算机认为它们是不相等的。</p>
+<h2 id="浮点数的存储方式"><a href="#浮点数的存储方式" class="headerlink" title="浮点数的存储方式"></a>浮点数的存储方式</h2><p>首先要知道浮点数在计算机中是如何存储的。JavaScript 用 8 个字节，也就是 64 个比特位来表示一个数字，这 64 个比特位，每个位置上要么是 0 要么是 1。</p>
+<p>其次要知道计算机跟人脑最大的不同就是计算机只认识 2 进制，而人脑用的是 10 进制，所以需要先把 0.1 和 0.2 转换成二进制来分析：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0.1</span>.toString(<span class="number">2</span>) <span class="comment">// 0.00011001100110011001100110011001100110011001100110011... 无限循环</span></span><br><span class="line"><span class="number">0.2</span>.toString(<span class="number">2</span>) <span class="comment">// 0.0011001100110011001100110011001100110011001100110011... 无限循环</span></span><br></pre></td></tr></table></figure>
+<p>正所谓 “吾生也有涯，而知也无涯。以有涯随无涯，殆已” 意思是说用有限的 64 个比特位来表示无限循环的小数那是不可能的，只能近似表示。</p>
+<p>那计算机是如何用 2 进制来近似表示 0.1 的呢？按照 IEEE 754 标准，把这 64 个比特位划分为 <code>64 = 1 + 11 + 52</code> 三个部分：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">x xxxxxxxxxxx xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</span><br><span class="line">1 ----11----- -------------------------52-------------------------</span><br></pre></td></tr></table></figure>
+<ul>
+<li>第 1 位是符号位 S(sign)，用来表示正负，0表示正数，1表示负数</li>
+<li>第 2 位到第 12 位是指数位 E(exponent)，用来储存指数部分</li>
+<li>第 13 位到第 64 位是尾数位 M(mantissa)，用来储存有效数字</li>
+</ul>
+<p>为什么要分成这三个部分呢？我们不妨先思考一下，在十进制的情况下如何统一表示整数和小数。</p>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/IEEE754/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/IEEE754/" data-id="ckckn9nya000jrvsevzbftewc" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-js-formdata" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/js-formdata/" class="article-date">
@@ -448,122 +549,6 @@
     </div>
     <footer class="article-footer">
      <a data-url="https://zju.date/never-use-flutter-listtile/" data-id="ckckn9ofn00pfrvsedekn7whe" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flutter/">Flutter</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-browser-eventloop" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/browser-eventloop/" class="article-date">
-  <time datetime="2019-10-31T09:15:09.000Z" itemprop="datePublished">2019-10-31</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/browser-eventloop/">浏览器中的消息队列和事件循环</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="事件循环是如何产生的"><a href="#事件循环是如何产生的" class="headerlink" title="事件循环是如何产生的"></a>事件循环是如何产生的</h2><p>在浏览器中，JS 的主线程是单线程的，异步的代码被放到了任务队列中，JS 主线程不断地轮询任务队列，每次从队首取出一个任务并进行处理，从而构成了事件环。</p>
-<h2 id="任务队列的类型"><a href="#任务队列的类型" class="headerlink" title="任务队列的类型"></a>任务队列的类型</h2><p>任务队列有两种，分别是宏任务（macrotask）队列和微任务（microtask）队列，用于存放不同的任务：</p>
-<ul>
-<li>宏任务主要有：script（用户代码）、setTimeout、setInterval、I/O、UI 交互事件、postMessage、MessageChannel 等</li>
-<li>微任务主要有：Promise.then、 MutationObserver 等</li>
-</ul>
-<h2 id="事件环的工作流程"><a href="#事件环的工作流程" class="headerlink" title="事件环的工作流程"></a>事件环的工作流程</h2><ul>
-<li>JS 引擎首先从上而下执行用户 script 代码（宏任务）</li>
-<li>如果遇到 setTimeout、promise、click事件等，按照分类放入宏任务队列或微任务队列中</li>
-<li>继续执行后面的代码，script 执行完毕后，会清空所有的微任务</li>
-<li>微任务清空后可能会进行一次 UI 渲染（不是每次都会）</li>
-<li>然后再去宏任务队列中取出一个执行，循环往复</li>
-</ul>
-<h2 id="图示"><a href="#图示" class="headerlink" title="图示"></a>图示</h2><p><img src="http://img.zlib.cn/blog/eventloop.svg?a=1" alt="浏览器中的事件环"></p>
-<h2 id="备注"><a href="#备注" class="headerlink" title="备注"></a>备注</h2><p>其实在浏览器中，宏任务队列是可以有多个的，微任务队列只能有一个，上面的图把所有的宏任务都放到一个队列当中并不严谨，但是定时器、事件和 ajax 类型的宏任务是放到一个宏任务队列中的，还有一些其他的宏任务，<a href="https://html.spec.whatwg.org/multipage/webappapis.html#task-queue" target="_blank" rel="noopener">规范</a> 里面的原话是这么说的：</p>
-<blockquote>
-<p>An event loop has one or more task queues. A task queue is a set of tasks.</p>
-</blockquote>
-<p>这里<a href="https://blog.risingstack.com/writing-a-javascript-framework-execution-timing-beyond-settimeout" target="_blank" rel="noopener">盗用</a>一张图：</p>
-<p><img src="http://img.zlib.cn/blog/task_queues.svg" alt="任务队列"></p>
-<p>如果出现多个宏任务队列，应该如何取宏任务呢？这个是比较灵活的，完全交给浏览器自己来实现，规范里面不做限制，但是只要保证下面两点即可：</p>
-<ul>
-<li>相同来源的宏任务都放到一个宏任务队列中</li>
-<li>每个宏任务队列都是按照先进先出的顺序取出</li>
-</ul>
-<p>规范里面也给出了说明：</p>
-<blockquote>
-<p>For example, a user agent could have one task queue for mouse and key events (to which the user interaction task source is associated), and another to which all other task sources are associated. Then, using the freedom granted in the initial step of the event loop processing model, it could give keyboard and mouse events preference over other tasks three-quarters of the time, keeping the interface responsive but not starving other task queues. Note that in this setup, the processing model still enforces that the user agent would never process events from any one task source out of order.</p>
-</blockquote>
-<p>事件循环的逻辑可以用下面的代码来描述：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span> (eventLoop.waitForTask()) &#123;</span><br><span class="line">  <span class="keyword">const</span> taskQueue = eventLoop.selectTaskQueue() <span class="comment">// 选择宏任务队列</span></span><br><span class="line">  <span class="keyword">if</span> (taskQueue.hasNextTask()) &#123;</span><br><span class="line">    taskQueue.processNextTask() <span class="comment">// 取出宏任务并执行</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> microtaskQueue = eventLoop.microTaskQueue</span><br><span class="line">  <span class="keyword">while</span> (microtaskQueue.hasNextMicrotask()) &#123; <span class="comment">// 清空微任务队列</span></span><br><span class="line">    microtaskQueue.processNextMicrotask()</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (shouldRender()) &#123; <span class="comment">// 浏览器决定是否渲染，如果是，则执行下面的逻辑</span></span><br><span class="line">    applyScrollResizeAndCSS()</span><br><span class="line">    runAnimationFrames()</span><br><span class="line">    render()</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><a href="https://blog.risingstack.com/writing-a-javascript-framework-execution-timing-beyond-settimeout" target="_blank" rel="noopener">图示</a>如下：</p>
-<p><img src="http://img.zlib.cn/blog/browser-event-loop.svg" alt="浏览器中的事件环"></p>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/browser-eventloop/" data-id="ckckn9o2c0068rvsec96bamwk" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-flutter-relative-size" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/flutter-relative-size/" class="article-date">
-  <time datetime="2019-10-30T01:52:49.000Z" itemprop="datePublished">2019-10-30</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/flutter-relative-size/">Flutter设置相对尺寸</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="相对于屏幕设置尺寸"><a href="#相对于屏幕设置尺寸" class="headerlink" title="相对于屏幕设置尺寸"></a>相对于屏幕设置尺寸</h3><figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@override</span></span><br><span class="line">Widget build(BuildContext context) &#123;</span><br><span class="line">  <span class="keyword">return</span> Scaffold(</span><br><span class="line">    appBar: AppBar(</span><br><span class="line">      title: Text(<span class="string">"MediaQuery"</span>),</span><br><span class="line">    ),</span><br><span class="line">    body: Container(</span><br><span class="line">      width: MediaQuery.of(context).size.width * <span class="number">0.5</span>,</span><br><span class="line">      height: MediaQuery.of(context).size.height * <span class="number">0.5</span>,</span><br><span class="line">    ),</span><br><span class="line">  );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="相对于父组件设置尺寸"><a href="#相对于父组件设置尺寸" class="headerlink" title="相对于父组件设置尺寸"></a>相对于父组件设置尺寸</h3><figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@override</span></span><br><span class="line">Widget build(BuildContext context) &#123;</span><br><span class="line">  <span class="keyword">return</span> Scaffold(</span><br><span class="line">    appBar: AppBar(</span><br><span class="line">      title: Text(<span class="string">"FractionallySizedBox"</span>),</span><br><span class="line">    ),</span><br><span class="line">    body: FractionallySizedBox(</span><br><span class="line">      widthFactor: <span class="number">0.5</span>,</span><br><span class="line">      heightFactor: <span class="number">0.5</span>,</span><br><span class="line">      child: Container(</span><br><span class="line">        <span class="comment">// this container won't be larger than</span></span><br><span class="line">        <span class="comment">// half of its parent size</span></span><br><span class="line">      ),</span><br><span class="line">    ),</span><br><span class="line">  );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="相对于兄弟组件设置尺寸"><a href="#相对于兄弟组件设置尺寸" class="headerlink" title="相对于兄弟组件设置尺寸"></a>相对于兄弟组件设置尺寸</h3><figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@override</span></span><br><span class="line">Widget build(BuildContext context) &#123;</span><br><span class="line">  <span class="keyword">return</span> Scaffold(</span><br><span class="line">    appBar: AppBar(</span><br><span class="line">      title: Text(<span class="string">"Expanded"</span>),</span><br><span class="line">    ),</span><br><span class="line">    body: Container(</span><br><span class="line">      child: Row(</span><br><span class="line">        children: &lt;Widget&gt;[</span><br><span class="line">          Expanded(</span><br><span class="line">            flex: <span class="number">6</span>, <span class="comment">// 60% of space =&gt; (6/(6 + 4))</span></span><br><span class="line">            child: Container(</span><br><span class="line">              color: Colors.red,</span><br><span class="line">            ),</span><br><span class="line">          ),</span><br><span class="line">          Expanded(</span><br><span class="line">            flex: <span class="number">4</span>, <span class="comment">// 40% of space</span></span><br><span class="line">            child: Container(</span><br><span class="line">              color: Colors.purple,</span><br><span class="line">            ),</span><br><span class="line">          ),</span><br><span class="line">        ],</span><br><span class="line">      ),</span><br><span class="line">    ),</span><br><span class="line">  );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/flutter-relative-size/" data-id="ckd7jj1z60000ngsevrjua53s" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flutter/">Flutter</a></li></ul>
 

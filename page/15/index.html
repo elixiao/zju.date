@@ -54,6 +54,134 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-moment-timezone" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/moment-timezone/" class="article-date">
+  <time datetime="2018-08-13T02:14:07.000Z" itemprop="datePublished">2018-08-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/moment-timezone/">关于 moment-timezone</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p> moment 默认会使用系统时区，如果要重置时区，使用下面的命令：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">moment.tz.setDefault(<span class="built_in">String</span>)</span><br><span class="line">moment.tz.setDefault(<span class="string">"America/New_York"</span>)</span><br></pre></td></tr></table></figure>
+<p>恢复默认：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">moment.tz.setDefault()</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>注意：如果根据某个时区创建了moment对象，后面又改变了时区，那么只会影响改变时区事件发生后的对象，之前的对象时区未变！对之前的对象进行 clone 也不会变为新时区，也就是说对象的时区保存了创建时 moment 时区的快照！</p>
+</blockquote>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/moment-timezone/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/moment-timezone/" data-id="ckckn9oe900nbrvsevcp75zmz" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-gulp-return" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/gulp-return/" class="article-date">
+  <time datetime="2018-08-10T08:08:52.000Z" itemprop="datePublished">2018-08-10</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/gulp-return/">gulp合法的返回值</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>用 gulp 写了一个简单的任务：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> gulp = <span class="built_in">require</span>(<span class="string">'gulp'</span>)</span><br><span class="line"></span><br><span class="line">gulp.task(<span class="string">'hello'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">"Hello World"</span>)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>发现会报错：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">The following tasks did not complete: hello</span><br><span class="line">Did you forget to signal async completion?</span><br></pre></td></tr></table></figure>
+<p>因为没有告诉 gulp 这个任务什么时候处理完了，在 gulp 任务函数中，只有下面 6 种返回值是合法的：</p>
+<ol>
+<li><p>返回 <a href="https://nodejs.org/api/stream.html" target="_blank" rel="noopener">Stream</a></p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> print = <span class="built_in">require</span>(<span class="string">'gulp-print'</span>)</span><br><span class="line"></span><br><span class="line">gulp.task(<span class="string">'hello'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> gulp.src(<span class="string">'package.json'</span>)</span><br><span class="line">    .pipe(print(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123; <span class="keyword">return</span> <span class="string">'Hello World'</span> &#125;))</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<pre><code>&lt;!--more--&gt;
+</code></pre><ol>
+<li><p>返回 <a href="https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Promise" target="_blank" rel="noopener"><code>Promise</code></a></p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">gulp.task(<span class="string">'hello'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123; </span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="keyword">function</span>(<span class="params">resolve, reject</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">"Hello World"</span>)</span><br><span class="line">    resolve()</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<pre><code>使用 [async/await](https://javascript.info/async-await) 语法可以简化成：
+
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">gulp.task(<span class="string">'hello'</span>, <span class="keyword">async</span> <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">"Hello World"</span>)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+</code></pre><ol>
+<li><p>执行回调函数</p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">gulp.task(<span class="string">'hello'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">done</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">"Hello World"</span>);</span><br><span class="line">  done();</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>返回 <a href="https://nodejs.org/api/child_process.html" target="_blank" rel="noopener">child process</a></p>
+</li>
+</ol>
+<pre><code><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> spawn = <span class="built_in">require</span>(<span class="string">'child_process'</span>).spawn</span><br><span class="line"></span><br><span class="line">gulp.task(<span class="string">'hello'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> spawn(<span class="string">'echo'</span>, [<span class="string">'HTTP'</span>, <span class="string">'Server'</span>, <span class="string">'Started'</span>], &#123; <span class="attr">stdio</span>: <span class="string">'inherit'</span> &#125;)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+</code></pre><ol>
+<li><p>返回 <a href="http://reactivex.io/rxjs/class/es6/Observable.js~Observable.html" target="_blank" rel="noopener">RxJS <code>Observable</code></a>.</p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> <span class="keyword">of</span> = <span class="built_in">require</span>(<span class="string">'rxjs'</span>).of</span><br><span class="line"></span><br><span class="line">gulp.task(<span class="string">'hello'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> o = <span class="keyword">of</span>(<span class="string">'Hello World'</span>)</span><br><span class="line">  o.subscribe(<span class="function"><span class="keyword">function</span>(<span class="params">msg</span>) </span>&#123; <span class="built_in">console</span>.log(msg); &#125;);</span><br><span class="line">  <span class="keyword">return</span> o</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>返回 <a href="https://nodejs.org/api/events.html#events_class_eventemitter" target="_blank" rel="noopener"><code>EventEmitter</code></a></p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">gulp.task(<span class="string">'hello'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> e = <span class="keyword">new</span> EventEmitter()</span><br><span class="line">  e.on(<span class="string">'msg'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">msg</span>) </span>&#123; <span class="built_in">console</span>.log(msg); &#125;)</span><br><span class="line">  setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123; e.emit(<span class="string">'msg'</span>, <span class="string">'Hello World'</span>); e.emit(<span class="string">'finish'</span>) &#125;)</span><br><span class="line">  <span class="keyword">return</span> e</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/gulp-return/" data-id="ckckn9o8700gbrvse0azza7xm" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-es-alias" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/es-alias/" class="article-date">
@@ -452,95 +580,6 @@
      <a data-url="https://zju.date/es-aggregate/" data-id="ckckn9o5c00b9rvsei2zjwdxe" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Elasticsearch/">Elasticsearch</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-empty-character" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/empty-character/" class="article-date">
-  <time datetime="2018-07-18T14:22:22.000Z" itemprop="datePublished">2018-07-18</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/empty-character/">空白汉字占位符</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>在HTML中有个空白汉字占位符：<code>&amp;#12288;</code>，在排版表单的时候比较有用。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/empty-character/" data-id="ckckn9o5800b0rvse3c8qxqkl" class="article-share-link">Share</a>
-     
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-shell-alias-with-params" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/shell-alias-with-params/" class="article-date">
-  <time datetime="2018-07-12T03:04:07.000Z" itemprop="datePublished">2018-07-12</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/shell-alias-with-params/">带参数的alias</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>解压 MongoDB 之后，进入到 <code>bin</code> 目录可以看到 <code>mongod</code> 命令，执行该命令的时候，后面要带参数，能不能在 .bashrc 中定义别名，同时也能接收参数呢？就像下面这样：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">alias</span> mongod=<span class="string">"./path/to/mongodb/<span class="variable">$1</span>"</span></span><br></pre></td></tr></table></figure>
-<p>这样是行不通的，alias 并不能把后面的参数动态放到 <code>$1</code> 中，alias 仅仅是字符串替换而已，例如：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">alias</span> foo=<span class="string">'/path/to/bar'</span></span><br><span class="line">$ foo some args</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/shell-alias-with-params/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/shell-alias-with-params/" data-id="ckckn9ois00u3rvsee5tpieq8" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
 
     </footer>
   </div>

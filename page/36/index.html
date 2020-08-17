@@ -54,6 +54,101 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-linux-sudo-lost" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/linux-sudo-lost/" class="article-date">
+  <time datetime="2017-09-16T04:18:31.000Z" itemprop="datePublished">2017-09-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/linux-sudo-lost/">sudo找不到命令</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><code>sudo npm i</code>  报错：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[ec2-user@ip-17-31-41]$ sudo npm i</span><br><span class="line">sudo：npm：找不到命令</span><br></pre></td></tr></table></figure>
+<p>sudo 有时候会出现找不到命令，而明明 PATH 路径下包含该命令，让人非常疑惑。其实出现这种情况的原因是：出于系统安全的考虑，当 sudo 以管理权限执行命令的时候，linux 将 PATH 环境变量进行了重置，因此搜索的路径不是我们想要的PATH变量的路径。两种方法解决该问题：</p>
+<p>首先，都要打开sudo的配置文件：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo visudo</span><br></pre></td></tr></table></figure>
+<ol>
+<li><p>可以使用 secure_path 指令修改 sudoers 中默认的 PATH为你想要的路径。这个指令指定当用户执行 sudo 命令时在什么地方寻找二进制代码和命令。这个选项的目的显然是要限制用户运行 sudo 命令的范围，这是一种好做法。</p>
+</li>
+<li><p>将 <code>Defaults env_reset</code> 改成 <code>Defaults !env_reset</code> 取消掉对 PATH 变量的重置，然后在 .bashrc 中最后 <code>alias sudo=&#39;sudo env PATH=$PATH&#39;</code>，这样sudo执行命令时所搜寻的路径就是系统的PATH变量中的路径，如想添加其他变量也是类似。</p>
+</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/linux-sudo-lost/" data-id="ckckn9ob800ldrvseqcf8xaw3" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-mongodb-query-empty-array-or-undefined" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/mongodb-query-empty-array-or-undefined/" class="article-date">
+  <time datetime="2017-09-15T14:34:23.000Z" itemprop="datePublished">2017-09-15</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/mongodb-query-empty-array-or-undefined/">mongodb 数组字段相关查询</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>查询的时候，匹配某个数组字段至少包含一个以上元素的方法：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">db.xxx.find(&#123;<span class="attr">field</span>: &#123;<span class="attr">$exists</span>: <span class="literal">true</span>, <span class="attr">$gt</span>: &#123;<span class="attr">$size</span>: <span class="number">0</span>&#125;&#125;&#125;)</span><br><span class="line">db.xxx.find(&#123;<span class="attr">field</span>: &#123;<span class="attr">$exists</span>: <span class="literal">true</span>, <span class="attr">$not</span>: &#123;<span class="attr">$size</span>: <span class="number">0</span>&#125;&#125;&#125;)</span><br><span class="line">db.xxx.find(&#123;<span class="string">'field.0'</span>: &#123;<span class="attr">$exists</span>: <span class="literal">true</span>&#125;&#125;)</span><br></pre></td></tr></table></figure>
+<p>反过来，匹配字段不存在或者为空数组的写法：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">db.xxx.find(&#123;<span class="string">'field.0'</span>: &#123;<span class="attr">$exists</span>: <span class="literal">false</span>&#125;&#125;)</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/mongodb-query-empty-array-or-undefined/" data-id="ckckn9oet00o7rvseeqsmtv2q" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MongoDB/">MongoDB</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-node-module-mjs" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/node-module-mjs/" class="article-date">
@@ -458,195 +553,6 @@
     </div>
     <footer class="article-footer">
      <a data-url="https://zju.date/focus-not-working/" data-id="ckckn9o7000e6rvseghfern1b" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-wechat-pay" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/wechat-pay/" class="article-date">
-  <time datetime="2017-08-22T01:06:07.000Z" itemprop="datePublished">2017-08-22</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/wechat-pay/">微信扫码支付</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>信扫码支付，官方提供了两种模式：</p>
-<ol>
-<li>商户根据微信支付规则链接生成二维码，带固定参数productid（订单号）。用户扫码后，微信支付系统将productid和用户唯一标识（openid）回调商户后台系统，商户后台系统根据productid生成支付交易，最后微信支付系统发起用户支付流程。</li>
-<li>商户后台系统调用微信支付预付交易接口，将返回的链接生成二维码，用户扫码后输入密码完成支付交易。</li>
-</ol>
-<p>模式2比较简单，逐一分析。</p>
-<h2 id="模式2"><a href="#模式2" class="headerlink" title="模式2"></a>模式2</h2><p>首先调用统一下单接口地址：<code>https://api.mch.weixin.qq.com/pay/unifiedorder</code>，这个地址需要提供以下参数，放在body里面通过POST请求调用：</p>
-<table>
-<thead>
-<tr>
-<th>参数名</th>
-<th>参数含义</th>
-<th>示例</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>appid</td>
-<td>公众号ID</td>
-<td>wxb77bcb162c53b0f8</td>
-</tr>
-<tr>
-<td>mch_id</td>
-<td>商户号</td>
-<td>1487713882</td>
-</tr>
-<tr>
-<td>nonce_str</td>
-<td>随机字符串</td>
-<td>abc123def</td>
-</tr>
-<tr>
-<td>sign</td>
-<td>签名</td>
-<td>签名</td>
-</tr>
-<tr>
-<td>body</td>
-<td>商品描述</td>
-<td>软件-购买</td>
-</tr>
-<tr>
-<td>out_trade_no</td>
-<td>商户订单号</td>
-<td>20150806125346</td>
-</tr>
-<tr>
-<td>total_fee</td>
-<td>金额</td>
-<td>10</td>
-</tr>
-<tr>
-<td>spbill_create_ip</td>
-<td>终端IP</td>
-<td>192.168.1.1</td>
-</tr>
-<tr>
-<td>notify_url</td>
-<td>支付结果通知地址</td>
-<td><a href="http://api.soft.cn/payment" target="_blank" rel="noopener">http://api.soft.cn/payment</a></td>
-</tr>
-<tr>
-<td>trade_type</td>
-<td>交易类型</td>
-<td>NATIVE</td>
-</tr>
-</tbody>
-</table>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/wechat-pay/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/wechat-pay/" data-id="ckckn9oln00y3rvseiv167fpk" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-feathersjs-hook" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/feathersjs-hook/" class="article-date">
-  <time datetime="2017-08-20T04:07:12.000Z" itemprop="datePublished">2017-08-20</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/feathersjs-hook/">feathersjs hook</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>feathersjs hook 对象里面究竟都有什么？</p>
-<ol>
-<li><p><code>hook.app</code></p>
-<p> 只读属性，是 feathersjs 对象，可用于获取其他 service，例如：<code>hook.app.service(&#39;name&#39;)</code></p>
-</li>
-</ol>
-<ol>
-<li><p><code>hook.service</code></p>
-<p> 只读属性，当前 hook 执行所在的 service</p>
-</li>
-<li><p><code>hook.path</code></p>
-<p> 只读属性，表示当前 service 的路径</p>
-</li>
-<li><p><code>hook.method</code></p>
-<p> 只读属性，是 <code>find</code>, <code>get</code>, <code>create</code>, <code>update</code>, <code>patch</code>, <code>remove</code> 中的一个</p>
-</li>
-<li><p><code>hook.type</code></p>
-<p> 只读属性，是 <code>before</code>, <code>after</code>, <code>error</code> 中的一个</p>
-</li>
-<li><p><code>hook.params</code></p>
-<p> 可写属性，包含客户端传过来的参数，例如 <code>params.query</code></p>
-</li>
-<li><p><code>hook.id</code></p>
-<p> 可写属性， <code>get</code>, <code>remove</code>, <code>update</code> 和 <code>patch</code> 方法才有</p>
-</li>
-<li><p><code>hook.data</code></p>
-<p> 可写属性，<code>create</code>, <code>update</code> 和 <code>patch</code> 方法才有</p>
-</li>
-<li><p><code>hook.error</code></p>
-<p> 可写属性，只有当 <code>hook.type = error</code> 时才有</p>
-</li>
-<li><p><code>hook.result</code></p>
-<p>可写属性，只有当 <code>hook.type = after</code> 时才有，但是可以在 before 或 error hooks 中设置它。</p>
-</li>
-</ol>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/feathersjs-hook/" data-id="ckckn9o5z00ccrvseoi7zrdmz" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 

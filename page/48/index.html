@@ -54,6 +54,104 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-feathers-client" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/feathers-client/" class="article-date">
+  <time datetime="2017-03-30T03:18:29.000Z" itemprop="datePublished">2017-03-30</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/feathers-client/">feathers client 用法</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="class"><span class="keyword">class</span> <span class="title">AppComponent</span> </span>&#123;</span><br><span class="line">    private messageService: any</span><br><span class="line"></span><br><span class="line">    <span class="keyword">constructor</span>(private feathers: Feathers) &#123;</span><br><span class="line">        feathers.login(<span class="string">'tem8@qq.com'</span>, <span class="string">'lixiao520'</span>)</span><br><span class="line">        <span class="keyword">this</span>.messageService = feathers.service(<span class="string">'messages'</span>)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ngOnInit() &#123;</span><br><span class="line">        <span class="keyword">this</span>.messageService.listen(<span class="string">'created'</span>, <span class="keyword">this</span>.onCreated)</span><br><span class="line">        <span class="keyword">this</span>.messageService.listen(<span class="string">'patched'</span>, <span class="keyword">this</span>.onPatched)</span><br><span class="line">        <span class="keyword">this</span>.messageService.listen(<span class="string">'removed'</span>, <span class="keyword">this</span>.onRemoved)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// GET /messages/&lt;id&gt;</span></span><br><span class="line">    getMessage() &#123;</span><br><span class="line">        <span class="comment">// get(id, params ) &#123;&#125;,</span></span><br><span class="line">        <span class="keyword">this</span>.messageService.get(<span class="number">1</span>,&#123;&#125;)</span><br><span class="line">            .then(<span class="function"><span class="params">message</span> =&gt;</span> &#123;&#125;)</span><br><span class="line">            .catch(<span class="function"><span class="params">e</span> =&gt;</span> &#123;&#125;)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// GET /messages</span></span><br><span class="line">    findMessage() &#123;</span><br><span class="line">        <span class="comment">// find(params) &#123;&#125;,</span></span><br><span class="line">        <span class="keyword">this</span>.messageService.find()</span><br><span class="line">            .then(<span class="function"><span class="params">page</span> =&gt;</span> &#123;&#125;)</span><br><span class="line">            .catch(<span class="function"><span class="params">e</span> =&gt;</span> &#123;&#125;)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// POST /messages</span></span><br><span class="line">    createMessage() &#123;</span><br><span class="line">        <span class="comment">// create(data, params ) &#123;&#125;</span></span><br><span class="line">        <span class="keyword">this</span>.messageService.create(&#123;<span class="attr">name</span>:<span class="string">'中国移动'</span>&#125;,&#123;&#125;)</span><br><span class="line">            .then(<span class="function"><span class="params">message</span> =&gt;</span> &#123;&#125;)</span><br><span class="line">            .catch(<span class="function"><span class="params">e</span> =&gt;</span> &#123;&#125;)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// PATCH /messages[/&lt;id&gt;]</span></span><br><span class="line">    patchMessage() &#123;</span><br><span class="line">        <span class="comment">// patch(id, data, params ) &#123;&#125;,</span></span><br><span class="line">        <span class="keyword">this</span>.messageService.patch(<span class="number">1</span>,&#123;<span class="attr">name</span>:<span class="string">'中国联通'</span>&#125;,&#123;&#125;)</span><br><span class="line">            .then(<span class="function"><span class="params">message</span> =&gt;</span> &#123;&#125;)</span><br><span class="line">            .catch(<span class="function"><span class="params">e</span> =&gt;</span> &#123;&#125;)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// DELETE /messages/&lt;id&gt;</span></span><br><span class="line">    removeMessage() &#123;</span><br><span class="line">        <span class="comment">// remove(id, params ) &#123;&#125;,</span></span><br><span class="line">        <span class="keyword">this</span>.messageService.remove(<span class="number">1</span>,&#123;&#125;)</span><br><span class="line">            .then(<span class="function"><span class="params">mesage</span> =&gt;</span> &#123;&#125;)</span><br><span class="line">            .catch(<span class="function"><span class="params">e</span>=&gt;</span>&#123;&#125;)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 创建异步回调</span></span><br><span class="line">    onCreated(message: any) &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">'监听到创建消息！'</span>, message)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 更新异步回调</span></span><br><span class="line">    onPatched(message: any) &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">'监听到更新消息！'</span>, message)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 删除异步回调</span></span><br><span class="line">    onRemoved(message: any) &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">'监听到删除消息！'</span>, message)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/feathers-client/" data-id="ckckn9o5v00c4rvse6wribfb8" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-json-stringify" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/json-stringify/" class="article-date">
+  <time datetime="2017-03-30T02:02:07.000Z" itemprop="datePublished">2017-03-30</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/json-stringify/">你不知道的 JSON.stringify</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p><code>JSON.stringify</code> 在日常开发中是经常遇到，但是你知道它其实有三个参数吗？</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">JSON</span>.stringify(value, replacer, space)</span><br></pre></td></tr></table></figure>
+<p>我们一般只会用到第一个参数，即 <code>value</code>（被序列化的对象），后面两个参数是可选的。但是后面两个参数才是 <code>JSON.stringify</code> 有趣的地方。</p>
+<h2 id="replacer"><a href="#replacer" class="headerlink" title="replacer"></a>replacer</h2><blockquote>
+<p>第二个参数 <code>replacer</code> 可以让我们<strong>定制序列化的逻辑</strong>。</p>
+</blockquote>
+<p>默认情况下（该参数为 null 或 undefined），对象所有的属性都会被序列化，但是 <code>replacer</code> 还可以是函数或数组：</p>
+<ul>
+<li>如果 <code>replacer</code> 是一个函数，则在序列化过程中，被序列化的值的每个属性都会经过该函数的转换和处理；</li>
+<li>如果 <code>replacer</code> 是一个数组，则只有包含在这个数组中的属性名才会被序列化到最终的 JSON 字符串中；</li>
+</ul>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/json-stringify/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/json-stringify/" data-id="ckckn9oau00krrvseqrgmxpif" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-mongodb-update" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/mongodb-update/" class="article-date">
@@ -466,103 +564,6 @@
      <a data-url="https://zju.date/change-ssh-port/" data-id="ckckn9o33007drvsebrjwxto2" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-format-input-date-format-in-angularjs" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/format-input-date-format-in-angularjs/" class="article-date">
-  <time datetime="2017-03-09T00:08:07.000Z" itemprop="datePublished">2017-03-09</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/format-input-date-format-in-angularjs/">angular.js input 中日期格式化</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>angular.js 日期选择器需要把选中的日期输出到 input 输入框中，默认显示的是时间戳形式的时间，现需要把格式变成特定格式，但 input 上 ng-model 无法使用 filter，网上寻找解决方案就是写个 directive，具体实例代码如下：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">angular.module(<span class="string">'dateRange'</span>,[]).directive(<span class="string">'dateFormat'</span>, [<span class="string">'$filter'</span>,<span class="function"><span class="keyword">function</span>(<span class="params">$filter</span>) </span>&#123;  </span><br><span class="line">    <span class="keyword">var</span> dateFilter = $filter(<span class="string">'date'</span>);  </span><br><span class="line">    <span class="keyword">return</span> &#123;  </span><br><span class="line">        <span class="built_in">require</span>: <span class="string">'ngModel'</span>,  </span><br><span class="line">        link: <span class="function"><span class="keyword">function</span>(<span class="params">scope, elm, attrs, ctrl</span>) </span>&#123;  </span><br><span class="line"></span><br><span class="line">            <span class="function"><span class="keyword">function</span> <span class="title">formatter</span>(<span class="params">value</span>) </span>&#123;  </span><br><span class="line">                <span class="keyword">return</span> dateFilter(value, <span class="string">'yyyy-MM-dd'</span>); <span class="comment">//format  </span></span><br><span class="line">            &#125;  </span><br><span class="line">      </span><br><span class="line">            <span class="function"><span class="keyword">function</span> <span class="title">parser</span>(<span class="params"></span>) </span>&#123;  </span><br><span class="line">                <span class="keyword">return</span> ctrl.$modelValue;  </span><br><span class="line">            &#125;  </span><br><span class="line">      </span><br><span class="line">            ctrl.$formatters.push(formatter);  </span><br><span class="line">            ctrl.$parsers.unshift(parser);  </span><br><span class="line">      </span><br><span class="line">        &#125;  </span><br><span class="line">    &#125;;  </span><br><span class="line">&#125;]);</span><br></pre></td></tr></table></figure>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"text"</span> <span class="attr">ng-model</span>=<span class="string">"start_date"</span> <span class="attr">date-format</span> <span class="attr">disabled</span>=<span class="string">"disabled"</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/format-input-date-format-in-angularjs/" data-id="ckckn9o7300edrvses46lvo0n" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-reverse-ssh" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/reverse-ssh/" class="article-date">
-  <time datetime="2017-03-02T03:42:55.000Z" itemprop="datePublished">2017-03-02</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/reverse-ssh/">用ssh建立反向连接</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>本地开发时，都是在本机上起一个服务，只要是在同一个局域网，其他机器也能访问这个接口。但有时候需要在外网访问，怎么办呢？有两种办法：</p>
-<ol>
-<li>通过软件<a href="https://ngrok.com/" target="_blank" rel="noopener">ngrock</a></li>
-<li>通过 ssh 反向代理</li>
-</ol>
-<p>ngrock 功能很强大，使用起来也比较简单，去<a href="https://ngrok.com/" target="_blank" rel="noopener">官网</a>按照 demo 操作就行。</p>
-<p>另外一种方式是 ssh 反向代理，前提条件是自己要有一台云服务器，登录到该服务器之后，修改 <code>sshd</code> 的配置文件 <code>/etc/ssh/sshd_config</code>：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#GatewayPorts no</span></span><br><span class="line">GatewayPorts yes <span class="comment"># 取消注释，并把no修改为yes</span></span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/reverse-ssh/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/reverse-ssh/" data-id="ckckn9oif00tlrvse1d3fl873" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
     </footer>
   </div>
