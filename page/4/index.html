@@ -54,6 +54,66 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-write-commonjs" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/write-commonjs/" class="article-date">
+  <time datetime="2019-12-09T07:08:01.000Z" itemprop="datePublished">2019-12-09</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/write-commonjs/">40行代码实现CommonJS规范</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>CommonJS 规范是把 Node.js 代码拆分成一个个文件，每个文件就是一个模块，有自己的作用域，在一个文件里面定义的变量、函数、类，都是私有的，对其他文件不可见。</p>
+<p>那这是如何做到的呢？<a href="http://nodejs.cn/api/modules.html" target="_blank" rel="noopener">官方文档</a> 里面能找到一些线索：</p>
+<blockquote>
+<p>在执行模块代码之前，Node.js 会使用一个如下的函数封装器将其封装：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&gt; (<span class="function"><span class="keyword">function</span>(<span class="params">exports, require, module, __filename, __dirname</span>) </span>&#123;</span><br><span class="line">&gt;   <span class="comment">// 模块的代码实际上在这里</span></span><br><span class="line">&gt; &#125;)</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<blockquote>
+<p>通过这样做，Node.js 实现了以下几点：</p>
+<ul>
+<li>保持了顶层的变量（用 var、 const 或 let 定义）作用在模块范围内，而不是全局对象。</li>
+<li>提供了一些看似全局的但实际上是模块特定的变量，例如 exports、__dirname 等</li>
+</ul>
+</blockquote>
+<p>也就是说 CommonJS 规范是把每个单独的文件读取出来之后，包裹成一个 function 来执行的，从而实现代码的隔离。例如，我们把一个非常简单的打印两数之和的代码强拆成三个文件：</p>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/write-commonjs/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/write-commonjs/" data-id="ckcrtxdpb0004ofsegablc23e" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-flutter-tab-avoid-call-twice" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/flutter-tab-avoid-call-twice/" class="article-date">
@@ -504,54 +564,6 @@
     <footer class="article-footer">
      <a data-url="https://zju.date/风寒和风热感冒/" data-id="ckckn9ome00z6rvsemmg7dcvu" class="article-share-link">Share</a>
      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-never-use-flutter-listtile" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/never-use-flutter-listtile/" class="article-date">
-  <time datetime="2019-11-12T13:39:02.000Z" itemprop="datePublished">2019-11-12</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/never-use-flutter-listtile/">千万不要用ListTile组件</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>最初，在 Flutter 项目中用 ListTile 实现了列表项的布局，速度很快，而且代码比较简单，例如：</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">ListTile(</span><br><span class="line">  leading: Icon(</span><br><span class="line">    Icons.account_box,</span><br><span class="line">    color: Colors.red,</span><br><span class="line">  ),</span><br><span class="line">  title: Text(</span><br><span class="line">    <span class="string">'账户'</span>,</span><br><span class="line">    textAlign: TextAlign.left,</span><br><span class="line">    style: TextStyle(</span><br><span class="line">      color: Colors.grey,</span><br><span class="line">    ),</span><br><span class="line">  ),</span><br><span class="line">  trailing: Icon(Icons.keyboard_arrow_right),</span><br><span class="line">  onTap: () &#123;</span><br><span class="line">    <span class="comment">// 响应点击事件</span></span><br><span class="line">  &#125;,</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/never-use-flutter-listtile/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/never-use-flutter-listtile/" data-id="ckckn9ofn00pfrvsedekn7whe" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flutter/">Flutter</a></li></ul>
-
     </footer>
   </div>
   

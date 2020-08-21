@@ -54,6 +54,51 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-focus-not-working" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/focus-not-working/" class="article-date">
+  <time datetime="2017-08-23T02:37:39.000Z" itemprop="datePublished">2017-08-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/focus-not-working/">无法对输入框进行聚焦</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在控制台想对一个输入框进行聚焦，使用：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$(<span class="string">'input[name="q"]'</span>).focus();</span><br></pre></td></tr></table></figure>
+<p>发现没反应，后来在 stackoverflow 找到<a href="https://stackoverflow.com/questions/15859113/focus-not-working" target="_blank" rel="noopener">原因</a>，是因为当时的焦点在控制台而不是网页，可以先设置一个延迟，然后迅速点击一下网页，然后就能看到输入框聚焦了。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">  $(<span class="string">'input[name="q"]'</span>).focus();</span><br><span class="line">&#125;, <span class="number">3000</span>);</span><br></pre></td></tr></table></figure>
+<p>同样的道理，如果一个元素不在 DOM 上面，对其使用 <code>focus</code> 也是无效的，所以当你发现始终无法对一个元素进行聚焦的时候，不妨检查一下该元素是否是动态的、在聚焦的时刻是否已经在 DOM 中了。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/focus-not-working/" data-id="ckckn9o7000e6rvseghfern1b" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-wechat-pay" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/wechat-pay/" class="article-date">
@@ -575,56 +620,6 @@
      <a data-url="https://zju.date/gulp-notes/" data-id="ckckn9o8g00gurvsem7uxhwl0" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-es-notes" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/es-notes/" class="article-date">
-  <time datetime="2017-08-16T02:30:36.000Z" itemprop="datePublished">2017-08-16</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/es-notes/">ElasticSearch学习笔记</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <h2 id="ElasticSearch概述"><a href="#ElasticSearch概述" class="headerlink" title="ElasticSearch概述"></a>ElasticSearch概述</h2><p>与传统数据库的类比：</p>
-<pre><code>关系数据库      ⇒ 数据库(database) ⇒ 表(table)    ⇒ 行(row)         ⇒ 列(column)
-Elasticsearch  ⇒ 索引(index)      ⇒ 类型(type)   ⇒ 文档(document)  ⇒ 字段(field)
-</code></pre><p>一个 Elasticsearch 集群可以包含多个索引，每个索引可以包含1个类型，这个类型中包含多个文档，然后每个文档中又包含了很多的字段。但是在 6.x 的版本中 type <a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/removal-of-types.html" target="_blank" rel="noopener">被废弃</a>了，在后期的版本中被完全移除，因此可以把 ES 想象成一个数据库只能容纳一个表。废弃的原因文档里面说得也比较清楚，在传统数据库中，表跟表之前是相互独立的，可以拥有不同的字段、不同的索引，但是在 ES 中，同一个索引下不同类型里名称相同的字段会被 Lucene 视为同一个字段，这就会产生矛盾，例如两个类型里面都有 deleted 字段，想在其中一个类型定义它是日期格式，另一个类型中定义它是布尔值，ES 做不到这一点，但数据库是可以做到的。</p>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/es-notes/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/es-notes/" data-id="ckckn9o5w00c6rvsejmff0ox6" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Elasticsearch/">Elasticsearch</a></li></ul>
 
     </footer>
   </div>

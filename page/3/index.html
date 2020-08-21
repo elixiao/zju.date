@@ -54,6 +54,51 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-flutter-safe-string" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/flutter-safe-string/" class="article-date">
+  <time datetime="2020-01-05T14:44:55.000Z" itemprop="datePublished">2020-01-05</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/flutter-safe-string/">Flutter字符串处理</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Dart 的 String 类使用 UTF-16 编码格式，遇到一些特殊语言和表情符号时会处理异常，例如：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">main() &#123;</span><br><span class="line">  <span class="keyword">var</span> input = [<span class="string">'Resume'</span>, <span class="string">'Résumé'</span>, <span class="string">'个人简历'</span>, <span class="string">'💼📃'</span>, <span class="string">'Currículo'</span>];</span><br><span class="line">  input.forEach((it) =&gt; <span class="built_in">print</span>(it.substring(<span class="number">0</span>, <span class="number">3</span>)));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>输出：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Res</span><br><span class="line">Ré</span><br><span class="line">个人简</span><br><span class="line">💼���</span><br><span class="line">Cur</span><br></pre></td></tr></table></figure>
+<p>通过引入字符串处理包 <a href="https://pub.flutter-io.cn/packages/characters" target="_blank" rel="noopener">https://pub.flutter-io.cn/packages/characters</a> ，然后用 <code>it.characters.take(3)</code> 替换 <code>it.substring(0, 3)</code>。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/flutter-safe-string/" data-id="ckckn9o6m00dkrvsemivpytc6" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flutter/">Flutter</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-flutter-scrollview-inside-scrollview" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/flutter-scrollview-inside-scrollview/" class="article-date">
@@ -534,66 +579,6 @@
      <a data-url="https://zju.date/dart-new-outside-main/" data-id="ckckn9o42008xrvse3temd9no" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Dart/">Dart</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-write-commonjs" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/write-commonjs/" class="article-date">
-  <time datetime="2019-12-09T07:08:01.000Z" itemprop="datePublished">2019-12-09</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/write-commonjs/">40行代码实现CommonJS规范</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>CommonJS 规范是把 Node.js 代码拆分成一个个文件，每个文件就是一个模块，有自己的作用域，在一个文件里面定义的变量、函数、类，都是私有的，对其他文件不可见。</p>
-<p>那这是如何做到的呢？<a href="http://nodejs.cn/api/modules.html" target="_blank" rel="noopener">官方文档</a> 里面能找到一些线索：</p>
-<blockquote>
-<p>在执行模块代码之前，Node.js 会使用一个如下的函数封装器将其封装：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&gt; (<span class="function"><span class="keyword">function</span>(<span class="params">exports, require, module, __filename, __dirname</span>) </span>&#123;</span><br><span class="line">&gt;   <span class="comment">// 模块的代码实际上在这里</span></span><br><span class="line">&gt; &#125;)</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
-</blockquote>
-<blockquote>
-<p>通过这样做，Node.js 实现了以下几点：</p>
-<ul>
-<li>保持了顶层的变量（用 var、 const 或 let 定义）作用在模块范围内，而不是全局对象。</li>
-<li>提供了一些看似全局的但实际上是模块特定的变量，例如 exports、__dirname 等</li>
-</ul>
-</blockquote>
-<p>也就是说 CommonJS 规范是把每个单独的文件读取出来之后，包裹成一个 function 来执行的，从而实现代码的隔离。例如，我们把一个非常简单的打印两数之和的代码强拆成三个文件：</p>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/write-commonjs/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/write-commonjs/" data-id="ckcrtxdpb0004ofsegablc23e" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
     </footer>
   </div>

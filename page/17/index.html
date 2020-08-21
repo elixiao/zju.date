@@ -54,6 +54,61 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-es-bool" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/es-bool/" class="article-date">
+  <time datetime="2018-06-28T05:59:07.000Z" itemprop="datePublished">2018-06-28</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/es-bool/">ES中的bool查询</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>用 bool 查询可以构建出非常复杂的语句，例如查询：公司是【中国移动】，姓名叫【张三】或者手机号是【18888888888】的用户。可以构建出下面的查询体：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  query: &#123;</span><br><span class="line">    bool: &#123;</span><br><span class="line">      must: [</span><br><span class="line">        &#123;<span class="attr">term</span>: &#123;<span class="attr">company</span>: <span class="string">'中国移动'</span>&#125;&#125;,</span><br><span class="line">        &#123;</span><br><span class="line">          bool: &#123;</span><br><span class="line">            should: [</span><br><span class="line">              &#123;<span class="attr">term</span>: &#123;<span class="attr">name</span>: <span class="string">'张三'</span>&#125;&#125;,</span><br><span class="line">              &#123;<span class="attr">term</span>: &#123;<span class="attr">phone</span>: <span class="string">'18888888888'</span>&#125;&#125;,</span><br><span class="line">            ]</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      ],</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在 ES 中，有四种 bool 操作符，分别是：</p>
+<ol>
+<li>must 相当于【<strong>且</strong>】（计入评分）</li>
+<li>must_not 相当于【<strong>非</strong>】</li>
+<li>should 相当于【<strong>或</strong>】（但比或更强大）</li>
+<li>filter 相当于【<strong>且</strong>】（不计入评分）</li>
+</ol>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/es-bool/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/es-bool/" data-id="ckckn9o5f00bcrvsedgyl8ber" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-handle-array-in-mongodb-aggregation" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/handle-array-in-mongodb-aggregation/" class="article-date">
@@ -511,68 +566,6 @@
      <a data-url="https://zju.date/mongodb-errors/" data-id="ckckn9oel00ntrvsebcof1v1v" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MongoDB/">MongoDB</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-mongodb-$lookup" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/mongodb-$lookup/" class="article-date">
-  <time datetime="2018-06-02T03:25:07.000Z" itemprop="datePublished">2018-06-02</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/mongodb-$lookup/">mongodb $lookup 运算符</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>有了 <code>$lookup</code> 之后，MongoDB 也能做关联查询了，典型的案例就是商品和订单，订单里面有商品，模型如下：</p>
-<p><strong>商品模型</strong>：</p>
-<ul>
-<li><code>_id</code>：唯一标识符</li>
-<li><code>name</code>：商品名称</li>
-<li><code>price</code>：商品价格</li>
-</ul>
-<p>创建三条商品数据：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">db.products.insert(&#123;<span class="attr">name</span>:<span class="string">'矿泉水'</span>, <span class="attr">price</span>:<span class="number">1</span>&#125;) <span class="comment">// 5b120c565c5d2ea98f402c06</span></span><br><span class="line">db.products.insert(&#123;<span class="attr">name</span>:<span class="string">'菜园小饼'</span>, <span class="attr">price</span>:<span class="number">4</span>&#125;) <span class="comment">// 5b120c565c5d2ea98f402c07</span></span><br><span class="line">db.products.insert(&#123;<span class="attr">name</span>:<span class="string">'挂面'</span>, <span class="attr">price</span>:<span class="number">5</span>&#125;) <span class="comment">// 5b120f995c5d2ea98f402c0b</span></span><br></pre></td></tr></table></figure>
-<p><strong>订单模型</strong>：</p>
-<ul>
-<li><code>_id</code>：唯一标识符</li>
-<li><code>user</code>：购买人（这里为了演示方便，就用字符串保存姓名）</li>
-<li><code>product</code>：购买的商品（引用类型，存商品模型的 ObjectId）</li>
-<li><code>createdAt</code>：购买时间</li>
-</ul>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/mongodb-$lookup/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/mongodb-$lookup/" data-id="ckckn9oea00ndrvsea6ma05hd" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
 
     </footer>
   </div>

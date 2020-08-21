@@ -54,6 +54,58 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-not-a-constructor" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/not-a-constructor/" class="article-date">
+  <time datetime="2018-09-30T05:35:07.000Z" itemprop="datePublished">2018-09-30</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/not-a-constructor/">require 时报错 not a constructor</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>当引用第三方库的时候，经常会遇到下面的错误：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xxx is not a constructor</span><br></pre></td></tr></table></figure>
+<p>原因是该第三方库使用 es6 语法暴露出来一个类，但是在项目中使用了 require 来引用导致的。这是 babel 在转换 <code>import</code> 和 <code>export</code> 到 <code>require</code> 和 <code>exports</code> 时存在的差异，举个例子，用 es6 写 processor.js 暴露一个类：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// processor.js</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Processor</span> </span>&#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> Processor</span><br></pre></td></tr></table></figure>
+<p>如果用 require 来引用：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// require.js</span></span><br><span class="line"><span class="keyword">const</span> Processor = <span class="built_in">require</span>(<span class="string">'./processor'</span>);</span><br><span class="line"><span class="keyword">const</span> processor = <span class="keyword">new</span> Processor() <span class="comment">// 会报错</span></span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/not-a-constructor/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/not-a-constructor/" data-id="ckckn9ogn00qwrvsexydbi17q" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-react-keep-alive" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/react-keep-alive/" class="article-date">
@@ -541,58 +593,6 @@
      <a data-url="https://zju.date/react-native-android-debug/" data-id="ckckn9ohu00slrvse51yf7f1r" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-how-to-abort-promise" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/how-to-abort-promise/" class="article-date">
-  <time datetime="2018-09-23T07:31:03.000Z" itemprop="datePublished">2018-09-23</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/how-to-abort-promise/">如何终断Promise？</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>Promise 有个缺点就是一旦创建就无法取消，所以本质上 Promise 是无法被终止的，但我们在开发过程中可能会遇到下面两个需求：</p>
-<h2 id="中断调用链"><a href="#中断调用链" class="headerlink" title="中断调用链"></a>中断调用链</h2><p>就是在某个 then/catch 执行之后，不想让后续的链式调用继续执行了，即：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">somePromise</span><br><span class="line">  .then(<span class="function"><span class="params">()</span> =&gt;</span> &#123;&#125;)</span><br><span class="line">  .then(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="comment">// 终止 Promise 链，让下面的 then、catch 和 finally 都不执行</span></span><br><span class="line">  &#125;)</span><br><span class="line">  .then(<span class="function"><span class="params">()</span> =&gt;</span> <span class="built_in">console</span>.log(<span class="string">'then'</span>))</span><br><span class="line">  .catch(<span class="function"><span class="params">()</span> =&gt;</span> <span class="built_in">console</span>.log(<span class="string">'catch'</span>))</span><br><span class="line">  .finally(<span class="function"><span class="params">()</span> =&gt;</span> <span class="built_in">console</span>.log(<span class="string">'finally'</span>))</span><br></pre></td></tr></table></figure>
-<p>答案就是在 then/catch 的最后一行返回一个永远 pending 的 promise 即可：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> &#123;&#125;)</span><br></pre></td></tr></table></figure>
-<p>这样的话后面所有的 then、catch 和 finally 都不会执行了。</p>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/how-to-abort-promise/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/how-to-abort-promise/" data-id="ckckn9o8k00h2rvsehghks7hb" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
     </footer>
   </div>
