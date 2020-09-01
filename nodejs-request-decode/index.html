@@ -5,18 +5,18 @@
   
   <title>zju.date</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="nodejs 通过 request 包进行网络请求，返回的是 GBK 编码，而本地是 UTF8 所以看到全是乱码，可以用下面的方式进行转换： 123456789const options = &amp;#123;  method: &apos;POST&apos;,  uri: &apos;xxxx&apos;,  form: body,  encoding: null&amp;#125;request(options, function (error">
+  <meta name="description" content="字符编码的案例： 错误的案例： 12345678910111213var http = require(&amp;apos;http&amp;apos;),    iconv = require(&amp;apos;iconv-lite&amp;apos;);http.get(&amp;quot;http://website.com/&amp;quot;, function(res) &amp;#123;  var body = &amp;apos;&amp;apos">
 <meta name="keywords" content="JavaScript">
 <meta property="og:type" content="article">
 <meta property="og:title" content="node.js中字符编码转换">
 <meta property="og:url" content="https://zju.date/nodejs-request-decode/index.html">
 <meta property="og:site_name" content=".">
-<meta property="og:description" content="nodejs 通过 request 包进行网络请求，返回的是 GBK 编码，而本地是 UTF8 所以看到全是乱码，可以用下面的方式进行转换： 123456789const options = &amp;#123;  method: &apos;POST&apos;,  uri: &apos;xxxx&apos;,  form: body,  encoding: null&amp;#125;request(options, function (error">
+<meta property="og:description" content="字符编码的案例： 错误的案例： 12345678910111213var http = require(&amp;apos;http&amp;apos;),    iconv = require(&amp;apos;iconv-lite&amp;apos;);http.get(&amp;quot;http://website.com/&amp;quot;, function(res) &amp;#123;  var body = &amp;apos;&amp;apos">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2020-08-20T20:01:17.248Z">
+<meta property="og:updated_time" content="2020-08-26T01:43:18.077Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="node.js中字符编码转换">
-<meta name="twitter:description" content="nodejs 通过 request 包进行网络请求，返回的是 GBK 编码，而本地是 UTF8 所以看到全是乱码，可以用下面的方式进行转换： 123456789const options = &amp;#123;  method: &apos;POST&apos;,  uri: &apos;xxxx&apos;,  form: body,  encoding: null&amp;#125;request(options, function (error">
+<meta name="twitter:description" content="字符编码的案例： 错误的案例： 12345678910111213var http = require(&amp;apos;http&amp;apos;),    iconv = require(&amp;apos;iconv-lite&amp;apos;);http.get(&amp;quot;http://website.com/&amp;quot;, function(res) &amp;#123;  var body = &amp;apos;&amp;apos">
   
     <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
   
@@ -82,23 +82,36 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <p>nodejs 通过 request 包进行网络请求，返回的是 GBK 编码，而本地是 UTF8 所以看到全是乱码，可以用下面的方式进行转换：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> options = &#123;</span><br><span class="line">  method: <span class="string">'POST'</span>,</span><br><span class="line">  uri: <span class="string">'xxxx'</span>,</span><br><span class="line">  form: body,</span><br><span class="line">  encoding: <span class="literal">null</span></span><br><span class="line">&#125;</span><br><span class="line">request(options, <span class="function"><span class="keyword">function</span> (<span class="params">error, response, body</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> decodedBody = iconv.decode(body, <span class="string">'GBK'</span>)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+        <p>字符编码的案例：</p>
+<p>错误的案例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">var http = require(&apos;http&apos;),</span><br><span class="line">    iconv = require(&apos;iconv-lite&apos;);</span><br><span class="line"></span><br><span class="line">http.get(&quot;http://website.com/&quot;, function(res) &#123;</span><br><span class="line">  var body = &apos;&apos;;</span><br><span class="line">  res.on(&apos;data&apos;, function(chunk) &#123;</span><br><span class="line">    body += chunk;</span><br><span class="line">  &#125;);</span><br><span class="line">  res.on(&apos;end&apos;, function() &#123;</span><br><span class="line">    var decodedBody = iconv.decode(body, &apos;win1252&apos;);</span><br><span class="line">    console.log(decodedBody);</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>正确的案例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">http.get(&quot;http://website.com/&quot;, function(res) &#123;</span><br><span class="line">  var chunks = [];</span><br><span class="line">  res.on(&apos;data&apos;, function(chunk) &#123;</span><br><span class="line">    chunks.push(chunk);</span><br><span class="line">  &#125;);</span><br><span class="line">  res.on(&apos;end&apos;, function() &#123;</span><br><span class="line">    var decodedBody = iconv.decode(Buffer.concat(chunks), &apos;win1252&apos;);</span><br><span class="line">    console.log(decodedBody);</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">// Or, with iconv-lite@0.4 and Node v0.10+, you can use streaming support with `collect` helper</span><br><span class="line">http.get(&quot;http://website.com/&quot;, function(res) &#123;</span><br><span class="line">  res.pipe(iconv.decodeStream(&apos;win1252&apos;)).collect(function(err, decodedBody) &#123;</span><br><span class="line">    console.log(decodedBody);</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>nodejs 通过 request 包进行网络请求，返回的是 GBK 编码，而本地是 UTF8 所以看到全是乱码，可以用下面的方式进行转换：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> iconv = <span class="built_in">require</span>(<span class="string">'iconv-lite'</span>)</span><br><span class="line"><span class="keyword">const</span> request = <span class="built_in">require</span>(<span class="string">'request'</span>)</span><br><span class="line"><span class="keyword">const</span> options = &#123;</span><br><span class="line">  method: <span class="string">'POST'</span>,</span><br><span class="line">  uri: <span class="string">'xxxx'</span>,</span><br><span class="line">  form: body,</span><br><span class="line">  encoding: <span class="literal">null</span></span><br><span class="line">&#125;</span><br><span class="line">request(options, <span class="function"><span class="keyword">function</span> (<span class="params">error, response, body</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> decodedBody = iconv.decode(body, <span class="string">'GBK'</span>)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
 <a id="more"></a>
-<p>注意，这里一定要得到 buffer 然后再 decode ，千万不要 decode string，因为Node.js 不支持 gbk 编码，Node.js 目前支持的字符编码包括：</p>
+<p>用 iconv-lite 进行 decode 的时候，一定要注意是 decode buffer 而不是 string，因为如果是 string 类型，那么肯定是用某种编码 decode 过了的，再 decode 就会出问题。</p>
+<p>在 Node.js 中，内置了 buffer 转字符串的方法，即 <code>Buffer.toString(encoding)</code>，但遗憾的是 encoding 并没有 GBK 编码，这是可以理解的，因为毕竟 GBK 编码是国人匠心打造的，仅用于汉字等字符，不具备国际通用性，Node.js 支持的字符编码有：</p>
 <ul>
-<li><code>ascii</code> - 仅支持 7 位 ASCII 数据。如果设置去掉高位的话，这种编码是非常快的。</li>
-<li><code>utf8</code> - 多字节编码的 Unicode 字符。许多网页和其他文档格式都使用 UTF-8 。</li>
-<li><code>utf16le</code> - 2 或 4 个字节，小字节序编码的 Unicode 字符。支持代理对（U+10000 至 U+10FFFF）。</li>
-<li><code>ucs2</code> - ‘utf16le’ 的别名。</li>
-<li><code>base64</code> - Base64 编码</li>
-<li><code>latin1</code> - 一种把 Buffer 编码成一字节编码的字符串的方式</li>
-<li><code>binary</code> - ‘latin1’ 的别名。</li>
-<li><code>hex</code> - 将每个字节编码为两个十六进制字符</li>
+<li><code>ascii</code>：7 位 ASCII 数据</li>
+<li><code>utf8</code>：国际通用的多字节 Unicode 编码，大部分网页和其他文档格式都使用 UTF-8</li>
+<li><code>utf16le</code>：2 或 4 个字节，小字节序编码的 Unicode 字符</li>
+<li><code>ucs2</code> - utf16le 的别名</li>
+<li><code>base64</code>：Base64 编码，也比较常用。</li>
+<li><code>latin1</code>：一种把 Buffer 编码成一字节编码的字符串的方式</li>
+<li><code>binary</code>：latin1 的别名</li>
+<li><code>hex</code>：将每个字节编码为两个十六进制字符</li>
 </ul>
 <p>如果拿到的是 string 的话，就意味着已经用 utf8(默认)编码过了，再转成 gbk 就会得到一堆的【锟斤拷锟斤拷锟斤拷】。</p>
-<h2 id="锟斤拷是怎么来的？"><a href="#锟斤拷是怎么来的？" class="headerlink" title="锟斤拷是怎么来的？"></a>锟斤拷是怎么来的？</h2><p>Unicode 和老编码体系的转化过程中，有一些字用 Unicode 是没法表示的，于是 Unicode 官方用了一个占位符来表示这些文字，即：U+FFFD。而 U+FFFD 的 utf8 编码是 ‘\xef\xbf\xbd’。重复多次就是 ‘\xef\xbf\xbd\xef\xbf\xbd’，如果用 gbk 解码的话，由于一个汉字2个字节，就得到：锟(0xEFBF)，斤（0xBDEF），拷（0xBFBD）。简单地说就是 gbk 编码传过去，但是 utf8 的服务器不认得，就返回了容错字符，然后又被 gbk 翻译回了汉字。</p>
-<p>如果看不懂上面的解释，这里再详细描述一次：utf8中有一个专门用来容错的字符 U+FFFD，0xFFFD对应的utf8编码是 11101111, 10111111,  10111101，那么这用16进制表示就是 0xEF 0xBF 0xBD，也就是 0xEFBFBD ，如果按照gbk来解码这三个字符，如果有两个容错字符的话，那么就是 0xEF 0xBF 0xBD 0xEF 0xBF 0xBD 6个字节，按照每两个字节，去查询gbk编码对应的汉字，就会发现刚好对应着这三个汉字：</p>
+<h2 id="锟斤拷是怎么来的？"><a href="#锟斤拷是怎么来的？" class="headerlink" title="锟斤拷是怎么来的？"></a>锟斤拷是怎么来的？</h2><p>Unicode 和老编码体系的转化过程中，有一些字用 Unicode 是没法表示的，于是 Unicode 官方用了一个占位符来表示这些文字，即：<code>U+FFFD</code>。而 <code>U+FFFD</code> 的 utf8 编码是 <code>\xef\xbf\xbd</code>，如果出现多个无法表示的字符，就会出现：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">\xef\xbf\xbd\xef\xbf\xbd...</span><br></pre></td></tr></table></figure>
+<p>这个时候，如果用 gbk 解码的话，由于一个汉字2个字节，就得到了锟(0xEFBF)，斤（0xBDEF），拷（0xBFBD）。</p>
+<blockquote>
+<p>GBK 编码传到了 utf8 服务器，无法识别返回容错字符，然后又被 GBK 翻译回了汉字。</p>
+</blockquote>
+<p>如果看不懂上面的解释，这里再详细描述一次：utf8中有一个专门用来容错的字符 U+FFFD，0xFFFD对应的utf8编码是 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">11101111, 10111111,  10111101</span><br></pre></td></tr></table></figure>
+<p>那么这用16进制表示就是 <code>0xEF 0xBF 0xBD</code>，也就是 <code>0xEFBFBD</code>，如果按照gbk来解码这三个字符，如果有两个容错字符的话，那么就是 <code>0xEF 0xBF 0xBD 0xEF 0xBF 0xBD</code> 6个字节，按照每两个字节，去查询gbk编码对应的汉字，就会发现刚好对应着这三个汉字：</p>
 <ul>
 <li>锟（0xEFBF）</li>
 <li>斤（0xBDEF）</li>
@@ -126,7 +139,7 @@
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/nodejs-request-decode/" data-id="ckckn9ogh00qmrvseobjnzstm" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/nodejs-request-decode/" data-id="ckej9qg7z00rdwpq40s3ue410" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 

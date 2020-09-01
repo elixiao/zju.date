@@ -12,7 +12,7 @@
 <meta property="og:site_name" content=".">
 <meta property="og:description" content="首先安装 goaccess： 12brew install goaccess # Macyum -y install goaccess # centos 安装完成之后，就可以用 goaccess 为 Nginx 的日志生成 html 版本的报告了，首先我们要获取 Nginx 日志，正好有一个正在运行的 Nginx:alpine 容器，进去看一下： 123456$ cat /etc/nginx/ng">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-06-21T06:57:10.037Z">
+<meta property="og:updated_time" content="2020-08-22T08:11:28.441Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="使用goaccess分析Nginx日志">
 <meta name="twitter:description" content="首先安装 goaccess： 12brew install goaccess # Macyum -y install goaccess # centos 安装完成之后，就可以用 goaccess 为 Nginx 的日志生成 html 版本的报告了，首先我们要获取 Nginx 日志，正好有一个正在运行的 Nginx:alpine 容器，进去看一下： 123456$ cat /etc/nginx/ng">
@@ -90,7 +90,7 @@
 <a id="more"></a>
 <p>这两个文件被做成了软链接输出到 console 了，查看一下官方提供的 <a href="https://github.com/nginxinc/docker-nginx/blob/master/stable/alpine/Dockerfile" target="_blank" rel="noopener">Dockerfile</a> 果然如此：</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ln -sf /dev/stdout /var/<span class="built_in">log</span>/nginx/access.log</span><br><span class="line">ln -sf /dev/stderr /var/<span class="built_in">log</span>/nginx/error.log</span><br></pre></td></tr></table></figure>
-<p>这样的话只需要取 docker 的<a href="https://docs.docker.com/config/containers/logging/json-file/" target="_blank" rel="noopener">日志</a>即可：</p>
+<p>由于 stdout 和 stderr 都是输出到控制台，这样的话只需要取 docker 的<a href="https://docs.docker.com/config/containers/logging/json-file/" target="_blank" rel="noopener">日志</a>即可：</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ docker inspect --format=<span class="string">'&#123;&#123;.LogPath&#125;&#125;'</span> &lt;nginx-containter-id&gt;</span><br><span class="line">/mnt/docker/containers/xxx/xxx-json.log</span><br></pre></td></tr></table></figure>
 <p>把这个文件拷贝一份出来，命名为 nginx.log，然后用 goaccesss 分析：</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ goaccess -f nginx.log -o result.html</span><br><span class="line">Parsing... [0] [0/s]</span><br><span class="line">GoAccess - version 1.3 - Apr 16 2019 15:50:32</span><br><span class="line">Config file: No config file used</span><br><span class="line"></span><br><span class="line">Fatal error has occurred</span><br><span class="line">Error occurred at: src/parser.c - parse_log - 2764</span><br><span class="line">未在配置文件中设置时间格式</span><br></pre></td></tr></table></figure>
@@ -129,7 +129,7 @@
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/goaccess-notes/" data-id="ckckn9o7v00frrvse3jns36st" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/goaccess-notes/" data-id="ckej9qg0n00g0wpq4ehlt5mfh" class="article-share-link">Share</a>
      
     </footer>
   </div>

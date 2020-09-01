@@ -54,6 +54,104 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-custom-http-header" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/custom-http-header/" class="article-date">
+  <time datetime="2018-01-19T01:36:13.000Z" itemprop="datePublished">2018-01-19</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/custom-http-header/">自定义 http header</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>自定义header往往是以X开头的，后来被规范废弃了，建议以相关字符串开头。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Account-ID</span><br><span class="line">Host-Name</span><br><span class="line">Storage-Policy</span><br></pre></td></tr></table></figure>
+<p>最好能换成带前缀的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">OpenStack-Identity-Account-ID</span><br><span class="line">OpenStack-Networking-Host-Name</span><br><span class="line">OpenStack-Object-Storage-Policy</span><br></pre></td></tr></table></figure>
+<p>带版本字符串的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">OpenStack-Nova-API-Version: 2.1</span><br></pre></td></tr></table></figure>
+<p>最好换成：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">OpenStack-API-Version: Nova 2.1</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/custom-http-header/" data-id="ckej9qfwj008twpq4qwbjosgl" class="article-share-link">Share</a>
+     
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-js-base64" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/js-base64/" class="article-date">
+  <time datetime="2018-01-18T09:08:45.000Z" itemprop="datePublished">2018-01-18</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/js-base64/">JavaScript 转换 base64</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>下面的代码可以将字符串转换为 base64，也可以将 base64 还原为字符串：</p>
+<ol>
+<li><p>浏览器端</p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> str = <span class="string">'Hello World!'</span></span><br><span class="line"><span class="keyword">const</span> encodedString = btoa(str)</span><br><span class="line"><span class="built_in">console</span>.log(encodedString) <span class="comment">// 输出: "SGVsbG8gV29ybGQh"</span></span><br><span class="line"><span class="keyword">const</span> decodedString = atob(encodedString)</span><br><span class="line"><span class="built_in">console</span>.log(decodedString) <span class="comment">// 输出: "Hello World!"</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>nodejs端</p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> str = <span class="string">'Hello World!'</span></span><br><span class="line"><span class="keyword">const</span> encodedString = Buffer.from(str).toString(<span class="string">'base64'</span>)</span><br><span class="line"><span class="built_in">console</span>.log(encodedString) <span class="comment">// 输出: "SGVsbG8gV29ybGQh"</span></span><br><span class="line"><span class="keyword">const</span> decodedString = Buffer.from(encodedString, <span class="string">'base64'</span>).toString()</span><br><span class="line"><span class="built_in">console</span>.log(decodedString) <span class="comment">// 输出: "Hello World!"</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>跨平台通用函数</p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> Base64=&#123;<span class="attr">_keyStr</span>:<span class="string">"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/="</span>,<span class="attr">encode</span>:<span class="function"><span class="keyword">function</span>(<span class="params">e</span>)</span>&#123;<span class="keyword">var</span> t=<span class="string">""</span>;<span class="keyword">var</span> n,r,i,s,o,u,a;<span class="keyword">var</span> f=<span class="number">0</span>;e=Base64._utf8_encode(e);<span class="keyword">while</span>(f&lt;e.length)&#123;n=e.charCodeAt(f++);r=e.charCodeAt(f++);i=e.charCodeAt(f++);s=n&gt;&gt;<span class="number">2</span>;o=(n&amp;<span class="number">3</span>)&lt;&lt;<span class="number">4</span>|r&gt;&gt;<span class="number">4</span>;u=(r&amp;<span class="number">15</span>)&lt;&lt;<span class="number">2</span>|i&gt;&gt;<span class="number">6</span>;a=i&amp;<span class="number">63</span>;<span class="keyword">if</span>(<span class="built_in">isNaN</span>(r))&#123;u=a=<span class="number">64</span>&#125;<span class="keyword">else</span> <span class="keyword">if</span>(<span class="built_in">isNaN</span>(i))&#123;a=<span class="number">64</span>&#125;t=t+<span class="keyword">this</span>._keyStr.charAt(s)+<span class="keyword">this</span>._keyStr.charAt(o)+<span class="keyword">this</span>._keyStr.charAt(u)+<span class="keyword">this</span>._keyStr.charAt(a)&#125;<span class="keyword">return</span> t&#125;,<span class="attr">decode</span>:<span class="function"><span class="keyword">function</span>(<span class="params">e</span>)</span>&#123;<span class="keyword">var</span> t=<span class="string">""</span>;<span class="keyword">var</span> n,r,i;<span class="keyword">var</span> s,o,u,a;<span class="keyword">var</span> f=<span class="number">0</span>;e=e.replace(<span class="regexp">/[^A-Za-z0-9+/=]/g</span>,<span class="string">""</span>);<span class="keyword">while</span>(f&lt;e.length)&#123;s=<span class="keyword">this</span>._keyStr.indexOf(e.charAt(f++));o=<span class="keyword">this</span>._keyStr.indexOf(e.charAt(f++));u=<span class="keyword">this</span>._keyStr.indexOf(e.charAt(f++));a=<span class="keyword">this</span>._keyStr.indexOf(e.charAt(f++));n=s&lt;&lt;<span class="number">2</span>|o&gt;&gt;<span class="number">4</span>;r=(o&amp;<span class="number">15</span>)&lt;&lt;<span class="number">4</span>|u&gt;&gt;<span class="number">2</span>;i=(u&amp;<span class="number">3</span>)&lt;&lt;<span class="number">6</span>|a;t=t+<span class="built_in">String</span>.fromCharCode(n);<span class="keyword">if</span>(u!=<span class="number">64</span>)&#123;t=t+<span class="built_in">String</span>.fromCharCode(r)&#125;<span class="keyword">if</span>(a!=<span class="number">64</span>)&#123;t=t+<span class="built_in">String</span>.fromCharCode(i)&#125;&#125;t=Base64._utf8_decode(t);<span class="keyword">return</span> t&#125;,<span class="attr">_utf8_encode</span>:<span class="function"><span class="keyword">function</span>(<span class="params">e</span>)</span>&#123;e=e.replace(<span class="regexp">/rn/g</span>,<span class="string">"n"</span>);<span class="keyword">var</span> t=<span class="string">""</span>;<span class="keyword">for</span>(<span class="keyword">var</span> n=<span class="number">0</span>;n&lt;e.length;n++)&#123;<span class="keyword">var</span> r=e.charCodeAt(n);<span class="keyword">if</span>(r&lt;<span class="number">128</span>)&#123;t+=<span class="built_in">String</span>.fromCharCode(r)&#125;<span class="keyword">else</span> <span class="keyword">if</span>(r&gt;<span class="number">127</span>&amp;&amp;r&lt;<span class="number">2048</span>)&#123;t+=<span class="built_in">String</span>.fromCharCode(r&gt;&gt;<span class="number">6</span>|<span class="number">192</span>);t+=<span class="built_in">String</span>.fromCharCode(r&amp;<span class="number">63</span>|<span class="number">128</span>)&#125;<span class="keyword">else</span>&#123;t+=<span class="built_in">String</span>.fromCharCode(r&gt;&gt;<span class="number">12</span>|<span class="number">224</span>);t+=<span class="built_in">String</span>.fromCharCode(r&gt;&gt;<span class="number">6</span>&amp;<span class="number">63</span>|<span class="number">128</span>);t+=<span class="built_in">String</span>.fromCharCode(r&amp;<span class="number">63</span>|<span class="number">128</span>)&#125;&#125;<span class="keyword">return</span> t&#125;,<span class="attr">_utf8_decode</span>:<span class="function"><span class="keyword">function</span>(<span class="params">e</span>)</span>&#123;<span class="keyword">var</span> t=<span class="string">""</span>;<span class="keyword">var</span> n=<span class="number">0</span>;<span class="keyword">var</span> r=c1=c2=<span class="number">0</span>;<span class="keyword">while</span>(n&lt;e.length)&#123;r=e.charCodeAt(n);<span class="keyword">if</span>(r&lt;<span class="number">128</span>)&#123;t+=<span class="built_in">String</span>.fromCharCode(r);n++&#125;<span class="keyword">else</span> <span class="keyword">if</span>(r&gt;<span class="number">191</span>&amp;&amp;r&lt;<span class="number">224</span>)&#123;c2=e.charCodeAt(n+<span class="number">1</span>);t+=<span class="built_in">String</span>.fromCharCode((r&amp;<span class="number">31</span>)&lt;&lt;<span class="number">6</span>|c2&amp;<span class="number">63</span>);n+=<span class="number">2</span>&#125;<span class="keyword">else</span>&#123;c2=e.charCodeAt(n+<span class="number">1</span>);c3=e.charCodeAt(n+<span class="number">2</span>);t+=<span class="built_in">String</span>.fromCharCode((r&amp;<span class="number">15</span>)&lt;&lt;<span class="number">12</span>|(c2&amp;<span class="number">63</span>)&lt;&lt;<span class="number">6</span>|c3&amp;<span class="number">63</span>);n+=<span class="number">3</span>&#125;&#125;<span class="keyword">return</span> t&#125;&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> str = <span class="string">'Hello World!'</span></span><br><span class="line"><span class="keyword">const</span> encodedString = Base64.encode(str)</span><br><span class="line"><span class="built_in">console</span>.log(encodedString) <span class="comment">// 输出: "SGVsbG8gV29ybGQh"</span></span><br><span class="line"><span class="keyword">const</span> decodedString = Base64.decode(encodedString)</span><br><span class="line"><span class="built_in">console</span>.log(decodedString) <span class="comment">// 输出: "Hello World!"</span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/js-base64/" data-id="ckej9qg2w00jrwpq4lalccduj" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-js-get-function-name-inside-function" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/js-get-function-name-inside-function/" class="article-date">
@@ -92,7 +190,7 @@
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/js-get-function-name-inside-function/" data-id="ckckn9oah00k4rvse9vvrnuqd" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/js-get-function-name-inside-function/" data-id="ckej9qg3900kfwpq4hqd4v7oi" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
@@ -171,7 +269,7 @@
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/package-json-dependencies/" data-id="ckckn9ogw00rbrvse1aqfgqv3" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/package-json-dependencies/" data-id="ckej9qg8h00s0wpq4g9e6enpm" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
@@ -214,7 +312,7 @@
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/sqlite-in-iphone-simulator/" data-id="ckckn9oj900uurvseyopsvl7n" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/sqlite-in-iphone-simulator/" data-id="ckej9qgaz00vjwpq4mfpo1p47" class="article-share-link">Share</a>
      
     </footer>
   </div>
@@ -256,7 +354,7 @@
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/js-random-id/" data-id="ckckn9oaj00k7rvse94a34qh7" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/js-random-id/" data-id="ckej9qg3g00kswpq4evo7325c" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
@@ -308,7 +406,7 @@
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/enable-https/" data-id="ckckn9o5j00bkrvsexdahr6br" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/enable-https/" data-id="ckej9qfxw00b8wpq4ahpz1jeb" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
 
@@ -353,7 +451,7 @@
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/replace-angular-favicon/" data-id="ckckn9oib00tdrvse9do6eiti" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/replace-angular-favicon/" data-id="ckej9qga100u8wpq4r8wcq5n3" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
@@ -403,7 +501,7 @@
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/typescript-partial/" data-id="ckckn9ok200w2rvseiiwrefiq" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/typescript-partial/" data-id="ckej9qgc200x2wpq4f5jvmlq6" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
@@ -454,131 +552,9 @@
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/js-comma/" data-id="ckckn9oa100jcrvse1fmpkktq" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/js-comma/" data-id="ckej9qg2z00jxwpq4vrz7q64q" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-docker-mount-volume" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/docker-mount-volume/" class="article-date">
-  <time datetime="2018-01-11T14:56:07.000Z" itemprop="datePublished">2018-01-11</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/docker-mount-volume/">docker mount 和 volume</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>mount 和 volume 的区别：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ docker run -d -it --name devtest -v myvol2:/app nginx:latest</span><br></pre></td></tr></table></figure>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ docker run -d -it --name devtest --mount <span class="built_in">source</span>=myvol2,target=/app nginx:latest</span><br></pre></td></tr></table></figure>
-<p>最开始的时候 <code>-v</code> 和 <code>--volume</code> 标识用于单独的容器， <code>--mount</code> 标识用于 swarm 服务，从 Docker 17.06 开始也可以将 <code>--mount</code> 用于单独的容器了。总的来说，<code>--mount</code> 语义更加清楚，跟 <code>-v</code> 语法的区别就在于把冒号分离的存储分成了 source 和 target 两部分，除此之外，如果需要指定存储介质选项，则必须使用 <code>--mount</code> 语法。例如：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ docker run -d --name=<span class="built_in">test</span> \</span><br><span class="line">  --mount <span class="built_in">source</span>=nginx-vol,destination=/usr/share/nginx/html,<span class="built_in">readonly</span> \</span><br><span class="line">  nginx:latest</span><br></pre></td></tr></table></figure>
-<p>创建数据卷：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ docker volume create my-vol</span><br></pre></td></tr></table></figure>
-<p>数据卷详情：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$ docker volume inspect my-vol</span><br><span class="line">[</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="string">"Driver"</span>: <span class="string">"local"</span>,</span><br><span class="line">        <span class="string">"Labels"</span>: &#123;&#125;,</span><br><span class="line">        <span class="string">"Mountpoint"</span>: <span class="string">"/var/lib/docker/volumes/my-vol/_data"</span>,</span><br><span class="line">        <span class="string">"Name"</span>: <span class="string">"my-vol"</span>,</span><br><span class="line">        <span class="string">"Options"</span>: &#123;&#125;,</span><br><span class="line">        <span class="string">"Scope"</span>: <span class="string">"local"</span></span><br><span class="line">    &#125;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
-<p>删除数据卷：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ docker volume rm my-vol</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/docker-mount-volume/" data-id="ckckn9o4o00a0rvsesf1f364l" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/">Docker</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-docker-network" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/docker-network/" class="article-date">
-  <time datetime="2018-01-11T14:50:16.000Z" itemprop="datePublished">2018-01-11</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/docker-network/">Docker网络笔记</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <h2 id="Docker中的网络"><a href="#Docker中的网络" class="headerlink" title="Docker中的网络"></a>Docker中的网络</h2><p>安装 Docker 后会自动创建 3 个网络。可以使用 <strong>docker network ls</strong> 命令列出这些网络：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ docker network ls </span><br><span class="line">NETWORK ID          NAME                DRIVER </span><br><span class="line">7fca4eb8c647        bridge              bridge </span><br><span class="line">9f904ee27bf5        none                null </span><br><span class="line">cf03ee007fb4        host                host</span><br></pre></td></tr></table></figure>
-<p>Docker 会为每个节点自动创建3个网络：</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:left">网络名称</th>
-<th style="text-align:left">作用</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">bridge</td>
-<td style="text-align:left">Docker安装时默认安装的docker0网络，若未指定，则容器默认连接此网络</td>
-</tr>
-<tr>
-<td style="text-align:left">none</td>
-<td style="text-align:left">容器定制的网络栈</td>
-</tr>
-<tr>
-<td style="text-align:left">host</td>
-<td style="text-align:left">在宿主网络栈上添加一个容器，容器中的网络配置和宿主机一样</td>
-</tr>
-</tbody>
-</table>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/docker-network/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/docker-network/" data-id="ckckn9o4z00akrvseho92t21p" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/">Docker</a></li></ul>
 
     </footer>
   </div>
@@ -590,7 +566,7 @@
 
 
   <nav id="page-nav">
-    <a class="extend prev" rel="prev" href="/page/28/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/27/">27</a><a class="page-number" href="/page/28/">28</a><span class="page-number current">29</span><a class="page-number" href="/page/30/">30</a><a class="page-number" href="/page/31/">31</a><span class="space">&hellip;</span><a class="page-number" href="/page/65/">65</a><a class="extend next" rel="next" href="/page/30/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/28/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/27/">27</a><a class="page-number" href="/page/28/">28</a><span class="page-number current">29</span><a class="page-number" href="/page/30/">30</a><a class="page-number" href="/page/31/">31</a><span class="space">&hellip;</span><a class="page-number" href="/page/66/">66</a><a class="extend next" rel="next" href="/page/30/">Next &raquo;</a>
   </nav>
 </section>
 

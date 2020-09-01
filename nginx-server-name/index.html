@@ -13,7 +13,7 @@
 <meta property="og:site_name" content=".">
 <meta property="og:description" content="server_name 可以用三种方式定义：  准确值 通配符 正则表达式  例如： 1234567891011121314151617181920# 准确值server &amp;#123;    listen       80;    server_name  example.org  www.example.org;&amp;#125;# 开头通配符server &amp;#123;    listen">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2018-04-28T03:14:06.000Z">
+<meta property="og:updated_time" content="2020-08-25T09:04:11.710Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Nginx 中的 server_name">
 <meta name="twitter:description" content="server_name 可以用三种方式定义：  准确值 通配符 正则表达式  例如： 1234567891011121314151617181920# 准确值server &amp;#123;    listen       80;    server_name  example.org  www.example.org;&amp;#125;# 开头通配符server &amp;#123;    listen">
@@ -163,11 +163,23 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">could not build the server_names_hash,</span><br><span class="line">you should increase either server_names_hash_max_size: 512</span><br><span class="line">or server_names_hash_bucket_size: 32</span><br></pre></td></tr></table></figure>
 <p>遇到这种情况，首先尝试调整 <code>server_names_hash_max_size</code> 的值，设置为大于 server name 总数的值。如果这样设置仍不能让 nginx 正常启动，或者 nginx 启动的时间变得过长，再尝试增加 <code>server_names_hash_bucket_size</code> 的值。</p>
 <p>如果一个 server 是某个监听端口唯一的 server，这时 nginx 根本不会去测试 server name，同时也不会为该监听端口构建 hash table。但其中又有一个例外，如果 server name 是正则表达式，而且正则表达式中包含了 captures，这时 nginx 不得不执行该正则表达式以获取 captures。（正则表达式的 capture 是指被圆括号引用的表达式部分，它们所匹配的字符串，可通过名字或数字引用）</p>
+<p>未匹配的场景：</p>
+<p>匹配规则：</p>
+<p>如果根据 listen 指令无法得到最佳匹配, 将会开始解析 server_name 指令. nginx 会检查请求中的 “Host” 头, 这个值包含了客户端实际试图请求的域名或者 ip 地址. nginx 会根据这个值去匹配 server_name 指令, 匹配规则如下:</p>
+<ul>
+<li>nginx 会尝试寻找一个和 sever_name 和 Host 值完全匹配的 server 块, 如果找到多个精确匹配, 则会使用第一个匹配的 server 块</li>
+<li>如果没有找到精确匹配的 server 块, 则 nginx 尝试找到 server_name 带有 * 开头的 server 块, 如果找到多个, 则选择最长匹配的 server 块</li>
+<li>如果没有找到使用开头的 server 块, 则会寻找以结尾的 server 块, 同样, 如果有多个匹配, 选择最长匹配</li>
+<li><p>如果没有找到使用 * 匹配的 server 块, 则会寻找使用正则表达式 (以~ 开头) 定义 server_name 的 server 块, 如果找到多个匹配, 会使用第一个匹配</p>
+</li>
+<li><p>如果没有找到正则表达式匹配的 server 块, 则 nginx 将会选择一个匹配 listen 字段的 default server 块. 每一个 ip 和端口组合都可以配置一个且只能配置一个默认的 default_server 块, 如果没有的话, 则会选择可用列表中的第一个 server</p>
+</li>
+</ul>
 
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/nginx-server-name/" data-id="ckckn9ofz00psrvsegwu1phk7" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/nginx-server-name/" data-id="ckej9qg7c00qjwpq4x4dz8zq2" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Nginx/">Nginx</a></li></ul>
 

@@ -54,6 +54,96 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-es-model" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/es-model/" class="article-date">
+  <time datetime="2016-06-30T08:31:11.000Z" itemprop="datePublished">2016-06-30</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/es-model/">elasticsearch 表结构</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>建立索引：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -XPUT <span class="string">"http://142.96.248.197:9200/contx_test"</span></span><br></pre></td></tr></table></figure>
+<p>设置索引mapping：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line">curl -XPOST <span class="string">"http://142.96.248.197:9200/contx_test/article/_mapping?pretty"</span> -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">    "article": &#123;</span></span><br><span class="line"><span class="string">    	"_timestamp": &#123; </span></span><br><span class="line"><span class="string">			"enabled": true</span></span><br><span class="line"><span class="string">		&#125;,</span></span><br><span class="line"><span class="string">       "_all": &#123;</span></span><br><span class="line"><span class="string">			"analyzer": "ik_max_word",</span></span><br><span class="line"><span class="string">			"search_analyzer": "ik_max_word",</span></span><br><span class="line"><span class="string">			"term_vector": "no",</span></span><br><span class="line"><span class="string">			"store": false</span></span><br><span class="line"><span class="string">        &#125;,</span></span><br><span class="line"><span class="string">    	"properties": &#123;</span></span><br><span class="line"><span class="string">    		"id": &#123;</span></span><br><span class="line"><span class="string">    			"type": "string",</span></span><br><span class="line"><span class="string">    			"index": "not_analyzed",</span></span><br><span class="line"><span class="string">				"include_in_all": false</span></span><br><span class="line"><span class="string">    		&#125;,</span></span><br><span class="line"><span class="string">			"title": &#123;</span></span><br><span class="line"><span class="string">				"type": "string",</span></span><br><span class="line"><span class="string">				"store": "no",</span></span><br><span class="line"><span class="string">				"term_vector": "with_positions_offsets",</span></span><br><span class="line"><span class="string">				"analyzer": "ik_max_word",</span></span><br><span class="line"><span class="string">				"search_analyzer": "ik_max_word",</span></span><br><span class="line"><span class="string">				"include_in_all": true</span></span><br><span class="line"><span class="string">			&#125;,</span></span><br><span class="line"><span class="string">			"content": &#123;</span></span><br><span class="line"><span class="string">				"type": "string",</span></span><br><span class="line"><span class="string">				"store": "no",</span></span><br><span class="line"><span class="string">				"term_vector": "with_positions_offsets",</span></span><br><span class="line"><span class="string">				"analyzer": "ik_max_word",</span></span><br><span class="line"><span class="string">				"search_analyzer": "ik_max_word",</span></span><br><span class="line"><span class="string">				"include_in_all": true</span></span><br><span class="line"><span class="string">			&#125;,</span></span><br><span class="line"><span class="string">			"source": &#123;</span></span><br><span class="line"><span class="string">				"type": "string",</span></span><br><span class="line"><span class="string">				"index": "not_analyzed",</span></span><br><span class="line"><span class="string">				"include_in_all": false</span></span><br><span class="line"><span class="string">			&#125;,</span></span><br><span class="line"><span class="string">			"hot": &#123;</span></span><br><span class="line"><span class="string">				"type": "long",</span></span><br><span class="line"><span class="string">				"include_in_all": false</span></span><br><span class="line"><span class="string">			&#125;,</span></span><br><span class="line"><span class="string">			"priurl": &#123;</span></span><br><span class="line"><span class="string">				"type": "string",</span></span><br><span class="line"><span class="string">				"index": "no"</span></span><br><span class="line"><span class="string">			&#125;,</span></span><br><span class="line"><span class="string">			"tags": &#123;</span></span><br><span class="line"><span class="string">				"type": "string",</span></span><br><span class="line"><span class="string">				"index": "not_analyzed",</span></span><br><span class="line"><span class="string">				"include_in_all": false</span></span><br><span class="line"><span class="string">			&#125;,</span></span><br><span class="line"><span class="string">			"catalog": &#123;</span></span><br><span class="line"><span class="string">				"type": "string",</span></span><br><span class="line"><span class="string">				"index": "not_analyzed",</span></span><br><span class="line"><span class="string">				"include_in_all": false</span></span><br><span class="line"><span class="string">			&#125;,</span></span><br><span class="line"><span class="string">			"app": &#123;</span></span><br><span class="line"><span class="string">				"type": "string",</span></span><br><span class="line"><span class="string">				"index": "not_analyzed",</span></span><br><span class="line"><span class="string">				"include_in_all": false</span></span><br><span class="line"><span class="string">			&#125;,</span></span><br><span class="line"><span class="string">			"time": &#123;</span></span><br><span class="line"><span class="string">				"type": "date",</span></span><br><span class="line"><span class="string">				"include_in_all": false</span></span><br><span class="line"><span class="string">			&#125;</span></span><br><span class="line"><span class="string">		&#125;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">&#125;'</span></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/es-model/" data-id="ckej9qfy700buwpq4y62d35gi" class="article-share-link">Share</a>
+     
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-native-ajax" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/native-ajax/" class="article-date">
+  <time datetime="2016-06-24T05:57:37.000Z" itemprop="datePublished">2016-06-24</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/native-ajax/">纯js的ajax请求</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>很多框架都对 ajax 请求进行了封装，使用起来特别方便。不过我们完全可以用 js 自己封装一个 ajax 请求：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line">ajax(&#123;</span><br><span class="line">   url: <span class="string">"http://yoursite.com/info/3000005"</span>,</span><br><span class="line">   type: <span class="string">"get"</span>,</span><br><span class="line">   data: <span class="string">""</span>,</span><br><span class="line">   dataType: <span class="string">"json"</span>,</span><br><span class="line">   success: <span class="function"><span class="keyword">function</span> (<span class="params">response, xml</span>) </span>&#123;</span><br><span class="line">       <span class="built_in">console</span>.log(response);</span><br><span class="line">   &#125;,</span><br><span class="line">   fail: <span class="function"><span class="keyword">function</span> (<span class="params">status</span>) </span>&#123;</span><br><span class="line">       <span class="built_in">console</span>.log(<span class="string">'fail'</span>);</span><br><span class="line">   &#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">ajax</span>(<span class="params">options</span>) </span>&#123;</span><br><span class="line">   options = options || &#123;&#125;;</span><br><span class="line">   options.type = (options.type || <span class="string">"GET"</span>).toUpperCase();</span><br><span class="line">   options.dataType = options.dataType || <span class="string">"json"</span>;</span><br><span class="line">   <span class="keyword">var</span> params = <span class="string">''</span>;</span><br><span class="line">   <span class="keyword">if</span>(options.data) params = formatParams(options.data);</span><br><span class="line">   </span><br><span class="line">   <span class="keyword">var</span> xhr;</span><br><span class="line">   <span class="keyword">if</span> (<span class="built_in">window</span>.XMLHttpRequest) &#123;</span><br><span class="line">       xhr = <span class="keyword">new</span> XMLHttpRequest();</span><br><span class="line">   &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">       xhr = <span class="keyword">new</span> ActiveXObject(<span class="string">'Microsoft.XMLHTTP'</span>);</span><br><span class="line">   &#125;</span><br><span class="line">   </span><br><span class="line">   xhr.onreadystatechange = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">       <span class="keyword">if</span> (xhr.readyState === <span class="number">4</span>) &#123;</span><br><span class="line">           <span class="keyword">var</span> status = xhr.status;</span><br><span class="line">           <span class="keyword">if</span> (status &gt;= <span class="number">200</span> &amp;&amp; status &lt; <span class="number">300</span>) &#123;</span><br><span class="line">               options.success &amp;&amp; options.success(xhr.responseText, xhr.responseXML);</span><br><span class="line">           &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">               options.fail &amp;&amp; options.fail(status);</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br><span class="line">  </span><br><span class="line">   <span class="keyword">if</span> (options.type === <span class="string">"GET"</span>) &#123;</span><br><span class="line">       <span class="keyword">if</span>(params)&#123;</span><br><span class="line">           xhr.open(<span class="string">"GET"</span>, options.url + <span class="string">"?"</span> + params, <span class="literal">true</span>);</span><br><span class="line">       &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">           xhr.open(<span class="string">"GET"</span>, options.url, <span class="literal">true</span>);</span><br><span class="line">       &#125;</span><br><span class="line">       xhr.send(<span class="literal">null</span>);</span><br><span class="line">   &#125; <span class="keyword">else</span> <span class="keyword">if</span> (options.type === <span class="string">"POST"</span>) &#123;</span><br><span class="line">       xhr.open(<span class="string">"POST"</span>, options.url, <span class="literal">true</span>);</span><br><span class="line">       xhr.setRequestHeader(<span class="string">"Content-Type"</span>, <span class="string">"application/x-www-form-urlencoded"</span>);</span><br><span class="line">       xhr.send(params);</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">formatParams</span>(<span class="params">data</span>) </span>&#123;</span><br><span class="line">   <span class="keyword">var</span> arr = [];</span><br><span class="line">   <span class="keyword">for</span> (<span class="keyword">var</span> name <span class="keyword">in</span> data) &#123;</span><br><span class="line">       arr.push(<span class="built_in">encodeURIComponent</span>(name) + <span class="string">"="</span> + <span class="built_in">encodeURIComponent</span>(data[name]));</span><br><span class="line">   &#125;</span><br><span class="line">   arr.push((<span class="string">"v="</span> + <span class="built_in">Math</span>.random()).replace(<span class="string">"."</span>,<span class="string">""</span>));</span><br><span class="line">   <span class="keyword">return</span> arr.join(<span class="string">"&amp;"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/native-ajax/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/native-ajax/" data-id="ckej9qg6q00ppwpq4qmjah0r5" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-react-problems-using-webpack" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/react-problems-using-webpack/" class="article-date">
@@ -92,7 +182,7 @@
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/react-problems-using-webpack/" data-id="ckckn9ohy00srrvsedplc6iyj" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/react-problems-using-webpack/" data-id="ckej9qg9p00towpq4mzqrj226" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
@@ -157,7 +247,7 @@
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/css-properties/" data-id="ckckn9o3l0088rvse6m86ajcp" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/css-properties/" data-id="ckej9qfwc008fwpq4nhdbq5h7" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CSS/">CSS</a></li></ul>
 
@@ -209,7 +299,7 @@
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/mise-distribution/" data-id="ckckn9odw00mqrvsefiegv8a4" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/mise-distribution/" data-id="ckej9qg5e00nowpq4phy1p6jg" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
 
@@ -268,7 +358,7 @@
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/change-npm-mirror/" data-id="ckckn9o2x0073rvseyei8aowd" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/change-npm-mirror/" data-id="ckej9qfvn0072wpq4xq9iqea3" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
@@ -317,7 +407,7 @@
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/js-mocha-chai/" data-id="ckckn9oag00k2rvse1bied101" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/js-mocha-chai/" data-id="ckej9qg3800kdwpq48a30njw4" class="article-share-link">Share</a>
      
     </footer>
   </div>
@@ -357,7 +447,7 @@
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/react-native-load-http-image/" data-id="ckckn9ohs00shrvse4gh52pw4" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/react-native-load-http-image/" data-id="ckej9qg9g00tcwpq4spki7rny" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
@@ -405,7 +495,7 @@
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/div-fill-parent-remaining-area/" data-id="ckckn9o490096rvsek7htslo4" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/div-fill-parent-remaining-area/" data-id="ckej9qfwz009fwpq42gistd74" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CSS/">CSS</a></li></ul>
 
@@ -452,131 +542,9 @@
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/how-to-save-disk-spaces-for-node_modules/" data-id="ckckn9o8i00gyrvseprlw2z4o" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/how-to-save-disk-spaces-for-node_modules/" data-id="ckej9qg1f00hdwpq4i6wishm3" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-ssh-login-without-password" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/ssh-login-without-password/" class="article-date">
-  <time datetime="2016-05-13T13:16:37.000Z" itemprop="datePublished">2016-05-13</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/ssh-login-without-password/">SSH免密码远程登录</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>用SSH免密码远程登录总共分三步：</p>
-<ol>
-<li><p>第一步：在本地用 <code>ssh-keygen</code> 生成公钥和私钥</p>
-</li>
-<li><p>第二步：将公钥拷贝到远程服务器的 <code>.ssh/authorized_key</code> 目录下</p>
- <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cat ~/.ssh/id_rsa.pub | ssh username@domain.com <span class="string">"umask 077; mkdir -p .ssh ; cat &gt;&gt; .ssh/authorized_keys"</span></span><br><span class="line"><span class="comment"># 或者</span></span><br><span class="line">ssh-copy-id -i ~/.ssh/id_rsa.pub remote-host</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>第三步：登录</p>
-</li>
-</ol>
-<p>有时候我们用 ssh 远程免密码登录时会遇到 authorized 都设置好了，但是依然需要输入密码，这个时候一定要检查文件的权限：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls -al</span><br></pre></td></tr></table></figure>
-<p>我把.ssh目录权限设置为：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod 755 .ssh</span><br></pre></td></tr></table></figure>
-<p>再把authorized_keys权限设为：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod 644 authorized_keys</span><br></pre></td></tr></table></figure>
-<p>这样再访问就没问题啦！</p>
-<!--用ssh命令通过第二台服务器直接连接到第三台服务器：
-ssh $SERVER_A
-ssh $SERVER_B
-ssh -t $SERVER_A ssh $SERVER_B
-firewall-cmd --zone=public --remove-port=1234/tcp
-firewall-cmd --permanent --zone=public --add-port=1235/tcp
-firewall-cmd --reload
-nc -z -v -w 2 42.96.248.197 9300
-nc -v -w 42.96.248.197 -i 3901-3905
-nc -z localhost 80-100
-nc -z -v localhost 9200
-nc 10.25.109.15 9200
-nc -vn 42.96.248.197 22
-nc -vnz -w 1 42.96.248.197 1-30
-nc -vnz -w 1 127.0.0.1 1-30-->
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/ssh-login-without-password/" data-id="ckckn9oja00uwrvse0xvnkvfl" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-mongodb-notes" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/mongodb-notes/" class="article-date">
-  <time datetime="2016-05-13T07:10:45.000Z" itemprop="datePublished">2016-05-13</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/mongodb-notes/">mongodb学习笔记</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <h2 id="创建数据"><a href="#创建数据" class="headerlink" title="创建数据"></a>创建数据</h2><p>插入第一条数据：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt; db.user.insert(&#123;name:<span class="string">'lixiao'</span>&#125;)</span><br><span class="line">WriteResult(&#123; <span class="string">"nInserted"</span> : 1 &#125;)</span><br></pre></td></tr></table></figure>
-<p>这个时候数据库被创建了：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt; show dbs;</span><br><span class="line"><span class="built_in">local</span>  0.000GB</span><br><span class="line"><span class="built_in">test</span>   0.000GB</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/mongodb-notes/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/mongodb-notes/" data-id="ckckn9oeo00nxrvsew1b7dnju" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
 
     </footer>
   </div>
@@ -588,7 +556,7 @@ nc -vnz -w 1 127.0.0.1 1-30-->
 
 
   <nav id="page-nav">
-    <a class="extend prev" rel="prev" href="/page/53/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/52/">52</a><a class="page-number" href="/page/53/">53</a><span class="page-number current">54</span><a class="page-number" href="/page/55/">55</a><a class="page-number" href="/page/56/">56</a><span class="space">&hellip;</span><a class="page-number" href="/page/65/">65</a><a class="extend next" rel="next" href="/page/55/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/53/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/52/">52</a><a class="page-number" href="/page/53/">53</a><span class="page-number current">54</span><a class="page-number" href="/page/55/">55</a><a class="page-number" href="/page/56/">56</a><span class="space">&hellip;</span><a class="page-number" href="/page/66/">66</a><a class="extend next" rel="next" href="/page/55/">Next &raquo;</a>
   </nav>
 </section>
 

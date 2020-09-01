@@ -54,6 +54,105 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-mysql-join" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/mysql-join/" class="article-date">
+  <time datetime="2017-09-16T05:46:32.000Z" itemprop="datePublished">2017-09-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/mysql-join/">MySQL join 查询</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>现有 Student 类保存学生的姓名 (username) 和国籍 (location)，那么在数据库里面这两张表的存储结构为：</p>
+<p>Student类：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">id    location     username</span><br><span class="line">34      Australia    krkrff</span><br><span class="line">64      india        dieiei</span><br><span class="line">574     pakistan     frkfrf</span><br><span class="line">253     japan        frfffrk</span><br><span class="line">633     india        ifirf</span><br><span class="line">26      Australia    riiri</span><br><span class="line">63      Australia    frffjrr</span><br></pre></td></tr></table></figure>
+<p>这样每添加一个学生就增加一行记录。中文系的学生都要写论文，然后又建立了一个Essay类，用于保存学生写的文章话题(topic)，在数据库里面这张表的存储结构为：</p>
+<p>Essay类：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">id   student_id   topic</span><br><span class="line">1     34          love</span><br><span class="line">3     64          friendship</span><br><span class="line">35    574         romance</span><br><span class="line">32    253         games</span><br><span class="line">95    633         football</span><br><span class="line">54    26          cricket</span><br><span class="line">648    63         music</span><br></pre></td></tr></table></figure>
+<p>这样只要有学生写了一篇文章就增加一条记录。现有这样的需求：来自 Australia 的同学都写过哪些话题？查询语句为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select e.topic from Essay e join Student s on s.id = e.student_id and s.location = &apos;Australia&apos;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/mysql-join/" data-id="ckej9qg6p00pnwpq40nppkb18" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-change-system-environment" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/change-system-environment/" class="article-date">
+  <time datetime="2017-09-16T05:17:07.000Z" itemprop="datePublished">2017-09-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/change-system-environment/">修改系统环境变量</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>当在 Linux 或 Mac 下的 shell 里面运行命令的时候，shell会去PATH环境变量指定的路径下寻找可执行文件。也就是说如果把可执行文件所在的目录保存在PATH环境变量里面，每次运行这个程序的时候就不需要跑到该程序所在的文件夹了。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> PATH=/opt/<span class="built_in">local</span>/bin:/opt/<span class="built_in">local</span>/sbin:<span class="variable">$PATH</span></span><br></pre></td></tr></table></figure>
+<p>注意，如果路径里面包含空格（例如文件夹的名字里面出现空格），必须在后面加上引号：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> PATH=<span class="string">"/your path/here"</span></span><br></pre></td></tr></table></figure>
+<p>export关键字很重要，如果定义了一个变量但没有export，那么这个变量只在当前shell下有效，例如：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ A=4</span><br><span class="line">$ <span class="built_in">echo</span> <span class="variable">$A</span></span><br><span class="line">4</span><br></pre></td></tr></table></figure>
+<p>如果再打开一个shell，这个变量就不存在了，也许你觉得这样也行啊，反正我就在当前shell下工作，但是如果你运行一个shell脚本的时候就无法使用该变量。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> PATH=/mightyq/bin:/opt/<span class="built_in">local</span>/bin:/opt/<span class="built_in">local</span>/sbin:<span class="variable">$PATH</span></span><br><span class="line"><span class="built_in">export</span> PATH=/opt/<span class="built_in">local</span>/bin:/mightyq/bin:/opt/<span class="built_in">local</span>/sbin:<span class="variable">$PATH</span></span><br><span class="line"><span class="built_in">export</span> PATH=/opt/<span class="built_in">local</span>/bin:/opt/<span class="built_in">local</span>/sbin:<span class="variable">$PATH</span>:/mightyq/bin</span><br></pre></td></tr></table></figure>
+<p>使用文件中设置的环境变量：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">. ./.profile echo $PATH</span><br></pre></td></tr></table></figure>
+<p>这里的 <code>.</code> 是 <code>source</code> 的简写。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/change-system-environment/" data-id="ckej9qfvp0076wpq4xi8klb9j" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-mongoose-aggregation" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/mongoose-aggregation/" class="article-date">
@@ -93,7 +192,7 @@
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/mongoose-aggregation/" data-id="ckckn9of600orrvsew2285il5" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/mongoose-aggregation/" data-id="ckej9qg6d00p6wpq4cd9y4bvx" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
 
@@ -144,7 +243,7 @@
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/linux-sudo-lost/" data-id="ckckn9ob800ldrvseqcf8xaw3" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/linux-sudo-lost/" data-id="ckej9qg4b00m2wpq411zwip45" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
 
@@ -188,7 +287,7 @@
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/mongodb-query-empty-array-or-undefined/" data-id="ckckn9oet00o7rvseeqsmtv2q" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/mongodb-query-empty-array-or-undefined/" data-id="ckej9qg6600ouwpq48749gtbc" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MongoDB/">MongoDB</a></li></ul>
 
@@ -240,7 +339,7 @@
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/node-module-mjs/" data-id="ckckn9og900q8rvseg304msqu" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/node-module-mjs/" data-id="ckej9qg7k00qvwpq4t4aef32a" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
@@ -300,7 +399,7 @@
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/js-object-vs-function/" data-id="ckckn9oal00kbrvsewjk40505" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/js-object-vs-function/" data-id="ckej9qg3b00kiwpq48miqru2p" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
@@ -366,7 +465,7 @@
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/nginx-gzip/" data-id="ckckn9ofx00pqrvserohizr4m" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/nginx-gzip/" data-id="ckej9qg7000q4wpq4e7l9n8tj" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Nginx/">Nginx</a></li></ul>
 
@@ -407,7 +506,7 @@
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/js-perfect-square/" data-id="ckckn9oak00k9rvse8lli6ur6" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/js-perfect-square/" data-id="ckej9qg3c00kkwpq46jg7yts3" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
@@ -459,105 +558,7 @@
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/node-qr-image/" data-id="ckckn9ogi00qorvsef4gmh68h" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-reverse-proxy-nginx" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/reverse-proxy-nginx/" class="article-date">
-  <time datetime="2017-08-24T03:42:55.000Z" itemprop="datePublished">2017-08-24</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/reverse-proxy-nginx/">用nginx域名转发</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>nginx可以把同一端口上的连接根据不同的域名转发到不同的端口，例如在本地通过node.js起了两个server，分别监听3031和3032端口，nginx监听80端口，在 <code>/etc/hosts</code> 文件里面建立两个映射：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1	www.3031.com</span><br><span class="line">127.0.0.1	www.3032.com</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/reverse-proxy-nginx/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/reverse-proxy-nginx/" data-id="ckckn9oic00tfrvse1jfzo9yc" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-install-nginx-on-mac" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/install-nginx-on-mac/" class="article-date">
-  <time datetime="2017-08-23T15:07:07.000Z" itemprop="datePublished">2017-08-23</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/install-nginx-on-mac/">Mac安装nginx</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>安装nginx</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install nginx</span><br></pre></td></tr></table></figure>
-<p>查看nginx版本</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nginx -v</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/install-nginx-on-mac/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/install-nginx-on-mac/" data-id="ckckn9o9600hyrvse6h5xidgl" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/node-qr-image/" data-id="ckej9qg7j00qtwpq43np87jg1" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
@@ -571,7 +572,7 @@
 
 
   <nav id="page-nav">
-    <a class="extend prev" rel="prev" href="/page/35/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/34/">34</a><a class="page-number" href="/page/35/">35</a><span class="page-number current">36</span><a class="page-number" href="/page/37/">37</a><a class="page-number" href="/page/38/">38</a><span class="space">&hellip;</span><a class="page-number" href="/page/65/">65</a><a class="extend next" rel="next" href="/page/37/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/35/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/34/">34</a><a class="page-number" href="/page/35/">35</a><span class="page-number current">36</span><a class="page-number" href="/page/37/">37</a><a class="page-number" href="/page/38/">38</a><span class="space">&hellip;</span><a class="page-number" href="/page/66/">66</a><a class="extend next" rel="next" href="/page/37/">Next &raquo;</a>
   </nav>
 </section>
 

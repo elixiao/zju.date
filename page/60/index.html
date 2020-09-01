@@ -54,6 +54,142 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-systemjs-notes" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/systemjs-notes/" class="article-date">
+  <time datetime="2016-01-31T05:12:20.000Z" itemprop="datePublished">2016-01-31</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/systemjs-notes/">SystemJS学习笔记</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>从最简单的例子说起：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"system.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="undefined"></span></span><br><span class="line"><span class="javascript">	System.import(<span class="string">'./app.js'</span>); </span></span><br><span class="line"><span class="javascript">	System.import(<span class="string">'https://code.jquery.com/jquery.js'</span>);</span></span><br><span class="line"><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>上面代码的意思是找到当前目录下的app.js文件以及网络服务器上的jquery.js，然后加载并使用它。SystemJS做了哪些事情呢？</p>
+<ol>
+<li>首先根据字符串里面提供的相对/绝对路径找到对应文件。</li>
+<li>找到之后先不忙加载，而是先看看注册中心里面是否存在，如果存在就直接读取，否则发起ajax请求异步加载。</li>
+<li>得到文件内容之后传到translate方法里面，在此可以对文件内容进行个性化修改。</li>
+<li>最后把最终的文件内容放到一个立即执行函数里面执行改模块，并在注册中心注册，返回promise。</li>
+</ol>
+<p>加载ES6模块：</p>
+<p>假设<code>app/hello.js</code>里面有如下代码：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="class"><span class="keyword">class</span> <span class="title">hello</span> </span>&#123;</span><br><span class="line">	<span class="keyword">constructor</span>() &#123;</span><br><span class="line">		<span class="keyword">this</span>.es6 = <span class="string">'good'</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;</span><br><span class="line">	System.import(<span class="string">'./app/hello.js'</span>).then(<span class="function"><span class="keyword">function</span>(<span class="params">m</span>) </span>&#123;</span><br><span class="line">		<span class="built_in">console</span>.log(<span class="keyword">new</span> m.hello().es6); <span class="comment">// good</span></span><br><span class="line">	&#125;);</span><br><span class="line">&lt;<span class="regexp">/script&gt;</span></span><br></pre></td></tr></table></figure>
+<h2 id="baseURL"><a href="#baseURL" class="headerlink" title="baseURL"></a>baseURL</h2><p>路径前缀</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">System.config(&#123;</span><br><span class="line">	baseURL: <span class="string">'/modules'</span></span><br><span class="line">&#125;);</span><br><span class="line">System.import(<span class="string">'jquery.js'</span>);</span><br></pre></td></tr></table></figure>
+<p>加载的是<code>/modules/jquery.js</code>。假设modules文件夹下面有很多js文件，这样import的时候就不用每次都加modules前缀了！</p>
+<h2 id="paths"><a href="#paths" class="headerlink" title="paths"></a>paths</h2><p><code>baseURL</code>是针对整个项目的路径前缀，具体到资源的时候，我们通常用<code>paths</code>定义路径名称映射：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">System.paths[<span class="string">"subfolder/*"</span>] = <span class="string">"./src/app/subfolder/*"</span>;</span><br><span class="line">System.import(<span class="string">'subfolder/codeFile.js'</span>);</span><br></pre></td></tr></table></figure>
+<p>这个时候加载的<code>subfolder/codeFile.js</code>文件路径实际上是：<code>http://localhost:8080/src/app/subfolder/codeFile.js</code>. </p>
+<p>虽说SystemJS支持通配符，但如果有比通配符更精确的路径，会使用这个路径，例如：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">System.paths[<span class="string">"subfolder/*"</span>] = <span class="string">"./src/app/subfolder/*"</span>;</span><br><span class="line">System.paths[<span class="string">"subfolder/codeFile2.js"</span>] = <span class="string">"./src/app/secondFolder/codeFile2.js"</span>;</span><br><span class="line">System.import(<span class="string">'subfolder/codeFile2.js'</span>);</span><br></pre></td></tr></table></figure>
+<p>这个时候加载的是<code>http://localhost:8080/src/app/secondFolder/codeFile2.js</code></p>
+<h2 id="map"><a href="#map" class="headerlink" title="map"></a>map</h2><p>除此之外还可以在模块内部定义名称映射：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">map: &#123;</span><br><span class="line">    <span class="string">"codeFile1.js"</span>: &#123;</span><br><span class="line">        <span class="string">"jquery"</span>: <span class="string">"vendor/jquery2.0.12/jquery.min.js"</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>那么在<code>codeFile1.js</code>里面可以这么写：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> $ <span class="keyword">from</span> <span class="string">'jquery'</span>;</span><br></pre></td></tr></table></figure>
+<p>这有什么好处呢？想想看如果两个文件都依赖jQuery，但却是不同的版本，可以这么写：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> $ <span class="keyword">from</span> <span class="string">'jquery'</span>; <span class="comment">// codeFile.js 依赖 jQuery 2， codeFile2.js 依赖 jQuery 1.10</span></span><br><span class="line"></span><br><span class="line">map: &#123;</span><br><span class="line">    <span class="string">"src/app/codeFile.js"</span>: &#123;</span><br><span class="line">        <span class="string">"jquery"</span>: <span class="string">"vendor/jquery/jquery-2.0.2.js"</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">"src/app/codeFile2.js"</span>: &#123;</span><br><span class="line">        <span class="string">"jquery"</span>: <span class="string">"vendor/jquery/jquery-1.10.0.js"</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样在codeFile.js模块引用了2.0.2版本，而在codeFile2.js模块引用了1.10.0版本。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">System.config(&#123;</span><br><span class="line">	map: &#123;</span><br><span class="line">		m: <span class="string">'./modules/'</span>,</span><br><span class="line">		c: <span class="string">'./controllers/'</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;);</span><br><span class="line">System.import(<span class="string">'a/jquery.js'</span>);</span><br><span class="line">System.import(<span class="string">'c/app.js'</span>);</span><br></pre></td></tr></table></figure>
+<p>会加载modules/jquery.js和controllers/app.js。你甚至可以这样：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">System.config(&#123;</span><br><span class="line">	map: &#123;</span><br><span class="line">		jquery: <span class="string">'https://code.jquery.com/jquery.js'</span> <span class="comment">// 或者./modules/</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;);</span><br><span class="line">System.import(<span class="string">'jquery'</span>);</span><br></pre></td></tr></table></figure>
+<h2 id="paths和map混合使用"><a href="#paths和map混合使用" class="headerlink" title="paths和map混合使用"></a>paths和map混合使用</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> $ <span class="keyword">from</span> <span class="string">'jquery'</span>;</span><br><span class="line"></span><br><span class="line">paths: &#123;</span><br><span class="line">    <span class="string">"vendor/*"</span>: <span class="string">"src/vendors/*"</span></span><br><span class="line">&#125;,</span><br><span class="line">map: &#123;</span><br><span class="line">    <span class="string">"src/app/codeFile.js"</span>: &#123;</span><br><span class="line">        <span class="string">"jquery"</span>: <span class="string">"vendor/jquery/jquery-2.0.2.js"</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最终加载的文件路径是<code>http://localhost:8080/src/vendors/jquery/jquery-2.0.2.js</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">System.import(&apos;./src/codeFile.js&apos;).then(function(m) &#123;</span><br><span class="line">    // do something with &apos;m&apos;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h2 id="package"><a href="#package" class="headerlink" title="package"></a>package</h2><p>还可以将别名限制在包/文件夹里面，例如：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">packages: &#123;</span><br><span class="line">    <span class="string">"src"</span>: &#123;</span><br><span class="line">        map: &#123;</span><br><span class="line">            <span class="string">"jquery"</span>: <span class="string">"vendor/jquery/jquery-2.0.2.js"</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>那么在src文件夹下面的模块就可以使用jquery别名了。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 这个文件里面可以使用jquery模块</span></span><br><span class="line">System.import(<span class="string">'src/components/codeFile.js'</span>);</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/systemjs-notes/" data-id="ckej9qgbi00w8wpq41kfdqw32" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-less-notes" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/less-notes/" class="article-date">
+  <time datetime="2016-01-28T06:31:42.000Z" itemprop="datePublished">2016-01-28</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/less-notes/">less</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>less是一种动态样式语言，属于CSS预处理语言的一种，它使用类似CSS的语法，为CSS的赋予了动态语言的特性，如变量、继承、运算、函数等，更方便CSS的编写和维护。</p>
+<h2 id="变量："><a href="#变量：" class="headerlink" title="变量："></a>变量：</h2><p>LESS源码：</p>
+<pre><code>@color: #4D926F;
+
+#header {
+    color: @color;
+}
+h2 {
+    color: @color;
+}
+</code></pre>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/less-notes/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/less-notes/" data-id="ckej9qg3x00lgwpq4ju6m5nui" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CSS/">CSS</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-sublime-vscode-config" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/sublime-vscode-config/" class="article-date">
@@ -121,7 +257,7 @@ code&gt;prefernces&gt;keyboard shortcuts
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/sublime-vscode-config/" data-id="ckckn9ojd00v1rvsey5q6bb1i" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/sublime-vscode-config/" data-id="ckej9qgb800vwwpq4ee196c96" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
 
@@ -166,7 +302,7 @@ code&gt;prefernces&gt;keyboard shortcuts
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/linux-unalias/" data-id="ckckn9obc00llrvse1tyo90pl" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/linux-unalias/" data-id="ckej9qg4f00m8wpq4asdyuaw8" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
 
@@ -212,7 +348,7 @@ code&gt;prefernces&gt;keyboard shortcuts
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/mac-switch-shell/" data-id="ckckn9ods00mjrvsedmsl3dco" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/mac-switch-shell/" data-id="ckej9qg5200n6wpq4ljbd6scv" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
 
@@ -259,7 +395,7 @@ code&gt;prefernces&gt;keyboard shortcuts
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/shell-&&-||/" data-id="ckckn9oiu00u7rvseht0mp7dx" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/shell-&&-||/" data-id="ckej9qgak00uwwpq4t5np0h9l" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
 
@@ -309,7 +445,7 @@ code&gt;prefernces&gt;keyboard shortcuts
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/rvm-notes/" data-id="ckckn9oil00tsrvsep7xnjihr" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/rvm-notes/" data-id="ckej9qga700ufwpq4dftikel6" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/学习笔记/">学习笔记</a></li></ul>
 
@@ -362,7 +498,7 @@ code&gt;prefernces&gt;keyboard shortcuts
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/grails-url-mapping/" data-id="ckckn9o8100g1rvsebcmeo2iw" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/grails-url-mapping/" data-id="ckej9qg0u00gcwpq4ktwcak8r" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/">Java</a></li></ul>
 
@@ -415,7 +551,7 @@ code&gt;prefernces&gt;keyboard shortcuts
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/tomcat-deploy-war/" data-id="ckckn9ojq00vlrvseext6afq6" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/tomcat-deploy-war/" data-id="ckej9qgbt00wowpq4del6knnt" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
 
@@ -465,134 +601,7 @@ code&gt;prefernces&gt;keyboard shortcuts
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/angular1-ngClass/" data-id="ckckn9o1r005brvsenls8t96b" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-angular1-ngRepeat" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/angular1-ngRepeat/" class="article-date">
-  <time datetime="2016-01-26T04:40:19.000Z" itemprop="datePublished">2016-01-26</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/angular1-ngRepeat/">AngularJS——ng-repeat里面的index</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p><code>$index</code>代表了ng-repeat循环的位置：</p>
-<pre><code>&lt;div ng-app=&quot;app&quot;&gt;
-    &lt;div ng-repeat=&quot;item in &apos;jquery&apos;.split(&apos;&apos;)&quot;&gt;
-        {{$index + 1}}. {{item}}
-    &lt;/div&gt;
-&lt;/div&gt;
-</code></pre><p>输出：</p>
-<pre><code>1. j
-2. q
-3. u
-4. e
-5. r
-6. y
-</code></pre>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/angular1-ngRepeat/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/angular1-ngRepeat/" data-id="ckckn9o1p0059rvsepz9z1y4g" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-browser-storage" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/browser-storage/" class="article-date">
-  <time datetime="2016-01-22T05:01:20.000Z" itemprop="datePublished">2016-01-22</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/browser-storage/">浏览器的Storage对象</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="Storage对象简介"><a href="#Storage对象简介" class="headerlink" title="Storage对象简介"></a><code>Storage</code>对象简介</h2><p>浏览器的<code>storage</code>对象包含<code>localStorage</code>和<code>sessionStorage</code>，它们的用法是一样的，区别在于：</p>
-<ul>
-<li><code>sessionStorage</code>为每一个给定的源维持一个独立的存储区域，该存储区域在页面会话期间可用（即只要浏览器处于打开状态，包括页面重新加载和恢复）。</li>
-<li><code>localStorage</code>拥有<code>sessionStorage</code>全部的功能，但不一样的是：如果关闭浏览器关闭，然后重新打开后数据仍然存在。</li>
-</ul>
-<blockquote>
-<p>也就是说它们的不同之处在于：存储在<code>localStorage</code>里面的数据没有过期时间，而存储在<code>sessionStorage</code>里面的数据会在浏览器会话结束（即浏览器关闭时）时被清除。这里面需要特别注意的是：<code>Storage</code>对象中保存的数据都仅限于该页面的协议。也就是说<code>a.com</code>下的<code>Storage</code>是不能被<code>b.com</code>所取到的，浏览器对于每个源使用不同的<code>Storage</code>对象进行独立运行和控制。</p>
-</blockquote>
-<h2 id="关于Storage对象的一些API"><a href="#关于Storage对象的一些API" class="headerlink" title="关于Storage对象的一些API"></a>关于<code>Storage</code>对象的一些API</h2><h4 id="属性"><a href="#属性" class="headerlink" title="属性"></a>属性</h4><ul>
-<li><code>Storage.length</code>：获取存储的数据项数量。</li>
-</ul>
-<h4 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h4><ul>
-<li><code>Storage.key(n)</code>：返回存储中的第n个键名。</li>
-<li><code>Storage.getItem(key)</code> ：从存储中获取值</li>
-<li><code>Storage.setItem(key,value)</code>：在存储中设置值</li>
-<li><code>Storage.removeItem(key)</code>：删除某项记录</li>
-<li><code>Storage.clear()</code>：删除全部记录</li>
-</ul>
-<h2 id="以localStorage为例详细介绍"><a href="#以localStorage为例详细介绍" class="headerlink" title="以localStorage为例详细介绍"></a>以<code>localStorage</code>为例详细介绍</h2><h4 id="判断浏览器是否支持本地存储"><a href="#判断浏览器是否支持本地存储" class="headerlink" title="判断浏览器是否支持本地存储"></a>判断浏览器是否支持本地存储</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="built_in">window</span>.localStorage)&#123;</span><br><span class="line">	alert(<span class="string">'This browser supports localStorage'</span>);</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">	alert(<span class="string">'This browser does NOT support localStorage'</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h4 id="本地存储赋值的3种方式："><a href="#本地存储赋值的3种方式：" class="headerlink" title="本地存储赋值的3种方式："></a>本地存储赋值的3种方式：</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">window</span>.localStorage.a = <span class="string">'value'</span></span><br><span class="line"><span class="built_in">window</span>.localStorage[<span class="string">'a'</span>] = <span class="string">'value'</span></span><br><span class="line"><span class="built_in">window</span>.localStorage.setItem(<span class="string">'a'</span>, <span class="string">'value'</span>)</span><br></pre></td></tr></table></figure>
-<h4 id="本地存储获取值的3种方式"><a href="#本地存储获取值的3种方式" class="headerlink" title="本地存储获取值的3种方式:"></a>本地存储获取值的3种方式:</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">window</span>.localStorage.a</span><br><span class="line"><span class="built_in">window</span>.localStorage[<span class="string">'a'</span>]</span><br><span class="line"><span class="built_in">window</span>.localStorage.getItem(<span class="string">'a'</span>)</span><br></pre></td></tr></table></figure>
-<h4 id="获取本地存储一共存储了多少了属性键值对"><a href="#获取本地存储一共存储了多少了属性键值对" class="headerlink" title="获取本地存储一共存储了多少了属性键值对"></a>获取本地存储一共存储了多少了属性键值对</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">window</span>.localStorage.length</span><br></pre></td></tr></table></figure>
-<h4 id="本地存储移除某个键值对"><a href="#本地存储移除某个键值对" class="headerlink" title="本地存储移除某个键值对"></a>本地存储移除某个键值对</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">window</span>.localStorage.removeItem(<span class="string">'a'</span>)</span><br></pre></td></tr></table></figure>
-<h4 id="一次性移除所有的键值对"><a href="#一次性移除所有的键值对" class="headerlink" title="一次性移除所有的键值对"></a>一次性移除所有的键值对</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">window</span>.localStorage.clear()</span><br></pre></td></tr></table></figure>
-<h4 id="有时候在我们不知道有哪些键的情况下，可以通过key-index-的方法来获取键"><a href="#有时候在我们不知道有哪些键的情况下，可以通过key-index-的方法来获取键" class="headerlink" title="有时候在我们不知道有哪些键的情况下，可以通过key(index)的方法来获取键"></a>有时候在我们不知道有哪些键的情况下，可以通过key(index)的方法来获取键</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">var</span> i=<span class="number">0</span>; i&lt;<span class="built_in">window</span>.localStorage.length; i++) &#123;</span><br><span class="line">	<span class="keyword">var</span> propertyName = <span class="built_in">window</span>.localStorage.key(i)</span><br><span class="line">	<span class="built_in">console</span>.log(propertyName + <span class="string">"----"</span> + <span class="built_in">window</span>.localStorage.getItem(propertyName))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h4 id="可以为本地存储添加事件监听器"><a href="#可以为本地存储添加事件监听器" class="headerlink" title="可以为本地存储添加事件监听器"></a>可以为本地存储添加事件监听器</h4><p><code>Storage</code>事件可以被监听，但是当前页面却收不到，只能是其他页面，也就是说同源下的两个不同页面之间可以通过监听<code>Storage</code>事件进行通信。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="built_in">window</span>.addEventListener)&#123;</span><br><span class="line">	<span class="built_in">window</span>.addEventListener(<span class="string">"storage"</span>,funciton()&#123;<span class="built_in">console</span>.log(<span class="string">'处理本地存储变化'</span>)&#125;,<span class="literal">false</span>)</span><br><span class="line">&#125;<span class="keyword">else</span> <span class="keyword">if</span>(<span class="built_in">window</span>.attachEvent)&#123;</span><br><span class="line">	<span class="built_in">window</span>.attachEvent(<span class="string">"onstorage"</span>,funciton()&#123;<span class="built_in">console</span>.log(<span class="string">'处理本地存储变化'</span>)&#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/browser-storage/" data-id="ckckn9o2g006drvse9zoykfsa" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/angular1-ngClass/" data-id="ckej9qfup005awpq4wgi5jk7l" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
@@ -606,7 +615,7 @@ code&gt;prefernces&gt;keyboard shortcuts
 
 
   <nav id="page-nav">
-    <a class="extend prev" rel="prev" href="/page/59/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/58/">58</a><a class="page-number" href="/page/59/">59</a><span class="page-number current">60</span><a class="page-number" href="/page/61/">61</a><a class="page-number" href="/page/62/">62</a><span class="space">&hellip;</span><a class="page-number" href="/page/65/">65</a><a class="extend next" rel="next" href="/page/61/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/59/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/58/">58</a><a class="page-number" href="/page/59/">59</a><span class="page-number current">60</span><a class="page-number" href="/page/61/">61</a><a class="page-number" href="/page/62/">62</a><span class="space">&hellip;</span><a class="page-number" href="/page/66/">66</a><a class="extend next" rel="next" href="/page/61/">Next &raquo;</a>
   </nav>
 </section>
 

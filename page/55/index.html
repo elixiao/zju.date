@@ -54,6 +54,128 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-ssh-login-without-password" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/ssh-login-without-password/" class="article-date">
+  <time datetime="2016-05-13T13:16:37.000Z" itemprop="datePublished">2016-05-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/ssh-login-without-password/">SSH免密码远程登录</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>用SSH免密码远程登录总共分三步：</p>
+<ol>
+<li><p>第一步：在本地用 <code>ssh-keygen</code> 生成公钥和私钥</p>
+</li>
+<li><p>第二步：将公钥拷贝到远程服务器的 <code>.ssh/authorized_key</code> 目录下</p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cat ~/.ssh/id_rsa.pub | ssh username@domain.com <span class="string">"umask 077; mkdir -p .ssh ; cat &gt;&gt; .ssh/authorized_keys"</span></span><br><span class="line"><span class="comment"># 或者</span></span><br><span class="line">ssh-copy-id -i ~/.ssh/id_rsa.pub remote-host</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>第三步：登录</p>
+</li>
+</ol>
+<p>有时候我们用 ssh 远程免密码登录时会遇到 authorized 都设置好了，但是依然需要输入密码，这个时候一定要检查文件的权限：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls -al</span><br></pre></td></tr></table></figure>
+<p>我把.ssh目录权限设置为：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod 755 .ssh</span><br></pre></td></tr></table></figure>
+<p>再把authorized_keys权限设为：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod 644 authorized_keys</span><br></pre></td></tr></table></figure>
+<p>这样再访问就没问题啦！</p>
+<!--用ssh命令通过第二台服务器直接连接到第三台服务器：
+ssh $SERVER_A
+ssh $SERVER_B
+ssh -t $SERVER_A ssh $SERVER_B
+firewall-cmd --zone=public --remove-port=1234/tcp
+firewall-cmd --permanent --zone=public --add-port=1235/tcp
+firewall-cmd --reload
+nc -z -v -w 2 42.96.248.197 9300
+nc -v -w 42.96.248.197 -i 3901-3905
+nc -z localhost 80-100
+nc -z -v localhost 9200
+nc 10.25.109.15 9200
+nc -vn 42.96.248.197 22
+nc -vnz -w 1 42.96.248.197 1-30
+nc -vnz -w 1 127.0.0.1 1-30-->
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/ssh-login-without-password/" data-id="ckej9qgb200vowpq439agagnb" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-mongodb-notes" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/mongodb-notes/" class="article-date">
+  <time datetime="2016-05-13T07:10:45.000Z" itemprop="datePublished">2016-05-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/mongodb-notes/">mongodb学习笔记</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <h2 id="创建数据"><a href="#创建数据" class="headerlink" title="创建数据"></a>创建数据</h2><p>插入第一条数据：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt; db.user.insert(&#123;name:<span class="string">'lixiao'</span>&#125;)</span><br><span class="line">WriteResult(&#123; <span class="string">"nInserted"</span> : 1 &#125;)</span><br></pre></td></tr></table></figure>
+<p>这个时候数据库被创建了：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt; show dbs;</span><br><span class="line"><span class="built_in">local</span>  0.000GB</span><br><span class="line"><span class="built_in">test</span>   0.000GB</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/mongodb-notes/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/mongodb-notes/" data-id="ckej9qg6100omwpq4ojjp0e8z" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-css-notes" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/css-notes/" class="article-date">
@@ -98,7 +220,7 @@
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/css-notes/" data-id="ckckn9o3i0082rvse9xfjywap" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/css-notes/" data-id="ckej9qfw90089wpq4twt09kwh" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CSS/">CSS</a></li></ul>
 
@@ -150,7 +272,7 @@
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/webpack-notes/" data-id="ckckn9old00xrrvsen7tq97t4" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/webpack-notes/" data-id="ckej9qgdh00ywwpq49eqyop2c" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
@@ -200,7 +322,7 @@
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/css-offline-effect/" data-id="ckckn9o3k0086rvsej6xx49ug" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/css-offline-effect/" data-id="ckej9qfwa008bwpq4jb8g3zj9" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CSS/">CSS</a></li></ul>
 
@@ -252,7 +374,7 @@
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/javascript-function-decorator/" data-id="ckckn9o9f00iervsetseykhwr" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/javascript-function-decorator/" data-id="ckej9qg2800ipwpq4kxnnpkhm" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
@@ -301,7 +423,7 @@
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/angular-directives/" data-id="ckckn9o0p003urvse6lllw9zg" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/angular-directives/" data-id="ckej9qfto003uwpq4xol6exr3" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
@@ -351,7 +473,7 @@
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/javascript-tips/" data-id="ckckn9o9r00iyrvseiz4xresx" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/javascript-tips/" data-id="ckej9qg2q00jhwpq49xsv266a" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
@@ -399,7 +521,7 @@
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/javascript-iife/" data-id="ckckn9o9i00iirvse52yugqmx" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/javascript-iife/" data-id="ckej9qg2g00j3wpq4pbkqjelw" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
@@ -452,103 +574,9 @@
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/classify-html-elements/" data-id="ckckn9o32007brvsepcy34i48" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/classify-html-elements/" data-id="ckej9qfvt007ewpq4h58vretd" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/HTML/">HTML</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-javascript-static-variable-and-function" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/javascript-static-variable-and-function/" class="article-date">
-  <time datetime="2016-04-21T13:22:37.000Z" itemprop="datePublished">2016-04-21</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/javascript-static-variable-and-function/">JavaScript中的静态变量和静态函数</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>JavaScript没有静态变量和静态函数，可以通过下面的方式达到类似的效果：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">f</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    f.count = ++f.count || <span class="number">1</span>;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">"f.count = "</span> + f.count)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">f();</span><br><span class="line">f();</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/javascript-static-variable-and-function/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/javascript-static-variable-and-function/" data-id="ckckn9o9k00imrvsegswgj5d2" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-css-box-sizing" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/css-box-sizing/" class="article-date">
-  <time datetime="2016-04-17T13:22:37.000Z" itemprop="datePublished">2016-04-17</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/css-box-sizing/">CSS中的box-sizing</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>默认的盒模型计算公式：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">盒子宽度 = width + padding + border</span><br><span class="line">盒子高度 = height + padding + border</span><br></pre></td></tr></table></figure>
-<p>这就会导致一个问题：设置width:100%的时候，元素会超出父容器。特别是textarea和input标签等。用了：</p>
-<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">box-sizing</span>: <span class="selector-tag">border-box</span></span><br></pre></td></tr></table></figure>
-<p>之后，width和height就是把padding和border计算在内的的值了，非常方便。</p>
-<p>参考文章：<a href="https://css-tricks.com/box-sizing/" target="_blank" rel="noopener">https://css-tricks.com/box-sizing/</a></p>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/css-box-sizing/" data-id="ckckn9o3h0080rvse385t4pxk" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CSS/">CSS</a></li></ul>
 
     </footer>
   </div>
@@ -560,7 +588,7 @@
 
 
   <nav id="page-nav">
-    <a class="extend prev" rel="prev" href="/page/54/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/53/">53</a><a class="page-number" href="/page/54/">54</a><span class="page-number current">55</span><a class="page-number" href="/page/56/">56</a><a class="page-number" href="/page/57/">57</a><span class="space">&hellip;</span><a class="page-number" href="/page/65/">65</a><a class="extend next" rel="next" href="/page/56/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/54/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/53/">53</a><a class="page-number" href="/page/54/">54</a><span class="page-number current">55</span><a class="page-number" href="/page/56/">56</a><a class="page-number" href="/page/57/">57</a><span class="space">&hellip;</span><a class="page-number" href="/page/66/">66</a><a class="extend next" rel="next" href="/page/56/">Next &raquo;</a>
   </nav>
 </section>
 
