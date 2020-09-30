@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="作为一名前端，肯定会接触到「同源」和「同站」这两个名词，比如：  Ajax 请求会受到浏览器同源策略的制约 Cookie 的 SameSite 属性表示该 Cookie 是否能被跨站发送  那究竟什么是同源（Same-Origin）、什么是同站（Same-Site）呢？在弄清楚这两个概念之前，必须先弄清楚「源」和「站」的区别：">
+<meta name="keywords" content="JavaScript">
+<meta property="og:type" content="article">
+<meta property="og:title" content="彻底搞懂「同源Same-Origin」和「同站Same-Site」的区别">
+<meta property="og:url" content="https://zju.date/samesite-vs-sameorigin/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="作为一名前端，肯定会接触到「同源」和「同站」这两个名词，比如：  Ajax 请求会受到浏览器同源策略的制约 Cookie 的 SameSite 属性表示该 Cookie 是否能被跨站发送  那究竟什么是同源（Same-Origin）、什么是同站（Same-Site）呢？在弄清楚这两个概念之前，必须先弄清楚「源」和「站」的区别：">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://img.zlib.cn/blog/same-origin.png">
+<meta property="og:image" content="http://img.zlib.cn/blog/same-site.png">
+<meta property="og:updated_time" content="2020-09-30T01:26:44.958Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="彻底搞懂「同源Same-Origin」和「同站Same-Site」的区别">
+<meta name="twitter:description" content="作为一名前端，肯定会接触到「同源」和「同站」这两个名词，比如：  Ajax 请求会受到浏览器同源策略的制约 Cookie 的 SameSite 属性表示该 Cookie 是否能被跨站发送  那究竟什么是同源（Same-Origin）、什么是同站（Same-Site）呢？在弄清楚这两个概念之前，必须先弄清楚「源」和「站」的区别：">
+<meta name="twitter:image" content="http://img.zlib.cn/blog/same-origin.png">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-samesite-vs-sameorigin" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/samesite-vs-sameorigin/" class="article-date">
+  <time datetime="2020-09-24T02:58:08.000Z" itemprop="datePublished">2020-09-24</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      彻底搞懂「同源Same-Origin」和「同站Same-Site」的区别
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>作为一名前端，肯定会接触到「同源」和「同站」这两个名词，比如：</p>
+<ul>
+<li>Ajax 请求会受到浏览器同源策略的制约</li>
+<li>Cookie 的 SameSite 属性表示该 Cookie 是否能被跨站发送</li>
+</ul>
+<p>那究竟什么是同源（Same-Origin）、什么是同站（Same-Site）呢？在弄清楚这两个概念之前，必须先弄清楚「源」和「站」的区别：</p>
+<a id="more"></a>
+<h2 id="源（Origin）"><a href="#源（Origin）" class="headerlink" title="源（Origin）"></a>源（Origin）</h2><blockquote>
+<p>源（origin）= 协议（scheme）+ 主机名（hostname）+ 端口号（port）</p>
+</blockquote>
+<p><img src="http://img.zlib.cn/blog/same-origin.png" alt="源"></p>
+<p><strong>举例</strong>：</p>
+<p>假如网址是： </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://www.example.com:443/foo</span><br></pre></td></tr></table></figure>
+<p>那么该网址的源就是：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://www.example.com:443</span><br></pre></td></tr></table></figure>
+<h2 id="站（Site）"><a href="#站（Site）" class="headerlink" title="站（Site）"></a>站（Site）</h2><blockquote>
+<p>站（site）= eTLD+1</p>
+</blockquote>
+<p><img src="http://img.zlib.cn/blog/same-site.png" alt="站"></p>
+<p><code>TLD</code> 表示顶级域名，例如 <code>.com</code>、<code>.org</code>、<code>.cn</code> 等等，顶级域名并不是一成不变的，会随着时间推移增加，例如前段时间就增加了 <code>.gay</code> 顶级域名，可以说是广大同性交友爱好者的福音，目前所有顶级域名被收录到了<a href="https://www.iana.org/domains/root/db" target="_blank" rel="noopener">顶级域名数据库</a>里面。</p>
+<p><code>TLD+1</code> 表示顶级域名和它前面二级域名的组合，例如网址是：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://www.example.com:443/foo</span><br></pre></td></tr></table></figure>
+<p>那么：</p>
+<ul>
+<li><code>TLD</code> 是 <code>.com</code></li>
+<li><code>TLD+1</code> 是 <code>example.com</code></li>
+</ul>
+<p>但是，这种表示方式是有缺陷的，例如对于下面的网址：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://www.example.com.cn</span><br></pre></td></tr></table></figure>
+<p>如果按照上面的规则，它的 <code>TLD+1</code> 就是 <code>com.cn</code>，并不能表示这个站点，真正能表示这个站点的应该是 <code>example.com.cn</code> 才对，所以衍生出 <code>eTLD</code> 的概念，即有效顶级域名：</p>
+<ul>
+<li><code>eTLD</code>：<code>com.cn</code></li>
+<li><code>eTLD+1</code>：<code>example.com.cn</code></li>
+</ul>
+<p><code>eTLD</code> 由 Mozilla 维护在<a href="https://publicsuffix.org/list/public_suffix_list.dat" target="_blank" rel="noopener">公共后缀列表</a>（Public Suffix List）中，而「站」的定义就是这里的 <code>eTLD+1</code>。</p>
+<p>有了上面的解释之后，相信大家对「源」和「站」的概念都理解了，接下来就解释一下「同源」和「同站」的含义：</p>
+<h2 id="同源和同站"><a href="#同源和同站" class="headerlink" title="同源和同站"></a>同源和同站</h2><ul>
+<li>同源：协议（scheme）+ 主机名（hostname）+ 端口号（port） 完全一致。</li>
+<li>同站：<code>eTLD+1</code> 完全一致。</li>
+</ul>
+<p>以 <code>https://www.example.com:443</code> 为例，下面给出了一系列的网址是否与其同源或同站的解释：    </p>
+<table>
+<thead>
+<tr>
+<th>对比网址</th>
+<th>是否同源</th>
+<th>是否同站</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>https://<strong><a href="http://www.other.com" target="_blank" rel="noopener">www.other.com</a></strong>:443</td>
+<td>否，因为 hostname 不同</td>
+<td>否，因为 eTLD 不同</td>
+</tr>
+<tr>
+<td>https://<strong>example.com</strong>:443</td>
+<td>否，因为 hostname 不同</td>
+<td><strong>是，子域名不影响 </strong></td>
+</tr>
+<tr>
+<td>https://<strong>login</strong>.example.com:443</td>
+<td>否，因为 hostname 不同</td>
+<td><strong>是，子域名不影响 </strong></td>
+</tr>
+<tr>
+<td><strong>http</strong>://<a href="http://www.example.com:443" target="_blank" rel="noopener">www.example.com:443</a></td>
+<td>否，因为 scheme 不同</td>
+<td><strong>是，协议不影响 </strong></td>
+</tr>
+<tr>
+<td><a href="https://www.example.com" target="_blank" rel="noopener">https://www.example.com</a>: <strong>80</strong></td>
+<td>否，因为 port 不同</td>
+<td><strong>是，端口号不影响 </strong></td>
+</tr>
+<tr>
+<td><strong><a href="https://www.example.com:443" target="_blank" rel="noopener">https://www.example.com:443</a></strong></td>
+<td><strong>是，显式完全匹配</strong></td>
+<td><strong>是，完全匹配 </strong></td>
+</tr>
+<tr>
+<td><strong><a href="https://www.example.com" target="_blank" rel="noopener">https://www.example.com</a></strong></td>
+<td><strong>是，隐式完全匹配 (https端口号是443)</strong></td>
+<td><strong>是，端口号不影响</strong></td>
+</tr>
+</tbody>
+</table>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/samesite-vs-sameorigin/" data-id="ckfopmy2u0004bfq43kxsykd8" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/xss-attack/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">XSS攻防实战</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dart/">Dart</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Elasticsearch/">Elasticsearch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Flutter/">Flutter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

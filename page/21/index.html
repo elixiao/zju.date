@@ -54,6 +54,165 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-angular-component-communication" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/angular-component-communication/" class="article-date">
+  <time datetime="2018-04-28T10:17:08.000Z" itemprop="datePublished">2018-04-28</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/angular-component-communication/">Angular 兄弟组件通信</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>在 Angular 中，父子组件可以通过 Input 和 Output 进行通信，从而实现父组件向子组件传递数据和子组件向父组件输出数据，那兄弟组件 A 和组件 B 之间如何进行通信呢？</p>
+<p>例如 sidebar 和 sidebar-toggle 两个并列的组件，点击 sidebar-toggle 的时候希望 sidebar 能够展开。有三种方法可以实现这种效果：</p>
+<ol>
+<li><p>将 sidebar 的引用传递给 sidebar-toggle</p>
+<p><code>app.component.html</code></p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">app-side-bar-toggle</span> [<span class="attr">sideBar</span>]=<span class="string">"sideBar"</span>&gt;</span><span class="tag">&lt;/<span class="name">app-side-bar-toggle</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">app-side-bar</span> #<span class="attr">sideBar</span>&gt;</span><span class="tag">&lt;/<span class="name">app-side-bar</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p><code>side-bar-toggle.component.ts</code></p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span>(&#123;</span><br><span class="line">  selector: <span class="string">'app-side-bar-toggle'</span>,</span><br><span class="line">  templateUrl: <span class="string">'./side-bar-toggle.component.html'</span>,</span><br><span class="line">  styleUrls: [<span class="string">'./side-bar-toggle.component.css'</span>]</span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> SideBarToggleComponent &#123;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Input</span>() sideBar: SideBarComponent;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@HostListener</span>(<span class="string">'click'</span>)</span><br><span class="line">  click() &#123;</span><br><span class="line">    <span class="keyword">this</span>.sideBar.toggle();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/angular-component-communication/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/angular-component-communication/" data-id="ckej9qfte003fwpq40hgrhlmw" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-batch-chmod" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/batch-chmod/" class="article-date">
+  <time datetime="2018-04-26T01:26:19.000Z" itemprop="datePublished">2018-04-26</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/batch-chmod/">批量chmod</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在 Mac 上把项目移动到 U 盘上的时候，发现文件的读写权限变了，<code>git status</code> 发现一堆文件发生变化，<code>git diff</code> 报：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">old mode 100644</span><br><span class="line">new mode 100755</span><br></pre></td></tr></table></figure>
+<p>后来发现是 U 盘格式跟 Mac 不兼容，于是只能移动回来，再用磁盘工具格式化成 Mac OS 扩展格式。但是怎么把这些目录和文件的读写权限给还原呢，网上找了一个非常有效的<a href="https://stackoverflow.com/questions/3740152/how-do-i-change-permissions-for-a-folder-and-all-of-its-subfolders-and-files-in" target="_blank" rel="noopener">办法</a>：</p>
+<ol>
+<li><p>把所有目录改成 755 (drwxr-xr-x):</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find /opt/lampp/htdocs -<span class="built_in">type</span> d -<span class="built_in">exec</span> chmod 755 &#123;&#125; \;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>把所有文件改成 644 (-rw-r–r–):</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find /opt/lampp/htdocs -<span class="built_in">type</span> f -<span class="built_in">exec</span> chmod 644 &#123;&#125; \;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/batch-chmod/" data-id="ckej9qfv20060wpq411y0pbz5" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-mongodb-index" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/mongodb-index/" class="article-date">
+  <time datetime="2018-04-23T13:35:23.000Z" itemprop="datePublished">2018-04-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/mongodb-index/">MongoDB索引</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <h2 id="MongoDB索引"><a href="#MongoDB索引" class="headerlink" title="MongoDB索引"></a>MongoDB索引</h2><p>数据库索引就好比书籍的目录，有了目录就能快速定位章节内容，而不需要翻阅全书，使得查找速度提高几个数量级。因此创建索引能够极大提升查询速度：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">db.users.createIndex(&#123;<span class="attr">createdAt</span>: <span class="number">1</span>&#125;) <span class="comment">// 按创建时间正序</span></span><br><span class="line">db.users.createIndex(&#123;<span class="attr">createdAt</span>: <span class="number">-1</span>&#125;) <span class="comment">// 按创建时间倒序</span></span><br><span class="line">db.users.createIndex(&#123;<span class="attr">company</span>: <span class="number">1</span>, <span class="attr">createdAt</span>: <span class="number">-1</span>&#125;) <span class="comment">// 组合索引</span></span><br><span class="line">db.users.createIndex(&#123;<span class="attr">createdAt</span>: <span class="number">-1</span>&#125;,&#123;<span class="attr">background</span>: <span class="literal">true</span>&#125;) <span class="comment">// 后台创建索引</span></span><br><span class="line">db.users.createIndex(&#123;<span class="attr">phone</span>: NumberInt(<span class="number">1</span>)&#125;,&#123;<span class="attr">background</span>: <span class="literal">true</span>&#125;) <span class="comment">// 指定为int类型，默认是double</span></span><br><span class="line">db.users.createIndex(&#123;<span class="attr">draweeId</span>: NumberInt(<span class="number">1</span>)&#125;,&#123;<span class="attr">sparse</span>: <span class="literal">true</span>, <span class="attr">background</span>: <span class="literal">true</span>&#125;) <span class="comment">// 指定为稀疏索引</span></span><br></pre></td></tr></table></figure>
+<p>在前台创建索过程中会锁定数据库，会导致其它操作无法进行数据读写，而在后台创建索引时，会定期释放写锁，从而保证其它操作的运行，但是后台操作会在耗时更长，尤其是在频繁进行写入的服务器上。创建完毕之后可以查看索引：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">db.users.getIndexes() <span class="comment">// 查看索引</span></span><br><span class="line">db.users.getIndexKeys() <span class="comment">// 查看索引字段</span></span><br><span class="line">db.users.totalIndexSize() <span class="comment">// 查看索引大小</span></span><br><span class="line">db.getCollection(<span class="string">'users'</span>).stats() <span class="comment">// 查看表相关信息</span></span><br></pre></td></tr></table></figure>
+<p>索引创建之后可以被删除：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">db.users.dropIndex(<span class="string">"createdAt_-1"</span>) <span class="comment">// 删除指定索引</span></span><br><span class="line">db.users.dropIndexes() <span class="comment">// 删除全部索引（除了_id索引）</span></span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/mongodb-index/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/mongodb-index/" data-id="ckej9qg5x00ogwpq4anh3qph8" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MongoDB/">MongoDB</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-yarn-registry" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/yarn-registry/" class="article-date">
@@ -416,155 +575,6 @@
     <footer class="article-footer">
      <a data-url="https://zju.date/openvpn-nopull/" data-id="ckej9qg8d00rvwpq4ed5l72fo" class="article-share-link">Share</a>
      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-speed-measure-webpack-plugin" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/speed-measure-webpack-plugin/" class="article-date">
-  <time datetime="2018-04-18T11:11:07.000Z" itemprop="datePublished">2018-04-18</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/speed-measure-webpack-plugin/">计算 webpack 插件/加载器的运行时间</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>webpack 有时候打包很慢，用了很多 plugin 和 loader，想知道到底是哪个环节慢，下面这个插件可以计算 plugin 和 loader 的耗时。</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn add -D speed-measure-webpack-plugin</span><br></pre></td></tr></table></figure>
-<p>使用方法很简单，把 webpack 配置对象包裹起来即可：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> SpeedMeasurePlugin = <span class="built_in">require</span>(<span class="string">"speed-measure-webpack-plugin"</span>);</span><br><span class="line"><span class="keyword">const</span> smp = <span class="keyword">new</span> SpeedMeasurePlugin();</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> webpackConfig = smp.wrap(&#123;</span><br><span class="line">  entry: &#123;</span><br><span class="line">    app: [<span class="string">"./app.js"</span>]</span><br><span class="line">  &#125;,</span><br><span class="line">  output: <span class="string">"./public"</span>,</span><br><span class="line">  <span class="built_in">module</span>: &#123;</span><br><span class="line">    rules: [</span><br><span class="line">      &#123;</span><br><span class="line">        test: <span class="regexp">/\.js$/</span>,</span><br><span class="line">        use: [&#123; <span class="attr">loader</span>: <span class="string">"babel-loader"</span> &#125;]</span><br><span class="line">      &#125;</span><br><span class="line">    ]</span><br><span class="line">  &#125;,</span><br><span class="line">  plugins: [</span><br><span class="line">    <span class="keyword">new</span> MyPlugin(),</span><br><span class="line">    <span class="keyword">new</span> MyOtherPlugin()</span><br><span class="line">  ]</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/speed-measure-webpack-plugin/" data-id="ckej9qgay00vhwpq4sjowy5lv" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-shorten-angular-import" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/shorten-angular-import/" class="article-date">
-  <time datetime="2018-04-16T09:36:12.000Z" itemprop="datePublished">2018-04-16</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/shorten-angular-import/">缩短 angular 中文件的引用</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>常见的代码：</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; ConstantService &#125; <span class="keyword">from</span> <span class="string">'../../../core/services/constant.service'</span></span><br></pre></td></tr></table></figure>
-<p>有点长，能不能短点？例如：</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; ConstantService &#125; <span class="keyword">from</span> <span class="string">'@app/core/services/constant.service'</span></span><br></pre></td></tr></table></figure>
-<p>可以配置 <code>tsconfig</code> 文件：</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"compilerOptions"</span>: &#123;</span><br><span class="line">    ...</span><br><span class="line">    "baseUrl": "./src",</span><br><span class="line">    "paths": &#123;</span><br><span class="line">      "@datorama/utils/*": ["app/utils/*"],</span><br><span class="line">      "@datorama/pipes/*": ["app/pipes/*"]</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/shorten-angular-import/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/shorten-angular-import/" data-id="ckej9qgap00v4wpq4q9kv1hck" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-angular-components" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/angular-components/" class="article-date">
-  <time datetime="2018-04-13T07:49:39.000Z" itemprop="datePublished">2018-04-13</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/angular-components/">Angular中的组件</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>组件的概念最近很流行，在各大框架中都有这个概念，那究竟什么是组件？</p>
-<blockquote>
-<p>组件是一块封装好的用户界面。</p>
-</blockquote>
-<p>利用组件，用户可以把大且复杂的界面拆分为小而简单的区域。就好比把复杂逻辑拆分成多个函数一样。当组件多了之后，应用就变成组件树的结构了，大部分场景下父子组件需要交互（传递数据），在 angular 中是通过输入属性（Input properties）和输出事件（Output events），父组件传递输入参数，子组件输出事件。</p>
-<p>这样以来，数据流就非常清晰了，但也带来一些问题：</p>
-<ul>
-<li>哪个组件负责向后台请求数据？</li>
-<li>哪个组件负责保存用户数据？</li>
-</ul>
-<p>组件跟纯函数一样，接收 <code>@Input</code> ，返回 <code>@Output</code>，单一职责，负责页面渲染。</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;app-product-item </span><br><span class="line">  [item]=<span class="string">"itemData"</span></span><br><span class="line">  (select)=<span class="string">"selectProduct($event)"</span>&gt;&lt;<span class="regexp">/app-product-item&gt;</span></span><br></pre></td></tr></table></figure>
-<p>那到底如何管理组件的状态，例如某组件想获取其子组件的子组件的数据，该如何传递呢？</p>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/angular-components/" data-id="ckej9qftk003mwpq4ph2vvn89" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
     </footer>
   </div>
   

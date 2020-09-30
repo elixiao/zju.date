@@ -54,6 +54,199 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-nginx-https" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/nginx-https/" class="article-date">
+  <time datetime="2017-03-24T02:02:07.000Z" itemprop="datePublished">2017-03-24</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/nginx-https/">nginx 添加 https 支持</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>为 nginx 配置 https 支持，只需如下两步：</p>
+<h2 id="生成证书"><a href="#生成证书" class="headerlink" title="生成证书"></a>生成证书</h2><ol>
+<li><p>进入目录</p>
+<p> 首先进入你想创建证书和私钥的目录，例如：</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ cd /usr/local/nginx/conf</span><br><span class="line">$ ls</span><br><span class="line">fastcgi.conf           koi-utf                nginx.conf             uwsgi_params</span><br><span class="line">fastcgi.conf.default   koi-win                nginx.conf.default     uwsgi_params.default</span><br><span class="line">fastcgi_params         mime.types             scgi_params            win-utf</span><br><span class="line">fastcgi_params.default mime.types.default     scgi_params.default</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>生成私钥</p>
+<p> 然后创建服务器私钥（KEY），命令会让你输入一个口令，例如：lixiao：</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ openssl genrsa -des3 -out server.key 1024</span><br><span class="line">Generating RSA private key, 1024 bit long modulus</span><br><span class="line">..........++++++</span><br><span class="line">................++++++</span><br><span class="line">e is 65537 (0x10001)</span><br><span class="line">Enter pass phrase for server.key:</span><br><span class="line">Verifying - Enter pass phrase for server.key:</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>根据私钥创建证书</p>
+<p> 然后创建签名请求的证书（CSR）：</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">$ openssl req -new -key server.key -out server.csr</span><br><span class="line">Enter pass phrase for server.key:</span><br><span class="line">You are about to be asked to enter information that will be incorporated</span><br><span class="line">into your certificate request.</span><br><span class="line">What you are about to enter is what is called a Distinguished Name or a DN.</span><br><span class="line">There are quite a few fields but you can leave some blank</span><br><span class="line">For some fields there will be a default value,</span><br><span class="line">If you enter &apos;.&apos;, the field will be left blank.</span><br><span class="line">-----</span><br><span class="line">Country Name (2 letter code) []:cn</span><br><span class="line">State or Province Name (full name) []:jiangsu</span><br><span class="line">Locality Name (eg, city) []:nanjing</span><br><span class="line">Organization Name (eg, company) []:lx</span><br><span class="line">Organizational Unit Name (eg, section) []:</span><br><span class="line">Common Name (eg, fully qualified host name) []:.</span><br><span class="line">Email Address []:</span><br><span class="line"></span><br><span class="line">Please enter the following &apos;extra&apos; attributes</span><br><span class="line">to be sent with your certificate request</span><br><span class="line">A challenge password []:LiXiao520$</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>去除口令</p>
+</li>
+</ol>
+<pre><code>在加载SSL支持的Nginx并使用上述私钥时除去必须的口令：
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ cp server.key server.key.org</span><br><span class="line">$ openssl rsa -in server.key.org -out server.key</span><br></pre></td></tr></table></figure>
+</code></pre><ol>
+<li><p>标记证书</p>
+<p> 最后标记证书使用上述私钥和CSR：</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ openssl x509 -req -days 365 -in server.csr -signkey server.key -out server.crt</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>总结一下，上述5个步骤：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mkdir your_dir</span><br><span class="line">cd your_dir</span><br><span class="line">openssl genrsa -des3 -out server.key 1024 # 会提示输入key</span><br><span class="line">openssl req -new -key server.key -out server.csr # 会提示输入组织信息 CN BeiJing HaiDian XXX</span><br><span class="line">cp server.key server.key.org</span><br><span class="line">openssl rsa -in server.key.org -out server.key </span><br><span class="line">openssl x509 -req -days 365 -in server.csr -signkey server.key -out server.crt</span><br></pre></td></tr></table></figure>
+<h2 id="配置nginx"><a href="#配置nginx" class="headerlink" title="配置nginx"></a>配置nginx</h2><p>修改Nginx配置文件，让其包含新标记的证书和私钥：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    server_name YOUR_DOMAINNAME_HERE;</span><br><span class="line">    listen 443;</span><br><span class="line">    ssl on;</span><br><span class="line">    ssl_certificate /usr/local/nginx/conf/server.crt;</span><br><span class="line">    ssl_certificate_key /usr/local/nginx/conf/server.key;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>重启nginx即可。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/nginx-https/" data-id="ckej9qg7100q6wpq4st22b5sg" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-mongodb-advance-query" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/mongodb-advance-query/" class="article-date">
+  <time datetime="2017-03-24T01:06:07.000Z" itemprop="datePublished">2017-03-24</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/mongodb-advance-query/">mongodb 高级查询</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>如果 mongodb 提供的查询语句无法满足业务需求，最后可以用杀手锏： <code>$where</code> 高级查询。</p>
+<blockquote>
+<p><code>$where</code> 操作符功能强大且灵活，它可以将 JavaScript 表达式的字符串或函数作为查询语句的一部分。在 JavaScript 表达式和函数中，可以使用this或obj来引用当前操作的文档，当表达式或函数返回值为true时，会返回当前的文档。</p>
+</blockquote>
+<p>例如文档格式是：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"username"</span>: <span class="string">"brian"</span>,</span><br><span class="line">  <span class="attr">"addresses': [</span></span><br><span class="line"><span class="attr">    &#123;</span></span><br><span class="line">       "address": "500 Grant Street",</span><br><span class="line">       "city": "Pittsburgh",</span><br><span class="line">       "state": "PA",</span><br><span class="line">       "zip": "15219",</span><br><span class="line">       "country": "US"</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">"address"</span>: <span class="string">"405 Spray Ave"</span>,</span><br><span class="line">      <span class="attr">"city"</span>: <span class="string">"Banff"</span>,</span><br><span class="line">      <span class="attr">"state"</span>: <span class="string">"AB"</span>,</span><br><span class="line">      <span class="attr">"zip"</span>: <span class="string">"T1L1J4"</span>,</span><br><span class="line">      <span class="attr">"country"</span>: <span class="string">"CA"</span></span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol>
+<li><p>查询用户名长度少于4个字符的文档：</p>
+ <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">db.users.find(&#123; <span class="attr">$where</span>: <span class="string">'this.username.length &lt; 4'</span> &#125;)</span><br></pre></td></tr></table></figure>
+<p> 这里的 this 就代表文档。</p>
+</li>
+<li><p>查询子文档address里面state字段长度超过2的文档：</p>
+ <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">db.users.find(&#123;  </span><br><span class="line">  $where: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="keyword">this</span>.addresses.length; i++) &#123;</span><br><span class="line">      <span class="keyword">var</span> address = <span class="keyword">this</span>.addresses[i];</span><br><span class="line">      <span class="keyword">if</span>(address.state.length &gt; <span class="number">2</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>双乾 签约短信</p>
+<p>百隆原始数据<br><code>`</code><br>{<br>  method: ‘fastpayOpenToken2BySms’,<br>  encryptId: ‘000010000000394’,<br>  apiVersion: 1,<br>  txnDate: 1587104706086,<br>  mid: ‘000010000000394’,<br>  agencyType: ‘kjthun’,<br>  idcard: ‘320324198905203717’,<br>  accountNumber: ‘6229180051095869’,<br>  holderName: ‘李潇’,<br>  tel: ‘13151560670’,<br>  cvv2: ‘663’,<br>  expired: ‘2103’,<br>  bizOrderNumber: ‘5e994bc2506be6e5de7e2b9d’<br>}<br>加密串 {“content”:”{\”method\”:\”fastpayOpenToken2BySms\”,\”encryptId\”:\”000010000000394\”,\”apiVersion\”:1,\”txnDate\”:1587104706086,\”mid\”:\”000010000000394\”,\”agencyType\”:\”kjthun\”,\”idcard\”:\”320324198905203717\”,\”accountNumber\”:\”6229180051095869\”,\”holderName\”:\”李潇\”,\”tel\”:\”13151560670\”,\”cvv2\”:\”663\”,\”expired\”:\”2103\”,\”bizOrderNumber\”:\”5e994bc2506be6e5de7e2b9d\”}”,”key”:”3d080af72795879c1aeb7e88ac678b7b”}<br>md5值 003bbb666924cf01a543012c4deaa5b0<br>{<br>  result: {<br>    code: ‘000000’,<br>    data: {<br>      bizOrderNumber: ‘5e994bc2506be6e5de7e2b9d’,<br>      isSign: ‘f’,<br>      openUrl: null<br>    },<br>    message: ‘获取开通短信成功’<br>  },<br>  sign: ‘5dad8a855a4e0b9213eae9a7d21105a8’<br>}</p>
+<p>收到银行短信<br>【中信银行信用卡】验证码557089，您正在使用尾号5869信用卡进行快捷签约，请勿向他人泄露您的验证码。</p>
+<p>签约确认：</p>
+<p>双乾原始数据 {<br>  method: ‘fastpayOpenToken2CheckSms’,<br>  encryptId: ‘000010000000394’,<br>  apiVersion: 1,<br>  txnDate: 1587104832099,<br>  mid: ‘000010000000394’,<br>  agencyType: ‘kjthun’,<br>  idcard: ‘320324198905203717’,<br>  accountNumber: ‘6229180051095869’,<br>  holderName: ‘李潇’,<br>  tel: ‘13151560670’,<br>  cvv2: ‘663’,<br>  expired: ‘2103’,<br>  smsCode: ‘557089’,<br>  bizOrderNumber: ‘5e994bc2506be6e5de7e2b9d’<br>}<br>加密串 {“content”:”{\”method\”:\”fastpayOpenToken2CheckSms\”,\”encryptId\”:\”000010000000394\”,\”apiVersion\”:1,\”txnDate\”:1587104832099,\”mid\”:\”000010000000394\”,\”agencyType\”:\”kjthun\”,\”idcard\”:\”320324198905203717\”,\”accountNumber\”:\”6229180051095869\”,\”holderName\”:\”李潇\”,\”tel\”:\”13151560670\”,\”cvv2\”:\”663\”,\”expired\”:\”2103\”,\”smsCode\”:\”557089\”,\”bizOrderNumber\”:\”5e994bc2506be6e5de7e2b9d\”}”,”key”:”3d080af72795879c1aeb7e88ac678b7b”}<br>md5值 e8f4d77fae92b7c287dbb59df5b99ce8<br>{<br>  result: {<br>    code: ‘000000’,<br>    data: {<br>      bizOrderNumber: ‘5e994bc2506be6e5de7e2b9d’,<br>      isSign: ‘t’,<br>      openUrl: null<br>    },<br>    message: ‘确认开卡成功’<br>  },<br>  sign: ‘2110f78985fa26f6130b57b05fdf4ce1’<br>}</p>
+<p>套现</p>
+<p>双乾原始数据 {<br>  method: ‘fastpayPrecreate2’,<br>  encryptId: ‘000600000000346’,<br>  apiVersion: 1,<br>  txnDate: 1587105892796,<br>  mid: ‘000600000000346’,<br>  agencyType: ‘nld01’,<br>  srcAmt: 100,<br>  bizOrderNumber: ‘5e99506401005ee6e5320654’,<br>  accountNumber: ‘6229180051095869’,<br>  tel: ‘13151560670’,<br>  fastpayFee: 0.45,<br>  holderName: ‘李潇’,<br>  idcard: ‘320324198905203717’,<br>  city: ‘南京市’,<br>  cvv2: ‘663’,<br>  expired: ‘2103’,<br>  settAccountNumber: ‘6230520390000820574’,<br>  settAccountTel: ‘15268139013’,<br>  extraFee: 0.5,<br>  notifyUrl: ‘<a href="https://credit.jsonfit.com/callback/shuangqian?type=TX&amp;method=fastpayPrecreate2&#39;" target="_blank" rel="noopener">https://credit.jsonfit.com/callback/shuangqian?type=TX&amp;method=fastpayPrecreate2&#39;</a><br>}<br>最终值 {<br>  content: ‘{“method”:”fastpayPrecreate2”,”encryptId”:”000600000000346”,”apiVersion”:1,”txnDate”:1587105892796,”mid”:”000600000000346”,”agencyType”:”nld01”,”srcAmt”:100,”bizOrderNumber”:”5e99506401005ee6e5320654”,”accountNumber”:”6229180051095869”,”tel”:”13151560670”,”fastpayFee”:0.45,”holderName”:”李潇”,”idcard”:”320324198905203717”,”city”:”南京市”,”cvv2”:”663”,”expired”:”2103”,”settAccountNumber”:”6230520390000820574”,”settAccountTel”:”号码 “,”extraFee”:0.5,”notifyUrl”:”<a href="https://credit.jsonfit.com/callback/shuangqian?type=TX&amp;method=fastpayPrecreate2&quot;}&#39;" target="_blank" rel="noopener">https://credit.jsonfit.com/callback/shuangqian?type=TX&amp;method=fastpayPrecreate2&quot;}&#39;</a>,<br>  sign: ‘3015709c14dacf61dc32416e6075a324’<br>}<br>{<br>  result: {<br>    code: ‘000000’,<br>    data: {<br>      bizOrderNumber: ‘5e99506401005ee6e5320654’,<br>      canUse: ‘t’,<br>      isSign: ‘t’,<br>      openHtml: null,<br>      openUrl: null,<br>      tn: ‘5e99506401005ee6e5320654’,<br>      txnId: 0,<br>      txnStatus: ‘p’<br>    },<br>    message: ‘预下单成功’<br>  },<br>  sign: ‘6b3953dba4ef79f0a481e8e482db657c’<br>}</p>
+<p>确认支付</p>
+<p>第一次是签约短信</p>
+<p>您正在申请开通帮贝钱包，验证码为422044，有效期5分钟，切勿泄露。【中国银联】</p>
+<p>如果短信失效</p>
+<p>{<br>  result: { code: ‘200001’, data: null, message: ‘请求参数错误:签约已失效请重新签约’ },<br>  sign: ‘148938a8ae21a47a6ee88c5cf7254ceb’<br>}</p>
+<p>订单号bizOrderNumber一定要跟上次一致，否则会报错</p>
+<p>{<br>  result: { code: ‘200001’, data: null, message: ‘该订单已提交，请勿重复提交’ },<br>  sign: ‘9f0e5335ff379a31689d399d31279b72’<br>}</p>
+<p>例如用户套现100，<br>fastpayFee: 0.45, // 交易手续费<br>extraFee: 0.5<br>实际入账 100-0.95=99.05</p>
+<p>代还<br>第一次10元 fastpayFee 0.5，则到账9.95，余额9.95<br>第二次10元 fastpayFee 0.46，则到账9.954 总余额19.9<br>实际上是19.904，把最后0.004抹去了，如果是0.005的话会，这就是利润啊！</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/mongodb-advance-query/" data-id="ckej9qg5q00o4wpq4tk51i7l7" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-git-add-remote-repo" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/git-add-remote-repo/" class="article-date">
+  <time datetime="2017-03-23T15:07:07.000Z" itemprop="datePublished">2017-03-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/git-add-remote-repo/">git push 到两个远程仓库</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>首先添加多个远程仓库</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git remote add &lt;name&gt; &lt;url&gt;</span><br></pre></td></tr></table></figure>
+<p>其中，name 表示你要给这个远程库起的名字，url 表示这个库的地址，然后提交到这个远程仓库：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git push &lt;name&gt; &lt;branch&gt;</span><br></pre></td></tr></table></figure>
+<p>其中，name 表示你在上一步给它起的名字，branch 表示某一个分支。比如为仓库添加 github 和 gitlab 两个远程仓库：</p>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/git-add-remote-repo/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/git-add-remote-repo/" data-id="ckej9qfzr00eowpq44brxec7x" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/">Git</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-linux-c" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/linux-c/" class="article-date">
@@ -246,7 +439,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/reverse-ssh/">用ssh建立反向连接</a>
+      <a class="article-title" href="/reverse-ssh/">内网穿透的两种方法</a>
     </h1>
   
 
@@ -258,14 +451,26 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <p>本地开发时，都是在本机上起一个服务，只要是在同一个局域网，其他机器也能访问这个接口。但有时候需要在外网访问，怎么办呢？有两种办法：</p>
+            <p>有时候，我们希望外网能够访问本地 localhost 起的服务，一个比较典型的场景就是小程序开发时，希望在本地接收微信服务器的回调，怎么办呢？这里总结了内网穿透的两种方法：</p>
 <ol>
-<li>通过软件<a href="https://ngrok.com/" target="_blank" rel="noopener">ngrock</a></li>
+<li>通过软件 <a href="https://ngrok.com/" target="_blank" rel="noopener">ngrock</a></li>
 <li>通过 ssh 反向代理</li>
 </ol>
-<p>ngrock 功能很强大，使用起来也比较简单，去<a href="https://ngrok.com/" target="_blank" rel="noopener">官网</a>按照 demo 操作就行。</p>
-<p>另外一种方式是 ssh 反向代理，前提条件是自己要有一台云服务器，登录到该服务器之后，修改 <code>sshd</code> 的配置文件 <code>/etc/ssh/sshd_config</code>：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#GatewayPorts no</span></span><br><span class="line">GatewayPorts yes <span class="comment"># 取消注释，并把no修改为yes</span></span><br></pre></td></tr></table></figure>
+<h2 id="ngrock-内网穿透"><a href="#ngrock-内网穿透" class="headerlink" title="ngrock 内网穿透"></a>ngrock 内网穿透</h2><p>ngrock 功能很强大，使用起来也比较简单：</p>
+<ol>
+<li>首先去<a href="https://ngrok.com/download" target="_blank" rel="noopener">官网下载</a>，下载完成并解压之后得到了一个 ngrok 可执行文件</li>
+<li><p>注册账号，获取 authtoken，并运行可执行文件</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ./ngrok authtoken xxx</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<ol>
+<li><p>代理本地服务：</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ./ngrok http 3030</span><br></pre></td></tr></table></figure>
+<p> 然后 ngrok 就会显示 http 和 https 的外网地址，访问下面这两个地址就能映射到本地 3030 端口开启的服务了。</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Session Status                online</span><br><span class="line">Account                       xxx (Plan: Free)</span><br><span class="line">Version                       2.3.35</span><br><span class="line">Region                        United States (us)</span><br><span class="line">Web Interface                 http://127.0.0.1:4040</span><br><span class="line">Forwarding                    http://6b6e94b6d845.ngrok.io -&gt; http://localhost:3030       </span><br><span class="line">Forwarding                    https://6b6e94b6d845.ngrok.io -&gt; http://localhost:3030     </span><br><span class="line">Connections                   ttl     opn     rt1     rt5     p50     p90</span><br><span class="line">                              0       0       0.00    0.00    0.00    0.00</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>由于 ngrock 的服务器在国外，有时候服务不是很稳定，而且免费版的外网地址不是固定的，每次运行软件都会变，因此比较适合用于测试环境。</p>
         </div>
         
           <p class="article-more-link">
@@ -368,143 +573,6 @@
      <a data-url="https://zju.date/typescript-cannot-find-name-require/" data-id="ckej9qgc000wzwpq4lgktw7zx" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-mysql-utf8mb4" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/mysql-utf8mb4/" class="article-date">
-  <time datetime="2017-02-23T09:32:33.000Z" itemprop="datePublished">2017-02-23</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/mysql-utf8mb4/">mysql添加表情字符集</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>mysql 查询的时候报错了：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">16:46:14	select * from emoji.emoji where code = &apos;😖&apos; LIMIT 0, 100	Error Code: 1267. Illegal mix of collations (utf8mb4_general_ci,IMPLICIT) and (utf8_general_ci,COERCIBLE) for operation &apos;=&apos;	0.0026 sec</span><br></pre></td></tr></table></figure>
-<p>原因是字符集导致的，无法显示表情的时候用这个字符集：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">set</span> character_set_results =utf8mb4;</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/mysql-utf8mb4/" data-id="ckej9qg6s00prwpq42s58ogy4" class="article-share-link">Share</a>
-     
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-fetch-api" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/fetch-api/" class="article-date">
-  <time datetime="2017-02-21T08:31:07.000Z" itemprop="datePublished">2017-02-21</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/fetch-api/">fetch api</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>基础用法：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">fetch(url, options).then(<span class="function"><span class="keyword">function</span>(<span class="params">response</span>) </span>&#123;</span><br><span class="line">  <span class="comment">// 处理HTTP返回（response）</span></span><br><span class="line">&#125;, <span class="function"><span class="keyword">function</span>(<span class="params">error</span>) </span>&#123;</span><br><span class="line">  <span class="comment">// 处理网络错误（network error）</span></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
-<p>例如：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">fetch(<span class="string">'http://example.com/movies.json'</span>)</span><br><span class="line">  .then(<span class="function"><span class="params">res</span> =&gt;</span> res.json())</span><br><span class="line">  .then(<span class="function"><span class="params">data</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="built_in">JSON</span>.stringify(myJson));</span><br><span class="line">  &#125;);</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/fetch-api/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/fetch-api/" data-id="ckej9qfyn00cnwpq4zvzvx6yc" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-mongodb-duplicate-key" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/mongodb-duplicate-key/" class="article-date">
-  <time datetime="2017-02-21T02:49:12.000Z" itemprop="datePublished">2017-02-21</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/mongodb-duplicate-key/">mongodb duplicate key</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">E11000 duplicate key error collection: art.counters index: entity_1 dup key: &#123; : null &#125;</span><br></pre></td></tr></table></figure>
-<p>报错的原因是数据值重复，例如你设置了一个 uid 的字段，但是第一次插入数据表的时候，你没有赋值，uid 字段是 null。第二次再插入数据的时候，uid 还是没有赋值，字段还是 null，由于设置 uid 属性是 unique，两次的数据都是 null ，所以报错了。</p>
-<p>解决办法：</p>
-<p>uid 这个字段是不需要设置的，MongoDB 数据库会自动给每一条记录设置一个 ObjectId，下面这一部分去掉就行了：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">uid: &#123;</span><br><span class="line">    type : <span class="built_in">Number</span>,</span><br><span class="line">    index: &#123;</span><br><span class="line">        unique: <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/mongodb-duplicate-key/" data-id="ckej9qg5v00ocwpq4kcodwiv3" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MongoDB/">MongoDB</a></li></ul>
 
     </footer>
   </div>

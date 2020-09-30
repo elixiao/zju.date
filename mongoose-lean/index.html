@@ -13,7 +13,7 @@
 <meta property="og:site_name" content=".">
 <meta property="og:description" content="1Model.find(&amp;#123;&amp;#125;).exec() 平均执行时间 218 毫秒，如果使用 lean() 1Model.find(&amp;#123;&amp;#125;).exec().lean() 执行时间变成 71 毫秒。那 lean() 到底做了什么？  不加 lean 查出来的是 Mongoose 文档，加 lean 查询出来的文档是普通的 JavaScript 对象，从而没有 save 方">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-03-16T09:41:52.496Z">
+<meta property="og:updated_time" content="2020-09-01T09:22:18.245Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="mongoose lean 的作用">
 <meta name="twitter:description" content="1Model.find(&amp;#123;&amp;#125;).exec() 平均执行时间 218 毫秒，如果使用 lean() 1Model.find(&amp;#123;&amp;#125;).exec().lean() 执行时间变成 71 毫秒。那 lean() 到底做了什么？  不加 lean 查出来的是 Mongoose 文档，加 lean 查询出来的文档是普通的 JavaScript 对象，从而没有 save 方">
@@ -93,6 +93,12 @@
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Model.create().lean()</span><br></pre></td></tr></table></figure>
 <p>创建之后如果想返回一个普通的对象，可以用 toObject 方法：</p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> instance = <span class="keyword">await</span> Model.create()</span><br><span class="line">instance.toObject()</span><br></pre></td></tr></table></figure>
+<p>什么时候应该使用 lean() ？</p>
+<p>If you’re executing a query and sending the results without modification to, say, an Express response, you should use lean. In general, if you do not modify the query results and do not use custom getters, you should use lean(). If you modify the query results or rely on features like getters or transforms, you should not use lean().</p>
+<p>Several internal instance props have had name changes so its more obvious that they are not intended for public use. Namely instance.doc has changed to instance._doc since it contains the structure Mongoose relies on to operate properly and should only be manipulated with caution.</p>
+<p>toObject 和 toJSON 两个方法</p>
+<p>A look at the source code reveals that both methods call an internal $toObject method, but with toJSON passing a second, true parameter:</p>
+<p>Document.prototype.toObject = function (options) {<br>  return this.$toObject(options);<br>};<br>…<br>Document.prototype.toJSON = function (options) {<br>  return this.$toObject(options, true);<br>};<br>That second parameter determines whether $toObject uses the toJSON or toObject schema options for its defaults. So unless those schema options are configured differently, the two methods are identical.</p>
 
       
     </div>

@@ -5,18 +5,18 @@
   
   <title>zju.date</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="本地开发时，都是在本机上起一个服务，只要是在同一个局域网，其他机器也能访问这个接口。但有时候需要在外网访问，怎么办呢？有两种办法：  通过软件ngrock 通过 ssh 反向代理  ngrock 功能很强大，使用起来也比较简单，去官网按照 demo 操作就行。 另外一种方式是 ssh 反向代理，前提条件是自己要有一台云服务器，登录到该服务器之后，修改 sshd 的配置文件 /etc/ssh/ssh">
+  <meta name="description" content="有时候，我们希望外网能够访问本地 localhost 起的服务，一个比较典型的场景就是小程序开发时，希望在本地接收微信服务器的回调，怎么办呢？这里总结了内网穿透的两种方法：  通过软件 ngrock 通过 ssh 反向代理  ngrock 内网穿透ngrock 功能很强大，使用起来也比较简单：  首先去官网下载，下载完成并解压之后得到了一个 ngrok 可执行文件 注册账号，获取 authtoke">
 <meta name="keywords" content="JavaScript">
 <meta property="og:type" content="article">
-<meta property="og:title" content="用ssh建立反向连接">
+<meta property="og:title" content="内网穿透的两种方法">
 <meta property="og:url" content="https://zju.date/reverse-ssh/index.html">
 <meta property="og:site_name" content=".">
-<meta property="og:description" content="本地开发时，都是在本机上起一个服务，只要是在同一个局域网，其他机器也能访问这个接口。但有时候需要在外网访问，怎么办呢？有两种办法：  通过软件ngrock 通过 ssh 反向代理  ngrock 功能很强大，使用起来也比较简单，去官网按照 demo 操作就行。 另外一种方式是 ssh 反向代理，前提条件是自己要有一台云服务器，登录到该服务器之后，修改 sshd 的配置文件 /etc/ssh/ssh">
+<meta property="og:description" content="有时候，我们希望外网能够访问本地 localhost 起的服务，一个比较典型的场景就是小程序开发时，希望在本地接收微信服务器的回调，怎么办呢？这里总结了内网穿透的两种方法：  通过软件 ngrock 通过 ssh 反向代理  ngrock 内网穿透ngrock 功能很强大，使用起来也比较简单：  首先去官网下载，下载完成并解压之后得到了一个 ngrok 可执行文件 注册账号，获取 authtoke">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2020-07-14T03:58:08.243Z">
+<meta property="og:updated_time" content="2020-09-15T06:38:21.702Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="用ssh建立反向连接">
-<meta name="twitter:description" content="本地开发时，都是在本机上起一个服务，只要是在同一个局域网，其他机器也能访问这个接口。但有时候需要在外网访问，怎么办呢？有两种办法：  通过软件ngrock 通过 ssh 反向代理  ngrock 功能很强大，使用起来也比较简单，去官网按照 demo 操作就行。 另外一种方式是 ssh 反向代理，前提条件是自己要有一台云服务器，登录到该服务器之后，修改 sshd 的配置文件 /etc/ssh/ssh">
+<meta name="twitter:title" content="内网穿透的两种方法">
+<meta name="twitter:description" content="有时候，我们希望外网能够访问本地 localhost 起的服务，一个比较典型的场景就是小程序开发时，希望在本地接收微信服务器的回调，怎么办呢？这里总结了内网穿透的两种方法：  通过软件 ngrock 通过 ssh 反向代理  ngrock 内网穿透ngrock 功能很强大，使用起来也比较简单：  首先去官网下载，下载完成并解压之后得到了一个 ngrok 可执行文件 注册账号，获取 authtoke">
   
     <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
   
@@ -71,7 +71,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      用ssh建立反向连接
+      内网穿透的两种方法
     </h1>
   
 
@@ -82,31 +82,45 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <p>本地开发时，都是在本机上起一个服务，只要是在同一个局域网，其他机器也能访问这个接口。但有时候需要在外网访问，怎么办呢？有两种办法：</p>
+        <p>有时候，我们希望外网能够访问本地 localhost 起的服务，一个比较典型的场景就是小程序开发时，希望在本地接收微信服务器的回调，怎么办呢？这里总结了内网穿透的两种方法：</p>
 <ol>
-<li>通过软件<a href="https://ngrok.com/" target="_blank" rel="noopener">ngrock</a></li>
+<li>通过软件 <a href="https://ngrok.com/" target="_blank" rel="noopener">ngrock</a></li>
 <li>通过 ssh 反向代理</li>
 </ol>
-<p>ngrock 功能很强大，使用起来也比较简单，去<a href="https://ngrok.com/" target="_blank" rel="noopener">官网</a>按照 demo 操作就行。</p>
-<p>另外一种方式是 ssh 反向代理，前提条件是自己要有一台云服务器，登录到该服务器之后，修改 <code>sshd</code> 的配置文件 <code>/etc/ssh/sshd_config</code>：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#GatewayPorts no</span></span><br><span class="line">GatewayPorts yes <span class="comment"># 取消注释，并把no修改为yes</span></span><br></pre></td></tr></table></figure>
+<h2 id="ngrock-内网穿透"><a href="#ngrock-内网穿透" class="headerlink" title="ngrock 内网穿透"></a>ngrock 内网穿透</h2><p>ngrock 功能很强大，使用起来也比较简单：</p>
+<ol>
+<li>首先去<a href="https://ngrok.com/download" target="_blank" rel="noopener">官网下载</a>，下载完成并解压之后得到了一个 ngrok 可执行文件</li>
+<li><p>注册账号，获取 authtoken，并运行可执行文件</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ./ngrok authtoken xxx</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<ol>
+<li><p>代理本地服务：</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ./ngrok http 3030</span><br></pre></td></tr></table></figure>
+<p> 然后 ngrok 就会显示 http 和 https 的外网地址，访问下面这两个地址就能映射到本地 3030 端口开启的服务了。</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Session Status                online</span><br><span class="line">Account                       xxx (Plan: Free)</span><br><span class="line">Version                       2.3.35</span><br><span class="line">Region                        United States (us)</span><br><span class="line">Web Interface                 http://127.0.0.1:4040</span><br><span class="line">Forwarding                    http://6b6e94b6d845.ngrok.io -&gt; http://localhost:3030       </span><br><span class="line">Forwarding                    https://6b6e94b6d845.ngrok.io -&gt; http://localhost:3030     </span><br><span class="line">Connections                   ttl     opn     rt1     rt5     p50     p90</span><br><span class="line">                              0       0       0.00    0.00    0.00    0.00</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>由于 ngrock 的服务器在国外，有时候服务不是很稳定，而且免费版的外网地址不是固定的，每次运行软件都会变，因此比较适合用于测试环境。</p>
 <a id="more"></a>
-<p>然后重启 <code>sshd</code>：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">service sshd restart</span><br></pre></td></tr></table></figure>
-<p>这个选项的意思是，你通过反向代理的ip是公网ip（<code>0.0.0.0</code>），而不是loopback的ip（<code>127.0.0.1</code>）。</p>
-<p>通过 <code>ssh</code> 来执行反向代理到服务器，例如将本机的 <code>3031</code> 的端口反向代理到服务器的 <code>9999</code> 端口：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ssh -R 9999:localhost:3031 &lt;用户名&gt;@公网主机ip</span><br><span class="line">ssh -NfR 9999:localhost:3031 &lt;用户名&gt;@公网主机ip</span><br></pre></td></tr></table></figure>
+<h2 id="ssh-反向代理"><a href="#ssh-反向代理" class="headerlink" title="ssh 反向代理"></a>ssh 反向代理</h2><p>另外一种方式是 ssh 反向代理，前提条件是自己要有一台云服务器。也非常简单，只要一句命令即可，例如将本机的 <code>3031</code> 的端口反向代理到服务器的 <code>9999</code> 端口：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ ssh -NR 9999:localhost:3031 &lt;用户名&gt;@公网主机ip <span class="comment"># 前台执行</span></span><br><span class="line">$ ssh -NfR 9999:localhost:3031 &lt;用户名&gt;@公网主机ip <span class="comment"># 后台执行</span></span><br></pre></td></tr></table></figure>
+<p>上面的参数含义是：</p>
 <ol>
 <li><code>-N</code> ssh不执行命令</li>
 <li><code>-f</code> 后台执行</li>
 <li><code>-R</code> 反向代理</li>
 </ol>
-<p>这时候在服务器上执行 <code>netstat</code> 命令查看监听端口，输出结果：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">netstat -tnl | grep 9999</span><br><span class="line">tcp        0      0 0.0.0.0:9999                0.0.0.0:*                   LISTEN      </span><br><span class="line">tcp        0      0 :::9999                     :::*                        LISTEN</span><br></pre></td></tr></table></figure>
-<p>如果你前面没有开启 <code>GatewayPorts</code> 选项，就只能转发到服务器的 <code>127.0.0.1</code> 而非 <code>0.0.0.0</code>：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">netstat -tnl | grep 9999</span><br><span class="line">tcp        0      0 127.0.0.1:9999              0.0.0.0:*                   LISTEN      </span><br><span class="line">tcp        0      0 ::1:9999                    :::*                        LISTEN</span><br></pre></td></tr></table></figure>
+<p>这个时候，如果你登录到服务器，访问：<code>http://localhost:9999</code> 则相当于访问本地 3031 端口启动的服务。不过需要注意一下，此时并未暴露到公网，也就是说你访问 <code>http://0.0.0.0:9999</code> 的时候，是不通的。这个时候，需要修改服务器上的 <code>sshd</code> 的配置文件了：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ vi /etc/ssh/sshd_config</span><br></pre></td></tr></table></figure>
+<p>然后输入 <code>/</code> 进入搜索模式，再输入 <code>GatewayPorts</code> 定位到下面这一行，把注释取消掉并把 no 改成 yes：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#GatewayPorts no</span></span><br><span class="line">GatewayPorts yes <span class="comment"># 取消注释，并把no修改为yes</span></span><br></pre></td></tr></table></figure>
+<p>最后重启 <code>sshd</code>：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ service sshd restart</span><br></pre></td></tr></table></figure>
+<p>GatewayPorts 这个选项能够让反向代理的 ip 为公网 ip（<code>0.0.0.0</code>），而不是 loopback 的 ip（<code>127.0.0.1</code>），那怎么查看到底有没有开启成功呢？可以在服务器上执行下面的命令：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ netstat -tnl | grep 9999</span><br><span class="line"><span class="comment"># 如果开启成功，会显示下面的 0.0.0.0</span></span><br><span class="line">tcp        0      0 0.0.0.0:9999                0.0.0.0:*                   LISTEN</span><br><span class="line"><span class="comment"># 如果开启失败，会显示下面的 127.0.0.1</span></span><br><span class="line">tcp        0      0 127.0.0.1:9999              0.0.0.0:*                   LISTEN</span><br></pre></td></tr></table></figure>
 <p>弄好之后，就可以让公网主机代理本地服务啦：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl 公网主机ip:9999 <span class="comment"># 转发到本地 3031 端口</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl 公网主机ip:9999 <span class="comment"># 会转发到本地 3031 端口</span></span><br></pre></td></tr></table></figure>
 <p>如果发现报错：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Failed to connect to xxxx port 9999: Connection refused</span><br></pre></td></tr></table></figure>
 <p>很有可能是服务器的安全组配置导致的，一定要先确保端口被放行才可以，那如何判断端口是否被放行了呢？可以用下面两个命令之一来快速开启 http 服务：</p>
