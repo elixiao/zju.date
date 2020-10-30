@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="node.js 企业级 web 框架有很多，例如阿里的 eggjs、IBM 的 loopback、风格类似 Spring 的 nestjs 等，今天介绍另一种选择，那就是 feathersjs，虽然在国内比较小众，但它入门很简单、遵循 RESTful 规范、文档和生态比较完善、社区维护也很积极，而且它还支持实时推送，自称是：  A framework for real-time applicati">
+<meta name="keywords" content="JavaScript">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Node.js企业级Web框架（Feathers）">
+<meta property="og:url" content="https://zju.date/feathers-notes/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="node.js 企业级 web 框架有很多，例如阿里的 eggjs、IBM 的 loopback、风格类似 Spring 的 nestjs 等，今天介绍另一种选择，那就是 feathersjs，虽然在国内比较小众，但它入门很简单、遵循 RESTful 规范、文档和生态比较完善、社区维护也很积极，而且它还支持实时推送，自称是：  A framework for real-time applicati">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://img.zlib.cn/blog/feathers-logo-wide.png">
+<meta property="og:image" content="http://img.zlib.cn/blog/feathers-hooks.png">
+<meta property="og:updated_time" content="2020-10-16T08:30:36.470Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Node.js企业级Web框架（Feathers）">
+<meta name="twitter:description" content="node.js 企业级 web 框架有很多，例如阿里的 eggjs、IBM 的 loopback、风格类似 Spring 的 nestjs 等，今天介绍另一种选择，那就是 feathersjs，虽然在国内比较小众，但它入门很简单、遵循 RESTful 规范、文档和生态比较完善、社区维护也很积极，而且它还支持实时推送，自称是：  A framework for real-time applicati">
+<meta name="twitter:image" content="http://img.zlib.cn/blog/feathers-logo-wide.png">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-feathers-notes" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/feathers-notes/" class="article-date">
+  <time datetime="2020-10-16T08:29:10.000Z" itemprop="datePublished">2020-10-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Node.js企业级Web框架（Feathers）
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>node.js 企业级 web 框架有很多，例如阿里的 <a href="https://eggjs.org/zh-cn/" target="_blank" rel="noopener">eggjs</a>、IBM 的 <a href="https://loopback.io/" target="_blank" rel="noopener">loopback</a>、风格类似 Spring 的 <a href="https://nestjs.com/" target="_blank" rel="noopener">nestjs</a> 等，今天介绍另一种选择，那就是 <a href="https://feathersjs.com/" target="_blank" rel="noopener">feathersjs</a>，虽然在国内比较小众，但它入门很简单、遵循 RESTful 规范、文档和生态比较完善、社区维护也很积极，而且它还支持实时推送，自称是：</p>
+<blockquote>
+<p>A framework for real-time applications and REST APIs</p>
+</blockquote>
+<p><img src="http://img.zlib.cn/blog/feathers-logo-wide.png" alt="feathersjs"></p>
+<p>feathersjs 是一款基于 express 的轻量级 node.js 框架，集成了以下几个重要特性：</p>
+<ul>
+<li>严格遵循 RESTful API 设计风格</li>
+<li>借助 websocket 提供实时通信功能</li>
+<li>提供了多种前端技术栈的支持，例如 React, VueJS, Angular, React Native 等</li>
+<li>通过 hook 横向扩展应用，是面向切片编程（AOP：Aspect Oriented Programming）思想的一种实现</li>
+</ul>
+<a id="more"></a>
+<h2 id="快速体验"><a href="#快速体验" class="headerlink" title="快速体验"></a>快速体验</h2><p>首先创建一个项目文件夹：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mkdir feathersjs-demo</span><br><span class="line"><span class="built_in">cd</span> feathersjs-demo</span><br></pre></td></tr></table></figure>
+<p>然后安装脚手架工具并在当前文件夹初始化项目：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">npm install @feathersjs/cli -g</span><br><span class="line">feathers g app</span><br></pre></td></tr></table></figure>
+<p>接下来按照提示一步步做就行了，这里我的选择是：</p>
+<ul>
+<li>语言用 typescript</li>
+<li><p>包管理器用 yarn</p>
+</li>
+<li><p>API 集成 REST 和 Realtime via Socket.io</p>
+</li>
+<li>需要鉴权，采用用户名密码登录，实体是 user</li>
+<li>测试库用 Jest</li>
+<li>数据库 ORM 选择 mongoose</li>
+</ul>
+<p>然后就会自动帮你创建下面的文件并下载依赖。然后运行：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm run dev</span><br></pre></td></tr></table></figure>
+<p>API 接口被生成在 <code>http://localhost:3031</code> ，用浏览器访问会出现欢迎页。</p>
+<h2 id="创建服务"><a href="#创建服务" class="headerlink" title="创建服务"></a>创建服务</h2><p>service 对应 RESTful 风格中的访问资源，例如 user、order 都是一种资源，而 <code>GET /users/1</code> 就是访问 id 为 1 的用户，<code>POST /orders</code> 就是创建订单。在 feathers 中可以用下面的命令创建服务：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ feathers g service</span><br><span class="line">? What kind of service is it? Mongoose</span><br><span class="line">? What is the name of the service? order</span><br><span class="line">? Which path should the service be registered on? orders</span><br><span class="line">? Does the service require authentication? Yes</span><br></pre></td></tr></table></figure>
+<p>一个基础的 service 就是 ES6 的一个类（class）：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyService</span> </span>&#123;</span><br><span class="line">  find(params [, callback]) &#123;&#125;</span><br><span class="line">  get(id, params [, callback]) &#123;&#125;</span><br><span class="line">  create(data, params [, callback]) &#123;&#125;</span><br><span class="line">  update(id, data, params [, callback]) &#123;&#125;</span><br><span class="line">  patch(id, data, params [, callback]) &#123;&#125;</span><br><span class="line">  remove(id, params [, callback]) &#123;&#125;</span><br><span class="line">  setup(app, path) &#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">app.use(<span class="string">'/my-service'</span>, <span class="keyword">new</span> MyService());</span><br></pre></td></tr></table></figure>
+<p>这些方法与 RESTful 风格之间的映射关系为：</p>
+<table>
+<thead>
+<tr>
+<th>feathers方法</th>
+<th>HTTP方法</th>
+<th>路径</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>find()</td>
+<td>GET</td>
+<td>/messages</td>
+</tr>
+<tr>
+<td>get()</td>
+<td>GET</td>
+<td>/messages/1</td>
+</tr>
+<tr>
+<td>create()</td>
+<td>POST</td>
+<td>/messages</td>
+</tr>
+<tr>
+<td>update()</td>
+<td>PUT</td>
+<td>/messages/1</td>
+</tr>
+<tr>
+<td>patch()</td>
+<td>PATCH</td>
+<td>/messages/1</td>
+</tr>
+<tr>
+<td>remove()</td>
+<td>DELETE</td>
+<td>/messages/1</td>
+</tr>
+</tbody>
+</table>
+<h2 id="登录鉴权"><a href="#登录鉴权" class="headerlink" title="登录鉴权"></a>登录鉴权</h2><p>feathers 帮助开发者封装好了一整套登录和鉴权逻辑，例如应用需要用户名密码登录和 jwt 验证，下面几行代码就搞定了，开发者不需要写额外代码：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; Application &#125; <span class="keyword">from</span> <span class="string">'@feathersjs/feathers'</span></span><br><span class="line"><span class="keyword">import</span> &#123; AuthenticationService, JWTStrategy &#125; <span class="keyword">from</span> <span class="string">'@feathersjs/authentication'</span></span><br><span class="line"><span class="keyword">import</span> &#123; LocalStrategy &#125; <span class="keyword">from</span> <span class="string">'@feathersjs/authentication-local'</span></span><br><span class="line"><span class="keyword">import</span> &#123; expressOauth &#125; <span class="keyword">from</span> <span class="string">'@feathersjs/authentication-oauth'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> (app: Application) =&gt; &#123;</span><br><span class="line">  <span class="keyword">const</span> authService = <span class="keyword">new</span> AuthenticationService(app);</span><br><span class="line"></span><br><span class="line">  authService.register(<span class="string">'jwt'</span>, <span class="keyword">new</span> JWTStrategy())</span><br><span class="line">  authService.register(<span class="string">'local'</span>, <span class="keyword">new</span> LocalStrategy())</span><br><span class="line"></span><br><span class="line">  app.use(<span class="string">'/authentication'</span>, authService)</span><br><span class="line">  app.configure(expressOauth())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>除此之外，feathers 还集成了很多第三方登录的 API，例如 Github、Google、Facebook，可以通过命令行交互的形式自己组合：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ feathers g authentication</span><br><span class="line">? What authentication strategies <span class="keyword">do</span> you want to use? (See API docs <span class="keyword">for</span> all 180+ supported oAuth providers) </span><br><span class="line">❯◯ Username + Password (Local)</span><br><span class="line"> ◯ Auth0</span><br><span class="line"> ◯ Google</span><br><span class="line"> ◯ Facebook</span><br><span class="line"> ◯ Twitter</span><br><span class="line"> ◉ GitHub</span><br></pre></td></tr></table></figure>
+<h2 id="使用中间件"><a href="#使用中间件" class="headerlink" title="使用中间件"></a>使用中间件</h2><p>feathers 框架是建立在 express 基础之上的，从其注册 RESTful 服务的语法上看：<code>app.use([path],service)</code>和 express 框架里面的 <code>app.use([path], middleware)</code> 非常类似：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 普通的中间件</span></span><br><span class="line">app.use(<span class="function"><span class="keyword">function</span>(<span class="params">req,res,next</span>)</span>&#123;</span><br><span class="line">  <span class="keyword">if</span>(req.isAuthenticated())&#123;</span><br><span class="line">    next();</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    next(<span class="keyword">new</span> <span class="built_in">Error</span>(<span class="number">401</span>));</span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 注册 RESTful service 对象，被 feathers 框架封装</span></span><br><span class="line">app.use(<span class="string">'/todos'</span>, &#123;</span><br><span class="line">  <span class="keyword">async</span> get(id) &#123;</span><br><span class="line">    <span class="keyword">return</span> &#123; id, <span class="attr">description</span>: <span class="string">`You have to do <span class="subst">$&#123;name&#125;</span>!`</span> &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>还可以为 service 单独指定中间件：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">app.use(<span class="string">'/todos'</span>, beforeMiddleware, todoService, afterMiddleware)</span><br></pre></td></tr></table></figure>
+<p>例如想把 JSON 数据转成 CSV 让前端下载，可以这么写：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> json2csv = <span class="built_in">require</span>(<span class="string">'json2csv'</span>)</span><br><span class="line"><span class="keyword">const</span> fields = [ <span class="string">'done'</span>, <span class="string">'description'</span> ]</span><br><span class="line"></span><br><span class="line">app.use(<span class="string">'/todos'</span>, todoService, <span class="function"><span class="keyword">function</span>(<span class="params">req, res</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> result = res.data</span><br><span class="line">  <span class="keyword">const</span> data = result.data</span><br><span class="line">  <span class="keyword">const</span> csv = json2csv(&#123; data, fields &#125;)</span><br><span class="line">  res.type(<span class="string">'csv'</span>)</span><br><span class="line">  res.end(csv)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>在 feathers 中可以使用脚手架创建中间件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">feathers g middleware</span><br></pre></td></tr></table></figure>
+<h2 id="接入数据库"><a href="#接入数据库" class="headerlink" title="接入数据库"></a>接入数据库</h2><p>在 feathers 中操作数据库非常简单，因为框架都帮我们封装好了，以 mongoose 为例，只需要引入 <a href="https://github.com/feathersjs-ecosystem/feathers-mongoose" target="_blank" rel="noopener">feathers-mongoose</a> 这个包，然后让上面的服务继承 MongooseService 即可。代码如下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; Service, MongooseServiceOptions &#125; <span class="keyword">from</span> <span class="string">'feathers-mongoose'</span></span><br><span class="line"><span class="keyword">import</span> &#123; Application &#125; <span class="keyword">from</span> <span class="string">'../../declarations'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="class"><span class="keyword">class</span> <span class="title">Book</span> <span class="keyword">extends</span> <span class="title">Service</span> </span>&#123;</span><br><span class="line">  <span class="keyword">constructor</span>(options: Partial&lt;MongooseServiceOptions&gt;, app: Application) &#123;</span><br><span class="line">    <span class="keyword">super</span>(options)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>你甚至都不要写增删改查方法了，默认全部生成好了，包括参数转换、分页逻辑等，开箱即用，封装数据层，快速建立映射关系（例如mysql、sqlserver、mongodb等），例如直接创建一条 book 记录：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">curl --location --request POST <span class="string">'http://localhost:3030/books'</span> \</span><br><span class="line">--header <span class="string">'Content-Type: application/json'</span> \</span><br><span class="line">--data-raw <span class="string">'&#123;</span></span><br><span class="line"><span class="string">    "name": "feathersjs从入门到精通",</span></span><br><span class="line"><span class="string">    "author": "乔柯力",</span></span><br><span class="line"><span class="string">    "price": 36</span></span><br><span class="line"><span class="string">&#125;'</span></span><br></pre></td></tr></table></figure>
+<p>然后查询 books 列表：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl --location --request GET &apos;http://localhost:3030/books&apos;</span><br></pre></td></tr></table></figure>
+<p>就这么简单，你如果想添加自己的逻辑，有两种方法，第一种是这样：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">create(data: any, <span class="attr">params</span>: Params) &#123;</span><br><span class="line">  <span class="comment">// 自己的逻辑</span></span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">super</span>.create(data, params)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>即在当前类中重写 create 方法，把基类覆盖掉，如果需要用到基类的方法，再通过 super 调用。第二种方法就是接下来要讲的 hooks：</p>
+<h2 id="钩子函数"><a href="#钩子函数" class="headerlink" title="钩子函数"></a>钩子函数</h2><p>钩子函数是 feathers 里面一个非常重要的概念，是面向切面编程思想（AOP）的具体实现。那什么是 AOP 呢？举个例子，当你的 service 逻辑写好了，老板说要针对所有业务操作添加一个日志，然后再加一道权限控制，怎么办呢？ 传统的做法是，改造每个业务方法，把日志逻辑和权限逻辑加进去，如果这样做的话，代码肯定一团糟，AOP 的思想是引导你从另一个切面来看待问题，把日志和权限控制逻辑单独抽离为函数，在需要的地方插入这些逻辑。所以 feathers 提供了前置、后置和错误钩子，用户可以把逻辑注入到里面：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  before: &#123;</span><br><span class="line">    all: [isLoggedIn],</span><br><span class="line">    find: [isAdmin],</span><br><span class="line">    get: [isCurrent],</span><br><span class="line">    create: [validate, hashPwd],</span><br><span class="line">    update: [],</span><br><span class="line">    patch: [],</span><br><span class="line">    remove: [],</span><br><span class="line">  &#125;,</span><br><span class="line">  after: &#123;</span><br><span class="line">    all: [removePasswords],</span><br><span class="line">    find: [],</span><br><span class="line">    get: [],</span><br><span class="line">    create: [sendEmail],</span><br><span class="line">    update: [],</span><br><span class="line">    patch: [],</span><br><span class="line">    remove: [],</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>下面这样图会更直观一些：</p>
+<p><img src="http://img.zlib.cn/blog/feathers-hooks.png" alt="feathers-hook"></p>
+<p>有了 hook，service 就可以更加聚焦在其独有的业务逻辑上面，但凡可复用的逻辑都能抽离到 hook 里面，例如：</p>
+<ul>
+<li>参数格式验证（例如validate）</li>
+<li>数据预处理（例如hashPwd）</li>
+<li>发送通知（例如sendEmail）</li>
+<li>等等…</li>
+</ul>
+<p>从本质上来讲，hooks 就是<strong>在目标方法执行前后执行的函数</strong>而已。</p>
+<h2 id="实时事件"><a href="#实时事件" class="headerlink" title="实时事件"></a>实时事件</h2><p>所有的 service 都会注册事件监听器，当资源发生改变的时候，即：create、update、patch、remove方法被调用的时候，即触发事件。由于每一个 service 继承了 EventEmitter，所以拥有下面三个方法：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">service.on(eventName, listener) <span class="comment">// 监听事件</span></span><br><span class="line">service.emit(eventName, data) <span class="comment">// 触发事件</span></span><br><span class="line">service.removeListener(eventName) <span class="comment">// 移除事件监听</span></span><br></pre></td></tr></table></figure>
+<p>除此之外， service 还有一些通用的方法：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">service.hooks(hooks) <span class="comment">// 注册钩子函数</span></span><br><span class="line">service.publish(event, publisher) <span class="comment">// 发布通知</span></span><br><span class="line">service.mixin(mixin) <span class="comment">// 扩展 service</span></span><br></pre></td></tr></table></figure>
+<p>其中 publish 方法定义了哪些事件会通过 websocket 实时推送到客户端：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">app.service(<span class="string">'orders'</span>).publish(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> [</span><br><span class="line">    app.channel(<span class="string">`group/admin`</span>),</span><br><span class="line">    app.channel(<span class="string">`group/order-receiver`</span>),</span><br><span class="line">  ]</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>这个时候，如果客户端连接之后，服务器每次新产生的订单，都会通知到客户端，实时推送。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> socket = io(<span class="string">'http://localhost:3030'</span>)</span><br><span class="line">socket.on(<span class="string">'connect'</span>, () =&gt; &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'连接成功'</span>)</span><br><span class="line">&#125;)</span><br><span class="line">socket.on(<span class="string">'orders created'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">order</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'Got a new order!'</span>, order)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>feathers 提供了 channels.ts 文件让开发者可以自定义分组，每当客户端建立连接，服务端会收到一个 connection 对象，然后根据业务需要把这个 connection 加入到某个分组里面，当然这个分组也是开发者自己定义的 <code>app.channel(&#39;xxx&#39;)</code>，一个典型的场景就是未登录用户全部加入 anonymous 分组，当登录之后将其从 anonymous 分组移除，然后加入 authenticated 分组，代码如下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">app.on(<span class="string">'connection'</span>, (connection: any): <span class="function"><span class="params">void</span> =&gt;</span> &#123;</span><br><span class="line">  app.channel(<span class="string">'anonymous'</span>).join(connection)</span><br><span class="line">&#125;)</span><br><span class="line">app.on(<span class="string">'login'</span>, (authResult: any, &#123; connection &#125;: any): <span class="function"><span class="params">void</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">if</span> (!connection) <span class="keyword">return</span></span><br><span class="line">  app.channel(<span class="string">'anonymous'</span>).leave(connection)</span><br><span class="line">  app.channel(<span class="string">'authenticated'</span>).join(connection)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>实时事件是建立在 websocket 通道之上的，feathers 内部集成了 socket.io，可以建立浏览器和 web 服务器的双向通信。</p>
+<h2 id="客户端集成"><a href="#客户端集成" class="headerlink" title="客户端集成"></a>客户端集成</h2><p>feathers 可以集成到很多客户端框架中，包括 Vue、Angular、React、React Native，模块拆分很细，客户端可以自由搭配使用：</p>
+<table>
+<thead>
+<tr>
+<th>Feathers module</th>
+<th>@feathersjs/client</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>@feathersjs/feathers</td>
+<td>feathers (default)</td>
+</tr>
+<tr>
+<td>@feathersjs/authentication-client</td>
+<td>feathers.authentication</td>
+</tr>
+<tr>
+<td>@feathersjs/rest-client</td>
+<td>feathers.rest</td>
+</tr>
+<tr>
+<td>@feathersjs/socketio-client</td>
+<td>feathers.socketio</td>
+</tr>
+</tbody>
+</table>
+<p>以 Angular 为例，如果选择使用 websocket 进行交互的话，可以创建一个全局 feathers.service.ts，代码如下：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; Injectable &#125; <span class="keyword">from</span> <span class="string">'@angular/core'</span></span><br><span class="line"><span class="keyword">import</span> * <span class="keyword">as</span> io <span class="keyword">from</span> <span class="string">'socket.io-client'</span></span><br><span class="line"><span class="keyword">import</span> socketio <span class="keyword">from</span> <span class="string">'@feathersjs/socketio-client'</span></span><br><span class="line"><span class="keyword">import</span> feathers <span class="keyword">from</span> <span class="string">'@feathersjs/feathers'</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@Injectable</span>()</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> Feathers &#123;</span><br><span class="line">  <span class="keyword">private</span> _feathers</span><br><span class="line">  <span class="keyword">private</span> _socket: SocketIOClient.Socket</span><br><span class="line"></span><br><span class="line">  <span class="keyword">constructor</span>(<span class="params"></span>) &#123;&#125;</span><br><span class="line"></span><br><span class="line">  init() &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">this</span>._feathers) <span class="keyword">return</span></span><br><span class="line">    <span class="keyword">this</span>._socket = io(<span class="string">'http://localhost:3050'</span>)</span><br><span class="line">    <span class="keyword">this</span>._feathers = feathers().configure(socketio(<span class="keyword">this</span>._socket))</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> service(name: <span class="built_in">string</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>._feathers.service(name)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>以创建 book 为例，可以在组件中这么调用：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; Component &#125; <span class="keyword">from</span> <span class="string">'@angular/core'</span></span><br><span class="line"><span class="keyword">import</span> &#123; Feathers &#125; <span class="keyword">from</span> <span class="string">'./services/feathers.service'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> AppComponent &#123;</span><br><span class="line">  <span class="keyword">constructor</span>(<span class="params"><span class="keyword">private</span> feathers: Feathers</span>) &#123;&#125;</span><br><span class="line"></span><br><span class="line">  createBook() &#123;</span><br><span class="line">    <span class="keyword">this</span>.feathers</span><br><span class="line">      .service(<span class="string">'books'</span>)</span><br><span class="line">      .create(&#123;</span><br><span class="line">        name: <span class="string">'feathesjs从入门到精通'</span>,</span><br><span class="line">        author: <span class="string">'乔柯力'</span></span><br><span class="line">      &#125;)</span><br><span class="line">      .then(<span class="function">(<span class="params">res</span>) =&gt;</span> &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">'书籍创建结果'</span>, res)</span><br><span class="line">      &#125;)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>除了可以用 <code>.create()</code> 新增之外，还可以用：</p>
+<ul>
+<li><code>.find()</code> 查询列表</li>
+<li><code>.get()</code> 获取详情</li>
+<li><code>.remove()</code> 删除</li>
+<li><code>.patch()</code> 更新</li>
+</ul>
+<p>完全被框架封装好了，用户只需要选择走 RESTful 还是走 websocket，如果是前者的话，内部默认使用 axios 封装了 http 请求（也可以选择其他库），后者的话内部默认使用了 socket.io 通信。</p>
+<p>上面初步介绍了 feathers 的核心概念，感兴趣的可以直接阅读<a href="https://docs.feathersjs.com/" target="_blank" rel="noopener">官方文档</a>，案例比较全，目前只有英文版。</p>
+<blockquote>
+<p>本文示例代码地址：<a href="mailto:`git@github.com" target="_blank" rel="noopener">`git@github.com</a>:keliq/feathersjs-demo.git`</p>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/feathers-notes/" data-id="ckgvyz2nw000154q4elex1qxb" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/docker-node-images/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          如何选择 Node.js 的 Docker 镜像
+        
+      </div>
+    </a>
+  
+  
+    <a href="/samesite-vs-sameorigin/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">彻底搞懂「同源Same-Origin」和「同站Same-Site」的区别</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dart/">Dart</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Elasticsearch/">Elasticsearch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Flutter/">Flutter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Node-js/">Node.js</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

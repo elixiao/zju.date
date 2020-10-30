@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="node.js 应用一般用 pm2 或者 docker 来部署，如果你也打算用 docker 部署的话，可能也会遇到如何选择 node 镜像的问题，官方提供了如下三类选择：  node:&amp;lt;version&amp;gt;：这是官方默认镜像，基于 debian 构建，可指定的版本有：  Debian 10（buster） — 当前的稳定版（stable）Debian 9（stretch） — 旧的稳定版">
+<meta name="keywords" content="Node.js">
+<meta property="og:type" content="article">
+<meta property="og:title" content="如何选择 Node.js 的 Docker 镜像">
+<meta property="og:url" content="https://zju.date/docker-node-images/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="node.js 应用一般用 pm2 或者 docker 来部署，如果你也打算用 docker 部署的话，可能也会遇到如何选择 node 镜像的问题，官方提供了如下三类选择：  node:&amp;lt;version&amp;gt;：这是官方默认镜像，基于 debian 构建，可指定的版本有：  Debian 10（buster） — 当前的稳定版（stable）Debian 9（stretch） — 旧的稳定版">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2020-10-30T08:02:45.943Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="如何选择 Node.js 的 Docker 镜像">
+<meta name="twitter:description" content="node.js 应用一般用 pm2 或者 docker 来部署，如果你也打算用 docker 部署的话，可能也会遇到如何选择 node 镜像的问题，官方提供了如下三类选择：  node:&amp;lt;version&amp;gt;：这是官方默认镜像，基于 debian 构建，可指定的版本有：  Debian 10（buster） — 当前的稳定版（stable）Debian 9（stretch） — 旧的稳定版">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-docker-node-images" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/docker-node-images/" class="article-date">
+  <time datetime="2020-10-28T02:31:04.000Z" itemprop="datePublished">2020-10-28</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      如何选择 Node.js 的 Docker 镜像
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>node.js 应用一般用 <a href="https://pm2.keymetrics.io/" target="_blank" rel="noopener">pm2</a> 或者 <a href="https://hub.docker.com/_/node" target="_blank" rel="noopener">docker</a> 来部署，如果你也打算用 docker 部署的话，可能也会遇到如何选择 node 镜像的问题，官方提供了如下三类选择：</p>
+<ol>
+<li><p><code>node:&lt;version&gt;</code>：这是官方默认镜像，基于 debian 构建，可指定的版本有：</p>
+<blockquote>
+<p>Debian 10（buster） — 当前的稳定版（stable）<br>Debian 9（stretch） — 旧的稳定版（oldstable）<br>Debian 8（jessie） — 更旧的稳定版（oldoldstable）<br>Debian 7（wheezy） — 被淘汰的稳定版</p>
+</blockquote>
+<p>这些镜像是基于 <a href="https://hub.docker.com/_/buildpack-deps/" target="_blank" rel="noopener">buildpack-deps</a> 进行构建的，这里可以查看 <a href="https://github.com/nodejs/docker-node/blob/master/14/buster/Dockerfile" target="_blank" rel="noopener">Dockerfile</a>，此类镜像的优点是安装的依赖很全，例如 <code>curl</code>、<code>wget</code> ，缺点是体积过大。</p>
+</li>
+<li><p><code>node:&lt;version&gt;-slim</code> ：这是删除冗余依赖后的精简版本镜像，同样是基于 debian 构建，体积上比默认镜像小很多，删除了很多默认公共的软件包，只保留了最基本的 node 运行环境。</p>
+</li>
+<li><p><code>node:&lt;version&gt;-alpine</code>：这个版本基于 alpine 镜像构建，比 debian 的 slim 版本还要小，可以说是最小的 node 镜像。虽然体积小，但是功能不少，普通的 node.js 应用都能跑起来，但是如果项目中用到了 c++ 扩展的话，就不要用这个了，因为 alpine 使用 musl 代替 glibc，一些 c/c++ 环境的软件可能不兼容。</p>
+</li>
+</ol>
+<p>接下来，基于 node.js 14 版本，分别下载上述三类镜像进行对比：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker pull node:14-buster</span><br><span class="line">docker pull node:14-buster-slim</span><br><span class="line">docker pull node:14-alpine</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<h2 id="镜像体积大小对比"><a href="#镜像体积大小对比" class="headerlink" title="镜像体积大小对比"></a>镜像体积大小对比</h2><p>运行 <code>docker images | grep node</code>：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">node           14-buster           70c62b76e4cc        5 hours ago         912MB</span><br><span class="line">node           14-buster-slim      9917d232c3dd        5 hours ago         181MB</span><br><span class="line">node           14-alpine           9db54a688554        5 hours ago         117MB</span><br></pre></td></tr></table></figure>
+<p>可以看到默认镜像 <code>node:14-buster</code> 体积要 <code>912MB</code> ，实在太大了，相较而言 <code>node:14-buster-slim</code> 则小很多，而 <code>node:14-alpine</code> 则更为轻巧。</p>
+<h2 id="容器内存占用对比"><a href="#容器内存占用对比" class="headerlink" title="容器内存占用对比"></a>容器内存占用对比</h2><p>用上面的镜像分别启动容器：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">docker run -d --name node-14-buster node:14-buster node -e <span class="string">"require('http').createServer((req, res) =&gt; res.end('Hello World')).listen(3030)"</span></span><br><span class="line"></span><br><span class="line">docker run -d --name node-14-buster-slim node:14-buster-slim node -e <span class="string">"require('http').createServer((req, res) =&gt; res.end('Hello World')).listen(3030)"</span></span><br><span class="line"></span><br><span class="line">docker run -d --name node-14-alpine node:14-alpine node -e <span class="string">"require('http').createServer((req, res) =&gt; res.end('Hello World')).listen(3030)"</span></span><br></pre></td></tr></table></figure>
+<p>运行 <code>docker stats</code> 查看运行时的内存占用</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">NAME                  CPU %   MEM USAGE/LIMIT     MEM %   NET I/O   BLOCK I/O    PIDS</span><br><span class="line">node-14-alpine        0.00%   4.809MiB/1.796GiB   0.26%   0B/0B     0B/0B        7</span><br><span class="line">node-14-buster-slim   0.00%   4.238MiB/1.796GiB   0.23%   0B/0B     0B/0B        7</span><br><span class="line">node-14-buster        0.00%   4.207MiB/1.796GiB   0.23%   0B/0B     4.88MB/0B    7</span><br></pre></td></tr></table></figure>
+<p>差别不大，反而是 alpine 占用内存稍稍高那么一点点，但都在可以接受的范围内。</p>
+<h2 id="区别和差异（应用视角）"><a href="#区别和差异（应用视角）" class="headerlink" title="区别和差异（应用视角）"></a>区别和差异（应用视角）</h2><p>站在 node.js 应用的角度，应该如何选择镜像呢？alpine 与 buster/buster-slim 最大的差异在于 C++ 插件，例如你的包里面用了 <a href="https://github.com/lovell/sharp" target="_blank" rel="noopener">sharp</a> 这个包对图片进行加工处理的话，alpine 镜像就不能用了，因为不兼容。其他情况下，如果你的应用和依赖是纯粹 node.js 编写的，不涉及到 C++ 插件，建议使用 alpine 镜像。</p>
+<p>buster/buster-slim 镜像可以运行所有 node.js 项目，包括那些 C++ 依赖，但是有一个坑就是通过 <code>npm start</code> 启动的项目无法监听到 docker 的 SIGTERM 信号，如果进程没有相应 SIGTERM 事件，docker 默认等待 10s，然后就强制杀掉应用了，测试步骤如下：</p>
+<ol>
+<li><p>首先在根目录创建一个 <code>code</code> 文件夹，写入 <code>index.js</code>：</p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(<span class="string">'pid'</span>, process.pid)</span><br><span class="line">process.on(<span class="string">'beforeExit'</span>, (code) =&gt; &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'进程 beforeExit 事件的代码: '</span>, code)</span><br><span class="line">&#125;)</span><br><span class="line">process.on(<span class="string">'exit'</span>, (code) =&gt; &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'进程 exit 事件的代码: '</span>, code)</span><br><span class="line">&#125;)</span><br><span class="line">process.on(<span class="string">'SIGTERM'</span>, (code) =&gt; &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'SIGTERM'</span>, code)</span><br><span class="line">  process.exit(<span class="number">0</span>)</span><br><span class="line">&#125;)</span><br><span class="line">process.on(<span class="string">'SIGINT'</span>, (code) =&gt; &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'SIGINT'</span>, code)</span><br><span class="line">  process.exit(<span class="number">0</span>)</span><br><span class="line">&#125;)</span><br><span class="line"><span class="built_in">require</span>(<span class="string">'http'</span>)</span><br><span class="line">  .createServer(<span class="function">(<span class="params">req, res</span>) =&gt;</span> res.end(<span class="string">'Hello World'</span>))</span><br><span class="line">  .listen(<span class="number">3030</span>)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>然后创建 package.json ：</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="string">"scripts"</span>: &#123;</span><br><span class="line">    <span class="string">"start"</span>: <span class="string">"node index.js"</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>启动容器：</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker run -d --name node-14-buster -v /code:/code node:14-buster sh -c <span class="string">'cd code &amp;&amp; npm start'</span></span><br><span class="line">docker run -d --name node-14-buster-slim -v /code:/code node:14-buster sh -c <span class="string">'cd code &amp;&amp; npm start'</span></span><br><span class="line">docker run -d --name node-14-alpine -v /code:/code node:14-alpine sh -c <span class="string">'cd code &amp;&amp; npm start'</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>重启容器</p>
+<p> 在重启 buster/buster-slim 镜像的时候，发现速度很慢，达到了 10s 的超时时间，那是因为没有响应 docker 传递的 SIGTERM 信号，可以通过下面的代码测试出来：</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">docker logs -f node-14-buster</span><br><span class="line"><span class="comment"># 然后开新命令行</span></span><br><span class="line">docker <span class="built_in">kill</span> -s SIGTERM node-14-buster</span><br><span class="line">docker restart node-14-buster</span><br></pre></td></tr></table></figure>
+<p> buster 和 buster-slim 都无法接受 SIGTERM 信号，alpine 则可以。</p>
+</li>
+</ol>
+<h2 id="自定义镜像"><a href="#自定义镜像" class="headerlink" title="自定义镜像"></a>自定义镜像</h2><p>凑巧了，我们目前的项目既用到了 C++ 插件，又要监听 SIGTERM 事件，官方提供的三类镜像都不能用了，不过基于其他操作系统定制一个 node.js 镜像也很容易，例如基于 Centos7 定制的 node.js 镜像：</p>
+<p>Dockerfile 如下：</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">FROM</span> centos:<span class="number">7</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> curl -L https://dl.yarnpkg.com/rpm/yarn.repo -o /etc/yum.repos.d/yarn.repo</span></span><br><span class="line"><span class="bash">RUN curl --silent --location https://rpm.nodesource.com/setup_14.x | bash -</span></span><br><span class="line"><span class="bash">RUN yum install -y nodejs yarn</span></span><br><span class="line"><span class="bash">WORKDIR /code</span></span><br><span class="line"><span class="bash">EXPOSE 80</span></span><br><span class="line"><span class="bash">CMD npm start</span></span><br></pre></td></tr></table></figure>
+<p>生成镜像：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker build -t node:14-centos7 .</span><br></pre></td></tr></table></figure>
+<p>该镜像既可以运行 C++ 插件，又能接收 Docker 的 SIGTERM 事件。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/docker-node-images/" data-id="ckgvyz2o1000354q4t3j9p5px" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Node-js/">Node.js</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/feathers-notes/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Node.js企业级Web框架（Feathers）</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dart/">Dart</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Elasticsearch/">Elasticsearch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Flutter/">Flutter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Node-js/">Node.js</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

@@ -54,6 +54,91 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-flutter-constraints-are-unbounded" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/flutter-constraints-are-unbounded/" class="article-date">
+  <time datetime="2020-03-26T01:39:11.000Z" itemprop="datePublished">2020-03-26</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/flutter-constraints-are-unbounded/">Flutter布局报错</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>今天在 flutter 在 ListView 里面的 itemBuilder 写布局，发现报错了：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">RenderFlex children have non-zero flex but incoming height constraints are unbounded.</span><br></pre></td></tr></table></figure>
+<p>这个报错的 item 的布局就是 Column.children 里面有个 Row，然后这个 Row.children 里面有个 Column，然后给这个 Column 设置 <code>crossAxisAlignment</code> 为 <code>CrossAxisAlignment.stretch</code>。</p>
+<p>查了资料说报错原因是 ListView 垂直方向的计算是包裹子 View 的，也就是说子 View 必须有一个明确的高度，或者尽可能小的高度，而不能是无限高。可以用 IntrinsicHeight 组件包裹 Row，这个 Row 就能根据子控件的高度，智能调整自身高度，就不会报错了。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/flutter-constraints-are-unbounded/" data-id="ckej9qfz000ddwpq4kh094e64" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flutter/">Flutter</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-slow-tencent-ssh" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/slow-tencent-ssh/" class="article-date">
+  <time datetime="2020-03-15T22:49:50.000Z" itemprop="datePublished">2020-03-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/slow-tencent-ssh/">腾讯云ssh登录超慢</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>腾讯云 ssh 登录超级缓慢，等了10几秒之后才登陆成功，然后提示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">There were 58431 failed login attempts since the last successful login.</span><br></pre></td></tr></table></figure>
+<p>而阿里云都是秒登，心想腾讯云真垃圾。后来网上查了一下说，上面统计的是上次成功登录之后有多少次失败登录的尝试，统计数据来源于文件 <code>/var/log/btmp</code>，我的这个文件有 5G，于是就把它给删了，登陆瞬间变快，秒登。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/slow-tencent-ssh/" data-id="ckej9qgat00vcwpq40sjrbbu8" class="article-share-link">Share</a>
+     
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-es6-function-scope" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/es6-function-scope/" class="article-date">
@@ -465,109 +550,6 @@
 
 
   
-    <article id="post-mac-install-mongodb" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/mac-install-mongodb/" class="article-date">
-  <time datetime="2020-01-14T08:39:13.000Z" itemprop="datePublished">2020-01-14</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/mac-install-mongodb/">Mac安装MongoDB</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>由于 MongoDB 开源许可证发生了变化，不是 MIT 了，所以 brew 不再提供下载支持，不过可以用 <code>brew tap</code> 来进行安装：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ brew tap mongodb/brew</span><br><span class="line">$ brew install mongodb-community</span><br><span class="line">$ brew install mongodb-community@3.6</span><br><span class="line">$ brew install mongodb-community-shell</span><br></pre></td></tr></table></figure>
-<p>安装之后有三个重要的文件或路径：</p>
-<ul>
-<li>配置文件：<code>/usr/local/etc/mongod.conf</code></li>
-<li>日志目录路径：<code>/usr/local/var/log/mongodb</code></li>
-<li>数据目录路径：<code>/usr/local/var/mongodb</code></li>
-</ul>
-<p>启动和停止 mongodb：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">brew services start mongodb-community</span><br><span class="line">brew services stop mongodb-community</span><br></pre></td></tr></table></figure>
-<p>手动开启命令：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mongod --config /usr/<span class="built_in">local</span>/etc/mongod.conf</span><br><span class="line">mongo admin --<span class="built_in">eval</span> <span class="string">"db.shutdownServer()"</span></span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/mac-install-mongodb/" data-id="ckej9qg4q00mswpq45rxpnwin" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MongoDB/">MongoDB</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-use-env-in-dockerfile" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/use-env-in-dockerfile/" class="article-date">
-  <time datetime="2020-01-14T08:32:17.000Z" itemprop="datePublished">2020-01-14</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/use-env-in-dockerfile/">在Dockerfile中使用环境变量</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>有时候，在通过 Dockerfile 制作 docker 镜像的时候，需要根据环境变量来选择不同的源，例如指定 centos 的版本、切换网络请求地址等。这个时候，可以在 dockerfile 里面使用 <code>ARG</code> 指令，然后在 build 的时候使用 <code>build-arg</code> 参数即可：</p>
-<ol>
-<li><p>Dockerfile 文件中声明环境变量</p>
- <figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ARG</span> request_domain <span class="comment"># 定义环境变量</span></span><br><span class="line"><span class="keyword">ARG</span> request_domain=<span class="number">127.0</span>.<span class="number">0.1</span> <span class="comment"># 定义环境变量并赋初始值</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>制作镜像时指定环境变量</p>
- <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker build --build-arg request_domain=<span class="variable">$&#123;request_domain&#125;</span> -t <span class="variable">$&#123;name&#125;</span> .</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<p>如果 Dockerfile 中声明了环境变量，但是 build 的时候没有使用 <code>--build-arg &lt;varname&gt;=&lt;value&gt;</code>，那么镜像不会被生成。如果指定了多余的环境变量，会有一个提示：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[Warning] One or more build-args [foo] were not consumed.</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/use-env-in-dockerfile/" data-id="ckej9qgcp00xtwpq43u49afzb" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/">Docker</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
 
 
   <nav id="page-nav">
@@ -586,7 +568,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dart/">Dart</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Elasticsearch/">Elasticsearch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Flutter/">Flutter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dart/">Dart</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Elasticsearch/">Elasticsearch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Flutter/">Flutter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Node-js/">Node.js</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
     </div>
   </div>
 

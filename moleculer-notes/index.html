@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="如果你想在 Node.js 项目中使用微服务框架的话，我推荐 Moleculer，它有丰富的功能、完善的文档、高效的性能和灵活的配置，我们先看一张架构图：  上图描述了如下的应用场景：  用户请求通过 HTTP 协议到达 API 网关层 Gateway 服务解析请求并将数据和指令交给 Broker Broker 通过 Transporter 调用微服务内部函数，返回处理后的数据  从这张图可以看到">
+<meta name="keywords" content="JavaScript">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Node.js微服务框架Moleculer">
+<meta property="og:url" content="https://zju.date/moleculer-notes/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="如果你想在 Node.js 项目中使用微服务框架的话，我推荐 Moleculer，它有丰富的功能、完善的文档、高效的性能和灵活的配置，我们先看一张架构图：  上图描述了如下的应用场景：  用户请求通过 HTTP 协议到达 API 网关层 Gateway 服务解析请求并将数据和指令交给 Broker Broker 通过 Transporter 调用微服务内部函数，返回处理后的数据  从这张图可以看到">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://img.zlib.cn/blog/moleculer-overview.svg">
+<meta property="og:image" content="http://img.zlib.cn/blog/moleculer-transporter.jpg">
+<meta property="og:image" content="http://img.zlib.cn/blog/moleculer-repl-demo.jpg">
+<meta property="og:image" content="http://img.zlib.cn/blog/moleculer-middlewares.jpg">
+<meta property="og:updated_time" content="2020-10-12T14:04:16.080Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Node.js微服务框架Moleculer">
+<meta name="twitter:description" content="如果你想在 Node.js 项目中使用微服务框架的话，我推荐 Moleculer，它有丰富的功能、完善的文档、高效的性能和灵活的配置，我们先看一张架构图：  上图描述了如下的应用场景：  用户请求通过 HTTP 协议到达 API 网关层 Gateway 服务解析请求并将数据和指令交给 Broker Broker 通过 Transporter 调用微服务内部函数，返回处理后的数据  从这张图可以看到">
+<meta name="twitter:image" content="http://img.zlib.cn/blog/moleculer-overview.svg">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-moleculer-notes" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/moleculer-notes/" class="article-date">
+  <time datetime="2019-07-17T06:17:50.000Z" itemprop="datePublished">2019-07-17</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Node.js微服务框架Moleculer
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>如果你想在 Node.js 项目中使用微服务框架的话，我推荐 <a href="https://moleculer.services/" target="_blank" rel="noopener">Moleculer</a>，它有丰富的功能、完善的文档、高效的性能和灵活的配置，我们先看一张架构图：</p>
+<p><img src="http://img.zlib.cn/blog/moleculer-overview.svg" alt="架构"></p>
+<p>上图描述了如下的应用场景：</p>
+<ol>
+<li>用户请求通过 HTTP 协议到达 API 网关层</li>
+<li>Gateway 服务解析请求并将数据和指令交给 Broker</li>
+<li>Broker 通过 Transporter 调用微服务内部函数，返回处理后的数据</li>
+</ol>
+<p>从这张图可以看到 Moleculer 接管了内部的服务注册与发现、服务之间的消息通信以及负载均衡等底层复杂逻辑，用户只需要写核心业务逻辑即可，大大提升了开发效率。</p>
+<a id="more"></a>
+<h2 id="核心概念"><a href="#核心概念" class="headerlink" title="核心概念"></a>核心概念</h2><h3 id="服务-Service"><a href="#服务-Service" class="headerlink" title="服务 Service"></a>服务 Service</h3><p>服务就是一个独立的业务单元，本质上就是一个 JS 对象，例如下面的代码实现了完整的加减乘除功能，我们可以给它起名为 <code>math</code> 服务：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">  name: <span class="string">'math'</span>,</span><br><span class="line">  actions: &#123;</span><br><span class="line">    add(ctx) &#123;</span><br><span class="line">      <span class="keyword">const</span> &#123; a, b &#125; = ctx.params</span><br><span class="line">      <span class="keyword">return</span> a + b</span><br><span class="line">    &#125;,</span><br><span class="line">    subtract(ctx) &#123;</span><br><span class="line">      <span class="keyword">const</span> &#123; a, b &#125; = ctx.params</span><br><span class="line">      <span class="keyword">return</span> a - b</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 省略代码</span></span><br><span class="line">  &#125;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="节点-Node"><a href="#节点-Node" class="headerlink" title="节点 Node"></a>节点 Node</h3><p>节点就是本地或网络上的一个 Node 进程，每个节点内部可以承载多个服务。例如定义了数学计算 <code>math</code> 和统计分析 <code>statistic</code> 两个服务，放在了 <code>services</code> 目录下，目录结构为：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">services</span><br><span class="line">├── math.service.js</span><br><span class="line">└── statistic.service.js</span><br></pre></td></tr></table></figure>
+<p>现将其在同一个 Node 进程中启动。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> &#123; ServiceBroker &#125; = <span class="built_in">require</span>(<span class="string">'moleculer'</span>)</span><br><span class="line"><span class="keyword">const</span> broker = <span class="keyword">new</span> ServiceBroker()</span><br><span class="line">broker.loadServices(<span class="string">'./services'</span>)</span><br><span class="line">broker.start().catch(<span class="function">(<span class="params">e</span>) =&gt;</span> <span class="built_in">console</span>.error(e))</span><br></pre></td></tr></table></figure>
+<p>那么这个启动的 Node 进程就是一个 Moleculer 节点。</p>
+<h3 id="本地服务-Local-services"><a href="#本地服务-Local-services" class="headerlink" title="本地服务 Local services"></a>本地服务 Local services</h3><p>在同一个节点上的服务彼此互为本地服务，它们共享硬件资源，通过局部总线进行通信，无任何网络延迟。比如说上面的 <code>math</code> 和 <code>statistic</code> 服务之间互为本地服务，可以在 <code>statistic</code> 里面直接调用 <code>math</code> 中的方法，这个时候并没有走传输介质，而是进程内部调用，效率很高。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">  name: <span class="string">'statistic'</span>,</span><br><span class="line">  actions: &#123;</span><br><span class="line">    calculate(ctx) &#123;</span><br><span class="line">      <span class="keyword">return</span> ctx.call(<span class="string">`math.add`</span>, &#123; <span class="attr">a</span>: <span class="number">3</span>, <span class="attr">b</span>: <span class="number">4</span> &#125;)</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="远程服务-Remote-Services"><a href="#远程服务-Remote-Services" class="headerlink" title="远程服务 Remote Services"></a>远程服务 Remote Services</h3><p>不同节点上的服务彼此互为远程服务，它们之间通过某种传输介质（例如消息中间件）进行通信。例如我们又起了一个 Node 进程，里面加载了 <code>user</code> 和 <code>account</code> 服务：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">services</span><br><span class="line">├── account.service.js</span><br><span class="line">└── user.service.js</span><br></pre></td></tr></table></figure>
+<p>那么 <code>user</code> 和 <code>math</code> 之间就互为远程服务，因为它们不在一个 Node 进程下面，例如在 <code>user.get</code> 中调用另外一个进程的 <code>math.multiply</code> 方法，就必须通过传输介质进行通信。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">  name: <span class="string">'user'</span>,</span><br><span class="line">  actions: &#123;</span><br><span class="line">    <span class="keyword">async</span> get(ctx) &#123;</span><br><span class="line">      <span class="keyword">return</span> ctx.call(<span class="string">'math.multiply'</span>, &#123; <span class="attr">a</span>: <span class="number">3</span>, <span class="attr">b</span>: <span class="number">10</span> &#125;)</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="服务中介-Service-Broker"><a href="#服务中介-Service-Broker" class="headerlink" title="服务中介 Service Broker"></a>服务中介 Service Broker</h3><p>服务中介是 Moleculer 框架的核心，负责服务之间的通信（包括本地和远程服务），每个节点都有一个服务中介。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> &#123; ServiceBroker &#125; = <span class="built_in">require</span>(<span class="string">'moleculer'</span>)</span><br><span class="line"><span class="keyword">const</span> broker = <span class="keyword">new</span> ServiceBroker()</span><br></pre></td></tr></table></figure>
+<p><code>broker</code> 实例有很多方法，例如：</p>
+<ul>
+<li>通过 <code>loadService</code> 方法加载服务</li>
+<li>通过 <code>emit</code> 方法触发事件</li>
+<li>通过 <code>call</code> 方法发送请求</li>
+</ul>
+<h3 id="传输介质-Transporter"><a href="#传输介质-Transporter" class="headerlink" title="传输介质 Transporter"></a>传输介质 Transporter</h3><p>传输介质负责节点之间的通信，是服务之间传输消息的通信总线，可以触发事件、发送请求、接收响应。</p>
+<p><img src="http://img.zlib.cn/blog/moleculer-transporter.jpg" alt="传输介质"></p>
+<p>也就是说如果 Node1 中的 <code>user</code> 服务想发消息给 Node2 中的 <code>math</code> 服务，需要通过传输介质进行通信，Moleculer 中提供了多种传输介质，例如：</p>
+<ul>
+<li>nats（<code>yarn add nats</code>）</li>
+<li>redis（<code>yarn add ioredis</code>）</li>
+<li>kafka（<code>yarn add kafka-node</code>）</li>
+<li>mqtt（<code>yarn add mqtt</code>）</li>
+<li>amqp（<code>yarn add amqplib</code>）</li>
+<li>等等，还可以自定义传输介质</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> &#123; ServiceBroker &#125; = <span class="built_in">require</span>(<span class="string">'moleculer'</span>)</span><br><span class="line"><span class="keyword">const</span> broker = <span class="keyword">new</span> ServiceBroker(&#123;</span><br><span class="line">  transporter: <span class="string">'nats://localhost:4222'</span>, <span class="comment">// 使用 nats 传输介质</span></span><br><span class="line">  <span class="comment">// transporter: 'redis://localhost:6379', // 使用 redis 传输介质</span></span><br><span class="line">  <span class="comment">// transporter: 'kafka://localhost:2181', // 使用 kafka 传输介质</span></span><br><span class="line">  <span class="comment">// transporter: 'mqtt://localhost:1883', // 使用 mqtt 传输介质</span></span><br><span class="line">  <span class="comment">// transporter: "amqp://localhost:5672", // 使用 amqp 传输介质</span></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<h3 id="网关-Gateway"><a href="#网关-Gateway" class="headerlink" title="网关 Gateway"></a>网关 Gateway</h3><p>网关将内部服务暴露给终端用户，它就是一个常规的 Moleculer 服务，内部集成了 HTTP 或 WebSocket 功能，将用户请求转发到内部服务。官方提供了一个 RESTful 的 API 网关：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn add moleculer-web <span class="comment"># 或者 npm i moleculer-web</span></span><br></pre></td></tr></table></figure>
+<p>使用方法：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> &#123; ServiceBroker &#125; = <span class="built_in">require</span>(<span class="string">'moleculer'</span>)</span><br><span class="line"><span class="keyword">const</span> ApiService = <span class="built_in">require</span>(<span class="string">'moleculer-web'</span>)</span><br><span class="line"><span class="keyword">const</span> broker = <span class="keyword">new</span> ServiceBroker(&#123; <span class="attr">transporter</span>: <span class="string">'nats://localhost:4222'</span> &#125;)</span><br><span class="line">broker.createService(ApiService)</span><br><span class="line">broker.start()</span><br></pre></td></tr></table></figure>
+<p>这个时候，默认会在 <code>localhost:3000</code> 端口开启一个 RESTful 的 HTTP 服务：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl <span class="string">'localhost:3000/math/subtract?a=5&amp;b=3'</span></span><br></pre></td></tr></table></figure>
+<p>如果 <code>math</code> 服务启动，那么请求就会被 Moleculer 转发给 <code>math.subtract</code> 方法进行处理并返回结果 <code>2</code>。</p>
+<h2 id="命令行工具"><a href="#命令行工具" class="headerlink" title="命令行工具"></a>命令行工具</h2><p>Moleculer 最让开发者喜欢的一点就是它提供了非常强大的命令行工具 <a href="https://moleculer.services/docs/0.13/moleculer-repl.html" target="_blank" rel="noopener">moleculer-repl</a>，采用约定大于配置的规范自动加载 <code>services</code> 目录下 <code>xxx.service.js</code> 文件，在开发环境支持热加载，也就是说自动监听代码变化，保存即更新服务，无需重启。在 package.json 中配置如下：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">"scripts": &#123;</span><br><span class="line">  "dev": "moleculer-runner --repl --hot services",</span><br><span class="line">  "start": "moleculer-runner"</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
+<p>在 moleculer-repl 提供的命令行里面可以看到所有的方法和事件：</p>
+<p><img src="http://img.zlib.cn/blog/moleculer-repl-demo.jpg" alt="repl"></p>
+<p>还可以直接调试各种方法，例如：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">call <span class="string">"math.add"</span> --a 5 --b 6 <span class="comment"># 命令行传参</span></span><br><span class="line">call <span class="string">"math.add"</span> --load my-params.json <span class="comment"># 从 文件中加载参数</span></span><br><span class="line">call <span class="string">"math.add"</span> --save my-response.json <span class="comment"># 把返回结果保存到文件</span></span><br></pre></td></tr></table></figure>
+<p>而且 moleculer-runner 可以直接上生产环境，自带日志管理、错误调试、缓存、参数校验等功能。</p>
+<h2 id="数据库连接"><a href="#数据库连接" class="headerlink" title="数据库连接"></a>数据库连接</h2><p>Moleculer 封装了 <a href="https://moleculer.services/docs/0.13/moleculer-db.html#Data-Manipulation" target="_blank" rel="noopener">moleculer-db</a> 库，把 CRUD 的逻辑打包进去，并且对接了 mongo、mongoose 和 sequelize ORM 框架，增删改查不需要写一行代码，只要引入相应的库和适配器即可：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> DbService = <span class="built_in">require</span>(<span class="string">'moleculer-db'</span>)</span><br><span class="line"><span class="keyword">const</span> mongoose = <span class="built_in">require</span>(<span class="string">'mongoose'</span>)</span><br><span class="line"><span class="keyword">const</span> MongooseAdapter = <span class="built_in">require</span>(<span class="string">'moleculer-db-adapter-mongoose'</span>)</span><br></pre></td></tr></table></figure>
+<p>然后在创建服务的时候，添加下面的参数：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">broker.createService(&#123;</span><br><span class="line">  name: <span class="string">'order'</span>,</span><br><span class="line">  mixins: [DbService],</span><br><span class="line">  adapter: <span class="keyword">new</span> MongooseAdapter(<span class="string">'mongodb://localhost:27017/test'</span>),</span><br><span class="line">  model: mongoose.model(</span><br><span class="line">    <span class="string">'order'</span>,</span><br><span class="line">    mongoose.Schema(&#123;</span><br><span class="line">      orderNo: &#123; <span class="attr">type</span>: <span class="built_in">String</span> &#125;,</span><br><span class="line">      price: &#123; <span class="attr">type</span>: <span class="built_in">Number</span>, <span class="attr">default</span>: <span class="number">0</span> &#125;,</span><br><span class="line">    &#125;)</span><br><span class="line">  ),</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>这个时候会自动生成 <code>count</code>、 <code>create</code>、 <code>find</code>、 <code>get</code>、 <code>insert</code>、 <code>list</code>、 <code>remove</code>、 <code>update</code> 八个方法，开箱即用。</p>
+<h2 id="中间件"><a href="#中间件" class="headerlink" title="中间件"></a>中间件</h2><p>Moleculer 同样支持中间件，框架有内置的中间件，用户也可以定义自己的中间件，还是 express 中熟悉的洋葱模型：</p>
+<p><img src="http://img.zlib.cn/blog/moleculer-middlewares.jpg" alt="中间件"></p>
+<p>在 Moleculer 中，中间件本质上就是一个包含高阶函数的对象，可以应用在方法、事件等各种场景，例如下面的错误捕获中间件：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">  name: <span class="string">'error'</span>,</span><br><span class="line">  localAction(next, action) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">async</span> <span class="function"><span class="keyword">function</span> (<span class="params">ctx</span>) </span>&#123;</span><br><span class="line">      <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">await</span> next(ctx)</span><br><span class="line">      &#125; <span class="keyword">catch</span> (e) &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">'出错的Action'</span>, action.name)</span><br><span class="line">        <span class="keyword">throw</span> e</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>示例代码地址：<code>git clone git@github.com:keliq/moleculer-demo.git</code></p>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/moleculer-notes/" data-id="ckgvyz2o3000554q469mhmt4h" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/flutter-vs-wxminiapp/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Flutter和小程序的下拉刷新和上拉加载功能
+        
+      </div>
+    </a>
+  
+  
+    <a href="/nodejs-ssl-unsupported-protocol/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">nodejs中SSL证书错误问题</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dart/">Dart</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Elasticsearch/">Elasticsearch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Flutter/">Flutter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Node-js/">Node.js</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

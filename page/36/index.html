@@ -54,6 +54,191 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-angular-resolve-vs-data" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/angular-resolve-vs-data/" class="article-date">
+  <time datetime="2017-10-21T03:45:12.000Z" itemprop="datePublished">2017-10-21</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/angular-resolve-vs-data/">angular 中的 resolve 和 data</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在 Angular 中，有两种给指定路由对应的组件传递数据的方式：</p>
+<ol>
+<li><p>使用 resolve</p>
+<p> 路由代码：</p>
+ <figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> AppRoutes: Routes = [</span><br><span class="line">  &#123; </span><br><span class="line">    path: <span class="string">'/one'</span>, component: OneComponent, resolve: &#123; foo: <span class="string">'foo'</span> &#125;</span><br><span class="line">  &#125;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<pre><code>组件代码:
+
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span>()</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> OneComponent <span class="keyword">implements</span> OnInit &#123;</span><br><span class="line">    <span class="keyword">constructor</span>(<span class="params"><span class="keyword">private</span> route: ActivatedRoute</span>) &#123;&#125;</span><br><span class="line">    ngOnInit() &#123;</span><br><span class="line">        <span class="keyword">this</span>.foo = <span class="keyword">this</span>.route.snapshot.data[<span class="string">'foo'</span>];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+&lt;!--more--&gt;
+</code></pre><ol>
+<li><p>使用 data</p>
+<p>路由代码：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> routes: RouterConfig = [</span><br><span class="line">    &#123;</span><br><span class="line">      path: <span class="string">'/one'</span>, component: OneComponent, data : &#123;some_data : <span class="string">'some value'</span>&#125;</span><br><span class="line">    &#125;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+<p>组件代码：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span>()</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> OneComponent <span class="keyword">implements</span> OnInit &#123;</span><br><span class="line">    <span class="keyword">constructor</span>(<span class="params"><span class="keyword">private</span> route: ActivatedRoute</span>) &#123;&#125;</span><br><span class="line">    ngOnInit() &#123;</span><br><span class="line">        <span class="keyword">this</span>.obs = <span class="keyword">this</span>.route.data.subscribe(<span class="function"><span class="params">v</span> =&gt;</span> <span class="built_in">console</span>.log(v));</span><br><span class="line">    &#125;</span><br><span class="line">    ngOnDestroy() &#123;</span><br><span class="line">        <span class="keyword">this</span>.obs.unsubscribe();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>案例：</p>
+<p>路由配置是：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">	path: <span class="string">'lairage'</span>, <span class="attr">component</span>: HostComponent,</span><br><span class="line">	children: [</span><br><span class="line">		&#123;<span class="attr">path</span>: <span class="string">''</span>, <span class="attr">component</span>: LairageComponent&#125;,</span><br><span class="line">		&#123;</span><br><span class="line">			path: <span class="string">'livestock/:id'</span>,</span><br><span class="line">			data: &#123;<span class="attr">type</span>: <span class="string">'lairage'</span>&#125;,</span><br><span class="line">			resolve: &#123;<span class="attr">itemDetail</span>: LairageResolver&#125;,</span><br><span class="line">			component: LivestockComponent</span><br><span class="line">		&#125;</span><br><span class="line">	]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在 HTML 页面：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">i</span> [<span class="attr">routerLink</span>]=<span class="string">"['/cultivation/lairage/livestock', target.id, &#123;h:target.herdsman_id,c:target.category&#125;]"</span></span></span><br><span class="line"><span class="tag">	[<span class="attr">queryParams</span>]=<span class="string">"&#123;code:target.code&#125;"</span> &gt;</span><span class="tag">&lt;/<span class="name">i</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>组件中调用：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> snapshot = <span class="keyword">this</span>.route.snapshot</span><br><span class="line"><span class="built_in">console</span>.log(snapshot)</span><br></pre></td></tr></table></figure>
+<p>路由 <code>route.snapshot</code> 参数详解：</p>
+<ol>
+<li><p>params</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="attr">id</span>: <span class="string">"28"</span>, <span class="attr">code</span>: <span class="string">"20171018180028009889"</span>&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>queryParams</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="attr">query</span>: <span class="string">"3"</span>&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>data</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">itemDetail: &#123;<span class="attr">id</span>: <span class="number">28</span>, <span class="attr">code</span>: <span class="string">"20171018180028009889"</span>, <span class="attr">time</span>: <span class="number">1508320828199</span>, <span class="attr">category</span>: <span class="string">"羊"</span>, <span class="attr">info</span>: <span class="string">"发送扥"</span>, …&#125;</span><br><span class="line">type:<span class="string">"lairage"</span></span><br></pre></td></tr></table></figure>
+<p>我们看到，resolve的对象也放到了data里面。</p>
+</li>
+<li><p>routeConfig</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">component:LivestockComponent</span><br><span class="line">data:&#123;<span class="attr">type</span>: <span class="string">"lairage"</span>&#125;</span><br><span class="line">path:<span class="string">"livestock/:id"</span></span><br><span class="line">resolve:&#123;<span class="attr">itemDetail</span>: ƒ&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>parent</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">parent.routeConfig.path</span><br></pre></td></tr></table></figure>
+<p>​</p>
+</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/angular-resolve-vs-data/" data-id="ckej9qfuh004wwpq46ifcvmvq" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Angular/">Angular</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-angular-random-color" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/angular-random-color/" class="article-date">
+  <time datetime="2017-10-17T02:42:07.000Z" itemprop="datePublished">2017-10-17</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/angular-random-color/">Angular 随机换颜色</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>使用 <code>[style.property]</code> 来改变 Angular 组件的样式：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> [<span class="attr">style.color</span>]=<span class="string">"color"</span>&gt;</span>我的颜色是动态变化的哦！<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">button</span> (<span class="attr">click</span>)=<span class="string">"setColor()"</span>&gt;</span> 随机生成 <span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>随机颜色：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">color = <span class="keyword">this</span>.getRandomColor();</span><br><span class="line"></span><br><span class="line">getRandomColor() &#123;</span><br><span class="line">    <span class="keyword">let</span> letters = <span class="string">'0123456789ABCDEF'</span>.split(<span class="string">''</span>), color = <span class="string">'#'</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">6</span>; i++)&#123;</span><br><span class="line">        color += letters[<span class="built_in">Math</span>.floor(<span class="built_in">Math</span>.random() * <span class="number">16</span>)];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> color;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">setColor() &#123;</span><br><span class="line">    <span class="keyword">this</span>.color = <span class="keyword">this</span>.getRandomColor();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/angular-random-color/" data-id="ckej9qfub004qwpq4mffe9v35" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-mongodb-aggregation-trap" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/mongodb-aggregation-trap/" class="article-date">
+  <time datetime="2017-10-12T03:23:23.000Z" itemprop="datePublished">2017-10-12</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/mongodb-aggregation-trap/">MongoDB 聚合的坑</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>mongodb 聚合的时候几个坑：</p>
+<ol>
+<li><p>_id 必须是 ObjectId 类型</p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$match: &#123; <span class="attr">item</span>: mongoose.Types.ObjectId(item.id) &#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<ol>
+<li><p>日期必须是 Date 类型</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$match: &#123; createdAt: &#123; $gt: new Date(&apos;xxxxx&apos;) &#125; &#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>返回的是一个 cursor ，不能当做数组取值，也没有 toArray 方法</p>
+</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/mongodb-aggregation-trap/" data-id="ckej9qg5n00o0wpq46symu8eg" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MongoDB/">MongoDB</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-centos-releaserver-and-basearch" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/centos-releaserver-and-basearch/" class="article-date">
@@ -409,162 +594,6 @@
 
 
   
-    <article id="post-mongodb-query-empty-array-or-undefined" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/mongodb-query-empty-array-or-undefined/" class="article-date">
-  <time datetime="2017-09-15T14:34:23.000Z" itemprop="datePublished">2017-09-15</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/mongodb-query-empty-array-or-undefined/">mongodb 数组字段相关查询</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>查询的时候，匹配某个数组字段至少包含一个以上元素的方法：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">db.xxx.find(&#123;<span class="attr">field</span>: &#123;<span class="attr">$exists</span>: <span class="literal">true</span>, <span class="attr">$gt</span>: &#123;<span class="attr">$size</span>: <span class="number">0</span>&#125;&#125;&#125;)</span><br><span class="line">db.xxx.find(&#123;<span class="attr">field</span>: &#123;<span class="attr">$exists</span>: <span class="literal">true</span>, <span class="attr">$not</span>: &#123;<span class="attr">$size</span>: <span class="number">0</span>&#125;&#125;&#125;)</span><br><span class="line">db.xxx.find(&#123;<span class="string">'field.0'</span>: &#123;<span class="attr">$exists</span>: <span class="literal">true</span>&#125;&#125;)</span><br></pre></td></tr></table></figure>
-<p>反过来，匹配字段不存在或者为空数组的写法：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">db.xxx.find(&#123;<span class="string">'field.0'</span>: &#123;<span class="attr">$exists</span>: <span class="literal">false</span>&#125;&#125;)</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/mongodb-query-empty-array-or-undefined/" data-id="ckej9qg6600ouwpq48749gtbc" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MongoDB/">MongoDB</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-node-module-mjs" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/node-module-mjs/" class="article-date">
-  <time datetime="2017-09-13T01:51:07.000Z" itemprop="datePublished">2017-09-13</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/node-module-mjs/">nodejs支持es6模块语法</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>在此之前，node.js中一直不支持es6模块语法，即 <code>import</code> 和 <code>export</code>，如果在命令行编译包含es6模块的文件，就会报下面的错误：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(function (exports, require, module, __filename, __dirname) &#123; import * as utils from &apos;./index.js&apos;</span><br><span class="line">                                                              ^^^^^^</span><br><span class="line">SyntaxError: Unexpected token import</span><br></pre></td></tr></table></figure>
-<p>于是不得不使用类似于 <code>babel</code> 的转换器进行转换，你需要安装 <code>babel-cli</code> 然后用命令 <code>babel-node</code> 来转换：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">babel-node index.js</span><br></pre></td></tr></table></figure>
-<p>而昨天发布的 8.5.0 版本增加了对模块的支持，语法是：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">node --experimental-modules index.mjs</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/node-module-mjs/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/node-module-mjs/" data-id="ckej9qg7k00qvwpq4t4aef32a" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-js-object-vs-function" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/js-object-vs-function/" class="article-date">
-  <time datetime="2017-09-05T15:30:25.000Z" itemprop="datePublished">2017-09-05</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/js-object-vs-function/">js 中的对象和函数</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>instanceof 操作符可用于判断一个对象是什么类型，如果使用 instanceof 来检测基本类型的值，则始终返回 false，因为基本类型不是对象，而如果变量是给定引用类型的实例，就会返回 true，所有引用类型的值都是 Object 的实例。</p>
-<p>Object 的每个实例都具有下面的属性和方法：</p>
-<ul>
-<li><code>constructor</code>：构造函数（即创建当前对象的函数）</li>
-<li><code>hasOwnProperty(name)</code>：检查属性是否在当前对象而非原型当中</li>
-<li><code>isPrototypeOf(object)</code>：检查当前对象是否是被传入对象object的原型</li>
-<li><code>propertyIsEnumerable(name)</code>：检查属性是否可枚举</li>
-<li><code>toString()</code>：返回对象的字符串表示</li>
-<li><code>toLocaleString()</code>：返回对象的本地字符串表示</li>
-<li><code>valueOf()</code>：返回对象的数值表示</li>
-</ul>
-<p>函数实际上是对象，每个函数都是Function类型的实例，函数名是指向函数对象的指针。</p>
-<p>下面三种写法是等价的：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">sum</span>(<span class="params">a,b</span>) </span>&#123; <span class="keyword">return</span> a+b &#125;</span><br><span class="line"><span class="keyword">var</span> sum = <span class="function"><span class="keyword">function</span>(<span class="params">a,b</span>) </span>&#123; <span class="keyword">return</span> a+b &#125;</span><br><span class="line"><span class="keyword">var</span> sum = <span class="keyword">new</span> <span class="built_in">Function</span>(<span class="string">'a'</span>,<span class="string">'b'</span>,<span class="string">'return a+b'</span>)</span><br></pre></td></tr></table></figure>
-<p>Function 是 javascript 里最常用的一个概念，javascript 里的 function 是最容易入手的一个功能，但它也是 javascript 最难理解最难掌握的一个概念。今天我们来尝试理解 Function 和 Object。因为这个里面有些人前期可能会搞糊涂，他们之间到底是什么关系，官方定义: 在Javascript中，每一个函数实际上都是一个函数对象.</p>
-<p>我们先来看最简单的两个代码,也是最容易理解的.</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">func</span>(<span class="params"></span>)</span>&#123;&#125;</span><br><span class="line"><span class="keyword">var</span> obj = &#123;&#125;</span><br><span class="line"><span class="built_in">console</span>.log(func <span class="keyword">instanceof</span> <span class="built_in">Function</span>) <span class="comment">//true</span></span><br><span class="line"><span class="built_in">console</span>.log(obj <span class="keyword">instanceof</span> <span class="built_in">Object</span>) <span class="comment">//true</span></span><br><span class="line"><span class="built_in">console</span>.log(func <span class="keyword">instanceof</span> <span class="built_in">Object</span>) <span class="comment">//true</span></span><br><span class="line"><span class="built_in">console</span>.log(obj <span class="keyword">instanceof</span> <span class="built_in">Function</span>) <span class="comment">//false</span></span><br></pre></td></tr></table></figure>
-<p>前面两个打印的效果容易理解.后面 fn instanceof Object 是为 true 的原因是: 在javascript中一切函数实际都是函数对象。我们再来看一个代码</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(<span class="built_in">Function</span> <span class="keyword">instanceof</span> <span class="built_in">Object</span>) <span class="comment">// true</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="built_in">Object</span> <span class="keyword">instanceof</span> <span class="built_in">Function</span>) <span class="comment">// true</span></span><br></pre></td></tr></table></figure>
-<p>函数实际也是一个函数对象，所以第一个为true，而 Object 也是函数，因为 Object的 结构是 <code>function Object(){native code}</code>，当然就是函数了，所以两个都是为true.</p>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/js-object-vs-function/" data-id="ckej9qg3b00kiwpq48miqru2p" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
 
 
   <nav id="page-nav">
@@ -583,7 +612,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dart/">Dart</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Elasticsearch/">Elasticsearch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Flutter/">Flutter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dart/">Dart</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Elasticsearch/">Elasticsearch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Flutter/">Flutter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Node-js/">Node.js</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
     </div>
   </div>
 

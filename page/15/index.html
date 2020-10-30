@@ -54,6 +54,237 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-double-pointer" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/double-pointer/" class="article-date">
+  <time datetime="2018-09-03T08:34:48.000Z" itemprop="datePublished">2018-09-03</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/double-pointer/">双指针在算法题中的应用</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>双指针是一种巧妙的解题思路，我们通过几道题来体验一下：</p>
+<h2 id="求链表的中间结点"><a href="#求链表的中间结点" class="headerlink" title="求链表的中间结点"></a>求链表的中间结点</h2><p><strong><a href="https://leetcode-cn.com/problems/middle-of-the-linked-list" target="_blank" rel="noopener">题目描述</a></strong>：给定一个带有头结点 head 的非空单链表，返回链表的中间结点。如果有两个中间结点，则返回第二个中间结点。</p>
+<p>此题并不难，假设链表中有 N 个节点，就是需要找到索引为 <code>Math.floor(N/2)</code> 的节点即可，例如：</p>
+<ul>
+<li>[1,2,3,4,5] 返回 3，即第 2 个节点</li>
+<li>[1,2,3,4,5,6] 返回 4，即第 3 个节点</li>
+</ul>
+<p>所以最容易想到的就是遍历一次链表，把长度得到，然后用上面的公式找到中间的节点，代码如下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> middleNode = <span class="function"><span class="keyword">function</span> (<span class="params">head</span>) </span>&#123;</span><br><span class="line">  <span class="comment">// 遍历链表，得到总长度</span></span><br><span class="line">  <span class="keyword">let</span> size = <span class="number">0</span>, current = head</span><br><span class="line">  <span class="keyword">while</span> (current) &#123;</span><br><span class="line">    size++</span><br><span class="line">    current = current.next</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 找到中间节点的索引，再次遍历得到中间节点</span></span><br><span class="line">  <span class="keyword">let</span> index = <span class="built_in">Math</span>.floor(size / <span class="number">2</span>), i = <span class="number">0</span></span><br><span class="line">  current = head</span><br><span class="line">  <span class="keyword">while</span> (i &lt; index) &#123;</span><br><span class="line">    i++</span><br><span class="line">    current = current.next</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> current</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其实更好的解法是使用双指针，更准确叫「快慢指针」，fast 和 slow 指针开始都指向 head，然后：</p>
+<ul>
+<li>fast 移动两步</li>
+<li>slow 移动一步 </li>
+</ul>
+<p>那么 fast 指针和 slow 指针所在索引的对应关系为：</p>
+<ul>
+<li>fast=0, slow=0，示例 [0]</li>
+<li>fast=2, slow=1，示例 [0, 1, 2]</li>
+<li>fast=4, slow=2，示例 [0, 1, 2, 3, 4]</li>
+<li>fast=6, slow=3，示例 [0, 1, 2, 3, 4, 5, 6]</li>
+<li>….</li>
+</ul>
+<p>如果 fast 指针已经到达链表的尾部，那么 slow 指针指向的位置就是我们要的中间节点，由于 fast 每次移动两步，只有当 fast 和 fast.next 存在的时候才能移动，所以代码如下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> middleNode = <span class="function"><span class="keyword">function</span> (<span class="params">head</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">let</span> fast = head, slow = head</span><br><span class="line">  <span class="keyword">while</span> (fast &amp;&amp; fast.next) &#123;</span><br><span class="line">    fast = fast.next.next</span><br><span class="line">    slow = slow.next</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> slow</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>是不是代码更简洁，思路也更容易理解了呢？这是双指针的典型应用。与之类似题目还有<a href="https://leetcode-cn.com/problems/remove-nth-node-from-end-of-list" target="_blank" rel="noopener">删除链表的倒数第N个节点</a></p>
+<h2 id="盛水最多的容器"><a href="#盛水最多的容器" class="headerlink" title="盛水最多的容器"></a>盛水最多的容器</h2><p><strong><a href="https://leetcode-cn.com/problems/container-with-most-water" target="_blank" rel="noopener">题目描述</a></strong>：给你 n 个非负整数 <code>[a1，a2，...，an]</code>，每个数代表坐标中的一个点 <code>(i, ai)</code> 。在坐标内画 n 条垂直线，垂直线 i 的两个端点分别为 <code>(i, ai)</code> 和 <code>(i, 0)</code>。找出其中的两条线，使得它们与 x 轴共同构成的容器可以容纳最多的水。例如：</p>
+<ul>
+<li>输入：[1,8,6,2,5,4,8,3,7]</li>
+<li>输出：49</li>
+</ul>
+<p>也就是说，要从数组中找到两个值 <code>ai</code> 和 <code>aj</code>，使得 <code>Min(ai, aj)*(j-i)</code> 最大。</p>
+<p>这道题当然也是可以用穷举法来做的，算出所有可能的值，但是时间复杂度为 <code>O(n^2)</code>，更好的解决方案就是双指针，更准确的说是「头尾指针」，一开始的时候，让头指针指向数组开始元素，尾指针指向数组最后元素，计算其容量。接下来只可能出现两种移动方式：</p>
+<ul>
+<li>头指针右移一步</li>
+<li>尾指针左移一步</li>
+</ul>
+<p>无论是哪种移动方式，<code>j-i</code> 的值是相同的，且比之前小 1，所以只要比较 <code>ai</code> 和 <code>aj</code>，哪个小就移哪个，直到两指针相遇，代码如下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> maxArea = <span class="function"><span class="keyword">function</span> (<span class="params">arr</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">let</span> i = <span class="number">0</span>, j = arr.length - <span class="number">1</span>, max = <span class="number">0</span></span><br><span class="line">  <span class="keyword">while</span> (i &lt; j) &#123;</span><br><span class="line">    <span class="keyword">let</span> head = arr[i], tail = arr[j]</span><br><span class="line">    max = <span class="built_in">Math</span>.max(max, <span class="built_in">Math</span>.min(head, tail) * (j - i))</span><br><span class="line">    head &lt; tail ? i++ : j--</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> max</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/double-pointer/" data-id="ckej9qfxq00auwpq4l3fjvlts" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-upgrade-bootstrap4" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/upgrade-bootstrap4/" class="article-date">
+  <time datetime="2018-09-03T03:46:13.000Z" itemprop="datePublished">2018-09-03</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/upgrade-bootstrap4/">bootstrap语义等价表</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>升级到 bootstrap4 之后 <code>hidden-*</code>、<code>visible-*</code> 类以及 <code>-xs</code> 中缀都不存在了，可以使用 <code>d-*</code> 类来代替，下表是等价关系：</p>
+<table>
+<thead>
+<tr>
+<th>语义</th>
+<th>bootstrap3</th>
+<th>bootstrap4</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>xs 以下隐藏</td>
+<td><code>hidden-xs-down</code></td>
+<td><code>d-none d-sm-block</code></td>
+</tr>
+<tr>
+<td>sm 以下隐藏</td>
+<td><code>hidden-sm-down</code></td>
+<td><code>d-none d-md-block</code></td>
+</tr>
+<tr>
+<td>md 以下隐藏</td>
+<td><code>hidden-md-down</code></td>
+<td><code>d-none d-lg-block</code></td>
+</tr>
+<tr>
+<td>lg 以下隐藏</td>
+<td><code>hidden-lg-down</code></td>
+<td><code>d-none d-xl-block</code></td>
+</tr>
+<tr>
+<td>xl 以下隐藏</td>
+<td><code>hidden-xl-down</code></td>
+<td><code>d-none</code></td>
+</tr>
+<tr>
+<td>xs 以上隐藏</td>
+<td><code>hidden-xs-up</code></td>
+<td><code>d-none</code></td>
+</tr>
+<tr>
+<td>sm 以上隐藏</td>
+<td><code>hidden-sm-up</code></td>
+<td><code>d-sm-none</code></td>
+</tr>
+<tr>
+<td>md 以上隐藏</td>
+<td><code>hidden-md-up</code></td>
+<td><code>d-md-none</code></td>
+</tr>
+<tr>
+<td>lg 以上隐藏</td>
+<td><code>hidden-lg-up</code></td>
+<td><code>d-lg-none</code></td>
+</tr>
+<tr>
+<td>xl 以上隐藏</td>
+<td><code>hidden-xl-up</code></td>
+<td><code>d-xl-none</code></td>
+</tr>
+<tr>
+<td>只隐藏 xs</td>
+<td><code>hidden-xs</code></td>
+<td><code>d-none d-sm-block</code></td>
+</tr>
+<tr>
+<td>只隐藏 sm</td>
+<td><code>hidden-sm</code></td>
+<td><code>d-block d-sm-none d-md-block</code></td>
+</tr>
+<tr>
+<td>只隐藏 md</td>
+<td><code>hidden-md</code></td>
+<td><code>d-block d-md-none d-lg-block</code></td>
+</tr>
+<tr>
+<td>只隐藏 lg</td>
+<td><code>hidden-lg</code></td>
+<td><code>d-block d-lg-none d-xl-block</code></td>
+</tr>
+<tr>
+<td>只隐藏 xl</td>
+<td><code>hidden-xl</code></td>
+<td><code>d-block d-xl-none</code></td>
+</tr>
+<tr>
+<td>只显示 xs</td>
+<td><code>visible-xs</code></td>
+<td><code>d-block d-sm-none</code></td>
+</tr>
+<tr>
+<td>只显示 sm</td>
+<td><code>visible-sm</code></td>
+<td><code>d-none d-sm-block d-md-none</code></td>
+</tr>
+<tr>
+<td>只显示 md</td>
+<td><code>visible-md</code></td>
+<td><code>d-none d-md-block d-lg-none</code></td>
+</tr>
+<tr>
+<td>只显示 lg</td>
+<td><code>visible-lg</code></td>
+<td><code>d-none d-lg-block d-xl-none</code></td>
+</tr>
+<tr>
+<td>只显示 xl</td>
+<td><code>visible-xl</code></td>
+<td><code>d-none d-xl-block</code></td>
+</tr>
+</tbody>
+</table>
+<p>col-sm-</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/upgrade-bootstrap4/" data-id="ckej9qgcg00xkwpq4q0djgp8h" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CSS/">CSS</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-mongodb-bulk" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/mongodb-bulk/" class="article-date">
@@ -479,115 +710,6 @@
 
 
   
-    <article id="post-es-alias" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/es-alias/" class="article-date">
-  <time datetime="2018-07-31T03:29:36.000Z" itemprop="datePublished">2018-07-31</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/es-alias/">在ES中为索引起别名</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>参见<a href="/es-prepare">准备工作</a>，搭建好命令行查询语法。</p>
-<p>查看全部索引：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">escurl -XGET $ES/_cat/indices?v</span><br></pre></td></tr></table></figure>
-<p>创建一个 test 索引：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">escurl -XPUT <span class="variable">$ES</span>/<span class="built_in">test</span>?pretty</span><br></pre></td></tr></table></figure>
-<p>添加一个文档：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">escurl -XPUT <span class="variable">$ES</span>/<span class="built_in">test</span>/_doc/1?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "name": "小明"</span></span><br><span class="line"><span class="string">&#125;'</span></span><br></pre></td></tr></table></figure>
-<p>查看索引内全部文档：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">escurl -XGET <span class="variable">$ES</span>/<span class="built_in">test</span>/_search?pretty</span><br></pre></td></tr></table></figure>
-<p>根据旧索引创建新索引：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">escurl -XPOST <span class="variable">$ES</span>/_reindex?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "source": &#123;"index":"test"&#125;,</span></span><br><span class="line"><span class="string">  "dest":&#123;"index":"test_v2"&#125;</span></span><br><span class="line"><span class="string">&#125;'</span></span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/es-alias/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/es-alias/" data-id="ckej9qfy100bjwpq4ytlyynt6" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Elasticsearch/">Elasticsearch</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-docker-ps-format" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/docker-ps-format/" class="article-date">
-  <time datetime="2018-07-31T01:24:23.000Z" itemprop="datePublished">2018-07-31</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/docker-ps-format/">docker ps 指定列</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>通过 <code>--format</code> 参数，可以在 <code>docker ps</code> 的时候指定输出的列：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 输出名称和镜像</span></span><br><span class="line">docker ps --format <span class="string">'&#123;&#123;.Names&#125;&#125;\t&#123;&#123;.Image&#125;&#125;'</span></span><br><span class="line"><span class="comment"># 按照表格展示</span></span><br><span class="line">docker ps --format <span class="string">'table &#123;&#123;.Names&#125;&#125;\t&#123;&#123;.Image&#125;&#125;'</span></span><br></pre></td></tr></table></figure>
-<p>还可以修改默认输出格式，默认配置文件是：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">~/.docker/config.json</span><br></pre></td></tr></table></figure>
-<p>然后添加下面的自定义参数：</p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"psFormat"</span>: <span class="string">"table &#123;&#123;.Names&#125;&#125;\\t&#123;&#123;.Image&#125;&#125;\\t&#123;&#123;.RunningFor&#125;&#125; ago\\t&#123;&#123;.Status&#125;&#125;\\t&#123;&#123;.Command&#125;&#125;"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/docker-ps-format/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/docker-ps-format/" data-id="ckej9qfxj00agwpq4keejnnsd" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
 
 
   <nav id="page-nav">
@@ -606,7 +728,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dart/">Dart</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Elasticsearch/">Elasticsearch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Flutter/">Flutter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dart/">Dart</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Elasticsearch/">Elasticsearch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Flutter/">Flutter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Node-js/">Node.js</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
     </div>
   </div>
 

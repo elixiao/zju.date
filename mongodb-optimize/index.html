@@ -13,7 +13,7 @@
 <meta property="og:site_name" content=".">
 <meta property="og:description" content="记录超过 1秒 的慢查询： 1$ db.setProfilingLevel(1, 1000)    Level Description     0 关闭，不记录。默认配置   1 记录超过 slowms 值的操作   2 记录所有操作    查看刚才的配置是否生效： 123456$ db.getProfilingStatus()&amp;#123;    &quot;was&quot; : 1,    &quot;slowms&quot; :">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-09-29T06:26:40.716Z">
+<meta property="og:updated_time" content="2020-10-30T06:28:06.728Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="MongoDB 慢查询和性能优化">
 <meta name="twitter:description" content="记录超过 1秒 的慢查询： 1$ db.setProfilingLevel(1, 1000)    Level Description     0 关闭，不记录。默认配置   1 记录超过 slowms 值的操作   2 记录所有操作    查看刚才的配置是否生效： 123456$ db.getProfilingStatus()&amp;#123;    &quot;was&quot; : 1,    &quot;slowms&quot; :">
@@ -143,6 +143,21 @@
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">db.setProfilingLevel(0) <span class="comment"># 关闭Profiling</span></span><br><span class="line">db.system.profile.drop() <span class="comment"># 删除system.profile集合</span></span><br><span class="line">db.createCollection(<span class="string">"system.profile"</span>, &#123;capped: <span class="literal">true</span>, size:4000000&#125;) <span class="comment"># 创建新的system.profile集合 --- 4M</span></span><br><span class="line">db.setProfilingLevel(1) <span class="comment"># 重新开启Profiling</span></span><br></pre></td></tr></table></figure>
 <p>注意，删除全部数据是不行的：</p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt; db.system.profile.remove(&#123;&#125;)</span><br><span class="line">cannot <span class="keyword">delete</span> <span class="keyword">from</span> system namespace</span><br></pre></td></tr></table></figure>
+<p>如果要实时观测当前正在执行的查询，可以用下面的语句：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">db.currentOp()</span><br></pre></td></tr></table></figure>
+<p>还可以指定查询条件，例如查询所有操作xxx集合并且执行时间已超过3s的请求：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">db.currentOp(&#123;     </span><br><span class="line">  <span class="string">"active"</span>: <span class="literal">true</span>,</span><br><span class="line">  <span class="string">"secs_running"</span>: &#123;<span class="string">"$gt"</span> : <span class="number">3</span>&#125;,</span><br><span class="line">  <span class="string">"ns"</span>: <span class="regexp">/^xxx\./</span></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>currentOp的过滤条件包括</p>
+<ul>
+<li>请求操作类型，insert、update、delete…</li>
+<li>请求对应的connectionId，threadId</li>
+<li>请求是否正在等待锁</li>
+<li>请求执行时间</li>
+<li>请求操作的DB或collection</li>
+<li>请求query的内容</li>
+</ul>
+<p>当我们知道某条语句是锁库的罪魁祸首的时候，我们就可以通过另一条语句，干掉对应的请求。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">db.currentOp() <span class="comment">// 获得对应的 opid</span></span><br><span class="line">db.killOp(opid)</span><br></pre></td></tr></table></figure>
 
       
     </div>
@@ -190,7 +205,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dart/">Dart</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Elasticsearch/">Elasticsearch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Flutter/">Flutter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dart/">Dart</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Elasticsearch/">Elasticsearch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Flutter/">Flutter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Node-js/">Node.js</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
     </div>
   </div>
 

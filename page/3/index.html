@@ -54,6 +54,109 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-mac-install-mongodb" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/mac-install-mongodb/" class="article-date">
+  <time datetime="2020-01-14T08:39:13.000Z" itemprop="datePublished">2020-01-14</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/mac-install-mongodb/">Mac安装MongoDB</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>由于 MongoDB 开源许可证发生了变化，不是 MIT 了，所以 brew 不再提供下载支持，不过可以用 <code>brew tap</code> 来进行安装：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ brew tap mongodb/brew</span><br><span class="line">$ brew install mongodb-community</span><br><span class="line">$ brew install mongodb-community@3.6</span><br><span class="line">$ brew install mongodb-community-shell</span><br></pre></td></tr></table></figure>
+<p>安装之后有三个重要的文件或路径：</p>
+<ul>
+<li>配置文件：<code>/usr/local/etc/mongod.conf</code></li>
+<li>日志目录路径：<code>/usr/local/var/log/mongodb</code></li>
+<li>数据目录路径：<code>/usr/local/var/mongodb</code></li>
+</ul>
+<p>启动和停止 mongodb：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">brew services start mongodb-community</span><br><span class="line">brew services stop mongodb-community</span><br></pre></td></tr></table></figure>
+<p>手动开启命令：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mongod --config /usr/<span class="built_in">local</span>/etc/mongod.conf</span><br><span class="line">mongo admin --<span class="built_in">eval</span> <span class="string">"db.shutdownServer()"</span></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/mac-install-mongodb/" data-id="ckej9qg4q00mswpq45rxpnwin" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MongoDB/">MongoDB</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-use-env-in-dockerfile" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/use-env-in-dockerfile/" class="article-date">
+  <time datetime="2020-01-14T08:32:17.000Z" itemprop="datePublished">2020-01-14</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/use-env-in-dockerfile/">在Dockerfile中使用环境变量</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>有时候，在通过 Dockerfile 制作 docker 镜像的时候，需要根据环境变量来选择不同的源，例如指定 centos 的版本、切换网络请求地址等。这个时候，可以在 dockerfile 里面使用 <code>ARG</code> 指令，然后在 build 的时候使用 <code>build-arg</code> 参数即可：</p>
+<ol>
+<li><p>Dockerfile 文件中声明环境变量</p>
+ <figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ARG</span> request_domain <span class="comment"># 定义环境变量</span></span><br><span class="line"><span class="keyword">ARG</span> request_domain=<span class="number">127.0</span>.<span class="number">0.1</span> <span class="comment"># 定义环境变量并赋初始值</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>制作镜像时指定环境变量</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker build --build-arg request_domain=<span class="variable">$&#123;request_domain&#125;</span> -t <span class="variable">$&#123;name&#125;</span> .</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>如果 Dockerfile 中声明了环境变量，但是 build 的时候没有使用 <code>--build-arg &lt;varname&gt;=&lt;value&gt;</code>，那么镜像不会被生成。如果指定了多余的环境变量，会有一个提示：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[Warning] One or more build-args [foo] were not consumed.</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/use-env-in-dockerfile/" data-id="ckej9qgcp00xtwpq43u49afzb" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/">Docker</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-js-tree-traversal" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/js-tree-traversal/" class="article-date">
@@ -437,124 +540,6 @@
 
 
   
-    <article id="post-js-write-promise" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/js-write-promise/" class="article-date">
-  <time datetime="2019-12-23T07:09:16.000Z" itemprop="datePublished">2019-12-23</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/js-write-promise/">75行代码实现Promise/A+规范</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>Promise 是一种非常重要的异步编程模式，可以巧妙地避免产生的回调地狱问题，有如下几个特点：</p>
-<ul>
-<li>Promise 是基于回调的</li>
-<li>利用发布订阅模式来进行通知回调</li>
-<li>递归链式调用</li>
-</ul>
-<p>Promise/A+ <a href="https://promisesaplus.com/" target="_blank" rel="noopener">规范</a>中对 Promise 做了如下的定义：</p>
-<blockquote>
-<p>一个有 then 方法的对象或者函数，只要是符合 A+ 规范，就是 Promise</p>
-</blockquote>
-<p>A+ 规范里面有很规则，主要讲述了 Promise 的内部变量和 then 函数的执行流程，并没有定义 catch/finally 等方法，其实这些方法都是基于 Promise 和 then 函数的，具体用法可参考 <a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Promise" target="_blank" rel="noopener">MDN</a> 文档。</p>
-<p>接下来就来实现一个 Promise，首先定义构造函数，里面保存四个私有变量：</p>
-<ol>
-<li>Promise 的状态(<code>status</code>)，该状态只能被改一次</li>
-<li>成功的值 <code>value</code></li>
-<li>拒绝的原因 <code>reason</code></li>
-<li>异步时预先保存的成功或失败的回调 <code>cb</code></li>
-</ol>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/js-write-promise/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/js-write-promise/" data-id="ckej9qg3o00l2wpq4akrsyudd" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-nodejs-eventloop" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/nodejs-eventloop/" class="article-date">
-  <time datetime="2019-12-23T07:09:16.000Z" itemprop="datePublished">2019-12-23</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/nodejs-eventloop/">typescript装饰器</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>之前总结过<a href="http://zju.date/browser-eventloop">浏览器中的事件循环</a>，在 Node.js 中也有自己的事件循环，但与浏览器不一样，在 Node.js 中有 5 个宏任务队列，分别是：</p>
-<ol>
-<li>计时器队列，里面存放 setTimeout 和 setInterval 函数添加的回调</li>
-<li>系统相关回调队列，例如端口监听、进程资源占用</li>
-<li>IO 事件队列，里面存放 I/O 事件回调，这是 Node.js 异步非阻塞的关键</li>
-<li>立即执行队列，里面存放 setImmediate 函数添加的回调</li>
-<li>关闭操作队列，里面存放 close 事件处理回调</li>
-</ol>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/nodejs-eventloop/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/nodejs-eventloop/" data-id="ckej9qg7v00r9wpq41m3bkk72" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
 
 
   <nav id="page-nav">
@@ -573,7 +558,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dart/">Dart</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Elasticsearch/">Elasticsearch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Flutter/">Flutter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dart/">Dart</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Elasticsearch/">Elasticsearch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Flutter/">Flutter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Node-js/">Node.js</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
     </div>
   </div>
 

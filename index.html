@@ -54,6 +54,125 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-docker-node-images" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/docker-node-images/" class="article-date">
+  <time datetime="2020-10-28T02:31:04.000Z" itemprop="datePublished">2020-10-28</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/docker-node-images/">如何选择 Node.js 的 Docker 镜像</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>node.js 应用一般用 <a href="https://pm2.keymetrics.io/" target="_blank" rel="noopener">pm2</a> 或者 <a href="https://hub.docker.com/_/node" target="_blank" rel="noopener">docker</a> 来部署，如果你也打算用 docker 部署的话，可能也会遇到如何选择 node 镜像的问题，官方提供了如下三类选择：</p>
+<ol>
+<li><p><code>node:&lt;version&gt;</code>：这是官方默认镜像，基于 debian 构建，可指定的版本有：</p>
+<blockquote>
+<p>Debian 10（buster） — 当前的稳定版（stable）<br>Debian 9（stretch） — 旧的稳定版（oldstable）<br>Debian 8（jessie） — 更旧的稳定版（oldoldstable）<br>Debian 7（wheezy） — 被淘汰的稳定版</p>
+</blockquote>
+<p>这些镜像是基于 <a href="https://hub.docker.com/_/buildpack-deps/" target="_blank" rel="noopener">buildpack-deps</a> 进行构建的，这里可以查看 <a href="https://github.com/nodejs/docker-node/blob/master/14/buster/Dockerfile" target="_blank" rel="noopener">Dockerfile</a>，此类镜像的优点是安装的依赖很全，例如 <code>curl</code>、<code>wget</code> ，缺点是体积过大。</p>
+</li>
+<li><p><code>node:&lt;version&gt;-slim</code> ：这是删除冗余依赖后的精简版本镜像，同样是基于 debian 构建，体积上比默认镜像小很多，删除了很多默认公共的软件包，只保留了最基本的 node 运行环境。</p>
+</li>
+<li><p><code>node:&lt;version&gt;-alpine</code>：这个版本基于 alpine 镜像构建，比 debian 的 slim 版本还要小，可以说是最小的 node 镜像。虽然体积小，但是功能不少，普通的 node.js 应用都能跑起来，但是如果项目中用到了 c++ 扩展的话，就不要用这个了，因为 alpine 使用 musl 代替 glibc，一些 c/c++ 环境的软件可能不兼容。</p>
+</li>
+</ol>
+<p>接下来，基于 node.js 14 版本，分别下载上述三类镜像进行对比：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker pull node:14-buster</span><br><span class="line">docker pull node:14-buster-slim</span><br><span class="line">docker pull node:14-alpine</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/docker-node-images/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/docker-node-images/" data-id="ckgvyz2o1000354q4t3j9p5px" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Node-js/">Node.js</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-feathers-notes" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/feathers-notes/" class="article-date">
+  <time datetime="2020-10-16T08:29:10.000Z" itemprop="datePublished">2020-10-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/feathers-notes/">Node.js企业级Web框架（Feathers）</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>node.js 企业级 web 框架有很多，例如阿里的 <a href="https://eggjs.org/zh-cn/" target="_blank" rel="noopener">eggjs</a>、IBM 的 <a href="https://loopback.io/" target="_blank" rel="noopener">loopback</a>、风格类似 Spring 的 <a href="https://nestjs.com/" target="_blank" rel="noopener">nestjs</a> 等，今天介绍另一种选择，那就是 <a href="https://feathersjs.com/" target="_blank" rel="noopener">feathersjs</a>，虽然在国内比较小众，但它入门很简单、遵循 RESTful 规范、文档和生态比较完善、社区维护也很积极，而且它还支持实时推送，自称是：</p>
+<blockquote>
+<p>A framework for real-time applications and REST APIs</p>
+</blockquote>
+<p><img src="http://img.zlib.cn/blog/feathers-logo-wide.png" alt="feathersjs"></p>
+<p>feathersjs 是一款基于 express 的轻量级 node.js 框架，集成了以下几个重要特性：</p>
+<ul>
+<li>严格遵循 RESTful API 设计风格</li>
+<li>借助 websocket 提供实时通信功能</li>
+<li>提供了多种前端技术栈的支持，例如 React, VueJS, Angular, React Native 等</li>
+<li>通过 hook 横向扩展应用，是面向切片编程（AOP：Aspect Oriented Programming）思想的一种实现</li>
+</ul>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/feathers-notes/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/feathers-notes/" data-id="ckgvyz2nw000154q4elex1qxb" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-samesite-vs-sameorigin" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/samesite-vs-sameorigin/" class="article-date">
@@ -479,91 +598,6 @@
 
 
   
-    <article id="post-flutter-constraints-are-unbounded" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/flutter-constraints-are-unbounded/" class="article-date">
-  <time datetime="2020-03-26T01:39:11.000Z" itemprop="datePublished">2020-03-26</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/flutter-constraints-are-unbounded/">Flutter布局报错</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>今天在 flutter 在 ListView 里面的 itemBuilder 写布局，发现报错了：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">RenderFlex children have non-zero flex but incoming height constraints are unbounded.</span><br></pre></td></tr></table></figure>
-<p>这个报错的 item 的布局就是 Column.children 里面有个 Row，然后这个 Row.children 里面有个 Column，然后给这个 Column 设置 <code>crossAxisAlignment</code> 为 <code>CrossAxisAlignment.stretch</code>。</p>
-<p>查了资料说报错原因是 ListView 垂直方向的计算是包裹子 View 的，也就是说子 View 必须有一个明确的高度，或者尽可能小的高度，而不能是无限高。可以用 IntrinsicHeight 组件包裹 Row，这个 Row 就能根据子控件的高度，智能调整自身高度，就不会报错了。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/flutter-constraints-are-unbounded/" data-id="ckej9qfz000ddwpq4kh094e64" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flutter/">Flutter</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-slow-tencent-ssh" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/slow-tencent-ssh/" class="article-date">
-  <time datetime="2020-03-15T22:49:50.000Z" itemprop="datePublished">2020-03-16</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/slow-tencent-ssh/">腾讯云ssh登录超慢</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>腾讯云 ssh 登录超级缓慢，等了10几秒之后才登陆成功，然后提示：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">There were 58431 failed login attempts since the last successful login.</span><br></pre></td></tr></table></figure>
-<p>而阿里云都是秒登，心想腾讯云真垃圾。后来网上查了一下说，上面统计的是上次成功登录之后有多少次失败登录的尝试，统计数据来源于文件 <code>/var/log/btmp</code>，我的这个文件有 5G，于是就把它给删了，登陆瞬间变快，秒登。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/slow-tencent-ssh/" data-id="ckej9qgat00vcwpq40sjrbbu8" class="article-share-link">Share</a>
-     
-    </footer>
-  </div>
-  
-</article>
-
-
-  
 
 
   <nav id="page-nav">
@@ -582,7 +616,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dart/">Dart</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Elasticsearch/">Elasticsearch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Flutter/">Flutter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dart/">Dart</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Elasticsearch/">Elasticsearch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Flutter/">Flutter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Node-js/">Node.js</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
     </div>
   </div>
 
