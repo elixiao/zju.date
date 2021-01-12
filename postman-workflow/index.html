@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Postman 是前端圈主流的接口测试工具，相信很多人都用过，但大部分开发者只用到了最基本的功能，即请求和响应，然而 Postman 提供给开发者的不仅仅是这些，下图是 Postman 的工作流，可以看到，在 request 的前面有前置请求脚本（pre-request script），在 response 的后面有测试脚本（test script），这四个部分合在一起才是一次完整的 Postma">
+<meta name="keywords" content="JavaScript">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Postman 工作流">
+<meta property="og:url" content="https://zju.date/postman-workflow/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="Postman 是前端圈主流的接口测试工具，相信很多人都用过，但大部分开发者只用到了最基本的功能，即请求和响应，然而 Postman 提供给开发者的不仅仅是这些，下图是 Postman 的工作流，可以看到，在 request 的前面有前置请求脚本（pre-request script），在 response 的后面有测试脚本（test script），这四个部分合在一起才是一次完整的 Postma">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://img.zlib.cn/blog/postman-workflow.png">
+<meta property="og:image" content="https://img.zlib.cn/blog/postman-pre-request-script.jpg">
+<meta property="og:image" content="https://img.zlib.cn/blog/postman-body-env.jpg">
+<meta property="og:image" content="https://img.zlib.cn/blog/postman-test-script.jpg">
+<meta property="og:updated_time" content="2021-01-12T08:26:16.388Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Postman 工作流">
+<meta name="twitter:description" content="Postman 是前端圈主流的接口测试工具，相信很多人都用过，但大部分开发者只用到了最基本的功能，即请求和响应，然而 Postman 提供给开发者的不仅仅是这些，下图是 Postman 的工作流，可以看到，在 request 的前面有前置请求脚本（pre-request script），在 response 的后面有测试脚本（test script），这四个部分合在一起才是一次完整的 Postma">
+<meta name="twitter:image" content="https://img.zlib.cn/blog/postman-workflow.png">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-postman-workflow" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/postman-workflow/" class="article-date">
+  <time datetime="2020-11-27T09:45:44.000Z" itemprop="datePublished">2020-11-27</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Postman 工作流
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Postman 是前端圈主流的接口测试工具，相信很多人都用过，但大部分开发者只用到了最基本的功能，即请求和响应，然而 Postman 提供给开发者的不仅仅是这些，下图是 Postman 的工作流，可以看到，在 request 的前面有前置请求脚本（pre-request script），在 response 的后面有测试脚本（test script），这四个部分合在一起才是一次完整的 Postman 工作流。</p>
+<p><img src="https://img.zlib.cn/blog/postman-workflow.png" alt="workflow"></p>
+<p>request 和 response 相信大家都会用了，这里主要介绍前置请求脚本和测试脚本的使用方法，以登录接口为例，演示一次 Postman 工作流的完整应用场景。</p>
+<a id="more"></a>
+<h2 id="前置请求脚本（pre-request-script）"><a href="#前置请求脚本（pre-request-script）" class="headerlink" title="前置请求脚本（pre-request script）"></a>前置请求脚本（pre-request script）</h2><p>pre-request script 叫前置请求脚本，顾名思义就是在发送 request 请求之前执行的脚本。那么这个脚本有什么用呢？请看这样一个需求：</p>
+<blockquote>
+<p>在每个请求的参数里面添加一个时间戳字段timestamp，用于记录当前发送时间。</p>
+</blockquote>
+<p>你可能会在 Postman 里面把这个参数写死，其实可以在每次发送请求的时候动态生成当前时间戳，只需要在 pre-request script 里面添加下面的代码：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pm.environment.set(<span class="string">"timestamp"</span>, Date.now())</span><br></pre></td></tr></table></figure>
+<p>这样就会动态生成一个 timestamp 环境变量，在 Postman 的 Params、Headers 和 Body 中都可以通过 <code></code> 来引用了，非常方便。其实 Postman 早就预料到可能会有这种需求，已经帮我们内置了很多变量，例如 <code></code> 、<code></code>、<code>$</code> 等诸多系统环境变量，可随时调用。</p>
+<p>当然，很多时候，我们还是希望能够自己定义环境变量，例如在登录接口里面，我在 pre-request script 中放了很多测试用的登录账号，随时进行切换，非常方便：</p>
+<p><img src="https://img.zlib.cn/blog/postman-pre-request-script.jpg" alt="前置请求脚本"></p>
+<p>设置完 body 环境变量之后，在请求体里面可以用 <code></code> 来获取这个变量了：</p>
+<p><img src="https://img.zlib.cn/blog/postman-body-env.jpg" alt="请求体"></p>
+<h2 id="测试脚本（test-script）"><a href="#测试脚本（test-script）" class="headerlink" title="测试脚本（test script）"></a>测试脚本（test script）</h2><p>Postman 内置了一套测试规则，并集成了 <a href="https://github.com/geraintluff/tv4" target="_blank" rel="noopener">tv4</a> 测试框架，方便开发者在收到请求后，对结果进行验证，例如：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 获取 JSON 响应体</span></span><br><span class="line"><span class="keyword">var</span> jsonData = pm.response.json()</span><br><span class="line"><span class="comment">// 确保状态码是 200，并且 value 的值是 100</span></span><br><span class="line">pm.test(<span class="string">"value is 100"</span>, <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    pm.response.to.have.status(<span class="number">200</span>)</span><br><span class="line">    pm.expect(jsonData.value).to.eql(<span class="number">100</span>)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>其实除了测试，在测试脚本里面能干的事情还有很多，例如我们在前置请求脚本里面动态设置了 body 这个环境变量，就需要在这里给删除，否则会永远保留在 Postman 的环境变量中：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 删除动态创建的 body</span></span><br><span class="line">postman.clearEnvironmentVariable(<span class="string">"body"</span>)</span><br></pre></td></tr></table></figure>
+<p>在登录接口的返回结果中有 accessToken 字段，我们需要保留下来给后续请求使用：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 从响应体中提取 token 并写入环境变量</span></span><br><span class="line"><span class="keyword">var</span> token = jsonData.accessToken</span><br><span class="line"><span class="keyword">if</span> (token) &#123;</span><br><span class="line">    pm.environment.set(<span class="string">"token"</span>, token)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>整个脚本的内容如下：</p>
+<p><img src="https://img.zlib.cn/blog/postman-test-script.jpg" alt="测试脚本"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/postman-workflow/" data-id="ckjtq8g8w000c6cq474p72lre" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/nodejs-cli/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          前端工程化之项目脚手架
+        
+      </div>
+    </a>
+  
+  
+    <a href="/typescript-strict/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">TypeScript中的严格模式</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dart/">Dart</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Elasticsearch/">Elasticsearch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Flutter/">Flutter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Node-js/">Node.js</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2021 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

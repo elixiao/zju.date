@@ -54,10 +54,10 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-change-docker-volume-folder" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-not-a-constructor" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/change-docker-volume-folder/" class="article-date">
-  <time datetime="2018-09-23T06:23:23.000Z" itemprop="datePublished">2018-09-23</time>
+    <a href="/not-a-constructor/" class="article-date">
+  <time datetime="2018-09-30T05:35:07.000Z" itemprop="datePublished">2018-09-30</time>
 </a>
     
   </div>
@@ -68,7 +68,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/change-docker-volume-folder/">修改 docker 默认存储位置</a>
+      <a class="article-title" href="/not-a-constructor/">require 时报错 not a constructor</a>
     </h1>
   
 
@@ -80,144 +80,22 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <p>docker 默认的存储位置是 <code>/var/lib/docker</code>，有三种方式可以实现修改 docker 默认存储位置的目的：</p>
-<ol>
-<li><p>指定启动参数</p>
-<p> 可以通过指定 docker 的启动参数 <code>data-root</code> 来设置 docker 的存储目录，这个文件一般位于 <code>/lib/systemd/system/docker.service</code></p>
- <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 旧的写法</span></span><br><span class="line">ExecStart=/usr/bin/dockerd</span><br><span class="line"><span class="comment"># 新的写法</span></span><br><span class="line">ExecStart=/usr/bin/dockerd --data-root /new_location/</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<pre><code>那么当再使用 `docker volume create xxx` 创建新的数据卷时，存储的目录就变成了：`/new_location/volumes/{volume_name}/_data`
-</code></pre>
+            <p>当引用第三方库的时候，经常会遇到下面的错误：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xxx is not a constructor</span><br></pre></td></tr></table></figure>
+<p>原因是该第三方库使用 es6 语法暴露出来一个类，但是在项目中使用了 require 来引用导致的。这是 babel 在转换 <code>import</code> 和 <code>export</code> 到 <code>require</code> 和 <code>exports</code> 时存在的差异，举个例子，用 es6 写 processor.js 暴露一个类：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// processor.js</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Processor</span> </span>&#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> Processor</span><br></pre></td></tr></table></figure>
+<p>如果用 require 来引用：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// require.js</span></span><br><span class="line"><span class="keyword">const</span> Processor = <span class="built_in">require</span>(<span class="string">'./processor'</span>);</span><br><span class="line"><span class="keyword">const</span> processor = <span class="keyword">new</span> Processor() <span class="comment">// 会报错</span></span><br></pre></td></tr></table></figure>
         </div>
         
           <p class="article-more-link">
-            <a href="/change-docker-volume-folder/#more">Read More</a>
+            <a href="/not-a-constructor/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/change-docker-volume-folder/" data-id="ckej9qfvm0070wpq4ha8wfaj6" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-nginx-implicit-upstream" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/nginx-implicit-upstream/" class="article-date">
-  <time datetime="2018-09-23T05:07:04.000Z" itemprop="datePublished">2018-09-23</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/nginx-implicit-upstream/">Nginx中显式和隐式的upstream</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>nginx 中 proxy_pass 指令必然对应显示或隐式的 upstream，或者 resolver。</p>
-<ol>
-<li><p>proxy_pass 和显式 upstream</p>
- <figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">upstream</span> bar &#123;</span><br><span class="line">    <span class="attribute">server</span> <span class="number">127.0.0.1:8001</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span>       <span class="number">80</span>;</span><br><span class="line">    <span class="attribute">server_name</span>  localhost;</span><br><span class="line">    <span class="attribute">location</span> /foo &#123;</span><br><span class="line">        <span class="attribute">proxy_pass</span> http://bar;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p> 访问 <code>http://localhost/foo</code>，proxy 模块会将请求转发到 127.0.0.1 的 8001 端口上。</p>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/nginx-implicit-upstream/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/nginx-implicit-upstream/" data-id="ckej9qg7600qcwpq41oceq7xm" class="article-share-link">Share</a>
-     
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-js-lock-object" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/js-lock-object/" class="article-date">
-  <time datetime="2018-09-22T09:42:10.000Z" itemprop="datePublished">2018-09-22</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/js-lock-object/">js锁定对象</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>在 js 当中，有时候需要锁定一个对象，有三个方法可供选择：</p>
-<ol>
-<li><p><code>Object.freeze</code></p>
-<ul>
-<li>不能新增属性</li>
-<li>不能修改属性</li>
-<li>不能修改已有属性的可枚举性、可配置性、可写性</li>
-<li>不能删除属性</li>
-</ul>
-</li>
-<li><p><code>Object.seal</code></p>
-<ul>
-<li>不能新增属性</li>
-<li>不能修改已有属性的可枚举性、可配置性、可写性</li>
-<li>可以修改属性</li>
-<li>不能删除属性</li>
-</ul>
-</li>
-<li><p><code>Object.preventExtensions</code></p>
-<ul>
-<li>不能新增属性</li>
-</ul>
-</li>
-</ol>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/js-lock-object/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/js-lock-object/" data-id="ckej9qg3700kbwpq49zzi089b" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/not-a-constructor/" data-id="ckej9qg8600rnwpq4ofqu9ofa" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
@@ -228,10 +106,10 @@
 
 
   
-    <article id="post-docker-container-join-multi-network" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-react-keep-alive" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/docker-container-join-multi-network/" class="article-date">
-  <time datetime="2018-09-21T09:14:13.000Z" itemprop="datePublished">2018-09-21</time>
+    <a href="/react-keep-alive/" class="article-date">
+  <time datetime="2018-09-28T23:17:31.000Z" itemprop="datePublished">2018-09-29</time>
 </a>
     
   </div>
@@ -242,7 +120,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/docker-container-join-multi-network/">docker容器加入多个网络</a>
+      <a class="article-title" href="/react-keep-alive/">react保存路由状态</a>
     </h1>
   
 
@@ -254,26 +132,31 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <p>docker 容器默认情况下会加入一个网络，可以在 <code>docker run</code> 命令中指定这个网络：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -itd --net bluenet --name c1 busybox sh</span><br></pre></td></tr></table></figure>
-<p>如果未指定，那就是 docker0 网络，但实际上容器可以加入多个网络的，需要使用 <code>docker network connect</code> 命令，例如现在创建两个网络：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ docker network create bluenet</span><br><span class="line">$ docker network create rednet</span><br></pre></td></tr></table></figure>
-<p>先用其中一个网络创建容器，但是别去运行它：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker create -it --net bluenet --name c1 busybox sh</span><br></pre></td></tr></table></figure>
-<p>这个时候，容器的状态是 <code>Created</code>，表示已创建但尚未运行。</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ docker ps -a</span><br><span class="line">CONTAINER ID        IMAGE       COMMAND      CREATED             STATUS     PORTS   NAMES</span><br><span class="line">25b52f0a988a        busybox     <span class="string">"sh"</span>         16 seconds ago      Created            c1</span><br></pre></td></tr></table></figure>
+            <p>在一个 React 项目中，客户希望切换路由再回来的时候，能够保持之前的状态。而保存状态有两种场景：</p>
+<ol>
+<li>只保留数据状态，不保留交互状态</li>
+<li>既保留数据状态，又保留交互状态</li>
+</ol>
+<p>所谓交互状态，就是连滚动位置、input 框里面输入到一半的文字等状态也要保留。上面两种场景对应的实现方法往往是：</p>
+<ol>
+<li>状态管理器中保存初始化数据，在 componentDidMount 时调用</li>
+<li>把页面隐藏掉，即设置：display: none</li>
+</ol>
+<p>对于第一种情况，一个简单的实现是把某个页面的状态参数放到 url 的 query 参数里面，同时也在全局状态对象中也存一份，组件初始化的时候先尝试从参数里面加载，如果没有参数，就从全局状态对象中取出来，示例代码如下：</p>
+<p>首先在 utils 中写暴露两个函数：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">getURLState</span>(<span class="params">opts</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> &#123; search, history, data = &#123;&#125; &#125; = opts</span><br><span class="line">  <span class="keyword">const</span> params = <span class="keyword">new</span> URLSearchParams(search)</span><br><span class="line">  <span class="keyword">const</span> fields = <span class="built_in">Object</span>.keys(data), ret = &#123;&#125;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; fields.length; i++) &#123;</span><br><span class="line">    <span class="keyword">const</span> field = fields[i]</span><br><span class="line">    ret[field] = params.get(field) || data[field]</span><br><span class="line">  &#125;</span><br><span class="line">  history.replace(<span class="built_in">window</span>.location.pathname + search)</span><br><span class="line">  <span class="keyword">return</span> ret</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">setURLState</span>(<span class="params">opts</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> &#123; search, history, data = &#123;&#125; &#125; = opts</span><br><span class="line">  <span class="keyword">const</span> currentUrlParams = <span class="keyword">new</span> URLSearchParams(search)</span><br><span class="line">  <span class="keyword">const</span> fields = <span class="built_in">Object</span>.keys(data), ret = &#123;&#125;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; fields.length; i++) &#123;</span><br><span class="line">    <span class="keyword">const</span> field = fields[i]</span><br><span class="line">    <span class="keyword">if</span> (field <span class="keyword">in</span> data) currentUrlParams.set(field, data[field])</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">const</span> newSearch = <span class="string">'?'</span> + currentUrlParams.toString()</span><br><span class="line">  history.push(<span class="built_in">window</span>.location.pathname + newSearch)</span><br><span class="line">  <span class="keyword">return</span> newSearch</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
         </div>
         
           <p class="article-more-link">
-            <a href="/docker-container-join-multi-network/#more">Read More</a>
+            <a href="/react-keep-alive/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/docker-container-join-multi-network/" data-id="ckej9qfx5009swpq4wllvr01w" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/react-keep-alive/" data-id="ckej9qg9e00t8wpq4otk1homv" class="article-share-link">Share</a>
      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/">Docker</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
     </footer>
   </div>
@@ -282,10 +165,10 @@
 
 
   
-    <article id="post-es-head" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-sudo-keep-env" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/es-head/" class="article-date">
-  <time datetime="2018-09-21T07:25:07.000Z" itemprop="datePublished">2018-09-21</time>
+    <a href="/sudo-keep-env/" class="article-date">
+  <time datetime="2018-09-28T01:06:07.000Z" itemprop="datePublished">2018-09-28</time>
 </a>
     
   </div>
@@ -296,7 +179,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/es-head/">es-head 安装</a>
+      <a class="article-title" href="/sudo-keep-env/">sudo 保持环境变量</a>
     </h1>
   
 
@@ -307,17 +190,20 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <p>用 docker 启动 es-head 服务：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker run -d -p 9100:9100 --name es-head mobz/elasticsearch-head:5-alpine</span><br><span class="line">docker run -d -p 9100:9100 --net elk --add-host es_host:<span class="variable">$ES_HOST</span> --name es-head mobz/elasticsearch-head:5-alpine</span><br></pre></td></tr></table></figure>
-<p>记得在 <code>elasticsearch.yml</code> 里面配置开启跨域支持：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">network.host: 0.0.0.0</span><br><span class="line">http.cors.enabled: <span class="literal">true</span></span><br><span class="line">http.cors.allow-origin: <span class="string">"*"</span></span><br></pre></td></tr></table></figure>
+        <p>sudo 之后环境变量就没了，但有个 <code>-E</code> 选项能够保持环境变量：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ export HTTP_PROXY=foof</span><br><span class="line">$ sudo -E bash -c &apos;echo $HTTP_PROXY&apos;</span><br></pre></td></tr></table></figure>
+<p>帮助页面解释如下:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-E, --preserve-env</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>Indicates to the security policy that the user wishes to preserve their existing environment variables.  The security policy may return an error if the user does not have permission to preserve the environment.</p>
+</blockquote>
 
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/es-head/" data-id="ckej9qfy600bswpq47s8k3mhq" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/sudo-keep-env/" data-id="ckej9qgba00vywpq466watph4" class="article-share-link">Share</a>
      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ELK/">ELK</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
 
     </footer>
   </div>
@@ -326,10 +212,10 @@
 
 
   
-    <article id="post-count-cpu" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-linux-route" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/count-cpu/" class="article-date">
-  <time datetime="2018-09-20T09:13:20.000Z" itemprop="datePublished">2018-09-20</time>
+    <a href="/linux-route/" class="article-date">
+  <time datetime="2018-09-27T14:43:07.000Z" itemprop="datePublished">2018-09-27</time>
 </a>
     
   </div>
@@ -340,7 +226,93 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/count-cpu/">查看服务器CPU个数</a>
+      <a class="article-title" href="/linux-route/">Linux 路由表</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>route 可查看路由表：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># route</span><br><span class="line">Destination     Gateway         Genmask Flags Metric Ref    Use Iface</span><br><span class="line">192.168.0.0     *               255.255.255.0   U     0      0        0 eth0</span><br><span class="line">169.254.0.0     *               255.255.0.0     U     0      0        0 eth0</span><br><span class="line">default         192.168.0.1     0.0.0.0         UG    0      0        0 eth0</span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th>Destination</th>
+<th>目标网段或者主机</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Gateway</td>
+<td>网关地址，”*” 表示目标是本主机所属的网络，不需要路由</td>
+</tr>
+<tr>
+<td>Genmask</td>
+<td>网络掩码</td>
+</tr>
+<tr>
+<td>Flags</td>
+<td>标记。</td>
+</tr>
+<tr>
+<td>Metric</td>
+<td>路由距离，到达指定网络所需的中转数（linux 内核中没有使用）</td>
+</tr>
+<tr>
+<td>Ref</td>
+<td>路由项引用次数（linux 内核中没有使用）</td>
+</tr>
+<tr>
+<td>Use</td>
+<td>此路由项被路由软件查找的次数</td>
+</tr>
+<tr>
+<td>Iface</td>
+<td>该路由表项对应的输出接口</td>
+</tr>
+</tbody>
+</table>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/linux-route/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/linux-route/" data-id="ckej9qg4800lwwpq4tl4rn6r0" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-install-latex-on-centos" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/install-latex-on-centos/" class="article-date">
+  <time datetime="2018-09-27T06:12:14.000Z" itemprop="datePublished">2018-09-27</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/install-latex-on-centos/">在centos上安装latex</a>
     </h1>
   
 
@@ -352,30 +324,27 @@
     <div class="article-entry" itemprop="articleBody">
       
         <ol>
-<li><p>查看物理CPU的个数</p>
- <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat /proc/cpuinfo | grep <span class="string">"physical id"</span> | sort | uniq | wc -l</span><br></pre></td></tr></table></figure>
+<li>从<a href="https://www.tug.org/texlive/acquire-netinstall.html" target="_blank" rel="noopener">官网</a>下载<a href="http://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz" target="_blank" rel="noopener">安装包</a>并解压</li>
+<li><p>删除已存在的 texlive 版本</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ yum erase texlive texlive*</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>安装依赖</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ yum install perl-Digest-MD5 -y</span><br></pre></td></tr></table></figure>
 </li>
 </ol>
 <ol>
-<li><p>查看逻辑CPU的个数</p>
- <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat /proc/cpuinfo | grep <span class="string">"processor"</span> | wc -l</span><br></pre></td></tr></table></figure>
+<li><p>进入解压后的文件夹</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">$ ./install-tl</span><br><span class="line">Installing to: /usr/local/texlive/2019</span><br><span class="line">...</span><br><span class="line">Welcome to TeX Live!</span><br><span class="line"></span><br><span class="line">See /usr/local/texlive/2019/index.html for links to documentation.</span><br><span class="line">The TeX Live web site (https://tug.org/texlive/) contains any updates and</span><br><span class="line">corrections. TeX Live is a joint project of the TeX user groups around the</span><br><span class="line">world; please consider supporting it by joining the group best for you. The</span><br><span class="line">list of groups is available on the web at https://tug.org/usergroups.html.</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Add /usr/local/texlive/2019/texmf-dist/doc/man to MANPATH.</span><br><span class="line">Add /usr/local/texlive/2019/texmf-dist/doc/info to INFOPATH.</span><br><span class="line">Most importantly, add /usr/local/texlive/2019/bin/x86_64-linux</span><br><span class="line">to your PATH for current and future sessions.</span><br><span class="line">Logfile: /usr/local/texlive/2019/install-tl.log</span><br></pre></td></tr></table></figure>
 </li>
-</ol>
-<ol>
-<li><p>查看CPU是几核</p>
- <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat /proc/cpuinfo | grep <span class="string">"cores"</span> | uniq</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<ol>
-<li><p>查看CPU的主频</p>
- <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat /proc/cpuinfo | grep MHz | uniq</span><br></pre></td></tr></table></figure>
+<li><p>把路径添加到环境变量</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ~/.bashrc</span></span><br><span class="line"><span class="built_in">export</span> PATH=/usr/<span class="built_in">local</span>/texlive/2019/bin/x86_64-linux:<span class="variable">$PATH</span></span><br></pre></td></tr></table></figure>
 </li>
 </ol>
 
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/count-cpu/" data-id="ckej9qfw3007ywpq4l4dc3wxy" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/install-latex-on-centos/" data-id="ckej9qg2000i9wpq4p3q4taai" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
 
@@ -386,10 +355,10 @@
 
 
   
-    <article id="post-hundreds-of-if" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-docker-quick-rm" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/hundreds-of-if/" class="article-date">
-  <time datetime="2018-09-18T02:30:22.000Z" itemprop="datePublished">2018-09-18</time>
+    <a href="/docker-quick-rm/" class="article-date">
+  <time datetime="2018-09-27T01:47:23.000Z" itemprop="datePublished">2018-09-27</time>
 </a>
     
   </div>
@@ -400,7 +369,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/hundreds-of-if/">代码放大招</a>
+      <a class="article-title" href="/docker-quick-rm/">一句话删除所有容器和镜像</a>
     </h1>
   
 
@@ -411,291 +380,219 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <p><img src="https://coolshell.cn/wp-content/uploads/2017/04/IMG_7411.jpg" alt="screenshot"></p>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/hundreds-of-if/" data-id="ckej9qg1m00hpwpq4hnkanuqu" class="article-share-link">Share</a>
-     
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-linux-cmd-route" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/linux-cmd-route/" class="article-date">
-  <time datetime="2018-09-18T02:27:08.000Z" itemprop="datePublished">2018-09-18</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/linux-cmd-route/">路由命令</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>添加路由规则：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ip route add TYPE PREFIX via GW [dev IFACE] [src SOURCE_IP]</span><br></pre></td></tr></table></figure>
-<ul>
-<li>ip route show：显示路由表；</li>
-<li>ip route add：添加路由；</li>
-<li>ip route change：修改路由；</li>
-<li>ip route replace：修改路由或添加路由；</li>
-<li>ip route delete：删除路由；</li>
-<li>ip route get：获得单条路由的详细信息；</li>
-<li>ip route flush：清空路由表；</li>
-</ul>
-<p>Route 命令是用于操作 ip 路由表，它创建一个静态路由让指定主机或者网络通过某个网络接口，如 eth0。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/linux-cmd-route/" data-id="ckej9qg4200lowpq40svc3f01" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-mask-subnet" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/mask-subnet/" class="article-date">
-  <time datetime="2018-09-17T03:12:23.000Z" itemprop="datePublished">2018-09-17</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/mask-subnet/">子网掩码计算</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>查看路由表：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ ip route list</span><br><span class="line">169.254.0.0/16 dev eth0 scope link metric 1002</span><br></pre></td></tr></table></figure>
-<p>IP 后面的数字 16 是用于计算子网网段的，其与子网掩码的映射关系表为：</p>
-<table>
-<thead>
-<tr>
-<th>/数字</th>
-<th>IP总数</th>
-<th>子网掩码</th>
-<th>C段个数</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>/30</td>
-<td>4</td>
-<td>255.255.255.252</td>
-<td>1/64</td>
-</tr>
-<tr>
-<td>/29</td>
-<td>8</td>
-<td>255.255.255.248</td>
-<td>1/32</td>
-</tr>
-<tr>
-<td>/28</td>
-<td>16</td>
-<td>255.255.255.240</td>
-<td>1/16</td>
-</tr>
-<tr>
-<td>/27</td>
-<td>32</td>
-<td>255.255.255.224</td>
-<td>1/8</td>
-</tr>
-<tr>
-<td>/26</td>
-<td>64</td>
-<td>255.255.255.192</td>
-<td>1/4</td>
-</tr>
-<tr>
-<td>/24</td>
-<td>256</td>
-<td>255.255.255.0</td>
-<td>1</td>
-</tr>
-<tr>
-<td>/23</td>
-<td>512</td>
-<td>255.255.254.0</td>
-<td>2</td>
-</tr>
-<tr>
-<td>/22</td>
-<td>1024</td>
-<td>255.255.252.0</td>
-<td>4</td>
-</tr>
-<tr>
-<td>/21</td>
-<td>2048</td>
-<td>255.255.248.0</td>
-<td>8</td>
-</tr>
-<tr>
-<td>/20</td>
-<td>4096</td>
-<td>255.255.240.0</td>
-<td>16</td>
-</tr>
-<tr>
-<td>/19</td>
-<td>8192</td>
-<td>255.255.224.0</td>
-<td>32</td>
-</tr>
-<tr>
-<td>/18</td>
-<td>16384</td>
-<td>255.255.192.0</td>
-<td>64</td>
-</tr>
-<tr>
-<td>/17</td>
-<td>32768</td>
-<td>255.255.128.0</td>
-<td>128</td>
-</tr>
-<tr>
-<td>/16</td>
-<td>65536</td>
-<td>255.255.0.0</td>
-<td>256</td>
-</tr>
-</tbody>
-</table>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/mask-subnet/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/mask-subnet/" data-id="ckej9qg5500nawpq4wh3ip7kp" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-docker-ip-segment" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/docker-ip-segment/" class="article-date">
-  <time datetime="2018-09-15T11:31:48.000Z" itemprop="datePublished">2018-09-15</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/docker-ip-segment/">docker中的IP网段</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>一般情况下，容器中可以直接访问的宿主机暴露的端口，今天换了一台机器却发现 docker 容器不能访问宿主机了，经过查阅资料，最终找到了原因，涉及到一些基础概念，这里记录如下：</p>
-<h2 id="IP-网段"><a href="#IP-网段" class="headerlink" title="IP 网段"></a>IP 网段</h2><p>IP地址分为五类:</p>
-<ul>
-<li>A类保留给政府或大型企业</li>
-<li>B类分配给中等规模的公司</li>
-<li>C类分配给小公司或个人</li>
-<li>D类用于组播</li>
-<li>E类用于实验</li>
-</ul>
-<p>其中最常见的就是前三类A、B和C，当将 IP 地址写成二进制形式时，他们有如下特征：</p>
-<ol>
-<li><p>A 类地址</p>
-<ul>
-<li>第一位总是 0，如 <code>10.0.0.1==00001010-00000000-00000000-00000001</code></li>
-<li>范围：<code>1.0.0.0-127.255.255.255</code></li>
-<li>默认子网掩码为 <code>255.0.0.0</code></li>
-<li>最多可容纳 16777215 台计算机</li>
-</ul>
-</li>
-<li><p>B 类地址</p>
-<ul>
-<li>前两位总是 10，如 <code>172.16.0.1==10101100-00010000-00000000-00000001</code></li>
-<li>范围：<code>128.0.0.0-191.255.255.255</code></li>
-<li>默认子网掩码为 255.255.0.0</li>
-<li>最多可容纳 65535 台计算机</li>
-</ul>
-</li>
-<li><p>C 类地址</p>
-<ul>
-<li>前三位总是 110，如 <code>192.168.0.1==11000000-10101000-00000000-00000001</code></li>
-<li>范围：<code>192.0.0.0-223.255.255.255</code></li>
-<li>默认子网掩码是 <code>255.255.255.0</code></li>
-<li>最多可容纳 254 台计算机</li>
-</ul>
-</li>
+        <ol>
+<li>删除所有正在运行的容器：<code>docker kill $(docker ps -q)</code></li>
+<li>删除所有已停止的容器：<code>docker rm $(docker ps -a -q)</code></li>
+<li>删除所有镜像：<code>docker rmi $(docker images -q)</code></li>
 </ol>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/docker-ip-segment/#more">Read More</a>
-          </p>
-        
+
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/docker-ip-segment/" data-id="ckej9qfxe00a4wpq4zxxe5n7j" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/docker-quick-rm/" data-id="ckej9qfxi00aewpq4yhnbcsji" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/">Docker</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-mac-ntfs" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/mac-ntfs/" class="article-date">
+  <time datetime="2018-09-26T22:45:23.000Z" itemprop="datePublished">2018-09-27</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/mac-ntfs/">Mac 读写 NTFS 硬盘</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Mac 打开 NTFS 格式硬盘读写功能：</p>
+<ol>
+<li><p><code>diskutil list</code> 找到磁盘名称，例如 Seagate</p>
+</li>
+<li><p><code>sudo vi /etc/fstab</code>，输入 <code>LABEL=Seagate none ntfs rw,auto,nobrowse</code></p>
+</li>
+<li><p><code>ln -s /Volumes/Seagate ~/Desktop/Seagate</code> 创建快捷方式</p>
+</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/mac-ntfs/" data-id="ckej9qg4v00mxwpq4aqaq9o95" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Mac/">Mac</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-react-native-upload-image" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/react-native-upload-image/" class="article-date">
+  <time datetime="2018-09-26T13:55:08.000Z" itemprop="datePublished">2018-09-26</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/react-native-upload-image/">React Native 上传图片</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>写一个通用的上传函数：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">async</span> upload(url, data) &#123;</span><br><span class="line">  <span class="keyword">let</span> options = &#123;</span><br><span class="line">    headers: &#123;</span><br><span class="line">      <span class="string">'Content-Type'</span>: <span class="string">'multipart/form-data'</span></span><br><span class="line">    &#125;,</span><br><span class="line">    method: <span class="string">'POST'</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  options.body = <span class="keyword">new</span> FormData();</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">let</span> key <span class="keyword">in</span> data) &#123;</span><br><span class="line">    options.body.append(key, data[key]);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> fetch(requestUrl, options)</span><br><span class="line">      .then(<span class="function"><span class="params">response</span> =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> response.json()</span><br><span class="line">          .then(<span class="function"><span class="params">responseJson</span> =&gt;</span> &#123;</span><br><span class="line">            <span class="comment">//You put some checks here</span></span><br><span class="line">            <span class="keyword">return</span> responseJson;</span><br><span class="line">          &#125;)</span><br><span class="line">      &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后调用：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">this</span>.upload(<span class="string">'http://xxx.com/api'</span>, &#123;</span><br><span class="line">  file: &#123;</span><br><span class="line">    uri: image.path,</span><br><span class="line">    type: image.mime,</span><br><span class="line">    name: image.name,</span><br><span class="line">  &#125;</span><br><span class="line">&#125;).then(<span class="function"><span class="params">res</span> =&gt;</span> &#123;</span><br><span class="line">  </span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/react-native-upload-image/" data-id="ckej9qg9k00tiwpq4a2q1rr2x" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-portainer-notes" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/portainer-notes/" class="article-date">
+  <time datetime="2018-09-26T00:11:47.000Z" itemprop="datePublished">2018-09-26</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/portainer-notes/">Portainer 管理容器</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>如果想管理 docker 容器，portainer 是非常好的管理工具：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d -p 9000:9000 --name portainer --restart always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer</span><br></pre></td></tr></table></figure>
+<p>指定网络：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">docker run -d \</span><br><span class="line">-p 9000:9000 \</span><br><span class="line">--network=myportainers \</span><br><span class="line">--restart=always \</span><br><span class="line">--name my-portainer \</span><br><span class="line">-v /var/run/docker.sock:/var/run/docker.sock \</span><br><span class="line">-v portainer_data:/data \</span><br><span class="line">portainer/portainer</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/portainer-notes/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/portainer-notes/" data-id="ckej9qg8s00sgwpq4rd89bi8p" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-react-native-android-debug" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/react-native-android-debug/" class="article-date">
+  <time datetime="2018-09-26T00:11:47.000Z" itemprop="datePublished">2018-09-26</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/react-native-android-debug/">React-Native 安卓调试</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>使用真机调试：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">system_profiler SPUSBDataType <span class="comment"># 找到Vendor ID</span></span><br><span class="line">vim ~/.android/adb_usb.ini <span class="comment"># 将上述ID复制进去</span></span><br><span class="line"><span class="comment"># 打开手机的调试模式</span></span><br><span class="line">adb <span class="built_in">kill</span>-server</span><br><span class="line">adb devices</span><br><span class="line">adb logcat -v time *:E <span class="comment"># 查看日志</span></span><br></pre></td></tr></table></figure>
+<p>重启 adb 方式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">adb kill-server</span><br><span class="line">adb start-server</span><br></pre></td></tr></table></figure>
+<p>使用 GenyMotion 虚拟机</p>
+<ol>
+<li>进入 GenyMotion <a href="https://www.genymotion.com/" target="_blank" rel="noopener">官网</a>，并下载 GenyMotion <a href="https://cloud.genymotion.com/page/launchpad/download/" target="_blank" rel="noopener">虚拟机</a></li>
+<li>申请个人<a href="https://www.genymotion.com/fun-zone/" target="_blank" rel="noopener">免费使用版</a></li>
+<li>下载 VirtualBox <a href="https://www.virtualbox.org/wiki/Downloads" target="_blank" rel="noopener">虚拟机</a></li>
+</ol>
+<p>在命令行启动虚拟设备：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">emulator -avd avd_name [ &#123;-option [value]&#125; … ]</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/react-native-android-debug/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/react-native-android-debug/" data-id="ckej9qg9f00tawpq46vvk8zn0" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
 
     </footer>
   </div>
@@ -707,7 +604,7 @@
 
 
   <nav id="page-nav">
-    <a class="extend prev" rel="prev" href="/page/12/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="page-number" href="/page/12/">12</a><span class="page-number current">13</span><a class="page-number" href="/page/14/">14</a><a class="page-number" href="/page/15/">15</a><span class="space">&hellip;</span><a class="page-number" href="/page/66/">66</a><a class="extend next" rel="next" href="/page/14/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/12/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="page-number" href="/page/12/">12</a><span class="page-number current">13</span><a class="page-number" href="/page/14/">14</a><a class="page-number" href="/page/15/">15</a><span class="space">&hellip;</span><a class="page-number" href="/page/67/">67</a><a class="extend next" rel="next" href="/page/14/">Next &raquo;</a>
   </nav>
 </section>
 
@@ -732,7 +629,7 @@
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2020 zju.date
+      &copy; 2021 zju.date
       &nbsp;&nbsp;&nbsp;
       contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
     </div>

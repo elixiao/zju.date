@@ -54,10 +54,10 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-mac-install-mongodb" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-vue-reactive" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/mac-install-mongodb/" class="article-date">
-  <time datetime="2020-01-14T08:39:13.000Z" itemprop="datePublished">2020-01-14</time>
+    <a href="/vue-reactive/" class="article-date">
+  <time datetime="2020-05-24T09:27:27.000Z" itemprop="datePublished">2020-05-24</time>
 </a>
     
   </div>
@@ -68,110 +68,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/mac-install-mongodb/">Mac安装MongoDB</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>由于 MongoDB 开源许可证发生了变化，不是 MIT 了，所以 brew 不再提供下载支持，不过可以用 <code>brew tap</code> 来进行安装：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ brew tap mongodb/brew</span><br><span class="line">$ brew install mongodb-community</span><br><span class="line">$ brew install mongodb-community@3.6</span><br><span class="line">$ brew install mongodb-community-shell</span><br></pre></td></tr></table></figure>
-<p>安装之后有三个重要的文件或路径：</p>
-<ul>
-<li>配置文件：<code>/usr/local/etc/mongod.conf</code></li>
-<li>日志目录路径：<code>/usr/local/var/log/mongodb</code></li>
-<li>数据目录路径：<code>/usr/local/var/mongodb</code></li>
-</ul>
-<p>启动和停止 mongodb：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">brew services start mongodb-community</span><br><span class="line">brew services stop mongodb-community</span><br></pre></td></tr></table></figure>
-<p>手动开启命令：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mongod --config /usr/<span class="built_in">local</span>/etc/mongod.conf</span><br><span class="line">mongo admin --<span class="built_in">eval</span> <span class="string">"db.shutdownServer()"</span></span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/mac-install-mongodb/" data-id="ckej9qg4q00mswpq45rxpnwin" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MongoDB/">MongoDB</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-use-env-in-dockerfile" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/use-env-in-dockerfile/" class="article-date">
-  <time datetime="2020-01-14T08:32:17.000Z" itemprop="datePublished">2020-01-14</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/use-env-in-dockerfile/">在Dockerfile中使用环境变量</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>有时候，在通过 Dockerfile 制作 docker 镜像的时候，需要根据环境变量来选择不同的源，例如指定 centos 的版本、切换网络请求地址等。这个时候，可以在 dockerfile 里面使用 <code>ARG</code> 指令，然后在 build 的时候使用 <code>build-arg</code> 参数即可：</p>
-<ol>
-<li><p>Dockerfile 文件中声明环境变量</p>
- <figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ARG</span> request_domain <span class="comment"># 定义环境变量</span></span><br><span class="line"><span class="keyword">ARG</span> request_domain=<span class="number">127.0</span>.<span class="number">0.1</span> <span class="comment"># 定义环境变量并赋初始值</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>制作镜像时指定环境变量</p>
- <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker build --build-arg request_domain=<span class="variable">$&#123;request_domain&#125;</span> -t <span class="variable">$&#123;name&#125;</span> .</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<p>如果 Dockerfile 中声明了环境变量，但是 build 的时候没有使用 <code>--build-arg &lt;varname&gt;=&lt;value&gt;</code>，那么镜像不会被生成。如果指定了多余的环境变量，会有一个提示：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[Warning] One or more build-args [foo] were not consumed.</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/use-env-in-dockerfile/" data-id="ckej9qgcp00xtwpq43u49afzb" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/">Docker</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-js-tree-traversal" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/js-tree-traversal/" class="article-date">
-  <time datetime="2020-01-14T08:19:15.000Z" itemprop="datePublished">2020-01-14</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/js-tree-traversal/">JS数据结构之树的遍历（Tree Traversal）</a>
+      <a class="article-title" href="/vue-reactive/">Vue响应式原理剖析（data、watch、computed）</a>
     </h1>
   
 
@@ -183,19 +80,27 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <h1 id="预备工作"><a href="#预备工作" class="headerlink" title="预备工作"></a>预备工作</h1><p>先写几个函数，能够生成树状结构的数据</p>
-<h2 id="生成随机数据"><a href="#生成随机数据" class="headerlink" title="生成随机数据"></a>生成随机数据</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 随机数据，支持string、number、boolean和object类型</span></span><br><span class="line"><span class="keyword">const</span> randomData = &#123;</span><br><span class="line">  get string() &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">Math</span>.random().toString(<span class="number">36</span>).slice(<span class="number">2</span>, <span class="number">6</span>)</span><br><span class="line">  &#125;,</span><br><span class="line">  get number() &#123;</span><br><span class="line">    <span class="keyword">return</span> (<span class="built_in">Math</span>.random() * <span class="number">10000</span>) | <span class="number">0</span></span><br><span class="line">  &#125;,</span><br><span class="line">  get boolean() &#123;</span><br><span class="line">    <span class="keyword">return</span> !((<span class="built_in">Math</span>.random() * <span class="number">2</span>) | <span class="number">0</span>)</span><br><span class="line">  &#125;,</span><br><span class="line">  get object() &#123;</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">      id: <span class="keyword">this</span>.number,</span><br><span class="line">      name: <span class="keyword">this</span>.string,</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>用 <code>randomData[类型]</code> 调用即可。</p>
+            <blockquote>
+<p>能用 Vue 改写的应用，终将会用 Vue 来改写。—— 尤大大（没说过）</p>
+</blockquote>
+<p>都 2020 年了，我想下面三句话不过分吧：</p>
+<ul>
+<li>Vue 是一个非常优秀的前端框架</li>
+<li>每个前端开发都应该会一点 Vue</li>
+<li>不会 Vue 的前端不是优秀的前端</li>
+</ul>
+<p>其实 Vue 的 API 是非常容易上手的，官方文档读一遍就能开发了，分分钟实现一个 TODO App。但只会用 Vue 其实是远远不够的，每一个 Vue 开发者都应该了解 Vue 响应式原理（<code>data</code>、<code>watch</code>、<code>computed</code>），否则永远只是知其然，不知其所以然。</p>
+<p>为了让大家彻底搞懂，本文采用渐进式的分析方式，即从零开始一行行写代码，最终完整实现一个具备响应式简版 Vue。 好了，大家把 vscode 打开，新建一个 <code>vue.js</code> 空文件，开始撸吧！</p>
         </div>
         
           <p class="article-more-link">
-            <a href="/js-tree-traversal/#more">Read More</a>
+            <a href="/vue-reactive/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/js-tree-traversal/" data-id="ckej9qg3n00l0wpq4ppe196lv" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/vue-reactive/" data-id="ckej9qgd600yhwpq4hsmrfp5j" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
@@ -206,10 +111,10 @@
 
 
   
-    <article id="post-same-wifi-ping-failed" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-js-scope" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/same-wifi-ping-failed/" class="article-date">
-  <time datetime="2020-01-13T14:23:35.000Z" itemprop="datePublished">2020-01-13</time>
+    <a href="/js-scope/" class="article-date">
+  <time datetime="2020-05-24T08:51:20.000Z" itemprop="datePublished">2020-05-24</time>
 </a>
     
   </div>
@@ -220,52 +125,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/same-wifi-ping-failed/">同一WiF无法ping通</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>同一个 WiFi 下，手机和电脑无法互相 ping 通：</p>
-<ol>
-<li>是不是在同一子网下</li>
-<li>检查防火墙，杀毒软件</li>
-<li>路由器是否开启了AP隔离</li>
-</ol>
-<p>小米路由器的 WiFi 默认使用 WPA 加密，把加密方法改为 WPA2 就好了，但是也不稳定，需要在 wpa2 和 普通方式之间来回切换，然后重启路由器才行。这么看来，小米路由器挺垃圾的。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/same-wifi-ping-failed/" data-id="ckej9qgaa00ujwpq4d2hvplpn" class="article-share-link">Share</a>
-     
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-vue-reactive-object" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/vue-reactive-object/" class="article-date">
-  <time datetime="2020-01-07T07:14:29.000Z" itemprop="datePublished">2020-01-07</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/vue-reactive-object/">Vue响应式原理之「对象属性劫持」</a>
+      <a class="article-title" href="/js-scope/">你真的懂作用域吗？</a>
     </h1>
   
 
@@ -277,24 +137,22 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <p>在 Vue 中，data 对象是响应式的，即对 data 中属性的修改会触发视图更新，今天就来分析一下这是如何做到的。</p>
-<p>首先定义一个普通的 JS 对象，例如：<code>{ name: &#39;keliq&#39; }</code>，我们希望当 name 发生变化时，能收到通知。</p>
-<p>在 Vue 当中，有三个非常重要的概念：Observer、Dep 和 Watcher，它们的功能是：</p>
-<ul>
-<li>Observer：把普通对象变成响应式对象，实现原理就是递归地对属性进行劫持，在 get 的时候把依赖收集到 dep.subs 里面，从而在 set 的时候能够逐个通知</li>
-<li>Dep：用于存放 Observer 收集到的依赖</li>
-<li>Watcher：创建观察者，即订阅响应式通知，当目标发生变化时执行回调</li>
-</ul>
+            <p>作用域是 JS 中非常基础的概念，在 ES5 中只有全局作用域和函数作用域，在 ES6 中增加了块级作用域。可是，你真的懂作用域吗？</p>
+<p>先不要着急回答，先看下面三道题。做不出来或做错了的话，就是不懂作用域，都做对了，作用域大概懂了三分之一吧，因为还有很多概念在里面呢！</p>
+<h3 id="题目一"><a href="#题目一" class="headerlink" title="题目一"></a>题目一</h3><p>请分别说出下面代码的执行结果：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(fn)</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fn</span>(<span class="params"></span>) </span>&#123;&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(fn)</span><br><span class="line"><span class="keyword">if</span>(<span class="literal">true</span>) &#123;</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">fn</span>(<span class="params"></span>) </span>&#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(fn)</span><br><span class="line"><span class="keyword">if</span>(<span class="literal">false</span>) &#123;</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">fn</span>(<span class="params"></span>) </span>&#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
         </div>
         
           <p class="article-more-link">
-            <a href="/vue-reactive-object/#more">Read More</a>
+            <a href="/js-scope/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/vue-reactive-object/" data-id="ckej9qgd700yjwpq4kxi9a0sk" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/js-scope/" data-id="ckej9qg3k00kwwpq42vjkqa1n" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
@@ -305,10 +163,10 @@
 
 
   
-    <article id="post-flutter-safe-string" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-flutter-constraints-are-unbounded" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/flutter-safe-string/" class="article-date">
-  <time datetime="2020-01-05T14:44:55.000Z" itemprop="datePublished">2020-01-05</time>
+    <a href="/flutter-constraints-are-unbounded/" class="article-date">
+  <time datetime="2020-03-26T01:39:11.000Z" itemprop="datePublished">2020-03-26</time>
 </a>
     
   </div>
@@ -319,7 +177,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/flutter-safe-string/">Flutter字符串处理</a>
+      <a class="article-title" href="/flutter-constraints-are-unbounded/">Flutter布局报错</a>
     </h1>
   
 
@@ -330,16 +188,15 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <p>Dart 的 String 类使用 UTF-16 编码格式，遇到一些特殊语言和表情符号时会处理异常，例如：</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">main() &#123;</span><br><span class="line">  <span class="keyword">var</span> input = [<span class="string">'Resume'</span>, <span class="string">'Résumé'</span>, <span class="string">'个人简历'</span>, <span class="string">'💼📃'</span>, <span class="string">'Currículo'</span>];</span><br><span class="line">  input.forEach((it) =&gt; <span class="built_in">print</span>(it.substring(<span class="number">0</span>, <span class="number">3</span>)));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>输出：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Res</span><br><span class="line">Ré</span><br><span class="line">个人简</span><br><span class="line">💼���</span><br><span class="line">Cur</span><br></pre></td></tr></table></figure>
-<p>通过引入字符串处理包 <a href="https://pub.flutter-io.cn/packages/characters" target="_blank" rel="noopener">https://pub.flutter-io.cn/packages/characters</a> ，然后用 <code>it.characters.take(3)</code> 替换 <code>it.substring(0, 3)</code>。</p>
+        <p>今天在 flutter 在 ListView 里面的 itemBuilder 写布局，发现报错了：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">RenderFlex children have non-zero flex but incoming height constraints are unbounded.</span><br></pre></td></tr></table></figure>
+<p>这个报错的 item 的布局就是 Column.children 里面有个 Row，然后这个 Row.children 里面有个 Column，然后给这个 Column 设置 <code>crossAxisAlignment</code> 为 <code>CrossAxisAlignment.stretch</code>。</p>
+<p>查了资料说报错原因是 ListView 垂直方向的计算是包裹子 View 的，也就是说子 View 必须有一个明确的高度，或者尽可能小的高度，而不能是无限高。可以用 IntrinsicHeight 组件包裹 Row，这个 Row 就能根据子控件的高度，智能调整自身高度，就不会报错了。</p>
 
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/flutter-safe-string/" data-id="ckej9qfzd00dxwpq47muo73ee" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/flutter-constraints-are-unbounded/" data-id="ckej9qfz000ddwpq4kh094e64" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flutter/">Flutter</a></li></ul>
 
@@ -350,10 +207,10 @@
 
 
   
-    <article id="post-flutter-scrollview-inside-scrollview" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-slow-tencent-ssh" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/flutter-scrollview-inside-scrollview/" class="article-date">
-  <time datetime="2019-12-30T10:15:56.000Z" itemprop="datePublished">2019-12-30</time>
+    <a href="/slow-tencent-ssh/" class="article-date">
+  <time datetime="2020-03-15T22:49:50.000Z" itemprop="datePublished">2020-03-16</time>
 </a>
     
   </div>
@@ -364,7 +221,48 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/flutter-scrollview-inside-scrollview/">Flutter中滚动组件嵌套滚动组件</a>
+      <a class="article-title" href="/slow-tencent-ssh/">腾讯云ssh登录超慢</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>腾讯云 ssh 登录超级缓慢，等了10几秒之后才登陆成功，然后提示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">There were 58431 failed login attempts since the last successful login.</span><br></pre></td></tr></table></figure>
+<p>而阿里云都是秒登，心想腾讯云真垃圾。后来网上查了一下说，上面统计的是上次成功登录之后有多少次失败登录的尝试，统计数据来源于文件 <code>/var/log/btmp</code>，我的这个文件有 5G，于是就把它给删了，登陆瞬间变快，秒登。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/slow-tencent-ssh/" data-id="ckej9qgat00vcwpq40sjrbbu8" class="article-share-link">Share</a>
+     
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-es6-function-scope" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/es6-function-scope/" class="article-date">
+  <time datetime="2020-03-15T22:42:59.000Z" itemprop="datePublished">2020-03-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/es6-function-scope/">ES6函数作用域</a>
     </h1>
   
 
@@ -376,20 +274,21 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <p>【转】<a href="https://medium.com/flutterpub/flutter-listview-gridview-inside-scrollview-68b722ae89d4" target="_blank" rel="noopener">原文地址</a>。在 Flutter 中，如果想在 scrollview 里面嵌套另一个 listview 的话，例如：</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">Scaffold(</span><br><span class="line">  appBar: AppBar(</span><br><span class="line">    title: Text(<span class="string">"ListView"</span>),</span><br><span class="line">  ),</span><br><span class="line">  body: Container(</span><br><span class="line">    child: SingleChildScrollView(</span><br><span class="line">      child: Column(</span><br><span class="line">        children: &lt;Widget&gt;[</span><br><span class="line">          HeaderWidget(<span class="string">"Header 1"</span>),</span><br><span class="line">          HeaderWidget(<span class="string">"Header 2"</span>),</span><br><span class="line">          HeaderWidget(<span class="string">"Header 3"</span>),</span><br><span class="line">          HeaderWidget(<span class="string">"Header 4"</span>),</span><br><span class="line">          ListView(</span><br><span class="line">            children: &lt;Widget&gt;[</span><br><span class="line">              BodyWidget(Colors.blue),</span><br><span class="line">              BodyWidget(Colors.red),</span><br><span class="line">              BodyWidget(Colors.green),</span><br><span class="line">            ],</span><br><span class="line">          ),</span><br><span class="line">        ],</span><br><span class="line">      ),</span><br><span class="line">    ),</span><br><span class="line">  ),</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+            <p>ES6 中的函数（非箭头函数）跟 ES5 的函数是有本质区别的，核心在于作用域，先看一道题：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> x = <span class="number">0</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">b</span>(<span class="params">y = x, x</span>) </span>&#123;</span><br><span class="line">  x = <span class="number">3</span></span><br><span class="line">  <span class="built_in">console</span>.log(x, y)</span><br><span class="line">  <span class="keyword">var</span> y = <span class="number">4</span></span><br><span class="line">&#125;</span><br><span class="line">b()</span><br></pre></td></tr></table></figure>
+<p>应该打印出什么呢？大家不妨亲自运行一下，看看跟自己想的是否一致。这里总结了两点 ES6 函数中比较特殊的地方：</p>
         </div>
         
           <p class="article-more-link">
-            <a href="/flutter-scrollview-inside-scrollview/#more">Read More</a>
+            <a href="/es6-function-scope/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/flutter-scrollview-inside-scrollview/" data-id="ckej9qfze00dzwpq4uk1xz3u1" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/es6-function-scope/" data-id="ckej9qfyd00c3wpq4x2x4dr9z" class="article-share-link">Share</a>
      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flutter/">Flutter</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
     </footer>
   </div>
@@ -398,10 +297,10 @@
 
 
   
-    <article id="post-dart-list-notes" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-dart-extension-method" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/dart-list-notes/" class="article-date">
-  <time datetime="2019-12-27T08:06:26.000Z" itemprop="datePublished">2019-12-27</time>
+    <a href="/dart-extension-method/" class="article-date">
+  <time datetime="2020-02-26T01:34:01.000Z" itemprop="datePublished">2020-02-26</time>
 </a>
     
   </div>
@@ -412,7 +311,55 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/dart-list-notes/">Dart List操作</a>
+      <a class="article-title" href="/dart-extension-method/">Dart扩展方法</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>dart 可以向任意类型添加扩展方法，语法如下：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">extension &lt;extension name&gt; on &lt;type&gt; &#123;</span><br><span class="line">  <span class="comment">// 这里定义扩展方法</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>举例：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">extension NumberParsing on <span class="built_in">String</span> &#123;</span><br><span class="line">  <span class="built_in">double</span> parseDouble() &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">double</span>.parse(<span class="keyword">this</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>使用：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> main() &#123;</span><br><span class="line">  <span class="comment">//使用String类的方法</span></span><br><span class="line">  <span class="built_in">print</span>(<span class="string">'3.14'</span>.split(<span class="string">"."</span>));</span><br><span class="line">  <span class="comment">//使用扩展方法</span></span><br><span class="line">  <span class="built_in">print</span>(<span class="string">'3.14'</span>.parseDouble());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>有一点值得注意的是不能使用 dynamic 类型的变量调用扩展方法，但类型推断是可以的：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> v = <span class="string">'3.14'</span>; <span class="comment">// 变量 v 推断为 String 类型</span></span><br><span class="line"><span class="built_in">print</span>(v.parseDouble()); <span class="comment">// 输出 : 3.14</span></span><br><span class="line"><span class="keyword">dynamic</span> d = <span class="string">'3.14'</span>;</span><br><span class="line"><span class="built_in">print</span>(d.parseDouble()); <span class="comment">// 运行时异常 : NoSuchMethodError</span></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/dart-extension-method/" data-id="ckej9qfwl008wwpq4qq72f286" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Dart/">Dart</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-flutter-flex-widgets" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/flutter-flex-widgets/" class="article-date">
+  <time datetime="2020-02-11T01:10:20.000Z" itemprop="datePublished">2020-02-11</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/flutter-flex-widgets/">Flutter flex布局组件</a>
     </h1>
   
 
@@ -424,23 +371,27 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <p>总结 dart 中关于 list 的一些特殊操作：</p>
-<h3 id="在-map-中使用索引"><a href="#在-map-中使用索引" class="headerlink" title="在 map 中使用索引"></a>在 map 中使用索引</h3><p>在 js 中可以在 map 中取到 i 的值：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">list.map(<span class="function">(<span class="params">it, i</span>)=&gt;</span>&#123;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
-<p>但是在 dart 中这种写法会报错，函数中只能得到 it 而得不到 i，那应该怎么办呢？可以使用 Map Entries：</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">list.asMap().entries.map((entry) &#123;</span><br><span class="line">    <span class="built_in">int</span> i = entry.key;</span><br><span class="line">    <span class="built_in">String</span> it = entry.value;</span><br><span class="line">    <span class="keyword">return</span> something;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+            <p>Flex 布局是目前 web 和移动端最流行的布局方式，在 Flutter 中，也有对应的组件，它们就是：</p>
+<h2 id="容器组件"><a href="#容器组件" class="headerlink" title="容器组件"></a>容器组件</h2><ul>
+<li>Row：水平方向上创建一个 flex 容器。</li>
+<li>Column：垂直方向上创建一个 flex 容器。</li>
+<li><p>Flex：直接创建一个 flex 容器，不指定方向，它是 Row 和 Column 组件的父类。</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">class Row extends Flex </span><br><span class="line">class Column extends Flex</span><br></pre></td></tr></table></figure>
+<p>  Flex 有个 <code>direction</code> 属性能够控制容器布局主轴方向，例如指定 <code>Axis.horizontal</code> 时跟 Row 一样的效果。</p>
+</li>
+</ul>
         </div>
         
           <p class="article-more-link">
-            <a href="/dart-list-notes/#more">Read More</a>
+            <a href="/flutter-flex-widgets/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/dart-list-notes/" data-id="ckej9qfwq0093wpq4c8430nfy" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/flutter-flex-widgets/" data-id="ckej9qfz000dcwpq4ui55b5nx" class="article-share-link">Share</a>
      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Dart/">Dart</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flutter/">Flutter</a></li></ul>
 
     </footer>
   </div>
@@ -449,10 +400,10 @@
 
 
   
-    <article id="post-dart-dynamic-instance" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-template-engine-vue" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/dart-dynamic-instance/" class="article-date">
-  <time datetime="2019-12-25T08:28:15.000Z" itemprop="datePublished">2019-12-25</time>
+    <a href="/template-engine-vue/" class="article-date">
+  <time datetime="2020-02-06T13:33:00.000Z" itemprop="datePublished">2020-02-06</time>
 </a>
     
   </div>
@@ -463,7 +414,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/dart-dynamic-instance/">Dart根据类名生成类的实例</a>
+      <a class="article-title" href="/template-engine-vue/">模板引擎实现原理（Vue篇）</a>
     </h1>
   
 
@@ -474,15 +425,28 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <p>在一个 Flutter 项目中，想动态创建类的实例，就是根据类名字符串，在进行某些操作的时候自动创建类的实例。但 Dart 语言不支持通过类名字符串生成实例，但是可以用下面的方式实现相同的效果：</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> factories = &lt;<span class="built_in">String</span>, <span class="built_in">Object</span> <span class="built_in">Function</span>()&gt;&#123;</span><br><span class="line">    <span class="string">'Foo'</span>, () =&gt; <span class="keyword">new</span> Foo(), </span><br><span class="line">    <span class="string">'Bar'</span>, () =&gt; <span class="keyword">new</span> Bar()</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="built_in">String</span> name = <span class="string">'Foo'</span>;</span><br><span class="line"><span class="built_in">Object</span> instance = factories[name]();</span><br></pre></td></tr></table></figure>
-
+        <div class="article-preview">
+            <p>在 Vue 框架里面内置了一个模板引擎，用于编译 Vue 专有语法，例如：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"app"</span>&gt;</span></span><br><span class="line">  你好，&#123;&#123; message &#125;&#125;！</span><br><span class="line">  <span class="tag">&lt;<span class="name">p</span> <span class="attr">v-if</span>=<span class="string">"seen"</span> <span class="attr">styles</span>=<span class="string">"color: red; fontSize: 16px"</span>&gt;</span>条件渲染<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">button</span> <span class="attr">v-on:click</span>=<span class="string">"reverseMessage"</span>&gt;</span>反转消息<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">ol</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">li</span> <span class="attr">v-for</span>=<span class="string">"todo in todos"</span> <span class="attr">class</span>=<span class="string">"color-gray ml-2"</span>&gt;</span></span><br><span class="line">      &#123;&#123; todo.text &#125;&#125;</span><br><span class="line">    <span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">ol</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>这里面有 <code></code>、<code>v-if</code>、<code>v-on:click</code>、<code>v-for</code> 等特殊的语法，Vue 需要把这些内容提取出来，转换成响应式的函数或者对应的 DOM 事件。</p>
+<p>在 Vue 中同样是用正则来提取这些内容的，它的转化流程如下：</p>
+<ul>
+<li>通过正则把模板转换成 AST 抽象语法树</li>
+<li>用 AST 生成 JS 代码</li>
+<li>用 <code>new Function</code> 配合 <code>with</code> 来执行 JS 代码</li>
+</ul>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/template-engine-vue/#more">Read More</a>
+          </p>
+        
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/dart-dynamic-instance/" data-id="ckej9qfwi008rwpq4glqfaw7k" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/template-engine-vue/" data-id="ckej9qgbm00wewpq41xmcdone" class="article-share-link">Share</a>
      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Dart/">Dart</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
     </footer>
   </div>
@@ -491,10 +455,10 @@
 
 
   
-    <article id="post-flutter-container-image-full-width-height" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-flutter-build-after-async-action" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/flutter-container-image-full-width-height/" class="article-date">
-  <time datetime="2019-12-25T01:28:19.000Z" itemprop="datePublished">2019-12-25</time>
+    <a href="/flutter-build-after-async-action/" class="article-date">
+  <time datetime="2020-01-26T03:41:36.000Z" itemprop="datePublished">2020-01-26</time>
 </a>
     
   </div>
@@ -505,7 +469,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/flutter-container-image-full-width-height/">flutter container中的image</a>
+      <a class="article-title" href="/flutter-build-after-async-action/">异步请求之后渲染页面</a>
     </h1>
   
 
@@ -516,22 +480,78 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <p>如何把图片放到容器内部，长宽保持跟容器相同呢？有两种方法：</p>
+        <div class="article-preview">
+            <p>在 Flutter 中，经常遇到先进行网络请求，然后用请求成功返回的结果来渲染页面的场景。如果网络请求速度比较慢的话，需要在等待网络返回结果的时候，给用户渲染一个等待的页面。有两种方式：</p>
 <ol>
-<li><p>用 container 的 decoration image</p>
- <figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Container(</span><br><span class="line">  decoration: BoxDecoration(</span><br><span class="line">    image: DecorationImage(</span><br><span class="line">      image: AssetImage(imagePath),</span><br><span class="line">      fit: BoxFit.cover,</span><br><span class="line">    ),</span><br><span class="line">  ),</span><br><span class="line">  child: hild,</span><br><span class="line">  padding: padding,</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>用 <code>FittedBox</code> 包裹 <code>Image</code> </p>
- <figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">FittedBox(</span><br><span class="line">  child: Image.asset(<span class="string">'foo.png'</span>),</span><br><span class="line">  fit: BoxFit.fill,</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-
+<li><p>使用 FutureBuilder 组件</p>
+<p> 封装好了这类组件</p>
+ <figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> FutureBuilder(</span><br><span class="line">  future: _future, <span class="comment">// Future 对象或 null</span></span><br><span class="line">  builder: (BuildContext context, AsyncSnapshot&lt;<span class="built_in">String</span>&gt; snapshot) &#123;</span><br><span class="line">    <span class="keyword">switch</span> (snapshot.connectionState) &#123;</span><br><span class="line">      <span class="keyword">case</span> ConnectionState.none: <span class="keyword">return</span> <span class="keyword">new</span> Text(<span class="string">'Press button to start'</span>);</span><br><span class="line">      <span class="keyword">case</span> ConnectionState.waiting: <span class="keyword">return</span> <span class="keyword">new</span> Text(<span class="string">'Awaiting result...'</span>);</span><br><span class="line">      <span class="keyword">default</span>:</span><br><span class="line">        <span class="keyword">if</span> (snapshot.hasError)</span><br><span class="line">          <span class="keyword">return</span> <span class="keyword">new</span> Text(<span class="string">'Error: <span class="subst">$&#123;snapshot.error&#125;</span>'</span>);</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">          <span class="keyword">return</span> <span class="keyword">new</span> Text(<span class="string">'Result: <span class="subst">$&#123;snapshot.data&#125;</span>'</span>);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/flutter-build-after-async-action/#more">Read More</a>
+          </p>
+        
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/flutter-container-image-full-width-height/" data-id="ckej9qfz200dgwpq492yjsjl2" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/flutter-build-after-async-action/" data-id="ckej9qfyy00d9wpq4s0e5c0tp" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flutter/">Flutter</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-template-engine-ejs" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/template-engine-ejs/" class="article-date">
+  <time datetime="2020-01-21T05:32:40.000Z" itemprop="datePublished">2020-01-21</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/template-engine-ejs/">模板引擎实现原理（EJS篇）</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>原理就是正则替换 + 字符串拼接，以 ejs 为例，具体步骤为：</p>
+<ol>
+<li>读取模板文件得到原始字符串</li>
+<li>正则替换 <code>&lt;% %&gt;</code> 和 <code>&lt;%= %&gt;</code></li>
+<li>拼接成代码形式的字符串</li>
+<li>使用 <code>new Function</code> 将字符串转化成函数</li>
+<li>函数内部使用 <code>with</code> 进行取值</li>
+</ol>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/template-engine-ejs/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/template-engine-ejs/" data-id="ckej9qgbl00wcwpq43iy9h2be" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
     </footer>
   </div>
@@ -543,7 +563,7 @@
 
 
   <nav id="page-nav">
-    <a class="extend prev" rel="prev" href="/page/2/">&laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/66/">66</a><a class="extend next" rel="next" href="/page/4/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/2/">&laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/67/">67</a><a class="extend next" rel="next" href="/page/4/">Next &raquo;</a>
   </nav>
 </section>
 
@@ -568,7 +588,7 @@
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2020 zju.date
+      &copy; 2021 zju.date
       &nbsp;&nbsp;&nbsp;
       contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
     </div>

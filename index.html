@@ -54,10 +54,10 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-docker-node-images" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-conventional-commits" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/docker-node-images/" class="article-date">
-  <time datetime="2020-10-28T02:31:04.000Z" itemprop="datePublished">2020-10-28</time>
+    <a href="/conventional-commits/" class="article-date">
+  <time datetime="2021-01-07T05:46:16.000Z" itemprop="datePublished">2021-01-07</time>
 </a>
     
   </div>
@@ -68,7 +68,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/docker-node-images/">如何选择 Node.js 的 Docker 镜像</a>
+      <a class="article-title" href="/conventional-commits/">约定式提交</a>
     </h1>
   
 
@@ -80,33 +80,23 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <p>node.js 应用一般用 <a href="https://pm2.keymetrics.io/" target="_blank" rel="noopener">pm2</a> 或者 <a href="https://hub.docker.com/_/node" target="_blank" rel="noopener">docker</a> 来部署，如果你也打算用 docker 部署的话，可能也会遇到如何选择 node 镜像的问题，官方提供了如下三类选择：</p>
-<ol>
-<li><p><code>node:&lt;version&gt;</code>：这是官方默认镜像，基于 debian 构建，可指定的版本有：</p>
-<blockquote>
-<p>Debian 10（buster） — 当前的稳定版（stable）<br>Debian 9（stretch） — 旧的稳定版（oldstable）<br>Debian 8（jessie） — 更旧的稳定版（oldoldstable）<br>Debian 7（wheezy） — 被淘汰的稳定版</p>
-</blockquote>
-<p>这些镜像是基于 <a href="https://hub.docker.com/_/buildpack-deps/" target="_blank" rel="noopener">buildpack-deps</a> 进行构建的，这里可以查看 <a href="https://github.com/nodejs/docker-node/blob/master/14/buster/Dockerfile" target="_blank" rel="noopener">Dockerfile</a>，此类镜像的优点是安装的依赖很全，例如 <code>curl</code>、<code>wget</code> ，缺点是体积过大。</p>
-</li>
-<li><p><code>node:&lt;version&gt;-slim</code> ：这是删除冗余依赖后的精简版本镜像，同样是基于 debian 构建，体积上比默认镜像小很多，删除了很多默认公共的软件包，只保留了最基本的 node 运行环境。</p>
-</li>
-<li><p><code>node:&lt;version&gt;-alpine</code>：这个版本基于 alpine 镜像构建，比 debian 的 slim 版本还要小，可以说是最小的 node 镜像。虽然体积小，但是功能不少，普通的 node.js 应用都能跑起来，但是如果项目中用到了 c++ 扩展的话，就不要用这个了，因为 alpine 使用 musl 代替 glibc，一些 c/c++ 环境的软件可能不兼容。</p>
-</li>
-</ol>
-<p>接下来，基于 node.js 14 版本，分别下载上述三类镜像进行对比：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker pull node:14-buster</span><br><span class="line">docker pull node:14-buster-slim</span><br><span class="line">docker pull node:14-alpine</span><br></pre></td></tr></table></figure>
+            <p><strong>「约定大于配置」</strong> 的思想在软件工程领域得到了广泛的应用，例如 Spring、Angular 等大型项目。其目的只有一个：<strong>减少软件开发人员做决定的数量，提升开发效率</strong>。这种思想同样被应用到 Git 提交当中，即 <strong>「约定式提交」</strong>。</p>
+<h2 id="什么是约定式提交？"><a href="#什么是约定式提交？" class="headerlink" title="什么是约定式提交？"></a>什么是约定式提交？</h2><p>约定式提交规范是一种基于提交消息的轻量级约定。所谓<strong>轻量级约定</strong>，说白了，就是有一套<strong>用于创建提交消息的简单规则</strong>，这套规则源自于<a href="https://github.com/angular/angular/blob/master/CONTRIBUTING.md#-commit-message-guidelines" target="_blank" rel="noopener">Angular 提交规范</a>，规定了提交消息的整体结构：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;type&gt;(&lt;scope&gt;): &lt;short summary&gt;</span><br><span class="line">&lt;BLANK LINE&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">&lt;BLANK LINE&gt;</span><br><span class="line">&lt;footer&gt;</span><br></pre></td></tr></table></figure>
+<p>翻译成中文就是：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;提交类型&gt;(&lt;作用域&gt;): &lt;简要描述&gt;</span><br><span class="line">// 空一行</span><br><span class="line">&lt;正文&gt;</span><br><span class="line">// 空一行</span><br><span class="line">&lt;脚注&gt;</span><br></pre></td></tr></table></figure>
         </div>
         
           <p class="article-more-link">
-            <a href="/docker-node-images/#more">Read More</a>
+            <a href="/conventional-commits/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/docker-node-images/" data-id="ckgvyz2o1000354q4t3j9p5px" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/conventional-commits/" data-id="ckjtq8g7w00006cq47kdfnbin" class="article-share-link">Share</a>
      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Node-js/">Node.js</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/">Git</a></li></ul>
 
     </footer>
   </div>
@@ -115,10 +105,10 @@
 
 
   
-    <article id="post-feathers-notes" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-fe-newbility" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/feathers-notes/" class="article-date">
-  <time datetime="2020-10-16T08:29:10.000Z" itemprop="datePublished">2020-10-16</time>
+    <a href="/fe-newbility/" class="article-date">
+  <time datetime="2020-12-23T02:44:53.000Z" itemprop="datePublished">2020-12-23</time>
 </a>
     
   </div>
@@ -129,7 +119,98 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/feathers-notes/">Node.js企业级Web框架（Feathers）</a>
+      <a class="article-title" href="/fe-newbility/">前端技术牛人</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>这些年，前端发展速度很快，也涌现出很多厉害的人物，作为一名非科班出身、自学入门的前端，大佬们就像一盏灯塔，在黑暗中指引着我们前进的方向。</p>
+<p>在此整理一些微博或知乎上关注的前端技术牛人（排名不分先后，技术不分高低，每个人都很厉害）：</p>
+<ul>
+<li><a href="http://weibo.com/ruanyf" target="_blank" rel="noopener">阮一峰</a>：技术大牛，畅销书作者</li>
+<li><a href="http://weibo.com/zhangxinxu" target="_blank" rel="noopener">张鑫旭</a>：CSS专家，著名博客作者</li>
+<li><a href="http://weibo.com/arttechdesign" target="_blank" rel="noopener">尤雨溪</a>：Vue 框架作者</li>
+<li><a href="https://weibo.com/aimingoo" target="_blank" rel="noopener">周爱民</a>：原支付宝架构师，绿宝书作者，JavaScript 专家</li>
+<li><a href="https://weibo.com/haxy" target="_blank" rel="noopener">贺师俊</a>：360高级前端架构师，江湖人称”贺老“</li>
+<li><a href="http://weibo.com/lifesinger" target="_blank" rel="noopener">玉伯也叫黑侠</a>：王保平，蚂蚁技术团队负责人，P10级别</li>
+<li><a href="https://www.zhihu.com/people/winter-25" target="_blank" rel="noopener">winter</a>：程劭非，花名寒泉，JavaScript 专家，江湖人称“计算机之子</li>
+<li><a href="http://weibo.com/jslouvre" target="_blank" rel="noopener">司徒正美</a>：去哪儿架构师，Avalon 框架作者（已故）</li>
+<li><a href="http://weibo.com/silverna" target="_blank" rel="noopener">十年踪迹</a>：月影，原奇虎360前端技术专家，现入职字节</li>
+<li><a href="https://weibo.com/311290005" target="_blank" rel="noopener">大漠</a>：W3CPlus创始人</li>
+<li><a href="https://www.zhihu.com/people/dead_horse" target="_blank" rel="noopener">死马</a>：<a href="https://github.com/eggjs" target="_blank" rel="noopener">eggjs</a> 核心开发者</li>
+<li><a href="http://weibo.com/xicilion" target="_blank" rel="noopener">响马</a>：西祠胡同创始人，fibjs 创始人</li>
+<li><a href="http://weibo.com/shyvo" target="_blank" rel="noopener">朴灵</a>：深入浅出 nodejs 作者</li>
+<li><a href="https://weibo.com/vczh" target="_blank" rel="noopener">轮子哥</a>：陈梓瀚，专业造轮子，微软工程师</li>
+<li><a href="http://weibo.com/liuyong25" target="_blank" rel="noopener">天猪</a>：阿里移动事业群前端工程师</li>
+<li><a href="https://www.zhihu.com/people/xiao-jue-83" target="_blank" rel="noopener">小爝</a>：新浪移动前端基础架构组负责人</li>
+<li><a href="https://www.zhihu.com/people/alpha-gde" target="_blank" rel="noopener">汪志成</a>：雪狼，ThoughtWorks 首席咨询师，Angular 技术专家</li>
+<li><a href="http://weibo.com/mx006" target="_blank" rel="noopener">勾三股四</a>：淘宝前端团队负责人</li>
+<li><a href="https://www.weibo.com/luinlee" target="_blank" rel="noopener">李子骅</a>：90后，<a href="https://github.com/luin/ioredis" target="_blank" rel="noopener">ioredis</a> 库作者</li>
+<li><a href="https://github.com/berwin" target="_blank" rel="noopener">刘博文</a>：95后，中专学历，《深入浅出Vue.js》作者，阿里巴巴最年轻的前端技术专家</li>
+<li><a href="http://weibo.com/u/3095656013" target="_blank" rel="noopener">狼叔</a>：i5ting CEO，node.js开发，全栈工程师</li>
+<li><a href="http://weibo.com/sharpmaster" target="_blank" rel="noopener">徐飞</a>：前阿里技术专家，江湖人称民工叔</li>
+<li><a href="http://weibo.com/haoel" target="_blank" rel="noopener">左耳朵耗子</a>：前 Amazon 中国任研发经理，前阿里核心系统专家组成员</li>
+<li><a href="http://weibo.com/isofish" target="_blank" rel="noopener">sofish</a>：饿了么大前端负责人</li>
+<li><a href="https://weibo.com/676588498" target="_blank" rel="noopener">小芋头君</a>：杭州大搜车无线架构部负责人</li>
+<li><a href="http://weibo.com/zensh" target="_blank" rel="noopener">严清</a>：Teambition 架构师</li>
+<li><a href="http://weibo.com/itapir" target="_blank" rel="noopener">貘吃馍香</a>：字节大牛，技术高手</li>
+<li><a href="http://weibo.com/huxpro" target="_blank" rel="noopener">黄玄</a>：阿里旅行前端工程师，微票儿前端团队负责人、饿了么大前端团队 PWA 顾问</li>
+<li><a href="http://weibo.com/unruledboy" target="_blank" rel="noopener">灵感之源</a>：智能实验室创始人，现移民澳大利亚</li>
+<li><a href="https://www.zhihu.com/people/doodlewind" target="_blank" rel="noopener">doodlewind</a>：稿定科技前端工程师</li>
+<li><a href="http://weibo.com/dfguo" target="_blank" rel="noopener">郭达峰</a>：strikingly 创始人</li>
+<li><a href="https://www.zhihu.com/people/vthinkxie/posts" target="_blank" rel="noopener">谢亚东</a>：花名执衡，阿里巴巴前端技术专家，NG-ZORRO项目发起者</li>
+<li><a href="https://imququ.com" target="_blank" rel="noopener">屈光宇</a>：360前端技术专家</li>
+<li><a href="https://www.zhihu.com/people/yanhaijing/posts" target="_blank" rel="noopener">颜海镜</a>：知名技术博主,《React状态管理与同构实战》作者</li>
+<li><a href="https://weibo.com/jieorlin" target="_blank" rel="noopener">一丝</a>：阿里巴巴前端工程师</li>
+<li><a href="https://weibo.com/chromeappsstore" target="_blank" rel="noopener">寸志</a>：陆金所前端架构师</li>
+<li><a href="https://weibo.com/chaojianpeng" target="_blank" rel="noopener">巢鹏</a>：谷歌Chrome开发人员</li>
+<li><a href="https://www.zhihu.com/people/huang-zi-yi-83/posts" target="_blank" rel="noopener">黄子毅</a>：阿里巴巴前端技术专家</li>
+<li><a href="http://weibo.com/jeffz" target="_blank" rel="noopener">老赵</a>：InfoQ中文站编辑，Wind.js类库作者</li>
+<li><a href="https://www.zhihu.com/people/jasinyip" target="_blank" rel="noopener">叶俊星</a>：高德地图高级前端工程师</li>
+<li><a href="http://weibo.com/206476669" target="_blank" rel="noopener">2gua</a>：码农、技术类书籍作家、译者</li>
+<li><a href="http://weibo.com/jiyinyiyong" target="_blank" rel="noopener">题叶</a>：closure程序员，饿了么技术专家</li>
+<li><a href="http://weibo.com/u/1899123755" target="_blank" rel="noopener">红烧Lo</a>：clojure技术专家，毕业于剑桥大学</li>
+<li><a href="http://weibo.com/plainjane" target="_blank" rel="noopener">羡辙</a>：女，前端工程师</li>
+<li><a href="http://weibo.com/173248656" target="_blank" rel="noopener">李靖</a>：阿里巴巴前端工程师</li>
+<li><a href="http://weibo.com/337058885" target="_blank" rel="noopener">韦字只念第二声</a>：女，90后，新浪微博前端工程师</li>
+</ul>
+<p>前端大佬很多，上面只列举了一小部分，大家如有推荐可以留言评论，名单会持续更新。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/fe-newbility/" data-id="ckjtq8g8500016cq4iman2rg2" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/">Git</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-git-commit-rules" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/git-commit-rules/" class="article-date">
+  <time datetime="2020-12-18T14:22:57.000Z" itemprop="datePublished">2020-12-18</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/git-commit-rules/">Git 提交规范</a>
     </h1>
   
 
@@ -141,28 +222,134 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <p>node.js 企业级 web 框架有很多，例如阿里的 <a href="https://eggjs.org/zh-cn/" target="_blank" rel="noopener">eggjs</a>、IBM 的 <a href="https://loopback.io/" target="_blank" rel="noopener">loopback</a>、风格类似 Spring 的 <a href="https://nestjs.com/" target="_blank" rel="noopener">nestjs</a> 等，今天介绍另一种选择，那就是 <a href="https://feathersjs.com/" target="_blank" rel="noopener">feathersjs</a>，虽然在国内比较小众，但它入门很简单、遵循 RESTful 规范、文档和生态比较完善、社区维护也很积极，而且它还支持实时推送，自称是：</p>
+            <p>最近发现团队有些新人有个坏毛病，就是 git 提交信息全是 ok，用 sourcetree 一看，整整齐齐全是 ok，压根都不知道每次提交解决了什么问题。</p>
+<p><img src="https://img.zlib.cn/blog/git-commit-ok.jpg" alt="git-ok"></p>
+<p>既然新人不讲码德，那我在此也劝这些新人耗子尾汁，记住：</p>
 <blockquote>
-<p>A framework for real-time applications and REST APIs</p>
+<p> ok 提交一时爽，git 回滚火葬场</p>
 </blockquote>
-<p><img src="http://img.zlib.cn/blog/feathers-logo-wide.png" alt="feathersjs"></p>
-<p>feathersjs 是一款基于 express 的轻量级 node.js 框架，集成了以下几个重要特性：</p>
+<p>在一个团队当中，既然大家维护同一个仓库，就要遵循相应工作流程和提交规范，其中 commit message 是比较重要的一个点，一个可读性好、描述清晰的 commit message，可以让团队其他成员不必深入看代码即可了解这次提交的作用。</p>
+<p>更为重要的时，规范提交信息之后，就可以直接从 commit 生成 changelog（即发布新版本时，用来说明与上一个版本差异的文档），这就节省了一大笔时间。</p>
+<p>国内外比较认同的就是 <a href="https://github.com/angular/angular/commits/master" target="_blank" rel="noopener">Angular</a> 的提交规范，简单且清晰，只有三个部分：标题区、内容区和备注区。因此要求团队新人完全遵守该规范：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;类型&gt;(&lt;改动范围&gt;): &lt;精简总结&gt;</span><br><span class="line">// 空一行</span><br><span class="line">&lt;详细描述&gt;</span><br><span class="line">// 空一行</span><br><span class="line">&lt;备注&gt;</span><br></pre></td></tr></table></figure>
+<p>其中<strong>类型</strong>和<strong>精简总结</strong>这两个是必填的，其余都是选填。接下来详细讲解每一部分应该写什么内容：</p>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/git-commit-rules/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/git-commit-rules/" data-id="ckjtq8g8900036cq47h7ryxfp" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-multi-git-account" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/multi-git-account/" class="article-date">
+  <time datetime="2020-12-11T03:40:13.000Z" itemprop="datePublished">2020-12-11</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/multi-git-account/">Git 和 Gitlab/Github 多账号</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>在工作中经常会遇到 Git 多账号的场景，例如：</p>
 <ul>
-<li>严格遵循 RESTful API 设计风格</li>
-<li>借助 websocket 提供实时通信功能</li>
-<li>提供了多种前端技术栈的支持，例如 React, VueJS, Angular, React Native 等</li>
-<li>通过 hook 横向扩展应用，是面向切片编程（AOP：Aspect Oriented Programming）思想的一种实现</li>
+<li>GitHub 和 GitLab 仓库使用不同账号</li>
+<li>公司仓库和个人仓库使用不同账号</li>
+<li>个人私有仓库和个人开源仓库使用不同账号</li>
+</ul>
+<p>那在 Git 当中如何管理多账号呢？首先要明确以下概念：</p>
+<h2 id="Git-账号和-GitHub-GitLab-账号不是一回事"><a href="#Git-账号和-GitHub-GitLab-账号不是一回事" class="headerlink" title="Git 账号和 GitHub/GitLab 账号不是一回事"></a>Git 账号和 GitHub/GitLab 账号不是一回事</h2><p>下图说得很明白，Git 是高质量的版本控制系统，GitHub 是云端代码托管平台：</p>
+<p><img src="https://img.zlib.cn/blog/git-vs-github.webp" alt="git_vs_github"></p>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/multi-git-account/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/multi-git-account/" data-id="ckjtq8g8e00076cq4opk29c5m" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/">Git</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-json-key-quote" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/json-key-quote/" class="article-date">
+  <time datetime="2020-12-10T03:00:30.000Z" itemprop="datePublished">2020-12-10</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/json-key-quote/">JSON5 解决了 JSON 两大痛点</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>JSON 格式可以说是目前最流行的数据传输格式了，被广泛应用于前后端通信，尤其是在 SPA 应用中，JSON 数据通过 HTTP 协议进行传输，具有体积小、易序列化、可读性好等优点。（当然，这些优点是相对的，例如体积小是相对于 XML 而言的，如果跟 protobuf 比，那体积就大多了。）</p>
+<p>JSON 虽好，但是仍有两大痛点让开发者苦恼不已：</p>
+<ul>
+<li>不能添加注释（这个不能忍）</li>
+<li>序列化之后的 key 被加上了双引号（体积变大了） </li>
 </ul>
         </div>
         
           <p class="article-more-link">
-            <a href="/feathers-notes/#more">Read More</a>
+            <a href="/json-key-quote/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/feathers-notes/" data-id="ckgvyz2nw000154q4elex1qxb" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/json-key-quote/" data-id="ckjtq8g8c00056cq473pi71mc" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
@@ -173,10 +360,10 @@
 
 
   
-    <article id="post-samesite-vs-sameorigin" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-what-does-rc-mean" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/samesite-vs-sameorigin/" class="article-date">
-  <time datetime="2020-09-24T02:58:08.000Z" itemprop="datePublished">2020-09-24</time>
+    <a href="/what-does-rc-mean/" class="article-date">
+  <time datetime="2020-12-09T15:01:18.000Z" itemprop="datePublished">2020-12-09</time>
 </a>
     
   </div>
@@ -187,7 +374,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/samesite-vs-sameorigin/">彻底搞懂「同源Same-Origin」和「同站Same-Site」的区别</a>
+      <a class="article-title" href="/what-does-rc-mean/">rc 后缀是什么意思</a>
     </h1>
   
 
@@ -199,22 +386,74 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <p>作为一名前端，肯定会接触到「同源」和「同站」这两个名词，比如：</p>
+            <p>前端开发不可避免地会遇到各种 rc 后缀的文件，例如 <code>.babelrc</code>、<code>.vuerc</code>、<code>.prettierrc</code>、<code>.eslintrc</code>、<code>.npmrc</code> 等，大家不妨用下面的命令看下自己的电脑里面到底有多少个 rc 文件：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">$ ls -l ~/.*rc</span><br><span class="line">-rw-r--r--  1 keliq  staff  1768 12  3 21:52 /Users/keliq/.bashrc</span><br><span class="line">-rw-r--r--  1 keliq  staff     8  2  4  2016 /Users/keliq/.cnpmrc</span><br><span class="line">-rw-r--r--  1 keliq  staff   122  2 18  2020 /Users/keliq/.gemrc</span><br><span class="line">-rw-------  1 keliq  staff  3257 11 10  2016 /Users/keliq/.linphonerc</span><br><span class="line">-rw-r--r--  1 keliq  staff    68 10 27  2016 /Users/keliq/.mkshrc</span><br><span class="line">-rw-------  1 keliq  staff   192 12  1 14:34 /Users/keliq/.npmrc</span><br><span class="line">-rw-------  1 keliq  staff   612  6 28  2019 /Users/keliq/.opmrc</span><br><span class="line">-rw-r--r--  1 keliq  staff   513 11  6  2017 /Users/keliq/.vimrc</span><br><span class="line">-rw-r--r--  1 keliq  staff   120 12  2 10:09 /Users/keliq/.vuerc</span><br><span class="line">-rw-r--r--  1 keliq  staff   386 12  7 23:31 /Users/keliq/.yarnrc</span><br><span class="line">-rw-r--r--  1 keliq  staff  3468 10 19  2017 /Users/keliq/.zshrc</span><br></pre></td></tr></table></figure>
+<p>那么 rc 后缀是什么意思呢？为什么大家都喜欢用 <code>.[xxx]rc</code> 来保存配置？为什么有些是 JSON 格式、有些是 yaml 格式、甚至其他乱七八糟的格式？</p>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/what-does-rc-mean/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/what-does-rc-mean/" data-id="ckjtq8g97000k6cq4nh3u6a2y" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-nodejs-cli" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/nodejs-cli/" class="article-date">
+  <time datetime="2020-11-27T10:22:01.000Z" itemprop="datePublished">2020-11-27</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/nodejs-cli/">前端工程化之项目脚手架</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p><img src="https://img.zlib.cn/blog/scaffold.jpg" alt="scaffold"></p>
+<p>在建筑领域，<em>脚手架</em>是为了保证各施工过程顺利进行而搭设的工作平台。在软件开发领域，如果把搭建项目想象成建造大型建筑的话，脚手架就是为了方便大家快速进入业务逻辑的开发，一个好的脚手架能显著提升工程效率，例如三大前端框架都提供了自己的脚手架工具：</p>
 <ul>
-<li>Ajax 请求会受到浏览器同源策略的制约</li>
-<li>Cookie 的 SameSite 属性表示该 Cookie 是否能被跨站发送</li>
+<li>Angular 中的 <a href="https://github.com/angular/angular-cli" target="_blank" rel="noopener">@angular/cli</a></li>
+<li>Vue 中的 <a href="https://github.com/vuejs/vue-cli" target="_blank" rel="noopener">@vue/cli</a></li>
+<li>React 中的 <a href="https://github.com/facebook/create-react-app" target="_blank" rel="noopener">create-react-app</a></li>
 </ul>
-<p>那究竟什么是同源（Same-Origin）、什么是同站（Same-Site）呢？在弄清楚这两个概念之前，必须先弄清楚「源」和「站」的区别：</p>
+<p>上述工具虽好，但相信很多公司为了满足自身业务需要，也造了不少自己的轮子，约定使用自己的那一套配置，如果没有脚手架，就只能把原项目代码复制过来，删除无用的逻辑，只保留基础能力，这个过程琐碎且耗时。</p>
+<p>因此，在这种情况下，就需要定制自己的开发模板，搭建一套属于自己的前端脚手架了。</p>
         </div>
         
           <p class="article-more-link">
-            <a href="/samesite-vs-sameorigin/#more">Read More</a>
+            <a href="/nodejs-cli/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/samesite-vs-sameorigin/" data-id="ckfopmy2u0004bfq43kxsykd8" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/nodejs-cli/" data-id="ckjtq8g8g00096cq4g3pagmtj" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
@@ -225,10 +464,10 @@
 
 
   
-    <article id="post-xss-attack" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-postman-workflow" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/xss-attack/" class="article-date">
-  <time datetime="2020-08-22T08:14:43.000Z" itemprop="datePublished">2020-08-22</time>
+    <a href="/postman-workflow/" class="article-date">
+  <time datetime="2020-11-27T09:45:44.000Z" itemprop="datePublished">2020-11-27</time>
 </a>
     
   </div>
@@ -239,7 +478,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/xss-attack/">XSS攻防实战</a>
+      <a class="article-title" href="/postman-workflow/">Postman 工作流</a>
     </h1>
   
 
@@ -251,23 +490,76 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <p>之前写过两篇文章分别介绍了 <a href="https://zju.date/cookie-notes">Cookie</a> 和 <a href="https://zju.date/node-jwt">JSON Web Token</a>，很多网站会在用户登录完毕设置一个 Cookie 值或者返回一个 Token，这就相当于一个令牌，只要拿着这张令牌就等同于证明了你是某个用户。如果 Cookie 或 Token 被窃取，攻击者就可以冒充真实的用户，在网站中为所欲为了。</p>
-<p>XSS 的全称叫跨站脚本攻击（Cross Site Scripting），攻击出现的原因一般是因为 Web 程序对用户的输入过滤不足导致的一种漏洞，攻击者可以把恶意的脚本代码注入到网页之中，当其他用户浏览时就会执行其中的恶意代码，对受害者产生各种攻击。XSS 一般分为三种类型：</p>
+            <p>Postman 是前端圈主流的接口测试工具，相信很多人都用过，但大部分开发者只用到了最基本的功能，即请求和响应，然而 Postman 提供给开发者的不仅仅是这些，下图是 Postman 的工作流，可以看到，在 request 的前面有前置请求脚本（pre-request script），在 response 的后面有测试脚本（test script），这四个部分合在一起才是一次完整的 Postman 工作流。</p>
+<p><img src="https://img.zlib.cn/blog/postman-workflow.png" alt="workflow"></p>
+<p>request 和 response 相信大家都会用了，这里主要介绍前置请求脚本和测试脚本的使用方法，以登录接口为例，演示一次 Postman 工作流的完整应用场景。</p>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/postman-workflow/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/postman-workflow/" data-id="ckjtq8g8w000c6cq474p72lre" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-typescript-strict" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/typescript-strict/" class="article-date">
+  <time datetime="2020-11-18T14:45:57.000Z" itemprop="datePublished">2020-11-18</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/typescript-strict/">TypeScript中的严格模式</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>在 tsconfig.json 文件中，有一个配置项叫做 <code>strict</code>，默认为 true，表示开启严格模式：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    /* Strict Type-Checking Options */</span><br><span class="line">    "strict": true,                       /* Enable all strict type-checking options. */</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>TypeScript 中的严格模式跟 JavaScript 中说的严格模式（即 <code>use strict</code>）不是一个概念，它表示是否开启下面一系列的类型检查规则：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="string">"noImplicitAny"</span>: <span class="literal">true</span>,</span><br><span class="line">    <span class="string">"strictNullChecks"</span>: <span class="literal">true</span>, </span><br><span class="line">    <span class="string">"strictFunctionTypes"</span>: <span class="literal">true</span>,</span><br><span class="line">    <span class="string">"strictBindCallApply"</span>: <span class="literal">true</span>,</span><br><span class="line">    <span class="string">"strictPropertyInitialization"</span>: <span class="literal">true</span>,</span><br><span class="line">    <span class="string">"noImplicitThis"</span>: <span class="literal">true</span>,</span><br><span class="line">    <span class="string">"alwaysStrict"</span>: <span class="literal">true</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>意思是说：</p>
 <ul>
-<li>反射型</li>
-<li>存储型</li>
-<li>DOM型</li>
+<li>如果你设置 <code>strict</code> 为 true 的话，那么上面所有的配置默认全是 true</li>
+<li>如果你设置 <code>strict</code> 为 false 的话，那么上面的所有配置默认全是 false</li>
+<li>你如果既设置了 <code>strict</code> 又单独设置了其中的部分配置，那么以单独设置的配置为准</li>
 </ul>
+<p>知道了这层关系之后，接下来就逐个解释 <code>strict</code> 所关联的配置项分别代表什么含义：</p>
         </div>
         
           <p class="article-more-link">
-            <a href="/xss-attack/#more">Read More</a>
+            <a href="/typescript-strict/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/xss-attack/" data-id="ckej9qge800zwwpq41xabb9gf" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/typescript-strict/" data-id="ckhokktp00001e2q4eodyuoy4" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
@@ -278,10 +570,10 @@
 
 
   
-    <article id="post-csrf-attack" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-script-async-defer" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/csrf-attack/" class="article-date">
-  <time datetime="2020-08-21T15:18:37.000Z" itemprop="datePublished">2020-08-21</time>
+    <a href="/script-async-defer/" class="article-date">
+  <time datetime="2020-11-13T13:57:12.000Z" itemprop="datePublished">2020-11-13</time>
 </a>
     
   </div>
@@ -292,7 +584,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/csrf-attack/">CSRF攻防实战（附JS源码）</a>
+      <a class="article-title" href="/script-async-defer/">图解 script 标签中的 async 和 defer 属性</a>
     </h1>
   
 
@@ -304,290 +596,23 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <p>上一篇文章讲了 <a href="https://juejin.im/post/6867184627393265677" target="_blank" rel="noopener">XSS 攻防实战</a>，给出了反射型、存储型和 DOM 型的攻击案例，只要做好防御措施，例如把 Cookie 设置成 httpOnly 并且在对用户输入进行过滤的话，XSS 攻击往往就无从下手，但是却防不住 CSRF 攻击，因为从兵法角度，XSS 攻击是攻城，CSRF 是攻心，即便城墙坚不可摧，人心亦可能动摇。</p>
-<blockquote>
-<p>上兵伐谋，攻心为上，攻城为下。——《孙子兵法·谋攻篇》</p>
-</blockquote>
-<p>CSRF 的全称是跨站请求伪造（Cross Site Request Forgery），它的攻击原理是：</p>
-<ol>
-<li>受害者登录目标网站，保存了该网站的登录状态</li>
-<li>攻击者诱导受害者进入第三方网站，向被攻击网站发送跨站请求</li>
-<li>由于用户已登录, 该跨站请求被成功执行</li>
-</ol>
-<p>CSRF 跨站请求一般有两种类型：</p>
+            <p>在 HTML 中会遇到以下三类 script：</p>
 <ul>
-<li>GET 型</li>
-<li>POST 型</li>
+<li><code>&lt;script src=&#39;xxx&#39;&gt;&lt;/script&gt;</code></li>
+<li><code>&lt;script src=&#39;xxx&#39; async&gt;&lt;/script&gt;</code></li>
+<li><code>&lt;script src=&#39;xxx&#39; defer&gt;&lt;/script&gt;</code></li>
 </ul>
+<p>那么这三类 script 有什么区别呢？</p>
         </div>
         
           <p class="article-more-link">
-            <a href="/csrf-attack/#more">Read More</a>
+            <a href="/script-async-defer/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/csrf-attack/" data-id="ckfopmy290000bfq4hx2oztsy" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-cookie-notes" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/cookie-notes/" class="article-date">
-  <time datetime="2020-08-21T10:01:51.000Z" itemprop="datePublished">2020-08-21</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/cookie-notes/">Cookie属性详解</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <blockquote>
-<p>只要上网，就离不开 Cookie。</p>
-</blockquote>
-<p>随便用浏览器打开一个网站，这里以<a href="http://nodejs.cn/" target="_blank" rel="noopener">Node.js中文网站</a>为例，打开控制台，切换到 Application/Cookies 标签，可以看到大量的 Cookie：</p>
-<p><img src="http://img.zlib.cn/blog/nodejs-cookie.jpg" alt="cookie"></p>
-<p>由于 HTTP 本身是无状态的，Cookie 可以用来跟踪用户，由于每次请求浏览器都会自动携带 Cookie，这样服务端就知道哪些请求是来自同一个用户了。</p>
-<blockquote>
-<p>正所谓：水能载舟亦能覆舟。Cookie 也是一把双刃剑，它可以给用户带来更好的阅读体验，也能在用户不知情的情况下窃取敏感信息。</p>
-</blockquote>
-<p>作为一名前端开发者，有必要掌握 Cookie 的各种属性及其玩法，我们按照上图中的顺序逐个进行讲解：</p>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/cookie-notes/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/cookie-notes/" data-id="ckej9qfw2007wwpq4rhqhrnx2" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-spa-hash-vs-history" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/spa-hash-vs-history/" class="article-date">
-  <time datetime="2020-08-16T01:40:32.000Z" itemprop="datePublished">2020-08-16</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/spa-hash-vs-history/">前端路由模式详解（hash和history）</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>前端路由有两种模式：hash 模式和 history 模式，接下来分析这两种模式的实现方式和优缺点。</p>
-<blockquote>
-<p>为了方便演示，需全局安装 light-server：<br>yarn global add light-server</p>
-</blockquote>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/spa-hash-vs-history/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/spa-hash-vs-history/" data-id="ckej9qgaw00vfwpq4i1x2h6fu" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-flutter-get-stuck-on-ios" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/flutter-get-stuck-on-ios/" class="article-date">
-  <time datetime="2020-05-29T13:33:47.000Z" itemprop="datePublished">2020-05-29</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/flutter-get-stuck-on-ios/">终于找到了Flutter在iOS上卡顿的原因</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>最近用 Flutter 做了一个项目，上线测试的时候 iOS 界面非常卡顿，那怕一个简单的页面切换，都会卡在一半的位置，而安卓上正常。一开始以为是 Flutter 代码问题，但是经过几天的代码优化和问题排查，最后定位问题出在了服务端 https 证书上面。据说 iOS 端给 Let’s Encrypt 做联网验证，验证的地址是 <a href="http://ocsp.int-x3.letsencrypt.org" target="_blank" rel="noopener">http://ocsp.int-x3.letsencrypt.org</a> ，而该地址国内无法访问，就导致 iOS 直接卡死。</p>
-<p>这个问题在 Github 上有许多讨论，参见 <a href="https://github.com/dart-lang/sdk/issues/41519" target="_blank" rel="noopener">dart-lang-issue</a>、<a href="https://github.com/flutterchina/dio/issues/703" target="_blank" rel="noopener">dio-issue</a>，基本上可以断定：只要在国内，服务端用了 LetsEncrypt 证书，Flutter 在 iOS 上进行网络请求就会卡顿。注意这不是 Flutter 的问题，是 iOS 系统和 LetsEncrypt 证书共同造成的问题，例如 Safari 打开 LetsEncrypt 证书的网页也会卡，所以解决方案就是换证书。</p>
-<p>查了一下资料，OCSP 叫做在线证书状态协议（英语：Online Certificate Status Protocol，缩写：OCSP），是 TLS 协议的扩展协议，在 TLS 的使用中，客户端无法判断一个还没有过期的证书是否被吊销了。这个时候有些客户端在从服务端拿到了一个证书之后，会去找服务端的接口去验证一下这个证书的是否过期、是否吊销等，而有些则不进行客户端检查。iOS 上的软件会检查，而 Android 不检查，据说因为 Google 不满意 OCSP 这个解决方案，认为检查证书状态并不能增加安全性，反而会导致 https 请求时间变长，所以所有 Google 的产品，无论是 Android 还是 Chrome 都不进行 OCSP 检查。</p>
-<p>如果坚持要用 LetsEncrypt 证书的话，也是有解决办法的，<a href="https://jhuo.ca/post/ocsp-stapling-letsencrypt/" target="_blank" rel="noopener">这篇文章</a>里面有详细介绍，通过配置 ssl_stapling_responder 使得请求 OCSP 被发送到设置的服务器。不过建议大家还是换证书吧！</p>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/flutter-get-stuck-on-ios/" data-id="ckej9qfz500dlwpq4n2ex1yew" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flutter/">Flutter</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-vue-reactive" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/vue-reactive/" class="article-date">
-  <time datetime="2020-05-24T09:27:27.000Z" itemprop="datePublished">2020-05-24</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/vue-reactive/">Vue响应式原理剖析（data、watch、computed）</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <blockquote>
-<p>能用 Vue 改写的应用，终将会用 Vue 来改写。—— 尤大大（没说过）</p>
-</blockquote>
-<p>都 2020 年了，我想下面三句话不过分吧：</p>
-<ul>
-<li>Vue 是一个非常优秀的前端框架</li>
-<li>每个前端开发都应该会一点 Vue</li>
-<li>不会 Vue 的前端不是优秀的前端</li>
-</ul>
-<p>其实 Vue 的 API 是非常容易上手的，官方文档读一遍就能开发了，分分钟实现一个 TODO App。但只会用 Vue 其实是远远不够的，每一个 Vue 开发者都应该了解 Vue 响应式原理（<code>data</code>、<code>watch</code>、<code>computed</code>），否则永远只是知其然，不知其所以然。</p>
-<p>为了让大家彻底搞懂，本文采用渐进式的分析方式，即从零开始一行行写代码，最终完整实现一个具备响应式简版 Vue。 好了，大家把 vscode 打开，新建一个 <code>vue.js</code> 空文件，开始撸吧！</p>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/vue-reactive/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/vue-reactive/" data-id="ckej9qgd600yhwpq4hsmrfp5j" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-js-scope" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/js-scope/" class="article-date">
-  <time datetime="2020-05-24T08:51:20.000Z" itemprop="datePublished">2020-05-24</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/js-scope/">你真的懂作用域吗？</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>作用域是 JS 中非常基础的概念，在 ES5 中只有全局作用域和函数作用域，在 ES6 中增加了块级作用域。可是，你真的懂作用域吗？</p>
-<p>先不要着急回答，先看下面三道题。做不出来或做错了的话，就是不懂作用域，都做对了，作用域大概懂了三分之一吧，因为还有很多概念在里面呢！</p>
-<h3 id="题目一"><a href="#题目一" class="headerlink" title="题目一"></a>题目一</h3><p>请分别说出下面代码的执行结果：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(fn)</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fn</span>(<span class="params"></span>) </span>&#123;&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(fn)</span><br><span class="line"><span class="keyword">if</span>(<span class="literal">true</span>) &#123;</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">fn</span>(<span class="params"></span>) </span>&#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(fn)</span><br><span class="line"><span class="keyword">if</span>(<span class="literal">false</span>) &#123;</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">fn</span>(<span class="params"></span>) </span>&#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/js-scope/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/js-scope/" data-id="ckej9qg3k00kwwpq42vjkqa1n" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/script-async-defer/" data-id="ckhokktot0000e2q4nsfghnc6" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
@@ -601,7 +626,7 @@
 
 
   <nav id="page-nav">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/66/">66</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/67/">67</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
   </nav>
 </section>
 
@@ -626,7 +651,7 @@
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2020 zju.date
+      &copy; 2021 zju.date
       &nbsp;&nbsp;&nbsp;
       contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
     </div>

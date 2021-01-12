@@ -54,10 +54,10 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-mongodb-update" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-mongodb-fuzzy-search" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/mongodb-update/" class="article-date">
-  <time datetime="2017-03-30T01:17:25.000Z" itemprop="datePublished">2017-03-30</time>
+    <a href="/mongodb-fuzzy-search/" class="article-date">
+  <time datetime="2017-05-07T05:32:07.000Z" itemprop="datePublished">2017-05-07</time>
 </a>
     
   </div>
@@ -68,7 +68,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/mongodb-update/">mongodb update</a>
+      <a class="article-title" href="/mongodb-fuzzy-search/">mongodb模糊查询</a>
     </h1>
   
 
@@ -79,19 +79,17 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <p>查询 course 表中，存在 lectures_count 字段的记录信息</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">db.course.find( &#123; <span class="string">"lectures.lectures_count"</span>: &#123; <span class="attr">$exists</span>: <span class="literal">true</span> &#125; &#125; )</span><br></pre></td></tr></table></figure>
-<p>删除 course 表中，所有的 lectures.lectures_count 字段</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">db.course.update(&#123;&#125;,&#123;$unset:&#123;&quot;lectures.lectures_count&quot;:&quot;&quot;&#125;&#125;,&#123;multi:true&#125;)</span><br></pre></td></tr></table></figure>
-<p>根据条件往表里插入一个字段</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">db.lecture.update(&#123;<span class="string">"course_id"</span>:<span class="string">"5352d5ab92fc7705666ae8c9"</span>&#125;,&#123;<span class="attr">$set</span>:&#123;<span class="string">"file_type"</span>:<span class="string">"PDF"</span>&#125;&#125;,&#123;<span class="attr">multi</span>:<span class="literal">true</span>&#125;)</span><br></pre></td></tr></table></figure>
-<p>完全删除某个键</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">db.users.update(&#123;<span class="string">"name"</span> : <span class="string">"joe"</span>&#125;,&#123;<span class="string">"$unset"</span> : &#123;<span class="string">"favorite book"</span> : <span class="number">1</span>&#125;&#125;)</span><br></pre></td></tr></table></figure>
+        <p>mongoose 如何实现类似于SQL中 nick LIKE ‘%keyword%’ or email LIKE ‘%keyword%’ 这种多条件模糊搜索的问题。 用到了 query.$or 和 query.$regex 这两个 find 参数。其中 query.$or 用于实现多条件查询，其值是一个数组。示例代码：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">query.or([&#123; <span class="attr">color</span>: <span class="string">'red'</span> &#125;, &#123; <span class="attr">status</span>: <span class="string">'emergency'</span> &#125;])</span><br></pre></td></tr></table></figure>
+<p>query.$regex用于实现模糊查询。示例代码:</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&#123; &lt;field&gt;: &#123; <span class="attr">$regex</span>: <span class="regexp">/pattern/</span>, <span class="attr">$options</span>: <span class="string">'&lt;options&gt;'</span> &#125; &#125;</span><br><span class="line">&#123; &lt;field&gt;: <span class="regexp">/pattern/</span><span class="xml"><span class="tag">&lt;<span class="name">options</span>&gt;</span> &#125;</span></span><br></pre></td></tr></table></figure>
+<p>通过以上两个参数就可以实现多条件模糊查询了。以User表为例,通过输入一个关键字,来匹配昵称或者邮箱与关键字相近的记录。示例代码:</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> keyword = <span class="keyword">this</span>.params.keyword <span class="comment">//从URL中传来的 keyword参数</span></span><br><span class="line"><span class="keyword">const</span> reg = <span class="keyword">new</span> <span class="built_in">RegExp</span>(keyword, <span class="string">'i'</span>) <span class="comment">//不区分大小写</span></span><br><span class="line"><span class="keyword">const</span> result = <span class="keyword">yield</span> User.find(</span><br><span class="line">    &#123;</span><br><span class="line">        $or : [ <span class="comment">//多条件，数组</span></span><br><span class="line">            &#123;<span class="attr">nick</span> : &#123;<span class="attr">$regex</span> : reg&#125;&#125;,</span><br><span class="line">            &#123;<span class="attr">email</span> : &#123;<span class="attr">$regex</span> : reg&#125;&#125;</span><br><span class="line">        ]</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">        password : <span class="number">0</span></span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">        sort : &#123; <span class="attr">_id</span> : <span class="number">-1</span> &#125;,</span><br><span class="line">        limit : <span class="number">100</span></span><br><span class="line">    &#125;</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
 
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/mongodb-update/" data-id="ckej9qg6b00p2wpq4ryuinxc2" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/mongodb-fuzzy-search/" data-id="ckej9qg5w00oewpq4l267an68" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
 
@@ -102,10 +100,10 @@
 
 
   
-    <article id="post-ubuntu-sublime-cjk" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-mac-clear-dns" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/ubuntu-sublime-cjk/" class="article-date">
-  <time datetime="2017-03-24T02:06:07.000Z" itemprop="datePublished">2017-03-24</time>
+    <a href="/mac-clear-dns/" class="article-date">
+  <time datetime="2017-05-06T07:47:07.000Z" itemprop="datePublished">2017-05-06</time>
 </a>
     
   </div>
@@ -116,7 +114,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/ubuntu-sublime-cjk/">ubuntu sublime 无法输入中文</a>
+      <a class="article-title" href="/mac-clear-dns/">Mac 清除 DNS 缓存</a>
     </h1>
   
 
@@ -127,17 +125,21 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <p>在 Ubuntu 上安装 sublime 之后发现无法输入中文，很是烦恼，网上找了很多教程，要么修改很多配置，要么非常繁琐。</p>
-<p>后来在 github 上发现一个库：<a href="https://github.com/lyfeyaj/sublime-text-imfix" target="_blank" rel="noopener">sublime-text-imfix</a> ，能够用一条命令就解决中文输入的问题了。</p>
-<p>不过需要注意的是，上面的库无法找到电脑中解压即用的绿色版 sublime ，所以需要用包管理工具安装：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">wget -qO - https://download.sublimetext.com/sublimehq-pub.gpg | sudo apt-key add -</span><br><span class="line">sudo apt-get install apt-transport-https</span><br><span class="line"><span class="built_in">echo</span> <span class="string">"deb https://download.sublimetext.com/ apt/stable/"</span> | sudo tee /etc/apt/sources.list.d/sublime-text.list</span><br><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install sublime-text</span><br></pre></td></tr></table></figure>
+        <h3 id="OS-X-Yosemite及更新机型"><a href="#OS-X-Yosemite及更新机型" class="headerlink" title="OS X Yosemite及更新机型"></a>OS X Yosemite及更新机型</h3><p>在 OS X v10.10.4 或更高版本中，请使用以下“终端”命令来还原 DNS 缓存设置：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo killall -HUP mDNSResponder</span><br></pre></td></tr></table></figure>
+<p>在 OS X v10.10 至 v10.10.3 中，请使用以下“终端”命令来还原 DNS 缓存设置：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo discoveryutil mdnsflushcache</span><br></pre></td></tr></table></figure>
+<h3 id="OS-X-Mavericks、Mountain-Lion-和-Lion"><a href="#OS-X-Mavericks、Mountain-Lion-和-Lion" class="headerlink" title="OS X Mavericks、Mountain Lion 和 Lion"></a>OS X Mavericks、Mountain Lion 和 Lion</h3><p>在 OS X v10.9.5 及更低版本中，请使用以下“终端”命令来还原 DNS 缓存设置：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo killall -HUP mDNSResponder</span><br></pre></td></tr></table></figure>
+<h3 id="Mac-OS-X-Snow-Leopard"><a href="#Mac-OS-X-Snow-Leopard" class="headerlink" title="Mac OS X Snow Leopard"></a>Mac OS X Snow Leopard</h3><p>在 OS X v10.6 至 v10.6.8 中，请使用以下“终端”命令来还原 DNS 缓存设置：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo dscacheutil -flushcache</span><br></pre></td></tr></table></figure>
 
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/ubuntu-sublime-cjk/" data-id="ckej9qgc600x8wpq4zjl6z806" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/mac-clear-dns/" data-id="ckej9qg4p00mrwpq4p4cdhnz9" class="article-share-link">Share</a>
      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Mac/">Mac</a></li></ul>
 
     </footer>
   </div>
@@ -146,10 +148,10 @@
 
 
   
-    <article id="post-nginx-https" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-mongoose-findByIdAndUpdate" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/nginx-https/" class="article-date">
-  <time datetime="2017-03-24T02:02:07.000Z" itemprop="datePublished">2017-03-24</time>
+    <a href="/mongoose-findByIdAndUpdate/" class="article-date">
+  <time datetime="2017-05-06T03:25:07.000Z" itemprop="datePublished">2017-05-06</time>
 </a>
     
   </div>
@@ -160,7 +162,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/nginx-https/">nginx 添加 https 支持</a>
+      <a class="article-title" href="/mongoose-findByIdAndUpdate/">mongoose findByIdAndUpdate 返回新数据</a>
     </h1>
   
 
@@ -171,113 +173,13 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <p>为 nginx 配置 https 支持，只需如下两步：</p>
-<h2 id="生成证书"><a href="#生成证书" class="headerlink" title="生成证书"></a>生成证书</h2><ol>
-<li><p>进入目录</p>
-<p> 首先进入你想创建证书和私钥的目录，例如：</p>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ cd /usr/local/nginx/conf</span><br><span class="line">$ ls</span><br><span class="line">fastcgi.conf           koi-utf                nginx.conf             uwsgi_params</span><br><span class="line">fastcgi.conf.default   koi-win                nginx.conf.default     uwsgi_params.default</span><br><span class="line">fastcgi_params         mime.types             scgi_params            win-utf</span><br><span class="line">fastcgi_params.default mime.types.default     scgi_params.default</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>生成私钥</p>
-<p> 然后创建服务器私钥（KEY），命令会让你输入一个口令，例如：lixiao：</p>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ openssl genrsa -des3 -out server.key 1024</span><br><span class="line">Generating RSA private key, 1024 bit long modulus</span><br><span class="line">..........++++++</span><br><span class="line">................++++++</span><br><span class="line">e is 65537 (0x10001)</span><br><span class="line">Enter pass phrase for server.key:</span><br><span class="line">Verifying - Enter pass phrase for server.key:</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>根据私钥创建证书</p>
-<p> 然后创建签名请求的证书（CSR）：</p>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">$ openssl req -new -key server.key -out server.csr</span><br><span class="line">Enter pass phrase for server.key:</span><br><span class="line">You are about to be asked to enter information that will be incorporated</span><br><span class="line">into your certificate request.</span><br><span class="line">What you are about to enter is what is called a Distinguished Name or a DN.</span><br><span class="line">There are quite a few fields but you can leave some blank</span><br><span class="line">For some fields there will be a default value,</span><br><span class="line">If you enter &apos;.&apos;, the field will be left blank.</span><br><span class="line">-----</span><br><span class="line">Country Name (2 letter code) []:cn</span><br><span class="line">State or Province Name (full name) []:jiangsu</span><br><span class="line">Locality Name (eg, city) []:nanjing</span><br><span class="line">Organization Name (eg, company) []:lx</span><br><span class="line">Organizational Unit Name (eg, section) []:</span><br><span class="line">Common Name (eg, fully qualified host name) []:.</span><br><span class="line">Email Address []:</span><br><span class="line"></span><br><span class="line">Please enter the following &apos;extra&apos; attributes</span><br><span class="line">to be sent with your certificate request</span><br><span class="line">A challenge password []:LiXiao520$</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>去除口令</p>
-</li>
-</ol>
-<pre><code>在加载SSL支持的Nginx并使用上述私钥时除去必须的口令：
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ cp server.key server.key.org</span><br><span class="line">$ openssl rsa -in server.key.org -out server.key</span><br></pre></td></tr></table></figure>
-</code></pre><ol>
-<li><p>标记证书</p>
-<p> 最后标记证书使用上述私钥和CSR：</p>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ openssl x509 -req -days 365 -in server.csr -signkey server.key -out server.crt</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<p>总结一下，上述5个步骤：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mkdir your_dir</span><br><span class="line">cd your_dir</span><br><span class="line">openssl genrsa -des3 -out server.key 1024 # 会提示输入key</span><br><span class="line">openssl req -new -key server.key -out server.csr # 会提示输入组织信息 CN BeiJing HaiDian XXX</span><br><span class="line">cp server.key server.key.org</span><br><span class="line">openssl rsa -in server.key.org -out server.key </span><br><span class="line">openssl x509 -req -days 365 -in server.csr -signkey server.key -out server.crt</span><br></pre></td></tr></table></figure>
-<h2 id="配置nginx"><a href="#配置nginx" class="headerlink" title="配置nginx"></a>配置nginx</h2><p>修改Nginx配置文件，让其包含新标记的证书和私钥：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    server_name YOUR_DOMAINNAME_HERE;</span><br><span class="line">    listen 443;</span><br><span class="line">    ssl on;</span><br><span class="line">    ssl_certificate /usr/local/nginx/conf/server.crt;</span><br><span class="line">    ssl_certificate_key /usr/local/nginx/conf/server.key;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>重启nginx即可。</p>
+        <p>Mongoose 中 <code>Model.findByIdAndUpdate</code> 操作对象之后，虽然数据库变了，但返回的不是更改之后的值，而是之前的值。如果想让返回结果是新值的话，可以用下面的语法：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Model.findByIdAndUpdate(id, updateObj, &#123;<span class="attr">new</span>: <span class="literal">true</span>&#125;, <span class="function"><span class="keyword">function</span>(<span class="params">err, model</span>) </span>&#123;&#125;)</span><br></pre></td></tr></table></figure>
 
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/nginx-https/" data-id="ckej9qg7100q6wpq4st22b5sg" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-mongodb-advance-query" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/mongodb-advance-query/" class="article-date">
-  <time datetime="2017-03-24T01:06:07.000Z" itemprop="datePublished">2017-03-24</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/mongodb-advance-query/">mongodb 高级查询</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>如果 mongodb 提供的查询语句无法满足业务需求，最后可以用杀手锏： <code>$where</code> 高级查询。</p>
-<blockquote>
-<p><code>$where</code> 操作符功能强大且灵活，它可以将 JavaScript 表达式的字符串或函数作为查询语句的一部分。在 JavaScript 表达式和函数中，可以使用this或obj来引用当前操作的文档，当表达式或函数返回值为true时，会返回当前的文档。</p>
-</blockquote>
-<p>例如文档格式是：</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"username"</span>: <span class="string">"brian"</span>,</span><br><span class="line">  <span class="attr">"addresses': [</span></span><br><span class="line"><span class="attr">    &#123;</span></span><br><span class="line">       "address": "500 Grant Street",</span><br><span class="line">       "city": "Pittsburgh",</span><br><span class="line">       "state": "PA",</span><br><span class="line">       "zip": "15219",</span><br><span class="line">       "country": "US"</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">"address"</span>: <span class="string">"405 Spray Ave"</span>,</span><br><span class="line">      <span class="attr">"city"</span>: <span class="string">"Banff"</span>,</span><br><span class="line">      <span class="attr">"state"</span>: <span class="string">"AB"</span>,</span><br><span class="line">      <span class="attr">"zip"</span>: <span class="string">"T1L1J4"</span>,</span><br><span class="line">      <span class="attr">"country"</span>: <span class="string">"CA"</span></span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<ol>
-<li><p>查询用户名长度少于4个字符的文档：</p>
- <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">db.users.find(&#123; <span class="attr">$where</span>: <span class="string">'this.username.length &lt; 4'</span> &#125;)</span><br></pre></td></tr></table></figure>
-<p> 这里的 this 就代表文档。</p>
-</li>
-<li><p>查询子文档address里面state字段长度超过2的文档：</p>
- <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">db.users.find(&#123;  </span><br><span class="line">  $where: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="keyword">this</span>.addresses.length; i++) &#123;</span><br><span class="line">      <span class="keyword">var</span> address = <span class="keyword">this</span>.addresses[i];</span><br><span class="line">      <span class="keyword">if</span>(address.state.length &gt; <span class="number">2</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<p>双乾 签约短信</p>
-<p>百隆原始数据<br><code>`</code><br>{<br>  method: ‘fastpayOpenToken2BySms’,<br>  encryptId: ‘000010000000394’,<br>  apiVersion: 1,<br>  txnDate: 1587104706086,<br>  mid: ‘000010000000394’,<br>  agencyType: ‘kjthun’,<br>  idcard: ‘320324198905203717’,<br>  accountNumber: ‘6229180051095869’,<br>  holderName: ‘李潇’,<br>  tel: ‘13151560670’,<br>  cvv2: ‘663’,<br>  expired: ‘2103’,<br>  bizOrderNumber: ‘5e994bc2506be6e5de7e2b9d’<br>}<br>加密串 {“content”:”{\”method\”:\”fastpayOpenToken2BySms\”,\”encryptId\”:\”000010000000394\”,\”apiVersion\”:1,\”txnDate\”:1587104706086,\”mid\”:\”000010000000394\”,\”agencyType\”:\”kjthun\”,\”idcard\”:\”320324198905203717\”,\”accountNumber\”:\”6229180051095869\”,\”holderName\”:\”李潇\”,\”tel\”:\”13151560670\”,\”cvv2\”:\”663\”,\”expired\”:\”2103\”,\”bizOrderNumber\”:\”5e994bc2506be6e5de7e2b9d\”}”,”key”:”3d080af72795879c1aeb7e88ac678b7b”}<br>md5值 003bbb666924cf01a543012c4deaa5b0<br>{<br>  result: {<br>    code: ‘000000’,<br>    data: {<br>      bizOrderNumber: ‘5e994bc2506be6e5de7e2b9d’,<br>      isSign: ‘f’,<br>      openUrl: null<br>    },<br>    message: ‘获取开通短信成功’<br>  },<br>  sign: ‘5dad8a855a4e0b9213eae9a7d21105a8’<br>}</p>
-<p>收到银行短信<br>【中信银行信用卡】验证码557089，您正在使用尾号5869信用卡进行快捷签约，请勿向他人泄露您的验证码。</p>
-<p>签约确认：</p>
-<p>双乾原始数据 {<br>  method: ‘fastpayOpenToken2CheckSms’,<br>  encryptId: ‘000010000000394’,<br>  apiVersion: 1,<br>  txnDate: 1587104832099,<br>  mid: ‘000010000000394’,<br>  agencyType: ‘kjthun’,<br>  idcard: ‘320324198905203717’,<br>  accountNumber: ‘6229180051095869’,<br>  holderName: ‘李潇’,<br>  tel: ‘13151560670’,<br>  cvv2: ‘663’,<br>  expired: ‘2103’,<br>  smsCode: ‘557089’,<br>  bizOrderNumber: ‘5e994bc2506be6e5de7e2b9d’<br>}<br>加密串 {“content”:”{\”method\”:\”fastpayOpenToken2CheckSms\”,\”encryptId\”:\”000010000000394\”,\”apiVersion\”:1,\”txnDate\”:1587104832099,\”mid\”:\”000010000000394\”,\”agencyType\”:\”kjthun\”,\”idcard\”:\”320324198905203717\”,\”accountNumber\”:\”6229180051095869\”,\”holderName\”:\”李潇\”,\”tel\”:\”13151560670\”,\”cvv2\”:\”663\”,\”expired\”:\”2103\”,\”smsCode\”:\”557089\”,\”bizOrderNumber\”:\”5e994bc2506be6e5de7e2b9d\”}”,”key”:”3d080af72795879c1aeb7e88ac678b7b”}<br>md5值 e8f4d77fae92b7c287dbb59df5b99ce8<br>{<br>  result: {<br>    code: ‘000000’,<br>    data: {<br>      bizOrderNumber: ‘5e994bc2506be6e5de7e2b9d’,<br>      isSign: ‘t’,<br>      openUrl: null<br>    },<br>    message: ‘确认开卡成功’<br>  },<br>  sign: ‘2110f78985fa26f6130b57b05fdf4ce1’<br>}</p>
-<p>套现</p>
-<p>双乾原始数据 {<br>  method: ‘fastpayPrecreate2’,<br>  encryptId: ‘000600000000346’,<br>  apiVersion: 1,<br>  txnDate: 1587105892796,<br>  mid: ‘000600000000346’,<br>  agencyType: ‘nld01’,<br>  srcAmt: 100,<br>  bizOrderNumber: ‘5e99506401005ee6e5320654’,<br>  accountNumber: ‘6229180051095869’,<br>  tel: ‘13151560670’,<br>  fastpayFee: 0.45,<br>  holderName: ‘李潇’,<br>  idcard: ‘320324198905203717’,<br>  city: ‘南京市’,<br>  cvv2: ‘663’,<br>  expired: ‘2103’,<br>  settAccountNumber: ‘6230520390000820574’,<br>  settAccountTel: ‘15268139013’,<br>  extraFee: 0.5,<br>  notifyUrl: ‘<a href="https://credit.jsonfit.com/callback/shuangqian?type=TX&amp;method=fastpayPrecreate2&#39;" target="_blank" rel="noopener">https://credit.jsonfit.com/callback/shuangqian?type=TX&amp;method=fastpayPrecreate2&#39;</a><br>}<br>最终值 {<br>  content: ‘{“method”:”fastpayPrecreate2”,”encryptId”:”000600000000346”,”apiVersion”:1,”txnDate”:1587105892796,”mid”:”000600000000346”,”agencyType”:”nld01”,”srcAmt”:100,”bizOrderNumber”:”5e99506401005ee6e5320654”,”accountNumber”:”6229180051095869”,”tel”:”13151560670”,”fastpayFee”:0.45,”holderName”:”李潇”,”idcard”:”320324198905203717”,”city”:”南京市”,”cvv2”:”663”,”expired”:”2103”,”settAccountNumber”:”6230520390000820574”,”settAccountTel”:”号码 “,”extraFee”:0.5,”notifyUrl”:”<a href="https://credit.jsonfit.com/callback/shuangqian?type=TX&amp;method=fastpayPrecreate2&quot;}&#39;" target="_blank" rel="noopener">https://credit.jsonfit.com/callback/shuangqian?type=TX&amp;method=fastpayPrecreate2&quot;}&#39;</a>,<br>  sign: ‘3015709c14dacf61dc32416e6075a324’<br>}<br>{<br>  result: {<br>    code: ‘000000’,<br>    data: {<br>      bizOrderNumber: ‘5e99506401005ee6e5320654’,<br>      canUse: ‘t’,<br>      isSign: ‘t’,<br>      openHtml: null,<br>      openUrl: null,<br>      tn: ‘5e99506401005ee6e5320654’,<br>      txnId: 0,<br>      txnStatus: ‘p’<br>    },<br>    message: ‘预下单成功’<br>  },<br>  sign: ‘6b3953dba4ef79f0a481e8e482db657c’<br>}</p>
-<p>确认支付</p>
-<p>第一次是签约短信</p>
-<p>您正在申请开通帮贝钱包，验证码为422044，有效期5分钟，切勿泄露。【中国银联】</p>
-<p>如果短信失效</p>
-<p>{<br>  result: { code: ‘200001’, data: null, message: ‘请求参数错误:签约已失效请重新签约’ },<br>  sign: ‘148938a8ae21a47a6ee88c5cf7254ceb’<br>}</p>
-<p>订单号bizOrderNumber一定要跟上次一致，否则会报错</p>
-<p>{<br>  result: { code: ‘200001’, data: null, message: ‘该订单已提交，请勿重复提交’ },<br>  sign: ‘9f0e5335ff379a31689d399d31279b72’<br>}</p>
-<p>例如用户套现100，<br>fastpayFee: 0.45, // 交易手续费<br>extraFee: 0.5<br>实际入账 100-0.95=99.05</p>
-<p>代还<br>第一次10元 fastpayFee 0.5，则到账9.95，余额9.95<br>第二次10元 fastpayFee 0.46，则到账9.954 总余额19.9<br>实际上是19.904，把最后0.004抹去了，如果是0.005的话会，这就是利润啊！</p>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/mongodb-advance-query/" data-id="ckej9qg5q00o4wpq4tk51i7l7" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/mongoose-findByIdAndUpdate/" data-id="ckej9qg6h00pcwpq4yu9chsr0" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
 
@@ -288,10 +190,10 @@
 
 
   
-    <article id="post-git-add-remote-repo" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-typescript-cannot-call-a-namespace" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/git-add-remote-repo/" class="article-date">
-  <time datetime="2017-03-23T15:07:07.000Z" itemprop="datePublished">2017-03-23</time>
+    <a href="/typescript-cannot-call-a-namespace/" class="article-date">
+  <time datetime="2017-04-30T07:45:07.000Z" itemprop="datePublished">2017-04-30</time>
 </a>
     
   </div>
@@ -302,7 +204,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/git-add-remote-repo/">git push 到两个远程仓库</a>
+      <a class="article-title" href="/typescript-cannot-call-a-namespace/">cannot call a namespace</a>
     </h1>
   
 
@@ -314,108 +216,20 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <p>首先添加多个远程仓库</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git remote add &lt;name&gt; &lt;url&gt;</span><br></pre></td></tr></table></figure>
-<p>其中，name 表示你要给这个远程库起的名字，url 表示这个库的地址，然后提交到这个远程仓库：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git push &lt;name&gt; &lt;branch&gt;</span><br></pre></td></tr></table></figure>
-<p>其中，name 表示你在上一步给它起的名字，branch 表示某一个分支。比如为仓库添加 github 和 gitlab 两个远程仓库：</p>
+            <p>使用下面的方式引用moment日期处理包：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> moment <span class="keyword">from</span> <span class="string">'moment'</span></span><br><span class="line"><span class="keyword">import</span> mongoose, &#123;Schema&#125; <span class="keyword">from</span> <span class="string">'mongoose'</span></span><br></pre></td></tr></table></figure>
+<p><code>ng serve</code> 编译报错：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">node_modules/moment/moment&quot;&apos; has no default export</span><br><span class="line">Module &apos;&quot;mongoose&quot;&apos; has no default export.</span><br></pre></td></tr></table></figure>
         </div>
         
           <p class="article-more-link">
-            <a href="/git-add-remote-repo/#more">Read More</a>
+            <a href="/typescript-cannot-call-a-namespace/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/git-add-remote-repo/" data-id="ckej9qfzr00eowpq44brxec7x" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/">Git</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-linux-c" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/linux-c/" class="article-date">
-  <time datetime="2017-03-22T14:01:23.000Z" itemprop="datePublished">2017-03-22</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/linux-c/">Linux 安装 c/c++ 运行环境</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>centos：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">yum -y update gcc</span><br><span class="line">yum -y install gcc+ gcc-c++</span><br></pre></td></tr></table></figure>
-<p>ubuntu：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">apt-get update gcc</span><br><span class="line">apt-get install g++</span><br></pre></td></tr></table></figure>
-<p>gcc 可以视为 c 语言编译器，g++ 视为 c++ 语言编译器，都需要安装。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/linux-c/" data-id="ckej9qg3z00liwpq43qo7xn09" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-promise-all" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/promise-all/" class="article-date">
-  <time datetime="2017-03-22T10:04:07.000Z" itemprop="datePublished">2017-03-22</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/promise-all/">Promise.all</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>等待所有代码的完成或第一个代码的失败。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> p1 = <span class="built_in">Promise</span>.resolve(<span class="number">3</span>)</span><br><span class="line"><span class="keyword">var</span> p2 = <span class="number">1337</span></span><br><span class="line"><span class="keyword">var</span> p3 = <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> &#123;</span><br><span class="line">  setTimeout(resolve, <span class="number">100</span>, <span class="string">"foo"</span>)</span><br><span class="line">&#125;)</span><br><span class="line"><span class="built_in">Promise</span>.all([p1, p2, p3]).then(<span class="function"><span class="params">values</span> =&gt;</span> &#123; </span><br><span class="line">  <span class="built_in">console</span>.log(values); <span class="comment">// [3, 1337, "foo"] </span></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/promise-all/" data-id="ckej9qg8x00smwpq4mriiogre" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/typescript-cannot-call-a-namespace/" data-id="ckej9qgby00wvwpq43frquo8m" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
@@ -426,10 +240,10 @@
 
 
   
-    <article id="post-change-ssh-port" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-javascript-task" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/change-ssh-port/" class="article-date">
-  <time datetime="2017-03-10T01:06:07.000Z" itemprop="datePublished">2017-03-10</time>
+    <a href="/javascript-task/" class="article-date">
+  <time datetime="2017-04-30T02:45:07.000Z" itemprop="datePublished">2017-04-30</time>
 </a>
     
   </div>
@@ -440,98 +254,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/change-ssh-port/">ssh多端口登录</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>通常ssh远程登录的默认端口是22，这个端口一般是可以更改或者添加的，配置文件位置在：<code>/etc/ssh/sshd_config</code>，下面添加 8080 端口：</p>
-<p>执行命令 vim /etc/ssh/sshd_config 编辑配置文件</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Port 22</span><br><span class="line">Port 8080</span><br></pre></td></tr></table></figure>
-<p>去掉 Port 22 的注释并且新增一行 Port 8080 然后保存并退出，然后重启ssh服务： </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl restart sshd.service</span><br></pre></td></tr></table></figure>
-<p>重启之后 22 和 8080 端口均可以连接，当不是默认端口时需要使用 <code>ssh -p 2223 hostname</code> 进行连接。</p>
-<p>　　<br>查看 ssh 端口状态：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">[root@iZrj9hj308beua257ojjzfZ ~]# systemctl status sshd.service</span><br><span class="line">● sshd.service - OpenSSH server daemon</span><br><span class="line">   Loaded: loaded (/usr/lib/systemd/system/sshd.service; enabled; vendor preset: enabled)</span><br><span class="line">   Active: active (running) since Thu 2017-10-26 13:17:25 CST; 5min ago</span><br><span class="line">     Docs: man:sshd(8)</span><br><span class="line">           man:sshd_config(5)</span><br><span class="line"> Main PID: 7394 (sshd)</span><br><span class="line">   CGroup: /system.slice/sshd.service</span><br><span class="line">           ├─7394 /usr/sbin/sshd -D</span><br><span class="line">           ├─7744 sshd: [accepted]</span><br><span class="line">           └─7745 sshd: [net]</span><br><span class="line"></span><br><span class="line">Oct 26 13:17:25 iZrj9hj308beua257ojjzfZ systemd[1]: Starting OpenSSH server daemon...</span><br><span class="line">Oct 26 13:17:25 iZrj9hj308beua257ojjzfZ sshd[7394]: Server listening on 0.0.0.0 port 8080.</span><br><span class="line">Oct 26 13:17:25 iZrj9hj308beua257ojjzfZ sshd[7394]: Server listening on 0.0.0.0 port 22.</span><br><span class="line">Oct 26 13:17:25 iZrj9hj308beua257ojjzfZ systemd[1]: Started OpenSSH server daemon.</span><br><span class="line">Oct 26 13:18:40 iZrj9hj308beua257ojjzfZ sshd[7397]: Accepted publickey for root from 54.191.168.76 port 51818 ssh2: RSA af:e8:67:48...:5e:d1</span><br><span class="line">Oct 26 13:21:22 iZrj9hj308beua257ojjzfZ sshd[7576]: Accepted publickey for root from 54.191.168.76 port 36028 ssh2: RSA af:e8:67:48...:5e:d1</span><br><span class="line">Hint: Some lines were ellipsized, use -l to show in full.</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/change-ssh-port/" data-id="ckej9qfvo0074wpq4ph00okjo" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-format-input-date-format-in-angularjs" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/format-input-date-format-in-angularjs/" class="article-date">
-  <time datetime="2017-03-09T00:08:07.000Z" itemprop="datePublished">2017-03-09</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/format-input-date-format-in-angularjs/">angular.js input 中日期格式化</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>angular.js 日期选择器需要把选中的日期输出到 input 输入框中，默认显示的是时间戳形式的时间，现需要把格式变成特定格式，但 input 上 ng-model 无法使用 filter，网上寻找解决方案就是写个 directive，具体实例代码如下：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">angular.module(<span class="string">'dateRange'</span>,[]).directive(<span class="string">'dateFormat'</span>, [<span class="string">'$filter'</span>,<span class="function"><span class="keyword">function</span>(<span class="params">$filter</span>) </span>&#123;  </span><br><span class="line">    <span class="keyword">var</span> dateFilter = $filter(<span class="string">'date'</span>);  </span><br><span class="line">    <span class="keyword">return</span> &#123;  </span><br><span class="line">        <span class="built_in">require</span>: <span class="string">'ngModel'</span>,  </span><br><span class="line">        link: <span class="function"><span class="keyword">function</span>(<span class="params">scope, elm, attrs, ctrl</span>) </span>&#123;  </span><br><span class="line"></span><br><span class="line">            <span class="function"><span class="keyword">function</span> <span class="title">formatter</span>(<span class="params">value</span>) </span>&#123;  </span><br><span class="line">                <span class="keyword">return</span> dateFilter(value, <span class="string">'yyyy-MM-dd'</span>); <span class="comment">//format  </span></span><br><span class="line">            &#125;  </span><br><span class="line">      </span><br><span class="line">            <span class="function"><span class="keyword">function</span> <span class="title">parser</span>(<span class="params"></span>) </span>&#123;  </span><br><span class="line">                <span class="keyword">return</span> ctrl.$modelValue;  </span><br><span class="line">            &#125;  </span><br><span class="line">      </span><br><span class="line">            ctrl.$formatters.push(formatter);  </span><br><span class="line">            ctrl.$parsers.unshift(parser);  </span><br><span class="line">      </span><br><span class="line">        &#125;  </span><br><span class="line">    &#125;;  </span><br><span class="line">&#125;]);</span><br></pre></td></tr></table></figure>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"text"</span> <span class="attr">ng-model</span>=<span class="string">"start_date"</span> <span class="attr">date-format</span> <span class="attr">disabled</span>=<span class="string">"disabled"</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/format-input-date-format-in-angularjs/" data-id="ckej9qfzn00eiwpq4zz9llove" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-reverse-ssh" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/reverse-ssh/" class="article-date">
-  <time datetime="2017-03-02T03:42:55.000Z" itemprop="datePublished">2017-03-02</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/reverse-ssh/">内网穿透的两种方法</a>
+      <a class="article-title" href="/javascript-task/">JavaScript中的任务</a>
     </h1>
   
 
@@ -543,36 +266,262 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <p>有时候，我们希望外网能够访问本地 localhost 起的服务，一个比较典型的场景就是小程序开发时，希望在本地接收微信服务器的回调，怎么办呢？这里总结了内网穿透的两种方法：</p>
-<ol>
-<li>通过软件 <a href="https://ngrok.com/" target="_blank" rel="noopener">ngrock</a></li>
-<li>通过 ssh 反向代理</li>
-</ol>
-<h2 id="ngrock-内网穿透"><a href="#ngrock-内网穿透" class="headerlink" title="ngrock 内网穿透"></a>ngrock 内网穿透</h2><p>ngrock 功能很强大，使用起来也比较简单：</p>
-<ol>
-<li>首先去<a href="https://ngrok.com/download" target="_blank" rel="noopener">官网下载</a>，下载完成并解压之后得到了一个 ngrok 可执行文件</li>
-<li><p>注册账号，获取 authtoken，并运行可执行文件</p>
- <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ./ngrok authtoken xxx</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<ol>
-<li><p>代理本地服务：</p>
- <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ./ngrok http 3030</span><br></pre></td></tr></table></figure>
-<p> 然后 ngrok 就会显示 http 和 https 的外网地址，访问下面这两个地址就能映射到本地 3030 端口开启的服务了。</p>
- <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Session Status                online</span><br><span class="line">Account                       xxx (Plan: Free)</span><br><span class="line">Version                       2.3.35</span><br><span class="line">Region                        United States (us)</span><br><span class="line">Web Interface                 http://127.0.0.1:4040</span><br><span class="line">Forwarding                    http://6b6e94b6d845.ngrok.io -&gt; http://localhost:3030       </span><br><span class="line">Forwarding                    https://6b6e94b6d845.ngrok.io -&gt; http://localhost:3030     </span><br><span class="line">Connections                   ttl     opn     rt1     rt5     p50     p90</span><br><span class="line">                              0       0       0.00    0.00    0.00    0.00</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<p>由于 ngrock 的服务器在国外，有时候服务不是很稳定，而且免费版的外网地址不是固定的，每次运行软件都会变，因此比较适合用于测试环境。</p>
+            <p>题目1：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">setImmediate(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="number">1</span>)</span><br><span class="line">&#125;, <span class="number">0</span>)</span><br><span class="line">setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="number">2</span>)</span><br><span class="line">&#125;, <span class="number">0</span>)</span><br><span class="line"><span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="params">resolve</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="number">3</span>)</span><br><span class="line">    resolve()</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="number">4</span>)</span><br><span class="line">&#125;).then(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="number">5</span>)</span><br><span class="line">&#125;)</span><br><span class="line"><span class="built_in">console</span>.log(<span class="number">6</span>)</span><br><span class="line">process.nextTick(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="number">7</span>)</span><br><span class="line">&#125;)</span><br><span class="line"><span class="built_in">console</span>.log(<span class="number">8</span>)</span><br></pre></td></tr></table></figure>
         </div>
         
           <p class="article-more-link">
-            <a href="/reverse-ssh/#more">Read More</a>
+            <a href="/javascript-task/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/reverse-ssh/" data-id="ckej9qga300ubwpq4uzk8hooq" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/javascript-task/" data-id="ckej9qg2n00jbwpq4v2inu23t" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-nodejs-cookie" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/nodejs-cookie/" class="article-date">
+  <time datetime="2017-04-29T09:37:07.000Z" itemprop="datePublished">2017-04-29</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/nodejs-cookie/">nodejs 处理 cookie</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>实用的包：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install cookie-parser --save</span><br></pre></td></tr></table></figure>
+<p>使用方法：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> express = <span class="built_in">require</span>(<span class="string">'express'</span>)</span><br><span class="line"><span class="keyword">var</span> cookieParser = <span class="built_in">require</span>(<span class="string">'cookie-parser'</span>)</span><br><span class="line"><span class="keyword">var</span> app = express()</span><br><span class="line"></span><br><span class="line"><span class="comment">//不使用签名</span></span><br><span class="line">app.use(cookieParser())</span><br><span class="line"></span><br><span class="line"><span class="comment">//若需要使用签名，需要指定一个secret字符串，否者会报错</span></span><br><span class="line">app.use(cookieParser(<span class="string">'secret'</span>));</span><br></pre></td></tr></table></figure>
+<p>HttpOnly 属性可以阻止通过 js 访问cookie, 从而一定程度上遏制攻击，要带的话，每次返回都要带，不然就会被改变了！</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/nodejs-cookie/" data-id="ckej9qg7m00qzwpq41vgrauav" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-using-brew-on-mac" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/using-brew-on-mac/" class="article-date">
+  <time datetime="2017-04-26T06:08:25.000Z" itemprop="datePublished">2017-04-26</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/using-brew-on-mac/">Mac上包管理工具brew的使用</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <h2 id="查看已安装的包"><a href="#查看已安装的包" class="headerlink" title="查看已安装的包"></a>查看已安装的包</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew list</span><br></pre></td></tr></table></figure>
+<p>输出：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">autoconf	gd		git-flow-avh	httpie ...</span><br></pre></td></tr></table></figure>
+<h2 id="查看可更新的包"><a href="#查看可更新的包" class="headerlink" title="查看可更新的包"></a>查看可更新的包</h2><p>用 <code>brew outdated</code> 查看可以更新的包。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew outdated</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/using-brew-on-mac/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/using-brew-on-mac/" data-id="ckej9qgcv00y1wpq4x1347kyw" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Mac/">Mac</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-feathers-search" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/feathers-search/" class="article-date">
+  <time datetime="2017-04-11T01:06:07.000Z" itemprop="datePublished">2017-04-11</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/feathers-search/">Feathersjs 客户端查询参数</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <ol>
+<li><p>指定数量（<code>$limit</code>）</p>
+<p> 查询列表时使用，用于指定服务器一次性返回的数量。</p>
+<p> 【案例】一次返回10条数据：</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://xxx.com/books?<span class="variable">$limit</span>=10</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<ol>
+<li><p>起始位置（<code>$skip</code>）</p>
+<p> 查询列表时使用，用于指定服务器忽略前面多少条数据。</p>
+<p> 【案例】忽略前面10条数据：</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://xxx.com/books?<span class="variable">$limit</span>=10&amp;<span class="variable">$skip</span>=10</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/feathers-search/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/feathers-search/" data-id="ckej9qfym00clwpq44r0excbr" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-js-accessor-property" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/js-accessor-property/" class="article-date">
+  <time datetime="2017-04-05T02:00:00.000Z" itemprop="datePublished">2017-04-05</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/js-accessor-property/">JS中的访问器属性</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> obj = &#123;</span><br><span class="line">    a: <span class="number">18</span>,</span><br><span class="line">    b: <span class="string">'my age is '</span>,</span><br><span class="line">    c: <span class="keyword">this</span>.b + <span class="keyword">this</span>.a</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">console</span>.log(obj.c)</span><br></pre></td></tr></table></figure>
+<p>希望输出 <code>my age is 18</code> 但是实际上输出 <code>NaN</code>，为什么呢？因为 <code>this</code> 指代的是全局，那怎样得到想要的结果呢？用下面的方法：</p>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/js-accessor-property/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/js-accessor-property/" data-id="ckej9qg2u00jnwpq4u2c0mbvn" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-js-collection-operation" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/js-collection-operation/" class="article-date">
+  <time datetime="2017-04-05T01:06:07.000Z" itemprop="datePublished">2017-04-05</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/js-collection-operation/">js集合运算</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>js小工具用于处理集合的并集、交集和差集：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> utils = &#123;</span><br><span class="line">  union: <span class="function">(<span class="params">a, b</span>) =&gt;</span> [...new <span class="built_in">Set</span>(a), ...new <span class="built_in">Set</span>(b)],</span><br><span class="line">  intersection: <span class="function">(<span class="params">a, b</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> sa = <span class="keyword">new</span> <span class="built_in">Set</span>(a), sb = <span class="keyword">new</span> <span class="built_in">Set</span>(b)</span><br><span class="line">    <span class="keyword">return</span> [...sa].filter(<span class="function"><span class="params">x</span> =&gt;</span> sb.has(x))</span><br><span class="line">  &#125;,</span><br><span class="line">  difference: <span class="function">(<span class="params">a, b</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> sa = <span class="keyword">new</span> <span class="built_in">Set</span>(a), sb = <span class="keyword">new</span> <span class="built_in">Set</span>(b)</span><br><span class="line">    <span class="keyword">return</span> [...sa].filter(<span class="function"><span class="params">x</span> =&gt;</span> !sb.has(x))</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/js-collection-operation/" data-id="ckej9qg2v00jpwpq4f0vtdfrd" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
@@ -586,7 +535,7 @@
 
 
   <nav id="page-nav">
-    <a class="extend prev" rel="prev" href="/page/48/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/47/">47</a><a class="page-number" href="/page/48/">48</a><span class="page-number current">49</span><a class="page-number" href="/page/50/">50</a><a class="page-number" href="/page/51/">51</a><span class="space">&hellip;</span><a class="page-number" href="/page/66/">66</a><a class="extend next" rel="next" href="/page/50/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/48/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/47/">47</a><a class="page-number" href="/page/48/">48</a><span class="page-number current">49</span><a class="page-number" href="/page/50/">50</a><a class="page-number" href="/page/51/">51</a><span class="space">&hellip;</span><a class="page-number" href="/page/67/">67</a><a class="extend next" rel="next" href="/page/50/">Next &raquo;</a>
   </nav>
 </section>
 
@@ -611,7 +560,7 @@
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2020 zju.date
+      &copy; 2021 zju.date
       &nbsp;&nbsp;&nbsp;
       contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
     </div>

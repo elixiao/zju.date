@@ -54,10 +54,10 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-http-client-get-headers" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-angular-valueChanges-in-form" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/http-client-get-headers/" class="article-date">
-  <time datetime="2018-05-03T06:15:15.000Z" itemprop="datePublished">2018-05-03</time>
+    <a href="/angular-valueChanges-in-form/" class="article-date">
+  <time datetime="2018-05-17T01:11:04.000Z" itemprop="datePublished">2018-05-17</time>
 </a>
     
   </div>
@@ -68,7 +68,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/http-client-get-headers/">http client 获取 header</a>
+      <a class="article-title" href="/angular-valueChanges-in-form/">Angular中表单的valueChanges</a>
     </h1>
   
 
@@ -79,15 +79,223 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <p>获取全部 response：</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">http</span><br><span class="line">  .get&lt;MyJsonData&gt;(<span class="string">'/data.json'</span>, &#123;observe: <span class="string">'response'</span>&#125;)</span><br><span class="line">  .subscribe(<span class="function"><span class="params">res</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="comment">// 获取 header</span></span><br><span class="line">    <span class="built_in">console</span>.log(res.headers.get(<span class="string">'X-Custom-Header'</span>))</span><br><span class="line">    <span class="comment">// 获取 body</span></span><br><span class="line">    <span class="built_in">console</span>.log(res.body.someField)</span><br><span class="line">  &#125;)</span><br><span class="line"><span class="string">``</span><span class="string">`  </span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">注意这里的 observe 参数很关键，如果没有这个参数就不会返回全部的 response 对象。</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">`</span><span class="string">``</span>typescript</span><br><span class="line"><span class="keyword">this</span>.http.post(url, body, &#123;responseType: <span class="string">'blob'</span>, observe: <span class="string">'response'</span>&#125;)</span><br><span class="line">  .subscribe(<span class="function"><span class="params">res</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(res.headers.get(<span class="string">'x-total-count'</span>))</span><br><span class="line">  &#125;)</span><br></pre></td></tr></table></figure>
-<p>自定义的 header 只有在后台配置之后，前端才能取到，例如：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&apos;access-control-expose-headers&apos; : &apos;x-total-count&apos;</span><br></pre></td></tr></table></figure>
+        <p>在 Angular 中可以使用 RxJS 的 <code>debounceTime()</code> 操作符来处理 <code>valueChanges</code> 这个可观察对象，例如：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123;Component&#125;   <span class="keyword">from</span> <span class="string">'@angular/core'</span>;</span><br><span class="line"><span class="keyword">import</span> &#123;FormControl&#125; <span class="keyword">from</span> <span class="string">'@angular/forms'</span>;</span><br><span class="line"><span class="keyword">import</span> &#123;Observable&#125;  <span class="keyword">from</span> <span class="string">'rxjs/Observable'</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="string">'rxjs/add/operator/debounceTime'</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="string">'rxjs/add/operator/throttleTime'</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="string">'rxjs/add/observable/fromEvent'</span>;</span><br><span class="line"></span><br><span class="line">@Component(&#123;</span><br><span class="line">  selector: <span class="string">'my-app'</span>,</span><br><span class="line">  template: <span class="string">`&lt;input type=text [value]="firstName" [formControl]="firstNameControl"&gt;</span></span><br><span class="line"><span class="string">    &lt;br&gt;&#123;&#123;firstName&#125;&#125;`</span></span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="class"><span class="keyword">class</span> <span class="title">AppComponent</span> </span>&#123;</span><br><span class="line">  firstName        = <span class="string">'Name'</span>;</span><br><span class="line">  firstNameControl = <span class="keyword">new</span> FormControl();</span><br><span class="line">  formCtrlSub: Subscription;</span><br><span class="line">  resizeSub:   Subscription;</span><br><span class="line">  ngOnInit() &#123;</span><br><span class="line">    <span class="comment">// debounce 操作符</span></span><br><span class="line">    <span class="keyword">this</span>.formCtrlSub = <span class="keyword">this</span>.firstNameControl.valueChanges</span><br><span class="line">      .debounceTime(<span class="number">1000</span>)</span><br><span class="line">      .subscribe(<span class="function"><span class="params">newValue</span> =&gt;</span> <span class="keyword">this</span>.firstName = newValue);</span><br><span class="line">    <span class="comment">// throttle 操作符</span></span><br><span class="line">    <span class="keyword">this</span>.resizeSub = Observable.fromEvent(<span class="built_in">window</span>, <span class="string">'resize'</span>)</span><br><span class="line">      .throttleTime(<span class="number">200</span>)</span><br><span class="line">      .subscribe(<span class="function"><span class="params">e</span> =&gt;</span> &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">'resize event'</span>, e);</span><br><span class="line">        <span class="keyword">this</span>.firstName += <span class="string">'*'</span>;</span><br><span class="line">      &#125;);</span><br><span class="line">  &#125;</span><br><span class="line">  ngDoCheck() &#123; <span class="built_in">console</span>.log(<span class="string">'change detection'</span>); &#125;</span><br><span class="line">  ngOnDestroy() &#123;</span><br><span class="line">    <span class="keyword">this</span>.formCtrlSub.unsubscribe();</span><br><span class="line">    <span class="keyword">this</span>.resizeSub.unsubscribe();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>While using <code>formControl</code>, you have to import <code>ReactiveFormsModule</code> to your <code>imports array</code>.</p>
+<p>example:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">import &#123;FormsModule, ReactiveFormsModule&#125; from &apos;@angular/forms&apos;;</span><br><span class="line"></span><br><span class="line">@NgModule(&#123;</span><br><span class="line">  imports: [</span><br><span class="line">    BrowserModule,</span><br><span class="line">    FormsModule,</span><br><span class="line">    ReactiveFormsModule,</span><br><span class="line">    MaterialModule,</span><br><span class="line">  ],</span><br><span class="line">  ...</span><br><span class="line">&#125;)</span><br><span class="line">export class AppModule &#123;&#125;</span><br></pre></td></tr></table></figure>
 
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/http-client-get-headers/" data-id="ckej9qg1i00hhwpq48rlvuh77" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/angular-valueChanges-in-form/" data-id="ckej9qfum0056wpq4878x3mun" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-axios-notes" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/axios-notes/" class="article-date">
+  <time datetime="2018-05-16T08:51:07.000Z" itemprop="datePublished">2018-05-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/axios-notes/">axios 学习笔记</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>用 axios 上传文件：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> formData = <span class="keyword">new</span> FormData()</span><br><span class="line"><span class="keyword">var</span> el = <span class="built_in">document</span>.querySelector(<span class="string">'#file'</span>)</span><br><span class="line">formData.append(<span class="string">"key"</span>, el.files[<span class="number">0</span>])</span><br><span class="line">axios.post(<span class="string">'upload_file'</span>, formData, &#123;</span><br><span class="line">    headers: &#123;</span><br><span class="line">      <span class="string">'Content-Type'</span>: <span class="string">'multipart/form-data'</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>axios 配置 baseUrl 和 全局拦截器：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> axios <span class="keyword">from</span> <span class="string">'axios'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> http = axios.create(&#123;</span><br><span class="line">  baseURL: process.env.API_ROOT,</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">http.interceptors.request.use(<span class="function">(<span class="params">request</span>) =&gt;</span> &#123;</span><br><span class="line">  request.headers.Authorization = <span class="string">`Bearer mytoken`</span>;</span><br><span class="line">  <span class="keyword">return</span> request;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 实例的默认配置可以被覆盖</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> pdfInstance = api.extend(&#123;</span><br><span class="line">  baseURL: <span class="string">'/file'</span>,</span><br><span class="line">  responseType: <span class="string">'arraybuffer'</span>,</span><br><span class="line">  headers: &#123;</span><br><span class="line">    Accept: <span class="string">'application/pdf'</span>,</span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/axios-notes/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/axios-notes/" data-id="ckej9qfux005qwpq49jlbvl18" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-js-deep-merge" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/js-deep-merge/" class="article-date">
+  <time datetime="2018-05-16T02:33:56.000Z" itemprop="datePublished">2018-05-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/js-deep-merge/">js 对象深度合并</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">merge</span>(<span class="params">...sources</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">let</span> acc = &#123;&#125;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">const</span> source of sources) &#123;</span><br><span class="line">    <span class="keyword">if</span> (source <span class="keyword">instanceof</span> <span class="built_in">Array</span>) &#123;</span><br><span class="line">      <span class="keyword">if</span> (!(acc <span class="keyword">instanceof</span> <span class="built_in">Array</span>)) &#123;</span><br><span class="line">        acc = []</span><br><span class="line">      &#125;</span><br><span class="line">      acc = [...acc, ...source]</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (source <span class="keyword">instanceof</span> <span class="built_in">Object</span>) &#123;</span><br><span class="line">      <span class="keyword">for</span> (<span class="keyword">let</span> [key, value] of <span class="built_in">Object</span>.entries(source)) &#123;</span><br><span class="line">        <span class="keyword">if</span> (value <span class="keyword">instanceof</span> <span class="built_in">Object</span> &amp;&amp; key <span class="keyword">in</span> acc) &#123;</span><br><span class="line">          value = merge(acc[key], value)</span><br><span class="line">        &#125;</span><br><span class="line">        acc = &#123; ...acc, [key]: value &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> acc</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/js-deep-merge/" data-id="ckej9qg3000jzwpq49f4bi1nj" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-js-module" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/js-module/" class="article-date">
+  <time datetime="2018-05-15T06:36:12.000Z" itemprop="datePublished">2018-05-15</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/js-module/">JS 模块化</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>随着 ES6 的普及，Webpack、Parcel 等打包工具的出现，模块化 JS 开发模式已经成为主流模式，但是当我们习以为常的时候，千万别忘记其实 JS 模块化的过程其实是很曲折的，让我们再回顾一下相关的概念：</p>
+<ol>
+<li><p>什么是模块？</p>
+<p>模块就是可复用的代码片段，封装了具体的实现细节，暴露公开的API，从而方便自己或他人调用。</p>
+</li>
+<li><p>为什么要模块化？</p>
+<p>没有模块，我们照样写代码，但是模块化有下面几个好处：</p>
+<ul>
+<li>代码抽象：只需要知道某个模块封装的功能、调用时需要传递的参数和返回格式即可，不用关系实现细节。</li>
+<li>代码封装：隐藏代码，不会被轻易变更。</li>
+<li>代码复用：避免重复劳动。</li>
+<li>依赖管理：在代码无需改动的情况下轻松更换依赖。</li>
+</ul>
+</li>
+</ol>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/js-module/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/js-module/" data-id="ckej9qg3d00kmwpq4dpp5fncg" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-angular-module" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/angular-module/" class="article-date">
+  <time datetime="2018-05-15T02:06:21.000Z" itemprop="datePublished">2018-05-15</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/angular-module/">Angular中的模块</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>Angular 框架有自己的模块系统，叫做 NgModule，模块是独立的方便复用，也就是说完全可以把一个 Angular 模块抽离出来放到另外一个 Angular 项目中。每个 Angular 应用都至少有一个 NgModule 类，就像树一样，至少有一个根节点，由模块构成的 Angular 应用本身也是一种树状结构，叫做模块树（Module Tree），其中 AppModule 就是根模块，位于 app.module.ts 文件中，引导这个根模块就可以启动整个 Angular 应用。</p>
+<h2 id="什么是-NgModule"><a href="#什么是-NgModule" class="headerlink" title="什么是 NgModule"></a>什么是 NgModule</h2><p>本质上来讲，NgModule 就是一个类，和组件Component和服务Service一样，更准确地说，NgModule 是一个带有 <code>@NgModule()</code> 装饰器的类。<code>@NgModule()</code> 装饰器是一个函数，它接受一个元数据对象，这个对象只有几个属性，例如基本的 app.module.ts 的结构如下：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; BrowserModule &#125; <span class="keyword">from</span> <span class="string">'@angular/platform-browser'</span></span><br><span class="line"><span class="keyword">import</span> &#123; NgModule &#125; <span class="keyword">from</span> <span class="string">'@angular/core'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> &#123; AppComponent &#125; <span class="keyword">from</span> <span class="string">'./app.component'</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@NgModule</span>(&#123;</span><br><span class="line">  declarations: [AppComponent], <span class="comment">// 模块内用到的组件、服务和管道等必须在此声明注册，否则Angular找不到</span></span><br><span class="line">  imports: [BrowserModule], <span class="comment">// 引入其他模块</span></span><br><span class="line">  providers: [], <span class="comment">// 应用层面的服务提供商</span></span><br><span class="line">  exports: [], <span class="comment">// 导出的组件、服务、管道等等</span></span><br><span class="line">  bootstrap: [AppComponent], <span class="comment">// 只在根模块中才会用到</span></span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> AppModule &#123;&#125;</span><br></pre></td></tr></table></figure>
+<p>可以通过下面的命令创建一个 NgModule</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ng generate module [name]</span><br></pre></td></tr></table></figure>
+<p>一个 Angular 项目中一般包含三大模块：核心模块（CoreModule）、特性模块（FeatureModule）和共享模块（SharedModule）。</p>
+<h2 id="核心模块（CoreModule）"><a href="#核心模块（CoreModule）" class="headerlink" title="核心模块（CoreModule）"></a>核心模块（CoreModule）</h2><p>CoreModule 用于存储每个应用程序上有且仅有一个的服务，例如用户认证等。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; NgModule, Optional, SkipSelf &#125; <span class="keyword">from</span> <span class="string">'@angular/core'</span></span><br><span class="line"><span class="keyword">import</span> &#123; HttpClientModule &#125; <span class="keyword">from</span> <span class="string">'@angular/common/http'</span></span><br><span class="line"><span class="comment">/* 定制的全局服务  */</span></span><br><span class="line"><span class="keyword">import</span> &#123; UserService &#125; <span class="keyword">from</span> <span class="string">'./user/user.service'</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@NgModule</span>(&#123;</span><br><span class="line">  imports: [</span><br><span class="line">    HttpClientModule</span><br><span class="line">  ],</span><br><span class="line">  providers: [</span><br><span class="line">    UserService</span><br><span class="line">  ]</span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> CoreModule &#123;</span><br><span class="line">  <span class="comment">/* 确保CoreModule只能在AppModule导入 */</span></span><br><span class="line">  constructor (@Optional() @SkipSelf() parentModule: CoreModule) &#123;</span><br><span class="line">    <span class="keyword">if</span> (parentModule) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">'CoreModule is already loaded. Import only in AppModule'</span>);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>CoreModule 应包含单例的 service、单例的 components 和 AppModule 中用到的第三方模块，例如 BrowserAnimationsModule。</p>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/angular-module/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/angular-module/" data-id="ckej9qfu5004gwpq4r798zuup" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Angular/">Angular</a></li></ul>
 
@@ -98,10 +306,10 @@
 
 
   
-    <article id="post-npm-publish-auth" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-es-prepare" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/npm-publish-auth/" class="article-date">
-  <time datetime="2018-05-03T01:23:52.000Z" itemprop="datePublished">2018-05-03</time>
+    <a href="/es-prepare/" class="article-date">
+  <time datetime="2018-05-14T10:16:36.000Z" itemprop="datePublished">2018-05-14</time>
 </a>
     
   </div>
@@ -112,7 +320,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/npm-publish-auth/">npm publish报错</a>
+      <a class="article-title" href="/es-prepare/">简化ES命令行查询</a>
     </h1>
   
 
@@ -123,17 +331,21 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <p>发布包的时候报错：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ npm publish</span><br><span class="line">npm ERR! code ENEEDAUTH</span><br><span class="line">npm ERR! need auth auth required <span class="keyword">for</span> publishing</span><br><span class="line">npm ERR! need auth You need to authorize this machine using `npm adduser`</span><br></pre></td></tr></table></figure>
-<p>找了半天发现 registry 不对，使用的是淘宝的镜像库，需要切换回 npmjs 才行：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">$ npm config list</span><br><span class="line">; cli configs</span><br><span class="line">metrics-registry = <span class="string">"https://registry.npm.taobao.org/"</span></span><br><span class="line">scope = <span class="string">""</span></span><br><span class="line">user-agent = <span class="string">"npm/6.4.1 node/v10.14.2 darwin x64"</span></span><br><span class="line"></span><br><span class="line">; userconfig /Users/xxx/.npmrc</span><br><span class="line">registry = <span class="string">"https://registry.npm.taobao.org/"</span></span><br><span class="line">strict-ssl = <span class="literal">false</span></span><br><span class="line"></span><br><span class="line">; node bin location = /Users/xxx/.nvm/versions/node/v10.14.2/bin/node</span><br><span class="line">; cwd = /Users/xxx/job/webstorm/npm/diff-object</span><br><span class="line">; HOME = /Users/xxx</span><br><span class="line">; <span class="string">"npm config ls -l"</span> to show all defaults.</span><br><span class="line"></span><br><span class="line">$ npm config <span class="built_in">set</span> registry https://registry.npmjs.org/</span><br><span class="line">$ npm adduser</span><br><span class="line">Username: xxx</span><br><span class="line">Password: </span><br><span class="line">Email: (this IS public) xxx@gmail.com</span><br><span class="line">Logged <span class="keyword">in</span> as xxx on https://registry.npmjs.org/.</span><br></pre></td></tr></table></figure>
+        <p>定义变量，方便随时切换 ES 地址：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> ES=localhost:9200</span><br></pre></td></tr></table></figure>
+<p>定义函数，在每次请求的时候都自动带上 <code>Content-Type: application/json</code> 请求头：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">escurl</span></span> () &#123; </span><br><span class="line">    curl -H <span class="string">'Content-Type: application/json'</span> <span class="string">"<span class="variable">$@</span>"</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>创建文档的时候，就可以像下面这样写，简化代码：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">escurl -XPUT <span class="variable">$ES</span>/<span class="built_in">test</span>/_doc/1?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "name": "小明"</span></span><br><span class="line"><span class="string">&#125;'</span></span><br></pre></td></tr></table></figure>
+<p>去官网下载<a href="https://github.com/elastic/elasticsearch/blob/master/docs/src/test/resources/accounts.json?raw=true" target="_blank" rel="noopener">示例文件</a>，导入到 ES 中：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">escurl -XPOST <span class="string">"<span class="variable">$ES</span>/bank/_doc/_bulk?pretty&amp;refresh"</span> --data-binary <span class="string">"@accounts.json"</span></span><br></pre></td></tr></table></figure>
 
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/npm-publish-auth/" data-id="ckej9qg8900rrwpq49w4n98px" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/es-prepare/" data-id="ckej9qfy900bxwpq4e9i3oeni" class="article-share-link">Share</a>
      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
 
     </footer>
   </div>
@@ -142,10 +354,10 @@
 
 
   
-    <article id="post-angular-forRoot-forChild" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-what-is-scaffold" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/angular-forRoot-forChild/" class="article-date">
-  <time datetime="2018-05-01T09:39:35.000Z" itemprop="datePublished">2018-05-01</time>
+    <a href="/what-is-scaffold/" class="article-date">
+  <time datetime="2018-05-13T01:49:07.000Z" itemprop="datePublished">2018-05-13</time>
 </a>
     
   </div>
@@ -156,7 +368,48 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/angular-forRoot-forChild/">Angular 中的 forRoot 和 forChild</a>
+      <a class="article-title" href="/what-is-scaffold/">什么是脚手架</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>什么是脚手架，百度百科是这样解释的：指施工现场为工人操作并解决垂直和水平运输而搭设的各种支架。在软件工程里面，脚手架的角色就是帮你直接生成项目的部分内容，免去你的重复无聊的工作，比如创建目录构建、新建各种配置文件。 </p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/what-is-scaffold/" data-id="ckej9qgds00zewpq4qdsqc35g" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-angular-route-reuse-stategy" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/angular-route-reuse-stategy/" class="article-date">
+  <time datetime="2018-05-12T04:34:36.000Z" itemprop="datePublished">2018-05-12</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/angular-route-reuse-stategy/">Angular中的路由缓存策略</a>
     </h1>
   
 
@@ -168,387 +421,125 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <p>引入模块我们一般有3个方法:</p>
-<h4 id="直接导入"><a href="#直接导入" class="headerlink" title="直接导入"></a>直接导入</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">import &#123; XXXModule &#125; from &apos;xxx.module&apos;</span><br><span class="line"></span><br><span class="line">@NgModule(&#123;</span><br><span class="line">    imports: [</span><br><span class="line">        XXXModule</span><br><span class="line">    ]</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+            <p>路由缓存的典型应用场景是：</p>
+<blockquote>
+<p>用户在列表页通过搜索条件筛选出满足条件的列表，点击列表项的详情，跳转到详情页。当用户从详情页返回到列表页的时候，是希望能够保存之前使用过的筛选条件的。</p>
+</blockquote>
+<p>要想实现自定义的路由缓存策略，首先要实现 RouteReuseStrategy 接口，简单来说，这个接口就做了两件事：</p>
+<ol>
+<li>当离开当前路由的时候，将当前路由的快照存起来</li>
+<li>当再次进入到该路由时，再取之前存的快照来恢复当前路由的一个状态</li>
+</ol>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; Injectable &#125; <span class="keyword">from</span> <span class="string">'@angular/core'</span></span><br><span class="line"><span class="keyword">import</span> &#123; RouteReuseStrategy, ActivatedRouteSnapshot, DetachedRouteHandle &#125; <span class="keyword">from</span> <span class="string">'@angular/router'</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@Injectable</span>()</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> AppRouteReuseStrategyService <span class="keyword">implements</span> RouteReuseStrategy &#123;</span><br><span class="line"></span><br><span class="line">    handles: &#123;[key: <span class="built_in">string</span>]: DetachedRouteHandle&#125; = &#123;&#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">constructor</span>(<span class="params"></span>) &#123; &#125;</span><br><span class="line">    </span><br><span class="line">    shouldDetach(route: ActivatedRouteSnapshot): <span class="built_in">boolean</span> &#123;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    store(route: ActivatedRouteSnapshot, handle: DetachedRouteHandle): <span class="built_in">void</span> &#123;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    shouldAttach(route: ActivatedRouteSnapshot): <span class="built_in">boolean</span> &#123;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    retrieve(route: ActivatedRouteSnapshot): DetachedRouteHandle &#123;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    shouldReuseRoute(future: ActivatedRouteSnapshot, curr: ActivatedRouteSnapshot): <span class="built_in">boolean</span> &#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
         </div>
         
           <p class="article-more-link">
-            <a href="/angular-forRoot-forChild/#more">Read More</a>
+            <a href="/angular-route-reuse-stategy/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/angular-forRoot-forChild/" data-id="ckej9qftw0042wpq4w5ywjix9" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/angular-route-reuse-stategy/" data-id="ckej9qfui004ywpq4yi6fx3me" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-angular-upgrade" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/angular-upgrade/" class="article-date">
+  <time datetime="2018-05-08T13:24:07.000Z" itemprop="datePublished">2018-05-08</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/angular-upgrade/">angular 版本升级</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>升级 angular 和 angular-cli 的版本到最新</p>
+<p>全局安装：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn global add @angular/cli</span><br></pre></td></tr></table></figure>
+<p>升级：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">yarn upgrade-interactive --latest</span><br><span class="line"><span class="comment"># 或者</span></span><br><span class="line">yarn add @angular/cli</span><br></pre></td></tr></table></figure>
+<p>然后升级 </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ng update @angular/cli</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/angular-upgrade/" data-id="ckej9qfuk0052wpq4oue3nbq2" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-angular-query-params" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/angular-query-params/" class="article-date">
+  <time datetime="2018-05-06T06:45:23.000Z" itemprop="datePublished">2018-05-06</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/angular-query-params/">Angular 路由参数</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>路由跳转的两种办法：</p>
+<ol>
+<li><p>使用 <code>routerLink</code>：</p>
+ <figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 相对路径</span></span><br><span class="line">[routerLink]=<span class="string">"['../../parent']"</span></span><br><span class="line">[routerLink]=<span class="string">"['../sibling']"</span></span><br><span class="line">[routerLink]=<span class="string">"['./child']"</span>  <span class="comment">// 或者</span></span><br><span class="line">[routerLink]=<span class="string">"['child']"</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 绝对路径</span></span><br><span class="line">[routerLink]=<span class="string">"['/absolute']"</span> </span><br><span class="line"></span><br><span class="line"><span class="comment">// 带路由参数  ../../parent;abc=xyz</span></span><br><span class="line">[routerLink]=<span class="string">"['../../parent', &#123;abc: 'xyz'&#125;]"</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 带查询参数和片段   ../../parent?p1=value1&amp;p2=v2#frag</span></span><br><span class="line">[routerLink]=<span class="string">"['../../parent']"</span> [queryParams]=<span class="string">"&#123;p1: 'value', p2: 'v2'&#125;"</span> fragment=<span class="string">"frag"</span></span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/angular-query-params/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/angular-query-params/" data-id="ckej9qfua004owpq4lwezao37" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Angular/">Angular</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-angular-component-communication" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/angular-component-communication/" class="article-date">
-  <time datetime="2018-04-28T10:17:08.000Z" itemprop="datePublished">2018-04-28</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/angular-component-communication/">Angular 兄弟组件通信</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>在 Angular 中，父子组件可以通过 Input 和 Output 进行通信，从而实现父组件向子组件传递数据和子组件向父组件输出数据，那兄弟组件 A 和组件 B 之间如何进行通信呢？</p>
-<p>例如 sidebar 和 sidebar-toggle 两个并列的组件，点击 sidebar-toggle 的时候希望 sidebar 能够展开。有三种方法可以实现这种效果：</p>
-<ol>
-<li><p>将 sidebar 的引用传递给 sidebar-toggle</p>
-<p><code>app.component.html</code></p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">app-side-bar-toggle</span> [<span class="attr">sideBar</span>]=<span class="string">"sideBar"</span>&gt;</span><span class="tag">&lt;/<span class="name">app-side-bar-toggle</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">app-side-bar</span> #<span class="attr">sideBar</span>&gt;</span><span class="tag">&lt;/<span class="name">app-side-bar</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p><code>side-bar-toggle.component.ts</code></p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span>(&#123;</span><br><span class="line">  selector: <span class="string">'app-side-bar-toggle'</span>,</span><br><span class="line">  templateUrl: <span class="string">'./side-bar-toggle.component.html'</span>,</span><br><span class="line">  styleUrls: [<span class="string">'./side-bar-toggle.component.css'</span>]</span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> SideBarToggleComponent &#123;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Input</span>() sideBar: SideBarComponent;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@HostListener</span>(<span class="string">'click'</span>)</span><br><span class="line">  click() &#123;</span><br><span class="line">    <span class="keyword">this</span>.sideBar.toggle();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/angular-component-communication/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/angular-component-communication/" data-id="ckej9qfte003fwpq40hgrhlmw" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-batch-chmod" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/batch-chmod/" class="article-date">
-  <time datetime="2018-04-26T01:26:19.000Z" itemprop="datePublished">2018-04-26</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/batch-chmod/">批量chmod</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>在 Mac 上把项目移动到 U 盘上的时候，发现文件的读写权限变了，<code>git status</code> 发现一堆文件发生变化，<code>git diff</code> 报：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">old mode 100644</span><br><span class="line">new mode 100755</span><br></pre></td></tr></table></figure>
-<p>后来发现是 U 盘格式跟 Mac 不兼容，于是只能移动回来，再用磁盘工具格式化成 Mac OS 扩展格式。但是怎么把这些目录和文件的读写权限给还原呢，网上找了一个非常有效的<a href="https://stackoverflow.com/questions/3740152/how-do-i-change-permissions-for-a-folder-and-all-of-its-subfolders-and-files-in" target="_blank" rel="noopener">办法</a>：</p>
-<ol>
-<li><p>把所有目录改成 755 (drwxr-xr-x):</p>
- <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find /opt/lampp/htdocs -<span class="built_in">type</span> d -<span class="built_in">exec</span> chmod 755 &#123;&#125; \;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>把所有文件改成 644 (-rw-r–r–):</p>
- <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find /opt/lampp/htdocs -<span class="built_in">type</span> f -<span class="built_in">exec</span> chmod 644 &#123;&#125; \;</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/batch-chmod/" data-id="ckej9qfv20060wpq411y0pbz5" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-mongodb-index" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/mongodb-index/" class="article-date">
-  <time datetime="2018-04-23T13:35:23.000Z" itemprop="datePublished">2018-04-23</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/mongodb-index/">MongoDB索引</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <h2 id="MongoDB索引"><a href="#MongoDB索引" class="headerlink" title="MongoDB索引"></a>MongoDB索引</h2><p>数据库索引就好比书籍的目录，有了目录就能快速定位章节内容，而不需要翻阅全书，使得查找速度提高几个数量级。因此创建索引能够极大提升查询速度：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">db.users.createIndex(&#123;<span class="attr">createdAt</span>: <span class="number">1</span>&#125;) <span class="comment">// 按创建时间正序</span></span><br><span class="line">db.users.createIndex(&#123;<span class="attr">createdAt</span>: <span class="number">-1</span>&#125;) <span class="comment">// 按创建时间倒序</span></span><br><span class="line">db.users.createIndex(&#123;<span class="attr">company</span>: <span class="number">1</span>, <span class="attr">createdAt</span>: <span class="number">-1</span>&#125;) <span class="comment">// 组合索引</span></span><br><span class="line">db.users.createIndex(&#123;<span class="attr">createdAt</span>: <span class="number">-1</span>&#125;,&#123;<span class="attr">background</span>: <span class="literal">true</span>&#125;) <span class="comment">// 后台创建索引</span></span><br><span class="line">db.users.createIndex(&#123;<span class="attr">phone</span>: NumberInt(<span class="number">1</span>)&#125;,&#123;<span class="attr">background</span>: <span class="literal">true</span>&#125;) <span class="comment">// 指定为int类型，默认是double</span></span><br><span class="line">db.users.createIndex(&#123;<span class="attr">draweeId</span>: NumberInt(<span class="number">1</span>)&#125;,&#123;<span class="attr">sparse</span>: <span class="literal">true</span>, <span class="attr">background</span>: <span class="literal">true</span>&#125;) <span class="comment">// 指定为稀疏索引</span></span><br></pre></td></tr></table></figure>
-<p>在前台创建索过程中会锁定数据库，会导致其它操作无法进行数据读写，而在后台创建索引时，会定期释放写锁，从而保证其它操作的运行，但是后台操作会在耗时更长，尤其是在频繁进行写入的服务器上。创建完毕之后可以查看索引：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">db.users.getIndexes() <span class="comment">// 查看索引</span></span><br><span class="line">db.users.getIndexKeys() <span class="comment">// 查看索引字段</span></span><br><span class="line">db.users.totalIndexSize() <span class="comment">// 查看索引大小</span></span><br><span class="line">db.getCollection(<span class="string">'users'</span>).stats() <span class="comment">// 查看表相关信息</span></span><br></pre></td></tr></table></figure>
-<p>索引创建之后可以被删除：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">db.users.dropIndex(<span class="string">"createdAt_-1"</span>) <span class="comment">// 删除指定索引</span></span><br><span class="line">db.users.dropIndexes() <span class="comment">// 删除全部索引（除了_id索引）</span></span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/mongodb-index/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/mongodb-index/" data-id="ckej9qg5x00ogwpq4anh3qph8" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MongoDB/">MongoDB</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-yarn-registry" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/yarn-registry/" class="article-date">
-  <time datetime="2018-04-23T13:35:23.000Z" itemprop="datePublished">2018-04-23</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/yarn-registry/">更改 yarn 仓库源</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>有时候在国内安装 nodejs 包真的很慢，可以设置 npm 或 yarn 的源：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ yarn config get registry</span><br><span class="line">https://registry.yarnpkg.com</span><br><span class="line">$ yarn config <span class="built_in">set</span> registry https://registry.npm.taobao.org --global</span><br><span class="line">success Set <span class="string">"registry"</span> to <span class="string">"https://registry.npm.taobao.org"</span>.</span><br><span class="line">Done <span class="keyword">in</span> 0.04s.</span><br><span class="line">$ yarn config get registry</span><br><span class="line">https://registry.npm.taobao.org</span><br></pre></td></tr></table></figure>
-<p>或者全局设置：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">yarn config <span class="built_in">set</span> registry https://registry.npm.taobao.org --global</span><br><span class="line">yarn config <span class="built_in">set</span> disturl https://npm.taobao.org/dist --global</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/yarn-registry/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/yarn-registry/" data-id="ckej9qget0107wpq4y9s3jj5v" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-letsencrypt-wildcard-certificate" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/letsencrypt-wildcard-certificate/" class="article-date">
-  <time datetime="2018-04-23T10:14:23.000Z" itemprop="datePublished">2018-04-23</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/letsencrypt-wildcard-certificate/">letsencrypt 通配符证书</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>这里记录自己如何通过 certbot 申请 letsencrypt 的通配符证书的。</p>
-<p>首先安装 certbot：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install python2-certbot-nginx</span><br></pre></td></tr></table></figure>
-<p>然后申请：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">certbot certonly --manual --agree-tos --server https://acme-v02.api.letsencrypt.org/directory</span><br></pre></td></tr></table></figure>
-<p>其中：</p>
-<ul>
-<li><code>--manual</code>：交互模式</li>
-<li><code>--agree-tos</code>：同意服务协议</li>
-</ul>
-<p>certbot 命令有很多选项，这里顺便介绍一下用法：</p>
-<p><strong>用法:</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">certbot [子命令] [选项] [-d 域名] [-d 域名]</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/letsencrypt-wildcard-certificate/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/letsencrypt-wildcard-certificate/" data-id="ckej9qg4000lkwpq4o7tuh4nj" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-js-generate-sequence" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/js-generate-sequence/" class="article-date">
-  <time datetime="2018-04-23T06:06:56.000Z" itemprop="datePublished">2018-04-23</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/js-generate-sequence/">js 中快速生成序列</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>下面的方法可以快速生成 [0, 2, 3, …, N-1] 的序列：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Array</span>.from(<span class="built_in">Array</span>(N).keys())</span><br></pre></td></tr></table></figure>
-<p>或者更简单的 es6 语法：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[...Array(N).keys()]</span><br></pre></td></tr></table></figure>
-<p>或者更简单的且更容易扩展的方法：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Array</span>.from(&#123;<span class="attr">length</span>:N&#125;))</span><br><span class="line"><span class="built_in">Array</span>(N).fill(<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
-<p>或者使用 Array.from 的第二个参数</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Array</span>.from(&#123; <span class="attr">length</span>: N &#125;, (it, i) =&gt; i + <span class="number">1</span>) <span class="comment">// 生成 [1, 2, ..., N] 的序列</span></span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/js-generate-sequence/" data-id="ckej9qg3400k7wpq4vw6ibavg" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-hot-and-code-observable" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/hot-and-code-observable/" class="article-date">
-  <time datetime="2018-04-22T13:30:03.000Z" itemprop="datePublished">2018-04-22</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/hot-and-code-observable/">hot 和 cold 可观察对象</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>可观察对象有两种：hot和cold。区别在于：</p>
-<ul>
-<li>hot：为每个订阅者创建一个数据提供方。</li>
-<li>cold：先创建一个数据提供方，每个订阅者都从这个数据提供方这里获取数据。</li>
-</ul>
-<p>比较抽象，可以形象的比喻成“网上看电影”和“电影院看电影”的区别：</p>
-<ul>
-<li>网上看电影：当用户点击播放按钮时，网站为每个用户都提供了完整的数据流，彼此互不影响，每个用户可以有不同的观看进度，随时可以从任意位置开始播放。</li>
-<li>电影院看电影：假如电影晚上6点开始，那么6点准时开播，创建了唯一的数据流，观看者的进度是完全一致的，如果有人迟到的话只能从他抵达时刻开始看后续内容。</li>
-</ul>
-<p>这样就不难理解：cold observable 仅在订阅之后开始创建数据流，hot obervable 无论有没有订阅都会产生数据流。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/hot-and-code-observable/" data-id="ckej9qg1b00h9wpq4hi552k9t" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
 
     </footer>
   </div>
@@ -560,7 +551,7 @@
 
 
   <nav id="page-nav">
-    <a class="extend prev" rel="prev" href="/page/20/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/19/">19</a><a class="page-number" href="/page/20/">20</a><span class="page-number current">21</span><a class="page-number" href="/page/22/">22</a><a class="page-number" href="/page/23/">23</a><span class="space">&hellip;</span><a class="page-number" href="/page/66/">66</a><a class="extend next" rel="next" href="/page/22/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/20/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/19/">19</a><a class="page-number" href="/page/20/">20</a><span class="page-number current">21</span><a class="page-number" href="/page/22/">22</a><a class="page-number" href="/page/23/">23</a><span class="space">&hellip;</span><a class="page-number" href="/page/67/">67</a><a class="extend next" rel="next" href="/page/22/">Next &raquo;</a>
   </nav>
 </section>
 
@@ -585,7 +576,7 @@
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2020 zju.date
+      &copy; 2021 zju.date
       &nbsp;&nbsp;&nbsp;
       contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
     </div>

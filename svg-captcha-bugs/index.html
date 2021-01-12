@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="登录页一般都要用图形验证码来防止机器人，在 Node.js 中也有很多生成图形验证码的库，其中 svg-captcha 的 star 比较多，官方号称它有以下优点：  轻量级，无需安装 C++ 图形库依赖 生成矢量 svg 验证码，图片放大不失真 比普通图片验证码要更难识别  于是我们的一个商业项目就用了这个库，结果踩雷了，被竞争对手用程序攻击…..，说多了都是泪，因为破解方法太简单，100% 秒">
+<meta name="keywords" content="JavaScript">
+<meta property="og:type" content="article">
+<meta property="og:title" content="svg-captcha 被爆严重漏洞">
+<meta property="og:url" content="https://zju.date/svg-captcha-bugs/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="登录页一般都要用图形验证码来防止机器人，在 Node.js 中也有很多生成图形验证码的库，其中 svg-captcha 的 star 比较多，官方号称它有以下优点：  轻量级，无需安装 C++ 图形库依赖 生成矢量 svg 验证码，图片放大不失真 比普通图片验证码要更难识别  于是我们的一个商业项目就用了这个库，结果踩雷了，被竞争对手用程序攻击…..，说多了都是泪，因为破解方法太简单，100% 秒">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2021-01-12T08:27:23.491Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="svg-captcha 被爆严重漏洞">
+<meta name="twitter:description" content="登录页一般都要用图形验证码来防止机器人，在 Node.js 中也有很多生成图形验证码的库，其中 svg-captcha 的 star 比较多，官方号称它有以下优点：  轻量级，无需安装 C++ 图形库依赖 生成矢量 svg 验证码，图片放大不失真 比普通图片验证码要更难识别  于是我们的一个商业项目就用了这个库，结果踩雷了，被竞争对手用程序攻击…..，说多了都是泪，因为破解方法太简单，100% 秒">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-svg-captcha-bugs" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/svg-captcha-bugs/" class="article-date">
+  <time datetime="2020-08-22T08:14:43.000Z" itemprop="datePublished">2020-08-22</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      svg-captcha 被爆严重漏洞
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>登录页一般都要用图形验证码来防止机器人，在 Node.js 中也有很多生成图形验证码的库，其中 <a href="https://github.com/produck/svg-captcha" target="_blank" rel="noopener">svg-captcha</a> 的 star 比较多，官方号称它有以下优点：</p>
+<ul>
+<li>轻量级，无需安装 C++ 图形库依赖</li>
+<li>生成矢量 svg 验证码，图片放大不失真</li>
+<li>比普通图片验证码要更难识别</li>
+</ul>
+<p>于是我们的一个商业项目就用了这个库，结果踩雷了，被竞争对手用程序攻击…..，说多了都是泪，因为破解方法太简单，100% 秒识别，感兴趣的可以查看完整的<a href="https://github.com/haua/svg-captcha-recognize" target="_blank" rel="noopener">破解代码</a>，在此也提醒一下大家：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">svg-captcha 有严重漏洞，比普通验证码更容易识别，千万不要用</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<h2 id="破解原理"><a href="#破解原理" class="headerlink" title="破解原理"></a>破解原理</h2><p>正常来讲，图形验证码的破解是用机器学习的办法识别图形里面的文字，还是有点技术含量的，svg-captcha 弱智的地方在于，用穷举法就暴力破解了…</p>
+<p>svg-captcha 生成验证码的代码如下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> svgCaptcha = <span class="built_in">require</span>(<span class="string">'svg-captcha'</span>)</span><br><span class="line"><span class="keyword">const</span> options = &#123;</span><br><span class="line">  size: <span class="number">4</span>,</span><br><span class="line">  ignoreChars: <span class="string">'0o1i'</span>,</span><br><span class="line">  noise: <span class="number">0</span>,</span><br><span class="line">  color: <span class="literal">false</span>,</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">const</span> svg = svgCaptcha.create(options)</span><br><span class="line"><span class="built_in">console</span>.log(svg)</span><br></pre></td></tr></table></figure>
+<p>会得到如下的输出：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  text: <span class="string">'4Bay'</span>,</span><br><span class="line">  data: <span class="string">'&lt;svg xmlns="http://www.w3.org/2000/svg" width="150" height="50" viewBox="0,0,150,50"&gt;&lt;path fill="#333" d="M84.98 28.87L85.01 28.90L85.04 28.93Q82.41 28.85 81.38 30.03L81.46 30.11L81.51 30.16Q80.52 31.37 80.52 34.00L80.47 33.96L80.47 33.96Q80.33 38.92 84.94 38.73L85.04 38.83L85.07 38.86Q87.11 39.00 88.46 37.43L88.40 37.37L88.41 37.38Q89.82 35.88 89.59 33.82L89.53 33.76L89.60 33.84Q89.59 31.27 88.71 30.24L88.78 30.31L88.72 30.25Q87.20 28.88 84.99 28.88ZM89.99 38.64L89.99 38.64L90.14 38.79Q88.94 41.25 84.26 41.25L84.12 41.10L82.77 41.20L82.78 41.21Q80.34 41.13 79.24 39.99L79.33 40.08L79.23 39.98Q78.25 39.00 77.98 36.61L78.06 36.68L78.02 36.64Q77.81 35.10 77.74 33.31L77.68 33.25L77.72 33.30Q77.72 32.34 77.57 30.40L77.51 30.35L77.50 30.34Q77.45 26.10 82.63 26.10L82.63 26.10L84.11 26.02L84.10 26.01Q87.16 26.18 89.26 27.48L89.21 27.42L89.13 27.35Q90.06 27.97 90.56 28.66L90.39 28.50L90.47 28.57Q90.75 27.78 91.28 26.15L91.20 26.06L91.32 26.19Q92.52 25.98 94.85 25.37L94.87 25.40L94.89 25.42Q92.31 29.66 92.31 34.91L92.19 34.79L92.22 34.82Q92.21 38.54 93.58 41.62L93.65 41.69L93.61 41.65Q92.44 41.31 90.53 41.09L90.54 41.10L90.62 41.18Q90.41 40.31 90.10 38.75ZM93.41 43.97L93.44 43.99L95.59 44.50L95.67 44.58Q96.81 44.81 97.80 45.27L97.88 45.35L97.72 45.18Q94.08 40.86 94.08 34.77L94.12 34.81L94.10 34.79Q94.07 30.23 96.20 26.43L96.29 26.51L96.19 26.41Q95.52 26.62 94.19 27.00L94.31 27.12L94.25 27.06Q94.56 26.27 95.44 24.75L95.42 24.73L95.58 24.89Q94.96 25.03 90.96 25.87L90.92 25.83L90.31 27.61L90.26 27.57Q88.49 25.83 84.08 25.61L84.11 25.64L84.15 25.68Q83.08 25.76 80.84 25.91L80.71 25.78L80.77 25.84Q77.06 26.16 77.17 30.20L77.28 30.31L77.16 30.19Q77.35 33.58 77.92 38.03L77.88 37.99L77.93 38.45L78.01 38.54Q78.03 39.28 78.83 40.38L78.78 40.34L78.90 40.46Q79.03 40.59 79.22 40.70L79.25 40.72L79.21 40.69Q79.48 41.19 79.86 41.76L79.87 41.77L79.78 41.68Q81.28 43.29 84.67 43.48L84.60 43.41L84.61 43.43Q86.22 43.51 86.37 43.51L86.38 43.51L87.91 43.49L88.06 43.63Q91.12 43.50 92.33 41.93L92.52 42.12L92.45 42.05Q92.73 42.59 93.34 43.89ZM86.89 31.23L86.91 31.25L86.81 31.16Q88.16 31.17 89.00 31.63L89.08 31.71L89.05 31.69Q89.32 32.45 89.32 33.90L89.27 33.84L89.29 33.87Q89.53 35.82 88.25 37.25L88.12 37.11L88.17 37.17Q86.85 38.55 84.95 38.35L84.95 38.35L84.95 38.36Q83.64 38.50 82.62 38.08L82.57 38.03L82.64 38.10Q82.34 37.16 82.34 35.94L82.43 36.03L82.29 35.89Q82.43 32.38 85.06 31.43L85.20 31.57L85.13 31.50Q86.07 31.22 86.87 31.22Z"/&gt;&lt;path fill="#444" d="M22.77 32.96L22.82 33.01L22.71 32.90Q25.93 32.65 29.12 32.77L29.09 32.73L29.07 32.71Q29.02 30.15 29.02 27.75L29.00 27.73L28.92 27.65Q28.91 25.17 29.10 22.62L29.12 22.64L29.21 22.73Q28.06 24.50 22.84 33.03ZM32.75 40.39L32.72 40.36L32.73 40.37Q31.00 40.01 29.21 39.93L29.22 39.94L29.27 39.99Q29.04 37.59 28.92 35.11L28.82 35.02L28.81 35.01Q23.57 34.90 18.84 36.31L18.78 36.24L18.93 36.39Q18.90 35.75 19.09 34.76L19.25 34.92L19.19 34.86Q20.87 31.59 24.44 25.31L24.60 25.46L24.49 25.36Q27.36 20.45 30.78 16.57L30.89 16.68L30.80 16.59Q31.67 16.40 33.35 16.13L33.42 16.20L33.38 16.16Q31.43 22.55 31.43 29.59L31.42 29.58L31.51 29.67Q31.44 31.09 31.52 32.57L31.48 32.53L32.93 32.81L32.85 32.73Q33.54 32.84 34.15 32.95L34.03 32.84L34.01 32.82Q34.25 33.93 34.51 35.87L34.53 35.89L34.47 35.83Q33.24 35.55 31.75 35.36L31.67 35.28L31.66 35.26Q31.96 37.35 32.64 40.28ZM34.36 32.52L34.41 32.57L34.36 32.52Q34.06 32.33 33.87 32.33L33.98 32.45L33.58 32.43L33.66 32.50Q33.40 30.87 33.40 29.46L33.48 29.55L33.55 29.62Q33.47 23.14 35.52 17.12L35.57 17.17L35.53 17.13Q34.85 17.48 33.41 17.86L33.39 17.85L33.35 17.81Q33.58 17.04 34.04 15.64L33.91 15.51L34.09 15.69Q32.64 15.92 30.59 16.15L30.64 16.20L30.63 16.19Q26.67 20.49 21.45 29.85L21.55 29.95L23.51 26.16L23.55 26.20Q23.23 27.33 22.97 27.90L22.99 27.93L18.44 36.86L18.40 36.81Q19.06 36.68 20.21 36.30L20.22 36.31L20.03 36.50L20.09 36.56Q19.89 37.16 19.59 38.42L19.73 38.56L19.62 38.45Q23.83 37.22 28.67 37.41L28.69 37.43L28.63 37.37Q28.59 38.25 28.79 40.23L28.94 40.39L28.77 40.21Q30.01 40.39 31.07 40.50L31.07 40.50L30.98 40.41Q31.19 41.15 31.45 42.52L31.43 42.50L31.41 42.47Q33.22 42.62 36.23 43.53L36.32 43.62L36.25 43.54Q35.34 41.50 34.43 38.22L34.49 38.29L35.85 38.66L35.92 38.73Q36.50 38.85 37.19 39.19L37.22 39.22L37.22 39.22Q36.46 36.75 36.31 35.08L36.25 35.02L36.22 34.99Q35.73 34.92 34.59 34.69L34.66 34.77L34.52 34.63Q34.40 33.43 34.40 32.56ZM26.40 32.40L26.41 32.41L26.33 32.33Q27.13 31.08 28.69 28.53L28.68 28.51L28.68 28.51Q28.66 29.45 28.62 30.40L28.62 30.40L28.66 30.44Q28.55 31.32 28.59 32.27L28.76 32.44L28.77 32.45Q28.09 32.31 27.52 32.31L27.52 32.30L27.61 32.40Q26.96 32.35 26.35 32.35Z"/&gt;&lt;path fill="#222" d="M109.75 49.66L109.81 49.72L109.67 49.58Q112.55 45.68 115.44 39.48L115.57 39.61L115.57 39.60Q112.36 32.97 106.27 24.90L106.21 24.84L106.28 24.91Q108.18 26.05 110.96 26.70L110.94 26.67L110.89 26.63Q114.49 31.37 116.93 36.59L116.87 36.52L116.88 36.54Q119.10 31.29 122.18 26.88L122.21 26.91L122.24 26.94Q124.38 26.53 126.47 25.73L126.59 25.84L126.52 25.77Q123.12 29.60 119.65 37.03L119.72 37.09L116.83 43.04L116.79 43.00Q115.28 46.05 113.53 48.68L113.53 48.68L113.54 48.69Q111.11 49.04 109.66 49.57ZM115.90 50.98L115.96 51.04L115.94 51.01Q117.52 47.99 118.97 44.72L119.09 44.84L121.73 38.41L121.79 38.48Q125.36 30.51 128.67 26.51L128.51 26.36L128.67 26.52Q127.20 27.06 125.30 27.75L125.30 27.75L126.36 26.37L126.41 26.43Q126.97 25.73 127.58 25.04L127.46 24.92L127.56 25.03Q124.82 26.01 121.96 26.47L121.92 26.43L122.00 26.50Q119.28 30.45 117.34 34.91L117.39 34.96L117.35 34.91Q115.72 31.61 113.93 28.79L113.83 28.69L113.88 28.74Q113.76 28.81 113.40 28.77L113.44 28.82L113.45 28.82Q112.93 28.63 112.74 28.63L112.78 28.66L112.73 28.62Q111.98 27.37 111.03 26.23L111.01 26.22L111.11 26.32Q108.00 25.72 105.26 24.01L105.11 23.85L105.22 23.96Q111.53 32.02 115.22 39.64L115.07 39.49L115.06 39.47Q112.96 44.61 108.89 50.24L108.84 50.20L108.92 50.27Q109.74 49.99 110.54 49.84L110.44 49.74L112.08 49.40L112.04 49.36Q111.52 50.18 110.34 51.82L110.31 51.78L110.27 51.74Q112.64 51.22 115.92 50.99Z"/&gt;&lt;path fill="#111" d="M53.70 29.63L53.79 29.71L53.63 29.56Q53.69 33.88 52.97 38.03L52.94 38.01L52.93 37.99Q55.30 37.54 58.38 37.43L58.41 37.46L58.27 37.32Q59.69 37.59 60.75 36.58L60.69 36.52L60.76 36.60Q61.71 35.46 61.71 34.13L61.85 34.27L61.83 34.25Q61.88 34.00 61.84 33.73L61.69 33.58L61.84 33.73Q61.67 30.79 59.43 29.95L59.28 29.81L59.28 29.80Q58.67 29.65 57.98 29.72L57.85 29.59L57.97 29.71Q56.94 29.66 55.91 29.70L55.83 29.62L55.86 29.65Q54.70 29.60 53.67 29.60ZM52.48 19.19L52.43 19.15L52.47 19.18Q53.32 22.47 53.59 26.85L53.64 26.90L53.58 26.84Q55.09 27.02 57.76 27.06L57.70 27.00L57.76 27.06Q60.67 27.08 61.01 23.54L60.96 23.48L60.94 23.47Q61.30 21.70 59.90 20.86L59.76 20.73L59.87 20.83Q58.93 20.27 54.51 19.63L54.58 19.69L54.49 19.60Q53.32 19.35 52.41 19.12ZM48.93 42.18L48.83 42.08L48.78 42.03Q51.29 35.40 51.02 28.02L50.98 27.97L50.99 27.98Q50.69 20.68 47.76 14.21L47.89 14.34L47.80 14.25Q51.57 16.76 57.79 17.00L57.88 17.09L57.83 17.04Q64.07 17.31 64.41 20.20L64.37 20.15L64.46 20.25Q64.82 23.04 63.41 25.71L63.33 25.63L63.28 25.58Q62.60 27.15 61.00 27.83L60.94 27.76L61.03 27.85Q64.57 28.43 64.80 33.79L64.96 33.95L64.80 33.80Q64.94 34.97 64.87 36.38L64.90 36.42L64.87 36.38Q64.84 37.72 63.91 38.65L63.85 38.60L63.86 38.61Q62.89 39.51 61.56 39.66L61.56 39.65L61.56 39.66Q60.18 39.83 59.11 39.83L59.11 39.83L59.09 39.81Q53.32 39.76 48.79 42.04ZM61.62 42.38L61.67 42.44L61.58 42.34Q62.56 42.44 64.42 42.56L64.52 42.66L64.54 42.67Q65.85 42.61 66.95 41.74L66.90 41.68L66.94 41.72Q67.86 40.93 67.74 39.37L67.66 39.28L67.72 39.34Q67.64 38.39 66.91 34.92L66.83 34.84L66.83 34.84Q66.24 31.70 64.37 30.21L64.34 30.18L63.92 29.34L63.87 29.28Q65.53 27.86 66.10 24.09L66.22 24.21L66.10 24.10Q66.30 23.00 66.22 21.59L66.23 21.60L66.27 21.63Q66.11 20.23 65.01 19.39L65.07 19.45L64.99 19.37Q64.68 19.18 64.57 19.14L64.57 19.14L64.66 19.23Q64.43 18.73 63.59 17.93L63.47 17.81L63.52 17.86Q61.98 16.78 57.75 16.59L57.80 16.64L57.89 16.72Q51.09 16.28 47.09 13.39L47.19 13.48L47.23 13.52Q50.44 20.47 50.74 28.00L50.77 28.03L50.71 27.97Q51.12 35.88 48.31 42.81L48.32 42.82L50.42 41.92L50.38 41.87Q49.88 42.90 49.39 44.04L49.40 44.06L49.53 44.19Q53.75 42.24 58.78 42.24L58.73 42.19L58.77 42.23Q60.15 42.20 61.59 42.35ZM59.48 31.82L59.56 31.91L59.54 31.88Q60.32 31.87 61.23 32.32L61.20 32.29L61.17 32.26Q61.16 32.48 61.31 33.55L61.48 33.72L61.46 33.69Q61.62 35.03 60.69 36.08L60.72 36.12L60.59 35.98Q59.72 37.09 58.31 36.98L58.40 37.07L56.88 37.14L56.83 37.09Q56.11 37.18 55.39 37.29L55.35 37.25L55.42 37.33Q55.65 35.42 55.73 31.96L55.70 31.93L55.64 31.87Q56.39 31.90 57.65 31.86L57.63 31.84L57.73 31.94Q58.95 31.87 59.56 31.91ZM58.44 22.23L58.53 22.31L58.76 22.16L58.84 22.24Q59.18 22.36 59.37 22.39L59.34 22.36L59.71 22.35L60.03 22.48L60.56 22.47L60.70 22.62Q60.76 22.83 60.76 23.14L60.69 23.07L60.70 23.60L60.61 23.52Q60.62 24.78 59.74 25.71L59.85 25.82L59.81 25.78Q58.95 26.73 57.73 26.73L57.63 26.63L57.80 26.80Q56.74 26.77 56.74 26.77L56.74 26.76L56.68 26.70Q55.39 26.71 55.73 26.71L55.64 26.62L55.64 26.62Q55.58 25.07 55.28 22.03L55.31 22.07L55.26 22.01Q56.96 22.27 58.49 22.27Z"/&gt;&lt;/svg&gt;'</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其中：</p>
+<ul>
+<li>text 字段是验证码里面的文字，需要保存到后端</li>
+<li>data 字段是 svg 内容，需要返回给前端</li>
+</ul>
+<p>仔细观察一下 data 里面的内容，如果有 4 个字母的话，会出现 4 个 <code>&lt;path fill=&quot;#444&quot; d=&quot;....</code>，由于数据集是 <code>a-zA-z0-9</code>，于是破解作者就写了一个脚本统计 svg 里面不同字母或数字对应的 path 的长度，跑了几十万次之后，得到了如下结果：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="string">'0'</span>: &#123; <span class="string">'2382'</span>: <span class="number">10819</span>, <span class="string">'2580'</span>: <span class="number">3769</span> &#125;,</span><br><span class="line">  <span class="string">'1'</span>: &#123; <span class="string">'998'</span>: <span class="number">10861</span>, <span class="string">'1081'</span>: <span class="number">3621</span> &#125;,</span><br><span class="line">  <span class="string">'2'</span>: &#123; <span class="string">'2546'</span>: <span class="number">11012</span>, <span class="string">'2758'</span>: <span class="number">3676</span> &#125;,</span><br><span class="line">  <span class="string">'3'</span>: &#123; <span class="string">'3878'</span>: <span class="number">10913</span>, <span class="string">'4201'</span>: <span class="number">3599</span> &#125;,</span><br><span class="line">  <span class="string">'4'</span>: &#123; <span class="string">'2140'</span>: <span class="number">10985</span>, <span class="string">'2318'</span>: <span class="number">3674</span> &#125;,</span><br><span class="line">  <span class="string">'5'</span>: &#123; <span class="string">'2606'</span>: <span class="number">10925</span>, <span class="string">'2823'</span>: <span class="number">3623</span> &#125;,</span><br><span class="line">  <span class="string">'6'</span>: &#123; <span class="string">'2632'</span>: <span class="number">10834</span>, <span class="string">'2851'</span>: <span class="number">3615</span> &#125;,</span><br><span class="line">  <span class="string">'7'</span>: &#123; <span class="string">'2042'</span>: <span class="number">10956</span>, <span class="string">'2212'</span>: <span class="number">3636</span> &#125;,</span><br><span class="line">  <span class="string">'8'</span>: &#123; <span class="string">'3414'</span>: <span class="number">10742</span>, <span class="string">'3698'</span>: <span class="number">3638</span> &#125;,</span><br><span class="line">  <span class="string">'9'</span>: &#123; <span class="string">'2800'</span>: <span class="number">5343</span>, <span class="string">'3033'</span>: <span class="number">1811</span> &#125;,</span><br><span class="line">  A: &#123; <span class="string">'1840'</span>: <span class="number">3618</span>, <span class="string">'1844'</span>: <span class="number">1825</span>, <span class="string">'1993'</span>: <span class="number">1885</span> &#125;,</span><br><span class="line">  B: &#123; <span class="string">'3054'</span>: <span class="number">11034</span>, <span class="string">'3308'</span>: <span class="number">3710</span> &#125;,</span><br><span class="line">  C: &#123; <span class="string">'2198'</span>: <span class="number">8820</span>, <span class="string">'2199'</span>: <span class="number">1536</span>, <span class="string">'2200'</span>: <span class="number">538</span>, <span class="string">'2201'</span>: <span class="number">92</span>, <span class="string">'2202'</span>: <span class="number">4</span>, <span class="string">'2381'</span>: <span class="number">3579</span> &#125;,</span><br><span class="line">  D: &#123; <span class="string">'1996'</span>: <span class="number">10745</span>, <span class="string">'2162'</span>: <span class="number">3651</span> &#125;,</span><br><span class="line">  ...</span><br><span class="line">  x: &#123; <span class="string">'1610'</span>: <span class="number">7350</span>, <span class="string">'1613'</span>: <span class="number">3706</span>, <span class="string">'1744'</span>: <span class="number">3762</span> &#125;,</span><br><span class="line">  y: &#123; <span class="string">'1274'</span>: <span class="number">10830</span>, <span class="string">'1380'</span>: <span class="number">3490</span> &#125;,</span><br><span class="line">  z: &#123; <span class="string">'1694'</span>: <span class="number">11224</span>, <span class="string">'1835'</span>: <span class="number">3701</span> &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>也就是说，每个字母的 path 长度，也就那几种，根据这个特点，只要知道 path 的长度，就能反推验证码里面是什么字母了。</p>
+<p>后来，破解作者就给原仓库提了个 <a href="https://github.com/produck/svg-captcha/issues/45" target="_blank" rel="noopener">issue</a>，希望能够解决这个 bug，但是大半年都过去了，依然没有动静，感觉这个库不维护了。</p>
+<h2 id="修复补丁"><a href="#修复补丁" class="headerlink" title="修复补丁"></a>修复补丁</h2><p>一个开源贡献者实在看不下去了，就手动修复了这个问题，提了 <a href="https://github.com/produck/svg-captcha/pull/47" target="_blank" rel="noopener">PR</a>，内容如下：</p>
+<blockquote>
+<p>随机拆分直线(L)与二次贝塞尔曲线(Q)，使得每个字母生成的向量每次均不同。</p>
+</blockquote>
+<blockquote>
+<p>潜在的问题或改进方向：</p>
+</blockquote>
+<blockquote>
+<p>生成的效率会降低，并且生成出来的 SVG 大小会变大。由于拆分也会导致生成图案变丑。<br>基于概率的拆分，或许会被基于统计的方式攻破。或许不应该将概率做成配置项，而是应该完全随机。<br>拆分所生成的点可能有特征。<br>每 L 或 Q 只会被拆分一次，可能应该改成有一定概率多次拆分。<br>由于拆分导致线条不连贯，如果逐点扰动对图案质量有显著影响（但是我不觉得对 SVG 图像进行逐点扰动有什么价值。同样的，噪点与横贯线条在 SVG 里也易于识别）。</p>
+</blockquote>
+<p>但是原作者就是不 merge，后来这位贡献者就自己上传到 npm 了，包名是 <a href="https://www.npmjs.com/package/svg-captcha-fixed" target="_blank" rel="noopener">svg-captcha-fixed</a>，如果大家还是想使用 svg 图形验证码的话，建议用这个包。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/svg-captcha-bugs/" data-id="ckjtq8g8y000d6cq44hnv6ykq" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/xss-attack/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          XSS攻防实战
+        
+      </div>
+    </a>
+  
+  
+    <a href="/csrf-attack/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">CSRF攻防实战（附JS源码）</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dart/">Dart</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Elasticsearch/">Elasticsearch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Flutter/">Flutter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Node-js/">Node.js</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2021 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

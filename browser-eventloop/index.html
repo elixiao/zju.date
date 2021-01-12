@@ -13,14 +13,14 @@
 <meta property="og:site_name" content=".">
 <meta property="og:description" content="事件循环是如何产生的在浏览器中，JS 的主线程是单线程的，异步的代码被放到了任务队列中，JS 主线程不断地轮询任务队列，每次从队首取出一个任务并进行处理，从而构成了事件环。 任务队列的类型任务队列有两种，分别是宏任务（macrotask）队列和微任务（microtask）队列，用于存放不同的任务：  宏任务主要有：script（用户代码）、setTimeout、setInterval、I/O、UI">
 <meta property="og:locale" content="default">
-<meta property="og:image" content="http://img.zlib.cn/blog/eventloop.svg?a=1">
-<meta property="og:image" content="http://img.zlib.cn/blog/task_queues.svg">
-<meta property="og:image" content="http://img.zlib.cn/blog/browser-event-loop.svg">
-<meta property="og:updated_time" content="2020-07-24T02:53:51.058Z">
+<meta property="og:image" content="https://img.zlib.cn/blog/eventloop.svg?a=1">
+<meta property="og:image" content="https://img.zlib.cn/blog/task_queues.svg">
+<meta property="og:image" content="https://img.zlib.cn/blog/browser-event-loop.svg">
+<meta property="og:updated_time" content="2021-01-12T08:29:15.680Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="浏览器中的消息队列和事件循环">
 <meta name="twitter:description" content="事件循环是如何产生的在浏览器中，JS 的主线程是单线程的，异步的代码被放到了任务队列中，JS 主线程不断地轮询任务队列，每次从队首取出一个任务并进行处理，从而构成了事件环。 任务队列的类型任务队列有两种，分别是宏任务（macrotask）队列和微任务（microtask）队列，用于存放不同的任务：  宏任务主要有：script（用户代码）、setTimeout、setInterval、I/O、UI">
-<meta name="twitter:image" content="http://img.zlib.cn/blog/eventloop.svg?a=1">
+<meta name="twitter:image" content="https://img.zlib.cn/blog/eventloop.svg?a=1">
   
     <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
   
@@ -99,13 +99,14 @@
 <li>微任务清空后可能会进行一次 UI 渲染（不是每次都会）</li>
 <li>然后再去宏任务队列中取出一个执行，循环往复</li>
 </ul>
-<h2 id="图示"><a href="#图示" class="headerlink" title="图示"></a>图示</h2><p><img src="http://img.zlib.cn/blog/eventloop.svg?a=1" alt="浏览器中的事件环"></p>
+<a id="more"></a>
+<h2 id="图示"><a href="#图示" class="headerlink" title="图示"></a>图示</h2><p><img src="https://img.zlib.cn/blog/eventloop.svg?a=1" alt="浏览器中的事件环"></p>
 <h2 id="备注"><a href="#备注" class="headerlink" title="备注"></a>备注</h2><p>其实在浏览器中，宏任务队列是可以有多个的，微任务队列只能有一个，上面的图把所有的宏任务都放到一个队列当中并不严谨，但是定时器、事件和 ajax 类型的宏任务是放到一个宏任务队列中的，还有一些其他的宏任务，<a href="https://html.spec.whatwg.org/multipage/webappapis.html#task-queue" target="_blank" rel="noopener">规范</a> 里面的原话是这么说的：</p>
 <blockquote>
 <p>An event loop has one or more task queues. A task queue is a set of tasks.</p>
 </blockquote>
 <p>这里<a href="https://blog.risingstack.com/writing-a-javascript-framework-execution-timing-beyond-settimeout" target="_blank" rel="noopener">盗用</a>一张图：</p>
-<p><img src="http://img.zlib.cn/blog/task_queues.svg" alt="任务队列"></p>
+<p><img src="https://img.zlib.cn/blog/task_queues.svg" alt="任务队列"></p>
 <p>如果出现多个宏任务队列，应该如何取宏任务呢？这个是比较灵活的，完全交给浏览器自己来实现，规范里面不做限制，但是只要保证下面两点即可：</p>
 <ul>
 <li>相同来源的宏任务都放到一个宏任务队列中</li>
@@ -118,7 +119,7 @@
 <p>事件循环的逻辑可以用下面的代码来描述：</p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span> (eventLoop.waitForTask()) &#123;</span><br><span class="line">  <span class="keyword">const</span> taskQueue = eventLoop.selectTaskQueue() <span class="comment">// 选择宏任务队列</span></span><br><span class="line">  <span class="keyword">if</span> (taskQueue.hasNextTask()) &#123;</span><br><span class="line">    taskQueue.processNextTask() <span class="comment">// 取出宏任务并执行</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> microtaskQueue = eventLoop.microTaskQueue</span><br><span class="line">  <span class="keyword">while</span> (microtaskQueue.hasNextMicrotask()) &#123; <span class="comment">// 清空微任务队列</span></span><br><span class="line">    microtaskQueue.processNextMicrotask()</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (shouldRender()) &#123; <span class="comment">// 浏览器决定是否渲染，如果是，则执行下面的逻辑</span></span><br><span class="line">    applyScrollResizeAndCSS()</span><br><span class="line">    runAnimationFrames()</span><br><span class="line">    render()</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p><a href="https://blog.risingstack.com/writing-a-javascript-framework-execution-timing-beyond-settimeout" target="_blank" rel="noopener">图示</a>如下：</p>
-<p><img src="http://img.zlib.cn/blog/browser-event-loop.svg" alt="浏览器中的事件环"></p>
+<p><img src="https://img.zlib.cn/blog/browser-event-loop.svg" alt="浏览器中的事件环"></p>
 
       
     </div>
@@ -176,7 +177,7 @@
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2020 zju.date
+      &copy; 2021 zju.date
       &nbsp;&nbsp;&nbsp;
       contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
     </div>

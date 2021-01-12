@@ -54,10 +54,10 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-node-get-parent-file-path" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-gulp-return" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/node-get-parent-file-path/" class="article-date">
-  <time datetime="2018-07-06T01:54:56.000Z" itemprop="datePublished">2018-07-06</time>
+    <a href="/gulp-return/" class="article-date">
+  <time datetime="2018-08-10T08:08:52.000Z" itemprop="datePublished">2018-08-10</time>
 </a>
     
   </div>
@@ -68,7 +68,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/node-get-parent-file-path/">js 获取引用自己的那个文件所在的目录</a>
+      <a class="article-title" href="/gulp-return/">gulp合法的返回值</a>
     </h1>
   
 
@@ -79,17 +79,46 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <p>如果 <code>a.js</code> 引用了 <code>b.js</code>，如果在 <code>b.js</code> 里面获取到引用它的文件（也就是 <code>a.js</code>）所在的文件夹呢？答案是：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>.parent.filename</span><br></pre></td></tr></table></figure>
-<p>例如：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cosnt path = <span class="built_in">require</span>(<span class="string">'path'</span>)</span><br><span class="line"><span class="built_in">console</span>.log(path.dirname(<span class="built_in">module</span>.parent.filename))</span><br></pre></td></tr></table></figure>
-<p>如果要获取最开始被执行的那个 js 文件，可以用：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">require</span>.main.filename</span><br></pre></td></tr></table></figure>
+        <p>用 gulp 写了一个简单的任务：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> gulp = <span class="built_in">require</span>(<span class="string">'gulp'</span>)</span><br><span class="line"></span><br><span class="line">gulp.task(<span class="string">'hello'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">"Hello World"</span>)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>发现会报错：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">The following tasks did not complete: hello</span><br><span class="line">Did you forget to signal async completion?</span><br></pre></td></tr></table></figure>
+<p>因为没有告诉 gulp 这个任务什么时候处理完了，在 gulp 任务函数中，只有下面 6 种返回值是合法的：</p>
+<ol>
+<li><p>返回 <a href="https://nodejs.org/api/stream.html" target="_blank" rel="noopener">Stream</a></p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> print = <span class="built_in">require</span>(<span class="string">'gulp-print'</span>)</span><br><span class="line"></span><br><span class="line">gulp.task(<span class="string">'hello'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> gulp.src(<span class="string">'package.json'</span>)</span><br><span class="line">    .pipe(print(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123; <span class="keyword">return</span> <span class="string">'Hello World'</span> &#125;))</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<pre><code>&lt;!--more--&gt;
+</code></pre><ol>
+<li><p>返回 <a href="https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Promise" target="_blank" rel="noopener"><code>Promise</code></a></p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">gulp.task(<span class="string">'hello'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123; </span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="keyword">function</span>(<span class="params">resolve, reject</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">"Hello World"</span>)</span><br><span class="line">    resolve()</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<pre><code>使用 [async/await](https://javascript.info/async-await) 语法可以简化成：
+
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">gulp.task(<span class="string">'hello'</span>, <span class="keyword">async</span> <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">"Hello World"</span>)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+</code></pre><ol>
+<li><p>执行回调函数</p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">gulp.task(<span class="string">'hello'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">done</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">"Hello World"</span>);</span><br><span class="line">  done();</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>返回 <a href="https://nodejs.org/api/child_process.html" target="_blank" rel="noopener">child process</a></p>
+</li>
+</ol>
+<pre><code><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> spawn = <span class="built_in">require</span>(<span class="string">'child_process'</span>).spawn</span><br><span class="line"></span><br><span class="line">gulp.task(<span class="string">'hello'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> spawn(<span class="string">'echo'</span>, [<span class="string">'HTTP'</span>, <span class="string">'Server'</span>, <span class="string">'Started'</span>], &#123; <span class="attr">stdio</span>: <span class="string">'inherit'</span> &#125;)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+</code></pre><ol>
+<li><p>返回 <a href="http://reactivex.io/rxjs/class/es6/Observable.js~Observable.html" target="_blank" rel="noopener">RxJS <code>Observable</code></a>.</p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> <span class="keyword">of</span> = <span class="built_in">require</span>(<span class="string">'rxjs'</span>).of</span><br><span class="line"></span><br><span class="line">gulp.task(<span class="string">'hello'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> o = <span class="keyword">of</span>(<span class="string">'Hello World'</span>)</span><br><span class="line">  o.subscribe(<span class="function"><span class="keyword">function</span>(<span class="params">msg</span>) </span>&#123; <span class="built_in">console</span>.log(msg); &#125;);</span><br><span class="line">  <span class="keyword">return</span> o</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>返回 <a href="https://nodejs.org/api/events.html#events_class_eventemitter" target="_blank" rel="noopener"><code>EventEmitter</code></a></p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">gulp.task(<span class="string">'hello'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> e = <span class="keyword">new</span> EventEmitter()</span><br><span class="line">  e.on(<span class="string">'msg'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">msg</span>) </span>&#123; <span class="built_in">console</span>.log(msg); &#125;)</span><br><span class="line">  setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123; e.emit(<span class="string">'msg'</span>, <span class="string">'Hello World'</span>); e.emit(<span class="string">'finish'</span>) &#125;)</span><br><span class="line">  <span class="keyword">return</span> e</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
 
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/node-get-parent-file-path/" data-id="ckej9qg7f00qnwpq4w95hbb8e" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/gulp-return/" data-id="ckej9qg1400guwpq4lcugxzai" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
@@ -100,10 +129,10 @@
 
 
   
-    <article id="post-git-commit-log" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-es-alias" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/git-commit-log/" class="article-date">
-  <time datetime="2018-07-05T02:17:56.000Z" itemprop="datePublished">2018-07-05</time>
+    <a href="/es-alias/" class="article-date">
+  <time datetime="2018-07-31T03:29:36.000Z" itemprop="datePublished">2018-07-31</time>
 </a>
     
   </div>
@@ -114,7 +143,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/git-commit-log/">Git 提交规范</a>
+      <a class="article-title" href="/es-alias/">在ES中为索引起别名</a>
     </h1>
   
 
@@ -126,117 +155,27 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <p>分为 header 和 body 两个部分：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;type&gt;: &lt;subject&gt;</span><br><span class="line"></span><br><span class="line">&lt;body&gt;</span><br></pre></td></tr></table></figure>
-<h2 id="头部-header"><a href="#头部-header" class="headerlink" title="头部 header"></a>头部 header</h2><p>header 由 type 和 subject 两部分组成：</p>
-<h4 id="type"><a href="#type" class="headerlink" title="type"></a>type</h4><p>表示类型，只能是下几种：</p>
-<ul>
-<li><strong>feat: 新功能</strong></li>
-<li><strong>fix: 修复问题</strong></li>
-<li>docs: 修改文档</li>
-<li>style: 修改代码格式，不影响代码逻辑</li>
-<li>refactor: 重构代码，理论上不影响现有功能</li>
-<li><strong>perf: 提升性能</strong></li>
-<li>test: 增加修改测试用例</li>
-<li>chore: 改变构建流程、或者增加依赖库、工具等</li>
-<li>revert: 回滚到上一个版本</li>
-</ul>
+            <p>参见<a href="/es-prepare">准备工作</a>，搭建好命令行查询语法。</p>
+<p>查看全部索引：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">escurl -XGET $ES/_cat/indices?v</span><br></pre></td></tr></table></figure>
+<p>创建一个 test 索引：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">escurl -XPUT <span class="variable">$ES</span>/<span class="built_in">test</span>?pretty</span><br></pre></td></tr></table></figure>
+<p>添加一个文档：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">escurl -XPUT <span class="variable">$ES</span>/<span class="built_in">test</span>/_doc/1?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "name": "小明"</span></span><br><span class="line"><span class="string">&#125;'</span></span><br></pre></td></tr></table></figure>
+<p>查看索引内全部文档：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">escurl -XGET <span class="variable">$ES</span>/<span class="built_in">test</span>/_search?pretty</span><br></pre></td></tr></table></figure>
+<p>根据旧索引创建新索引：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">escurl -XPOST <span class="variable">$ES</span>/_reindex?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "source": &#123;"index":"test"&#125;,</span></span><br><span class="line"><span class="string">  "dest":&#123;"index":"test_v2"&#125;</span></span><br><span class="line"><span class="string">&#125;'</span></span><br></pre></td></tr></table></figure>
         </div>
         
           <p class="article-more-link">
-            <a href="/git-commit-log/#more">Read More</a>
+            <a href="/es-alias/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/git-commit-log/" data-id="ckej9qfzw00eywpq4ywga6d42" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/">Git</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-es-dynamic" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/es-dynamic/" class="article-date">
-  <time datetime="2018-07-04T05:46:36.000Z" itemprop="datePublished">2018-07-04</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/es-dynamic/">ES中的动态映射和动态模板</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <blockquote>
-<p>为了方便演示和切换 ES 地址，在 <code>~/.bashrc</code> 中添加如下变量和脚本：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&gt;ES=localhost:9200</span><br><span class="line">&gt;<span class="function"><span class="title">escurl</span></span> () &#123; </span><br><span class="line">&gt;    curl -H <span class="string">'Content-Type: application/json'</span> <span class="string">"<span class="variable">$@</span>"</span>;</span><br><span class="line">&gt;&#125;</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
-</blockquote>
-<p>Elasticsearch 具有非常强大的动态性和灵活性，例如当向一个不存在的索引添加文档时，会自动创建该索引，例如：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$ escurl -XPUT <span class="variable">$ES</span>/my_article/doc/1?pretty -d <span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "title": "标题",</span></span><br><span class="line"><span class="string">  "createdAt": "2020-02-02T02:02:02.020Z",</span></span><br><span class="line"><span class="string">  "wordCount": 100,</span></span><br><span class="line"><span class="string">  "extra": &#123;</span></span><br><span class="line"><span class="string">    "deleted": false,</span></span><br><span class="line"><span class="string">    "score": 8.5</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#125;'</span></span><br></pre></td></tr></table></figure>
-<p>如果 my_article 索引不存在，则会自动创建 my_article 索引，并向其中添加数据，其数据结构为：</p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"mappings"</span>: &#123;</span><br><span class="line">    <span class="attr">"doc"</span>: &#123;</span><br><span class="line">      <span class="attr">"properties"</span>: &#123;</span><br><span class="line">        <span class="attr">"createdAt"</span>: &#123; <span class="attr">"type"</span>: <span class="string">"date"</span> &#125;,</span><br><span class="line">        <span class="attr">"wordCount"</span>: &#123; <span class="attr">"type"</span>: <span class="string">"long"</span> &#125;,</span><br><span class="line">        <span class="attr">"extra"</span>: &#123;</span><br><span class="line">          <span class="attr">"properties"</span>: &#123;</span><br><span class="line">            <span class="attr">"score"</span>: &#123; <span class="attr">"type"</span>: <span class="string">"float"</span> &#125;,</span><br><span class="line">            <span class="attr">"deleted"</span>: &#123; <span class="attr">"type"</span>: <span class="string">"boolean"</span> &#125;</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="attr">"title"</span>: &#123;</span><br><span class="line">          <span class="attr">"type"</span>: <span class="string">"text"</span>,</span><br><span class="line">          <span class="attr">"fields"</span>: &#123;</span><br><span class="line">            <span class="attr">"keyword"</span>: &#123;</span><br><span class="line">              <span class="attr">"ignore_above"</span>: <span class="number">256</span>,</span><br><span class="line">              <span class="attr">"type"</span>: <span class="string">"keyword"</span></span><br><span class="line">            &#125;</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>可以发现 ES 自动做了如下字段类型映射</p>
-<ul>
-<li>createdAt 字段映射成 date 类型</li>
-<li>wordCount 字段映射成 long 类型</li>
-<li>extra.score 字段映射成 float 类型</li>
-<li>extra.deleted 字段映射成 boolean 类型</li>
-<li>title 字段映射成 text 类型</li>
-</ul>
-<p>猜测非常准确，而且后续增加新字段还可以动态猜测并更新 mapping。</p>
-<h2 id="动态更新映射"><a href="#动态更新映射" class="headerlink" title="动态更新映射"></a>动态更新映射</h2><p>如果继续添加一个新文档，里面多出几个字段：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">$ escurl -XPUT <span class="variable">$ES</span>/my_article/doc/2?pretty -d <span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "title": "新文章",</span></span><br><span class="line"><span class="string">  "createdAt": "2020-02-02T02:02:02.020Z",</span></span><br><span class="line"><span class="string">  "wordCount": 100,</span></span><br><span class="line"><span class="string">  "likes": 0,</span></span><br><span class="line"><span class="string">  "author": "作者",</span></span><br><span class="line"><span class="string">  "extra": &#123;</span></span><br><span class="line"><span class="string">    "deleted": false,</span></span><br><span class="line"><span class="string">    "score": 8.5,</span></span><br><span class="line"><span class="string">    "remark": "备注"</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#125;'</span></span><br></pre></td></tr></table></figure>
-<p>发现映射被自动更新了：</p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"mappings"</span>: &#123;</span><br><span class="line">    <span class="attr">"doc"</span>: &#123;</span><br><span class="line">      <span class="attr">"properties"</span>: &#123;</span><br><span class="line">        <span class="attr">"createdAt"</span>: &#123; <span class="attr">"type"</span>: <span class="string">"date"</span> &#125;,</span><br><span class="line">        <span class="attr">"wordCount"</span>: &#123; <span class="attr">"type"</span>: <span class="string">"long"</span> &#125;,</span><br><span class="line">        <span class="attr">"author"</span>: &#123;</span><br><span class="line">          <span class="attr">"type"</span>: <span class="string">"text"</span>,</span><br><span class="line">          <span class="attr">"fields"</span>: &#123; <span class="attr">"keyword"</span>: &#123; <span class="attr">"ignore_above"</span>: <span class="number">256</span>, <span class="attr">"type"</span>: <span class="string">"keyword"</span> &#125; &#125;</span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="attr">"extra"</span>: &#123;</span><br><span class="line">          <span class="attr">"properties"</span>: &#123;</span><br><span class="line">            <span class="attr">"score"</span>: &#123; <span class="attr">"type"</span>: <span class="string">"float"</span> &#125;,</span><br><span class="line">            <span class="attr">"deleted"</span>: &#123; <span class="attr">"type"</span>: <span class="string">"boolean"</span> &#125;,</span><br><span class="line">            <span class="attr">"remark"</span>: &#123;</span><br><span class="line">              <span class="attr">"type"</span>: <span class="string">"text"</span>,</span><br><span class="line">              <span class="attr">"fields"</span>: &#123; <span class="attr">"keyword"</span>: &#123; <span class="attr">"ignore_above"</span>: <span class="number">256</span>, <span class="attr">"type"</span>: <span class="string">"keyword"</span> &#125; &#125;</span><br><span class="line">            &#125;</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="attr">"title"</span>: &#123;</span><br><span class="line">          <span class="attr">"type"</span>: <span class="string">"text"</span>,</span><br><span class="line">          <span class="attr">"fields"</span>: &#123; <span class="attr">"keyword"</span>: &#123; <span class="attr">"ignore_above"</span>: <span class="number">256</span>, <span class="attr">"type"</span>: <span class="string">"keyword"</span> &#125; &#125;</span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="attr">"likes"</span>: &#123; <span class="attr">"type"</span>: <span class="string">"long"</span> &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>也就是说，ES 会根据该字段的值猜测其数据类型并动态添加到类型映射里面。</p>
-<h2 id="手动干预动态映射"><a href="#手动干预动态映射" class="headerlink" title="手动干预动态映射"></a>手动干预动态映射</h2><p>动态映射虽然灵活，但有时候又想明确数据结构，因为不是所有字段都需要被存储，此时可以配置索引的 dynamic 选项，有三个可选值：</p>
-<ul>
-<li>true：动态添加新的字段（默认值）</li>
-<li>false：忽略新的字段</li>
-<li>strict：如果遇到新字段抛出异常</li>
-</ul>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">$ escurl -XPUT <span class="variable">$ES</span>/my_article?pretty -d <span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "mappings": &#123;</span></span><br><span class="line"><span class="string">    "doc": &#123;</span></span><br><span class="line"><span class="string">      "dynamic": "false",</span></span><br><span class="line"><span class="string">      "properties": &#123;</span></span><br><span class="line"><span class="string">        "title":  &#123; "type": "keyword"&#125;,</span></span><br><span class="line"><span class="string">        "wordCount": &#123; "type": "long" &#125;,</span></span><br><span class="line"><span class="string">        "createdAt": &#123; "type": "date" &#125;,</span></span><br><span class="line"><span class="string">        "extra":  &#123;</span></span><br><span class="line"><span class="string">          "type": "object",</span></span><br><span class="line"><span class="string">          "dynamic": true</span></span><br><span class="line"><span class="string">        &#125;</span></span><br><span class="line"><span class="string">      &#125;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#125;'</span></span><br></pre></td></tr></table></figure>
-<p>上面的索引的意思是：如果遇到新字段，会自动忽略，而内部对象 extra 遇到新字段就会动态创建新字段。注意，如果索引已经存在就会出错，必须删除重建。这个时候，如果再添加如下数据：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">$ escurl -XPUT <span class="variable">$ES</span>/your_article/doc/2?pretty -d <span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "title": "新文章",</span></span><br><span class="line"><span class="string">  "createdAt": "2020-02-02T02:02:02.020Z",</span></span><br><span class="line"><span class="string">  "wordCount": 100,</span></span><br><span class="line"><span class="string">  "likes": 0,</span></span><br><span class="line"><span class="string">  "author": "作者",</span></span><br><span class="line"><span class="string">  "extra": &#123;</span></span><br><span class="line"><span class="string">    "deleted": false,</span></span><br><span class="line"><span class="string">    "score": 8.5,</span></span><br><span class="line"><span class="string">    "remark": "备注"</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#125;'</span></span><br></pre></td></tr></table></figure>
-<p>likes 和 author 字段就会被忽略，而 extra.remark 字段则被添加进去了。</p>
-<h2 id="使用动态模板限制动态映射"><a href="#使用动态模板限制动态映射" class="headerlink" title="使用动态模板限制动态映射"></a>使用动态模板限制动态映射</h2><p>动态映射的自动推断功能很强大，但有时候并不完全符合业务需求，例如我希望所有 string 类型都映射成 keyword 而不是 text，所有 number 都映射成 double 而不是 long，这个时候就需要动态模板（dynamic_templates），可以完全控制新生成字段的映射类型。例如：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">$ escurl -XPUT <span class="variable">$ES</span>/my_article?pretty -d <span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "settings": &#123;</span></span><br><span class="line"><span class="string">    "index": &#123;</span></span><br><span class="line"><span class="string">      "number_of_shards": 1,</span></span><br><span class="line"><span class="string">      "number_of_replicas": 0</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;,</span></span><br><span class="line"><span class="string">  "mappings": &#123;</span></span><br><span class="line"><span class="string">    "doc": &#123;</span></span><br><span class="line"><span class="string">      "dynamic_templates": [</span></span><br><span class="line"><span class="string">        &#123;</span></span><br><span class="line"><span class="string">          "string_fields": &#123;</span></span><br><span class="line"><span class="string">            "match": "*",</span></span><br><span class="line"><span class="string">            "match_mapping_type": "string",</span></span><br><span class="line"><span class="string">            "mapping": &#123;</span></span><br><span class="line"><span class="string">              "type": "keyword",</span></span><br><span class="line"><span class="string">              "ignore_above": 256</span></span><br><span class="line"><span class="string">            &#125;</span></span><br><span class="line"><span class="string">          &#125;</span></span><br><span class="line"><span class="string">        &#125;,</span></span><br><span class="line"><span class="string">        &#123;</span></span><br><span class="line"><span class="string">          "number_fields": &#123;</span></span><br><span class="line"><span class="string">            "match": "*",</span></span><br><span class="line"><span class="string">            "match_mapping_type": "long",</span></span><br><span class="line"><span class="string">            "mapping": &#123;</span></span><br><span class="line"><span class="string">              "type": "double"</span></span><br><span class="line"><span class="string">            &#125;</span></span><br><span class="line"><span class="string">          &#125;</span></span><br><span class="line"><span class="string">        &#125;</span></span><br><span class="line"><span class="string">      ]</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#125;'</span></span><br></pre></td></tr></table></figure>
-<p>dynamic_templates 是一个数组，也就是说可以添加多个模板，ES 会按照顺序来检测，启用第一个匹配的模板。上面的做法是给当前索引指定动态模板，其实也可以反过来，先创建动态模板，让模板指定匹配的索引。</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">$ escurl -XPUT <span class="variable">$ES</span>/_template/my-template?pretty -d <span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "index_patterns":[ "my_*" ],</span></span><br><span class="line"><span class="string">  "mappings": &#123;</span></span><br><span class="line"><span class="string">    "doc": &#123;</span></span><br><span class="line"><span class="string">      "dynamic_templates": [</span></span><br><span class="line"><span class="string">        &#123;</span></span><br><span class="line"><span class="string">          "string_fields": &#123;</span></span><br><span class="line"><span class="string">            "match": "*",</span></span><br><span class="line"><span class="string">            "match_mapping_type": "string",</span></span><br><span class="line"><span class="string">            "mapping": &#123;</span></span><br><span class="line"><span class="string">              "type": "keyword",</span></span><br><span class="line"><span class="string">              "ignore_above": 256</span></span><br><span class="line"><span class="string">            &#125;</span></span><br><span class="line"><span class="string">          &#125;</span></span><br><span class="line"><span class="string">        &#125;,</span></span><br><span class="line"><span class="string">        &#123;</span></span><br><span class="line"><span class="string">          "number_fields": &#123;</span></span><br><span class="line"><span class="string">            "match": "*",</span></span><br><span class="line"><span class="string">            "match_mapping_type": "long",</span></span><br><span class="line"><span class="string">            "mapping": &#123;</span></span><br><span class="line"><span class="string">              "type": "double"</span></span><br><span class="line"><span class="string">            &#125;</span></span><br><span class="line"><span class="string">          &#125;</span></span><br><span class="line"><span class="string">        &#125;</span></span><br><span class="line"><span class="string">      ]</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#125;'</span></span><br></pre></td></tr></table></figure>
-<p>这个时候再创建 <code>my-xxx</code> 索引的时候，如果需要动态字段映射，会根据 my-template 里面的规则进行映射。动态模板非常实用，下面记录其增删改查的语法：</p>
-<h3 id="查看模板"><a href="#查看模板" class="headerlink" title="查看模板"></a>查看模板</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">escurl -XGET <span class="variable">$ES</span>/_template?pretty <span class="comment"># 查看所有模板</span></span><br><span class="line">escurl -XGET <span class="variable">$ES</span>/_template/tpl_1?pretty <span class="comment"># 查看指定模板 tpl_1</span></span><br><span class="line">escurl -XGET <span class="variable">$ES</span>/_template/tpl_1,tpl_2?pretty <span class="comment"># 批量查看模板 tpl_1 和 tpl_2</span></span><br></pre></td></tr></table></figure>
-<p>返回结果是一个对象，key 是模板名称，value 是模板定义。</p>
-<h3 id="检查模板是否存在"><a href="#检查模板是否存在" class="headerlink" title="检查模板是否存在"></a>检查模板是否存在</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ escurl --head <span class="variable">$ES</span>/_template/tpl_1</span><br></pre></td></tr></table></figure>
-<p>存在则返回：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">HTTP/1.1 200 OK</span><br><span class="line">content-type: application/json; charset=UTF-8</span><br><span class="line">content-length: 488</span><br></pre></td></tr></table></figure>
-<p>否则返回：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">HTTP/1.1 404 Not Found</span><br><span class="line">content-type: application/json; charset=UTF-8</span><br><span class="line">content-length: 2</span><br></pre></td></tr></table></figure>
-<h3 id="创建模板"><a href="#创建模板" class="headerlink" title="创建模板"></a>创建模板</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">$ escurl -XPUT <span class="variable">$ES</span>/_template/my-prefix-template</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">"order"</span>: 0,</span><br><span class="line">  <span class="string">"index_patterns"</span>: [</span><br><span class="line">    <span class="string">"prefix-*"</span></span><br><span class="line">  ],</span><br><span class="line">  <span class="string">"settings"</span>: &#123;</span><br><span class="line">    <span class="string">"index"</span>: &#123;</span><br><span class="line">      <span class="string">"number_of_shards"</span>: <span class="string">"5"</span>,</span><br><span class="line">      <span class="string">"number_of_replicas"</span>: <span class="string">"0"</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="string">"mappings"</span>: &#123;</span><br><span class="line">    <span class="string">"doc"</span>: &#123;</span><br><span class="line">      <span class="string">"dynamic_templates"</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">          <span class="string">"string_fields"</span>: &#123;</span><br><span class="line">            <span class="string">"match"</span>: <span class="string">"*"</span>,</span><br><span class="line">            <span class="string">"match_mapping_type"</span>: <span class="string">"string"</span>,</span><br><span class="line">            <span class="string">"mapping"</span>: &#123;</span><br><span class="line">              <span class="string">"type"</span>: <span class="string">"keyword"</span>,</span><br><span class="line">              <span class="string">"ignore_above"</span>: 256</span><br><span class="line">            &#125;</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      ],</span><br><span class="line">      <span class="string">"properties"</span>: &#123;</span><br><span class="line">        <span class="string">"discount"</span>: &#123;</span><br><span class="line">          <span class="string">"type"</span>: <span class="string">"double"</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="string">"pay"</span>: &#123;</span><br><span class="line">          <span class="string">"type"</span>: <span class="string">"double"</span></span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="删除模板"><a href="#删除模板" class="headerlink" title="删除模板"></a>删除模板</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ escurl -XDELETE <span class="variable">$ES</span>/_template/template_1</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/es-dynamic/" data-id="ckgvyz2nq000054q4yrg8iuv6" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/es-alias/" data-id="ckej9qfy100bjwpq4ytlyynt6" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Elasticsearch/">Elasticsearch</a></li></ul>
 
@@ -247,10 +186,10 @@
 
 
   
-    <article id="post-find-node_modules-from-any-directory" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-docker-ps-format" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/find-node_modules-from-any-directory/" class="article-date">
-  <time datetime="2018-07-04T02:25:15.000Z" itemprop="datePublished">2018-07-04</time>
+    <a href="/docker-ps-format/" class="article-date">
+  <time datetime="2018-07-31T01:24:23.000Z" itemprop="datePublished">2018-07-31</time>
 </a>
     
   </div>
@@ -261,7 +200,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/find-node_modules-from-any-directory/">nodejs 加载模块时指定搜索 node_module 的初始目录</a>
+      <a class="article-title" href="/docker-ps-format/">docker ps 指定列</a>
     </h1>
   
 
@@ -273,158 +212,22 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <p>先看这样的场景，假如某项目的目录结构如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">.</span><br><span class="line">|____A</span><br><span class="line">| |____package.json</span><br><span class="line">| |____node_modules</span><br><span class="line">| |____main.js</span><br><span class="line">| |____a.js</span><br><span class="line">|</span><br><span class="line">|____B</span><br><span class="line">| |____package.json</span><br><span class="line">| |____node_modules</span><br><span class="line">| |____main.js</span><br><span class="line">| |____b.js</span><br></pre></td></tr></table></figure>
-<p>A 和 B 文件夹各有 <code>a.js</code> 和 <code>b.js</code> 文件，都有 <code>main.js</code> 和 <code>node_modules</code> 文件夹，<code>a.js</code> 和 <code>b.js</code> 的内容都是：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> moment = <span class="built_in">require</span>(<span class="string">'moment'</span>)</span><br><span class="line"><span class="built_in">module</span>.exports = moment</span><br></pre></td></tr></table></figure>
+            <p>通过 <code>--format</code> 参数，可以在 <code>docker ps</code> 的时候指定输出的列：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 输出名称和镜像</span></span><br><span class="line">docker ps --format <span class="string">'&#123;&#123;.Names&#125;&#125;\t&#123;&#123;.Image&#125;&#125;'</span></span><br><span class="line"><span class="comment"># 按照表格展示</span></span><br><span class="line">docker ps --format <span class="string">'table &#123;&#123;.Names&#125;&#125;\t&#123;&#123;.Image&#125;&#125;'</span></span><br></pre></td></tr></table></figure>
+<p>还可以修改默认输出格式，默认配置文件是：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">~/.docker/config.json</span><br></pre></td></tr></table></figure>
+<p>然后添加下面的自定义参数：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"psFormat"</span>: <span class="string">"table &#123;&#123;.Names&#125;&#125;\\t&#123;&#123;.Image&#125;&#125;\\t&#123;&#123;.RunningFor&#125;&#125; ago\\t&#123;&#123;.Status&#125;&#125;\\t&#123;&#123;.Command&#125;&#125;"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
         </div>
         
           <p class="article-more-link">
-            <a href="/find-node_modules-from-any-directory/#more">Read More</a>
+            <a href="/docker-ps-format/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/find-node_modules-from-any-directory/" data-id="ckej9qfys00cxwpq4pl6hzync" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-trim-comment" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/trim-comment/" class="article-date">
-  <time datetime="2018-07-03T06:35:03.000Z" itemprop="datePublished">2018-07-03</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/trim-comment/">一句正则去除注释</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> noComments = text.replace(<span class="regexp">/\/\*(.|[\r\n])*?\*\//g</span>, <span class="string">''</span>).replace(<span class="regexp">/\/\/.*/gm</span>, <span class="string">''</span>);</span><br></pre></td></tr></table></figure>
-<p>在普通的场景下是完全适用的，但是并不完全可靠，例如：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a = <span class="string">"/*"</span></span><br><span class="line">someImportantLogicHere()</span><br><span class="line"><span class="keyword">var</span> b = <span class="string">"*/"</span></span><br></pre></td></tr></table></figure>
-<p>就会得到</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a = <span class="string">""</span></span><br></pre></td></tr></table></figure>
-<p>并不是我们想看到的结果，感觉通过正则表达式来去除注释不是很可靠，AST 靠谱一些。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/trim-comment/" data-id="ckej9qgbw00wtwpq4d9w3m1ml" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-require-from-string" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/require-from-string/" class="article-date">
-  <time datetime="2018-07-02T10:25:12.000Z" itemprop="datePublished">2018-07-02</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/require-from-string/">如何把字符串作为模块引入</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>在 nodejs 中，require 是引入一个文件，那如何把字符串作为模块引入进来呢？下面的代码可以：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">requireFromString</span>(<span class="params">src, filename</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> Module = <span class="built_in">module</span>.constructor;</span><br><span class="line">  <span class="keyword">var</span> m = <span class="keyword">new</span> Module();</span><br><span class="line">  m._compile(src, filename);</span><br><span class="line">  <span class="keyword">return</span> m.exports;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(requireFromString(<span class="string">'module.exports = &#123; test: 1&#125;'</span>));</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/require-from-string/" data-id="ckej9qg9x00u2wpq44xy6mksf" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-alpine-set-timezone" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/alpine-set-timezone/" class="article-date">
-  <time datetime="2018-06-29T01:40:23.000Z" itemprop="datePublished">2018-06-29</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/alpine-set-timezone/">alpine 设置时区</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="article-preview">
-            <p>在 Linux 中查看服务器时区：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">date -R</span><br><span class="line">Wed, 01 Aug 2017 17:05:44 +0800</span><br></pre></td></tr></table></figure>
-<p>最后的 <code>+0800</code> 表示东八区，在 alpine 中设置时区需要安装 tzdata 这个依赖，可以进入容器内进行安装：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装和更新依赖</span></span><br><span class="line">RUN apk update</span><br><span class="line">RUN apk upgrade</span><br><span class="line">RUN apk add ca-certificates &amp;&amp; update-ca-certificates</span><br><span class="line"><span class="comment"># 修改时区</span></span><br><span class="line">RUN apk add --update tzdata</span><br><span class="line">ENV TZ=Asia/Shanghai</span><br><span class="line"><span class="comment"># 清空缓存包</span></span><br><span class="line">RUN rm -rf /var/cache/apk/*</span><br></pre></td></tr></table></figure>
-        </div>
-        
-          <p class="article-more-link">
-            <a href="/alpine-set-timezone/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/alpine-set-timezone/" data-id="ckej9qft50030wpq4j47j798y" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/docker-ps-format/" data-id="ckej9qfxj00agwpq4keejnnsd" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
 
@@ -435,10 +238,10 @@
 
 
   
-    <article id="post-http-toolkit" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-mysql-notes" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/http-toolkit/" class="article-date">
-  <time datetime="2018-06-29T01:39:23.000Z" itemprop="datePublished">2018-06-29</time>
+    <a href="/mysql-notes/" class="article-date">
+  <time datetime="2018-07-31T01:23:07.000Z" itemprop="datePublished">2018-07-31</time>
 </a>
     
   </div>
@@ -449,49 +252,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/http-toolkit/">原生网络请求类库</a>
-    </h1>
-  
-
-      </header>
-    
-
-
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>用原生 js 封装一些网络请求的方法：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">ajax</span>(<span class="params">options = &#123;&#125;</span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">  options.method = (options.method || <span class="string">'GET'</span>).toUpperCase()</span><br><span class="line">  options.data = options.data || &#123;&#125;</span><br><span class="line">  options.params = formatParams(options.params)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">let</span> xhr</span><br><span class="line">  <span class="keyword">if</span> (<span class="built_in">window</span>.XMLHttpRequest) &#123;</span><br><span class="line">    xhr = <span class="keyword">new</span> XMLHttpRequest()</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    xhr = <span class="keyword">new</span> ActiveXObject(<span class="string">'Microsoft.XMLHTTP'</span>)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  xhr.onreadystatechange = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (xhr.readyState === <span class="number">4</span>) &#123;</span><br><span class="line">      <span class="keyword">const</span> status = xhr.status</span><br><span class="line">      <span class="keyword">const</span> json = <span class="built_in">JSON</span>.parse(xhr.responseText)</span><br><span class="line">      <span class="keyword">if</span> (status &gt;= <span class="number">200</span> &amp;&amp; status &lt; <span class="number">300</span>) &#123;</span><br><span class="line">        options.success &amp;&amp; options.success(json)</span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        options.fail &amp;&amp; options.fail(json)</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (options.method === <span class="string">'GET'</span>) &#123;</span><br><span class="line">    xhr.open(<span class="string">'GET'</span>, options.url + options.params, <span class="literal">true</span>)</span><br><span class="line">    xhr.send(<span class="literal">null</span>)</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (options.method === <span class="string">'POST'</span>) &#123;</span><br><span class="line">    xhr.open(<span class="string">'POST'</span>, options.url + options.params, <span class="literal">true</span>)</span><br><span class="line">    xhr.setRequestHeader(<span class="string">'Content-Type'</span>, <span class="string">'application/json'</span>)</span><br><span class="line">    xhr.send(<span class="built_in">JSON</span>.stringify(options.data))</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">formatParams</span>(<span class="params">params</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (params === <span class="literal">undefined</span> || params === <span class="literal">null</span>) <span class="keyword">return</span> <span class="string">''</span></span><br><span class="line">  <span class="keyword">if</span> (<span class="keyword">typeof</span> params !== <span class="string">'object'</span>) <span class="keyword">return</span> <span class="string">'?'</span> + params.toString()</span><br><span class="line">  <span class="keyword">const</span> arr = []</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">let</span> key <span class="keyword">in</span> params) &#123;</span><br><span class="line">    arr.push(<span class="built_in">encodeURIComponent</span>(key) + <span class="string">'='</span> + <span class="built_in">encodeURIComponent</span>(params[key]))</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (arr.length) <span class="keyword">return</span> <span class="string">'?'</span> + arr.join(<span class="string">'&amp;'</span>)</span><br><span class="line">  <span class="keyword">return</span> <span class="string">''</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">request</span>(<span class="params">options</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> success = <span class="function"><span class="params">res</span> =&gt;</span> resolve(res)</span><br><span class="line">    <span class="keyword">const</span> fail = <span class="function"><span class="params">err</span> =&gt;</span> reject(err)</span><br><span class="line">    ajax(&#123;...options, success, fail&#125;)</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">jsonp</span>(<span class="params">url, callback</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> ref = <span class="built_in">document</span>.getElementsByTagName(<span class="string">'script'</span>)[<span class="number">0</span>]</span><br><span class="line">  <span class="keyword">const</span> script = <span class="built_in">document</span>.createElement(<span class="string">'script'</span>)</span><br><span class="line">  <span class="built_in">window</span>.jsonpCallback = callback</span><br><span class="line">  script.src = url + (url.indexOf(<span class="string">'?'</span>) + <span class="number">1</span> ? <span class="string">'&amp;'</span> : <span class="string">'?'</span>) + <span class="string">'callback=jsonpCallback'</span></span><br><span class="line">  ref.parentNode.insertBefore(script, ref)</span><br><span class="line">  script.onload = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.remove()</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;ajax, request, jsonp&#125;</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-     <a data-url="https://zju.date/http-toolkit/" data-id="ckej9qg1l00hnwpq4j100jb4q" class="article-share-link">Share</a>
-     
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/HTTP/">HTTP</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-es-bool" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/es-bool/" class="article-date">
-  <time datetime="2018-06-28T05:59:07.000Z" itemprop="datePublished">2018-06-28</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/es-bool/">ES中的bool查询</a>
+      <a class="article-title" href="/mysql-notes/">MySQL学习笔记</a>
     </h1>
   
 
@@ -503,25 +264,21 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <p>用 bool 查询可以构建出非常复杂的语句，例如查询：公司是【中国移动】，姓名叫【张三】或者手机号是【18888888888】的用户。可以构建出下面的查询体：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  query: &#123;</span><br><span class="line">    bool: &#123;</span><br><span class="line">      must: [</span><br><span class="line">        &#123;<span class="attr">term</span>: &#123;<span class="attr">company</span>: <span class="string">'中国移动'</span>&#125;&#125;,</span><br><span class="line">        &#123;</span><br><span class="line">          bool: &#123;</span><br><span class="line">            should: [</span><br><span class="line">              &#123;<span class="attr">term</span>: &#123;<span class="attr">name</span>: <span class="string">'张三'</span>&#125;&#125;,</span><br><span class="line">              &#123;<span class="attr">term</span>: &#123;<span class="attr">phone</span>: <span class="string">'18888888888'</span>&#125;&#125;,</span><br><span class="line">            ]</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      ],</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>在 ES 中，有四种 bool 操作符，分别是：</p>
-<ol>
-<li>must 相当于【<strong>且</strong>】（计入评分）</li>
-<li>must_not 相当于【<strong>非</strong>】</li>
-<li>should 相当于【<strong>或</strong>】（但比或更强大）</li>
-<li>filter 相当于【<strong>且</strong>】（不计入评分）</li>
-</ol>
+            <p>在命令行运行 MySQL 命令时报错：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ mysql</span><br><span class="line"><span class="built_in">command</span> not found</span><br></pre></td></tr></table></figure>
+<p>在终端进入目录：/usr/local/bin ，设置 MySQL 命令路径</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo ln -s /usr/<span class="built_in">local</span>/mysql/bin/mysql mysql</span><br></pre></td></tr></table></figure>
+<p>MySQL 基本命令：</p>
         </div>
         
           <p class="article-more-link">
-            <a href="/es-bool/#more">Read More</a>
+            <a href="/mysql-notes/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/es-bool/" data-id="ckej9qfy000bhwpq4o40qt3vi" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/mysql-notes/" data-id="ckej9qg6p00pmwpq4reppihq6" class="article-share-link">Share</a>
      
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Database/">Database</a></li></ul>
 
@@ -532,10 +289,10 @@
 
 
   
-    <article id="post-handle-array-in-mongodb-aggregation" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-mongoose-schema-default-field" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/handle-array-in-mongodb-aggregation/" class="article-date">
-  <time datetime="2018-06-26T05:20:20.000Z" itemprop="datePublished">2018-06-26</time>
+    <a href="/mongoose-schema-default-field/" class="article-date">
+  <time datetime="2018-07-26T07:48:22.000Z" itemprop="datePublished">2018-07-26</time>
 </a>
     
   </div>
@@ -546,7 +303,54 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/handle-array-in-mongodb-aggregation/">mongodb 聚合语法中的数组处理</a>
+      <a class="article-title" href="/mongoose-schema-default-field/">mongodb default 字段</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>例如模型：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> mongoose = <span class="built_in">require</span>(<span class="string">'mongoose'</span>)</span><br><span class="line"><span class="keyword">const</span> Schema = mongoose.Schema</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> Model = mongoose.model(<span class="string">'holiday'</span>, <span class="keyword">new</span> Schema(&#123;</span><br><span class="line">  name: &#123;<span class="attr">type</span>: <span class="built_in">String</span>&#125;,</span><br><span class="line">  startAt: &#123;<span class="attr">type</span>: <span class="built_in">Date</span>&#125;,</span><br><span class="line">  endAt: &#123;<span class="attr">type</span>: <span class="built_in">Date</span>&#125;</span><br><span class="line">&#125;))</span><br><span class="line"></span><br><span class="line"><span class="built_in">module</span>.exports = Model</span><br></pre></td></tr></table></figure>
+<p>加个 nation 字段，表示国家，默认是中国。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nation: &#123;<span class="attr">type</span>: <span class="built_in">String</span>, <span class="attr">default</span>: <span class="string">'zh-cn'</span>&#125;</span><br></pre></td></tr></table></figure>
+<p>然后再添加 holiday 时，如果未指定 nation，会自动创建。这个时候数据库中的历史数据并没有 nation，需要写个脚本全部加上：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(!it.nation) &#123;</span><br><span class="line">    it.nation = <span class="string">'zh-cn'</span></span><br><span class="line">    it.save()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>但是问题就出在了 it.nation 这里，因为有 default，所以即使数据库中没有存这个字段，也会返回默认值。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/mongoose-schema-default-field/" data-id="ckej9qg6m00piwpq470qu5zuj" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MongoDB/">MongoDB</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-auto-increase-field" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/auto-increase-field/" class="article-date">
+  <time datetime="2018-07-24T01:46:09.000Z" itemprop="datePublished">2018-07-24</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/auto-increase-field/">mongodb 自增字段</a>
     </h1>
   
 
@@ -558,28 +362,211 @@
     <div class="article-entry" itemprop="articleBody">
       
         <div class="article-preview">
-            <p>js 有很多数组相关函数，如何在 mongodb 聚合语法中使用呢？官方也提供了一些操作符，例如：</p>
-<ol>
-<li><p><code>$arrayElemAt</code></p>
-<p>根据下标取数组中的元素，语法为：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123; <span class="attr">$arrayElemAt</span>: [ <span class="xml"><span class="tag">&lt;<span class="name">数组</span>&gt;</span>, <span class="tag">&lt;<span class="name">下标</span>&gt;</span> ] &#125;</span></span><br></pre></td></tr></table></figure>
-<p>例如数据源为：</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123; "_id" : 1, "name" : "dave123", favorites: [ "chocolate", "cake", "butter", "apples" ] &#125;</span><br><span class="line">&#123; "_id" : 2, "name" : "li", favorites: [ "apples", "pudding", "pie" ] &#125;</span><br><span class="line">&#123; "_id" : 3, "name" : "ahn", favorites: [ "pears", "pecans", "chocolate", "cherries" ] &#125;</span><br><span class="line">&#123; "_id" : 4, "name" : "ty", favorites: [ "ice cream" ] &#125;</span><br></pre></td></tr></table></figure>
-<p>下面的表达式会把 favorites 数组里面第一个和最后一个元素取出来映射到 first 和 last 字段上：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">db.users.aggregate([</span><br><span class="line">   &#123;</span><br><span class="line">     $project:</span><br><span class="line">      &#123;</span><br><span class="line">         name: <span class="number">1</span>,</span><br><span class="line">         first: &#123; <span class="attr">$arrayElemAt</span>: [ <span class="string">"$favorites"</span>, <span class="number">0</span> ] &#125;,</span><br><span class="line">         last: &#123; <span class="attr">$arrayElemAt</span>: [ <span class="string">"$favorites"</span>, <span class="number">-1</span> ] &#125;</span><br><span class="line">      &#125;</span><br><span class="line">   &#125;</span><br><span class="line">])</span><br></pre></td></tr></table></figure>
+            <p>想在 MongoDB 中实现自增的字段，首先定义一个 counter 模型：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> mongoose = <span class="built_in">require</span>(<span class="string">'mongoose'</span>)</span><br><span class="line"><span class="keyword">const</span> Schema = mongoose.Schema</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> Model = mongoose.model(<span class="string">'counter'</span>, <span class="keyword">new</span> Schema(&#123;</span><br><span class="line">  _id: &#123;<span class="attr">type</span>: <span class="built_in">String</span>, <span class="attr">required</span>: <span class="literal">true</span>&#125;,</span><br><span class="line">  seq: &#123;<span class="attr">type</span>: <span class="built_in">Number</span>, <span class="attr">default</span>: <span class="number">0</span>&#125;</span><br><span class="line">&#125;, &#123;<span class="attr">timestamps</span>: <span class="literal">true</span>&#125;))</span><br><span class="line"></span><br><span class="line"><span class="built_in">module</span>.exports = Model</span><br></pre></td></tr></table></figure>
         </div>
         
           <p class="article-more-link">
-            <a href="/handle-array-in-mongodb-aggregation/#more">Read More</a>
+            <a href="/auto-increase-field/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-     <a data-url="https://zju.date/handle-array-in-mongodb-aggregation/" data-id="ckej9qg1800h2wpq45y0o17tn" class="article-share-link">Share</a>
+     <a data-url="https://zju.date/auto-increase-field/" data-id="ckej9qfuv005owpq4x8f60sie" class="article-share-link">Share</a>
      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MongoDB/">MongoDB</a></li></ul>
+    </footer>
+  </div>
+  
+</article>
 
+
+  
+    <article id="post-css-first-element-with-class" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/css-first-element-with-class/" class="article-date">
+  <time datetime="2018-07-20T02:06:07.000Z" itemprop="datePublished">2018-07-20</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/css-first-element-with-class/">CSS选择第一个拥有某类的元素</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>现在有如下 HTML 结构：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"home"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">span</span>&gt;</span>blah<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">p</span> <span class="attr">class</span>=<span class="string">"red"</span>&gt;</span>first<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">p</span> <span class="attr">class</span>=<span class="string">"red"</span>&gt;</span>second<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">p</span> <span class="attr">class</span>=<span class="string">"red"</span>&gt;</span>third<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">p</span> <span class="attr">class</span>=<span class="string">"red"</span>&gt;</span>fourth<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>想只给第一个拥有 red 类的元素设置红色边框，应该如何做呢？很多人可能会使用 <code>:first-child</code> 选择器：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-class">.home</span> <span class="selector-class">.red</span><span class="selector-pseudo">:first-child</span> &#123;</span><br><span class="line">    <span class="attribute">border</span>: <span class="number">1px</span> solid red;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/css-first-element-with-class/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/css-first-element-with-class/" data-id="ckej9qfw70085wpq4qcntmyum" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CSS/">CSS</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-angular-hmr" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/angular-hmr/" class="article-date">
+  <time datetime="2018-07-20T01:54:13.000Z" itemprop="datePublished">2018-07-20</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/angular-hmr/">配置 Angular 热加载</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <ol>
+<li><p>安装依赖：</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">npm install -D @angularclass/hmr</span><br><span class="line"><span class="comment"># yarn add @angularclass/hmr --dev</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>增加 hmr 环境变量：</p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// src/enviroments/environment.hmr.ts</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> environment = &#123;</span><br><span class="line">  production: <span class="literal">false</span>,</span><br><span class="line">  hmr: <span class="literal">true</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// src/enviroments/environment.ts</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> environment = &#123;</span><br><span class="line">  production: <span class="literal">false</span>,</span><br><span class="line">  hmr: <span class="literal">false</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// src/enviroments/environment.prod.ts</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> environment = &#123;</span><br><span class="line">  production: <span class="literal">true</span>,</span><br><span class="line">  hmr: <span class="literal">false</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/angular-hmr/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/angular-hmr/" data-id="ckej9qfu00048wpq44efdig85" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-es-aggregate" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/es-aggregate/" class="article-date">
+  <time datetime="2018-07-19T03:29:36.000Z" itemprop="datePublished">2018-07-19</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/es-aggregate/">使用ES进行聚合操作</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="article-preview">
+            <p>参见<a href="/es-prepare">准备工作</a>，搭建好命令行查询语法。</p>
+<h3 id="获取数据的多维度统计值"><a href="#获取数据的多维度统计值" class="headerlink" title="获取数据的多维度统计值"></a>获取数据的多维度统计值</h3><p>总数量、最大值、最小值、平均值、求和：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">escurl -XGET <span class="variable">$ES</span>/bank/_search?pretty -d<span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "size": 0,</span></span><br><span class="line"><span class="string">  "aggs": &#123;</span></span><br><span class="line"><span class="string">    "group_by_balance": &#123;</span></span><br><span class="line"><span class="string">      "min": &#123;</span></span><br><span class="line"><span class="string">        "field": "balance"</span></span><br><span class="line"><span class="string">      &#125;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#125;'</span></span><br></pre></td></tr></table></figure>
+        </div>
+        
+          <p class="article-more-link">
+            <a href="/es-aggregate/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/es-aggregate/" data-id="ckej9qfxx00bawpq43wx714xp" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Elasticsearch/">Elasticsearch</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-empty-character" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/empty-character/" class="article-date">
+  <time datetime="2018-07-18T14:22:22.000Z" itemprop="datePublished">2018-07-18</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/empty-character/">空白汉字占位符</a>
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在HTML中有个空白汉字占位符：<code>&amp;#12288;</code>，在排版表单的时候比较有用。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/empty-character/" data-id="ckej9qfxv00b6wpq49rmvql1k" class="article-share-link">Share</a>
+     
     </footer>
   </div>
   
@@ -590,7 +577,7 @@
 
 
   <nav id="page-nav">
-    <a class="extend prev" rel="prev" href="/page/16/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/15/">15</a><a class="page-number" href="/page/16/">16</a><span class="page-number current">17</span><a class="page-number" href="/page/18/">18</a><a class="page-number" href="/page/19/">19</a><span class="space">&hellip;</span><a class="page-number" href="/page/66/">66</a><a class="extend next" rel="next" href="/page/18/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/16/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/15/">15</a><a class="page-number" href="/page/16/">16</a><span class="page-number current">17</span><a class="page-number" href="/page/18/">18</a><a class="page-number" href="/page/19/">19</a><span class="space">&hellip;</span><a class="page-number" href="/page/67/">67</a><a class="extend next" rel="next" href="/page/18/">Next &raquo;</a>
   </nav>
 </section>
 
@@ -615,7 +602,7 @@
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2020 zju.date
+      &copy; 2021 zju.date
       &nbsp;&nbsp;&nbsp;
       contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
     </div>

@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>zju.date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="在工作中经常会遇到 Git 多账号的场景，例如：  GitHub 和 GitLab 仓库使用不同账号 公司仓库和个人仓库使用不同账号 个人私有仓库和个人开源仓库使用不同账号  那在 Git 当中如何管理多账号呢？首先要明确以下概念： Git 账号和 GitHub/GitLab 账号不是一回事下图说得很明白，Git 是高质量的版本控制系统，GitHub 是云端代码托管平台：">
+<meta name="keywords" content="Git">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Git 和 Gitlab&#x2F;Github 多账号">
+<meta property="og:url" content="https://zju.date/multi-git-account/index.html">
+<meta property="og:site_name" content=".">
+<meta property="og:description" content="在工作中经常会遇到 Git 多账号的场景，例如：  GitHub 和 GitLab 仓库使用不同账号 公司仓库和个人仓库使用不同账号 个人私有仓库和个人开源仓库使用不同账号  那在 Git 当中如何管理多账号呢？首先要明确以下概念： Git 账号和 GitHub/GitLab 账号不是一回事下图说得很明白，Git 是高质量的版本控制系统，GitHub 是云端代码托管平台：">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://img.zlib.cn/blog/git-vs-github.webp">
+<meta property="og:image" content="https://img.zlib.cn/blog/ssh-keygen.jpg?a=2">
+<meta property="og:updated_time" content="2021-01-12T08:26:00.415Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Git 和 Gitlab&#x2F;Github 多账号">
+<meta name="twitter:description" content="在工作中经常会遇到 Git 多账号的场景，例如：  GitHub 和 GitLab 仓库使用不同账号 公司仓库和个人仓库使用不同账号 个人私有仓库和个人开源仓库使用不同账号  那在 Git 当中如何管理多账号呢？首先要明确以下概念： Git 账号和 GitHub/GitLab 账号不是一回事下图说得很明白，Git 是高质量的版本控制系统，GitHub 是云端代码托管平台：">
+<meta name="twitter:image" content="https://img.zlib.cn/blog/git-vs-github.webp">
+  
+    <link rel="alternate" href="/atom.xml" title="." type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/css/images/banner.jpg">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">.</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-multi-git-account" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/multi-git-account/" class="article-date">
+  <time datetime="2020-12-11T03:40:13.000Z" itemprop="datePublished">2020-12-11</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Git 和 Gitlab/Github 多账号
+    </h1>
+  
+
+      </header>
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在工作中经常会遇到 Git 多账号的场景，例如：</p>
+<ul>
+<li>GitHub 和 GitLab 仓库使用不同账号</li>
+<li>公司仓库和个人仓库使用不同账号</li>
+<li>个人私有仓库和个人开源仓库使用不同账号</li>
+</ul>
+<p>那在 Git 当中如何管理多账号呢？首先要明确以下概念：</p>
+<h2 id="Git-账号和-GitHub-GitLab-账号不是一回事"><a href="#Git-账号和-GitHub-GitLab-账号不是一回事" class="headerlink" title="Git 账号和 GitHub/GitLab 账号不是一回事"></a>Git 账号和 GitHub/GitLab 账号不是一回事</h2><p>下图说得很明白，Git 是高质量的版本控制系统，GitHub 是云端代码托管平台：</p>
+<p><img src="https://img.zlib.cn/blog/git-vs-github.webp" alt="git_vs_github"></p>
+<a id="more"></a>
+<h3 id="Git-账号"><a href="#Git-账号" class="headerlink" title="Git 账号"></a>Git 账号</h3><p>在 Git 中其实是不存在账号的概念的，即没有登录、鉴权等步骤，只有一个全局和本地的配置，能够设置 user.name 和 user.email 用于标识提交者信息。假如说你刚安装 Git，首次提交代码的时候会有如下提示：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">Your name and email address were configured automatically based</span><br><span class="line">on your username and hostname. Please check that they are accurate.</span><br><span class="line">You can suppress this message by setting them explicitly:</span><br><span class="line"></span><br><span class="line">    git config --global user.name <span class="string">"Your Name"</span></span><br><span class="line">    git config --global user.email you@example.com</span><br><span class="line"></span><br><span class="line">After doing this, you may fix the identity used <span class="keyword">for</span> this commit with:</span><br><span class="line"></span><br><span class="line">    git commit --amend --reset-author</span><br><span class="line"></span><br><span class="line"> 1 file changed, 1 insertion(+)</span><br></pre></td></tr></table></figure>
+<p>就是说你还没有设置提交人信息，全局和项目都没有设置，全局的配置在文件：<code>~/.gitconfig</code> 中，项目设置在 <code>.git/config</code> 中，如果都没有的话，Git 就会获取操作系统用户信息作为提交人信息，例如在 Mac 中，获取方式为 <code>用户全名 &lt;用户名@主机名&gt;</code>，其中：</p>
+<ul>
+<li>用户全名用 <code>id -F</code> 获取</li>
+<li>用户名用 <code>id -un</code> 获取</li>
+<li>主机名用 <code>hostname</code> 获取</li>
+</ul>
+<p>所以，如果你不设置提交人信息的话，电脑信息就暴露了，所以建议大家根据上面的提示进行设置。</p>
+<h3 id="GitHub-GitLab-账号"><a href="#GitHub-GitLab-账号" class="headerlink" title="GitHub/GitLab 账号"></a>GitHub/GitLab 账号</h3><p>这两个账号不用说了，就是登录网站注册得到的，但是注册之后有一个很重要的步骤就是配置 SSH Key，如果不配置的话，网站无法对提交人进行鉴权，因此就无法提交到仓库中。首先要在电脑上生成 SSH Key，生成方法很简单：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -t rsa -C <span class="string">"xxxxx"</span></span><br></pre></td></tr></table></figure>
+<p>运行之后，在 <code>~/.ssh</code> 目录下会多出两个文件：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">-rw-------@ 1 keliq  staff   1.6K 12 16  2015 id_rsa</span><br><span class="line">-rw-r--r--@ 1 keliq  staff   416B 12 16  2015 id_rsa.pub</span><br></pre></td></tr></table></figure>
+<p>其中 id_rsa.pub 就是公钥，通过 <code>cat ~/.ssh/id_rsa.pub</code> 获取其内容，复制到 GitHub 或 GitLab 账户的 SSH Key 里面即可，下次再提交的话就能通过了。</p>
+<p><img src="https://img.zlib.cn/blog/ssh-keygen.jpg?a=2" alt="ssh-key"></p>
+<h2 id="Git-多账号和-GitHub-GitLab-多账号操作步骤"><a href="#Git-多账号和-GitHub-GitLab-多账号操作步骤" class="headerlink" title="Git 多账号和 GitHub/GitLab 多账号操作步骤"></a>Git 多账号和 GitHub/GitLab 多账号操作步骤</h2><h3 id="Git-多账号"><a href="#Git-多账号" class="headerlink" title="Git 多账号"></a>Git 多账号</h3><p>在一个项目中，用下面的命令修改用户名和邮箱即可：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git config user.name xxx</span><br><span class="line">git config user.email xxx</span><br></pre></td></tr></table></figure>
+<p>这样的话，就相当于设置了一个新的 Git 账号了，但是要注意，这里的邮箱比较重要，在提交到 GitHub/GitLab 网站的时候，会根据这里设置邮箱（即 user.email）与 GitHub/GitLab 账号中的邮箱进行匹配，如果匹配上了，<strong>commit 中的用户名和头像就会 GitHub/GitLab 账号的用户名和头像</strong>，如果没匹配上，<strong>commit 中的用户名就用 user.name，然后头像没了！头像没了！头像没了！</strong>重要的事情说三遍。</p>
+<h3 id="GitHub-GitLab-多账号"><a href="#GitHub-GitLab-多账号" class="headerlink" title="GitHub/GitLab 多账号"></a>GitHub/GitLab 多账号</h3><p>这才是本文的重点，如何给托管平台 GitHub/GitLab 配置多账号。上面已经知道代码托管平台实际上是通过 <code>~/.ssh/id_rsa.pub</code> 来认证用户的，所以只要多生成几个密钥对就相当于生成了多个托管平台的账号了！注意，生成密钥对之后，记得添加到 GitHub 或 GitLab 账户的 SSH Key 里面。</p>
+<p>但是生成密钥对的时候不要覆盖之前的密钥对，因为默认会保存到同样的位置，即 <code>~/.ssh/id_rsa</code>，如果没备份的话，千万不要覆盖，不然就找不到了！（真覆盖了话，也不是什么大事，把原 SSH Key 从托管平台里面删了即可），例如你可以先保存到当前目录下，然后移动到其他位置，例如 <code>~/.ssh/keliq/</code> 目录：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -t rsa -C <span class="string">"xxx"</span></span><br><span class="line">Generating public/private rsa key pair.</span><br><span class="line">Enter file <span class="keyword">in</span> <span class="built_in">which</span> to save the key (/Users/keliq/.ssh/id_rsa): ./id_rsa</span><br><span class="line">Enter passphrase (empty <span class="keyword">for</span> no passphrase):</span><br><span class="line">Enter same passphrase again:</span><br><span class="line">Your identification has been saved <span class="keyword">in</span> ./id_rsa.</span><br><span class="line">Your public key has been saved <span class="keyword">in</span> ./id_rsa.pub</span><br></pre></td></tr></table></figure>
+<p>到这里，你就拥有多个 SSH Key 了，于是可以通过下面的命令切换身份：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 默认就是用的 ~/.ssh/id_rsa，所以加不加一个效果</span></span><br><span class="line">GIT_SSH_COMMAND=<span class="string">"ssh -i ~/.ssh/id_rsa"</span> git <span class="built_in">clone</span> xxxx</span><br><span class="line"><span class="comment"># 使用另外一个私钥</span></span><br><span class="line">GIT_SSH_COMMAND=<span class="string">"ssh -i  ~/.ssh/keliq/id_rsa"</span> git push</span><br><span class="line"><span class="comment"># 使用 gitlab 的私钥，当然你得把对应的公钥添加到 gitlab 的 SSH Key 里面才行</span></span><br><span class="line">GIT_SSH_COMMAND=<span class="string">"ssh -i  ~/.ssh/gitlab/id_rsa"</span> git push</span><br></pre></td></tr></table></figure>
+<p>这种方式虽然灵活，但是不够智能，例如我想要的效果就是：<strong>某个平台的所有仓库都使用某个私钥进行认证</strong>，这种需求很常见，打开 <code>~/git/config</code> 文件配置如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Host github.com</span><br><span class="line">    User git</span><br><span class="line">    Hostname github.com</span><br><span class="line">    PreferredAuthentications publickey</span><br><span class="line">    IdentityFile ~/.ssh/github/id_rsa</span><br><span class="line">Host gitlab.com</span><br><span class="line">    Hostname gitlab.com</span><br><span class="line">    PreferredAuthentications publickey</span><br><span class="line">    IdentityFile ~/.ssh/gitlab/id_rsa</span><br></pre></td></tr></table></figure>
+<p>到这里，多账号的配置基本上已经完成了，但是还有一个不足的地方就是虽然私钥根据域名自动选择了，但是提交的配置还是共享 <code>.gitconfig</code> 中的配置，例如 user.name 和 user.email，<strong>能不能根据仓库所在的不同位置选择不同的全局配置文件呢？</strong> 答案是可以的，打开 <code>~/.gitconfig</code> 文件，在末尾添加下面的配置：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[includeIf <span class="string">"gitdir:~/work/gitlab/"</span>]</span><br><span class="line">    path = .gitconfig-gitlab</span><br></pre></td></tr></table></figure>
+<p>然后再建一个 <code>~/.gitconfig-gitlab</code> 文件，里面写全局配置，例如：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[user]</span><br><span class="line">    name = keliq</span><br><span class="line">    email = keliq</span><br></pre></td></tr></table></figure>
+<p>那么只要仓库被放到了 <code>~/work/gitlab</code> 目录下面，默认就会使用这个配置了！</p>
+
+      
+    </div>
+    <footer class="article-footer">
+     <a data-url="https://zju.date/multi-git-account/" data-id="ckjtq8g8e00076cq4opk29c5m" class="article-share-link">Share</a>
+     
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/">Git</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/git-commit-rules/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Git 提交规范
+        
+      </div>
+    </a>
+  
+  
+    <a href="/json-key-quote/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">JSON5 解决了 JSON 两大痛点</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+
+        
+
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CFA/">CFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dart/">Dart</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/">ELK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Elasticsearch/">Elasticsearch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Flutter/">Flutter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MongoDB/">MongoDB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Node-js/">Node.js</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/学习笔记/">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/小程序/">小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/诗歌/">诗歌</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2021 zju.date
+      &nbsp;&nbsp;&nbsp;
+      contact: <a href="mailto:zju.date@qq.com">zju.date@qq.com</a>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+</script>
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>
